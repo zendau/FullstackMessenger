@@ -102,19 +102,25 @@ export default {
         
        
         const myAudio = document.createElement('audio')
+        myAudio.id = 'main';
         myAudio.muted = false
         navigator.mediaDevices.getUserMedia({
           audio: true
         }).then(stream => {
 
           socket.data.getConnect().on('user-connected', userId => {
-            const audio = document.createElement('audio')
-            document.body.append(audio)
+            // const audio = document.createElement('audio')
+            // audio.id = userId;
+            // document.body.append(audio)
             connectToNewUser(userId, stream)
           })          
       
 
           socket.data.getConnect().on('getUsers', (users) => {
+            console.log(users);
+          })
+
+           socket.data.getConnect().on('getUsers', (users) => {
             console.log(users);
           })
 
@@ -129,6 +135,7 @@ export default {
             }, function(remoteStream) {
               call.answer(remoteStream)
               const audio = document.createElement('audio')
+              audio.id = call.peer
               call.on('stream', userVideoStream => {
                 addVideoStream(audio, userVideoStream)
               })
@@ -156,6 +163,7 @@ export default {
         console.log('conntected to new user. Call to '+userId)
         const call = myPeer.call(userId, stream)
         const audio = document.createElement('audio')
+        audio.id = userId
         call.on('stream', userVideoStream => {
           addVideoStream(audio, userVideoStream)
         })
