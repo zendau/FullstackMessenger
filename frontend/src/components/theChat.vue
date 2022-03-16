@@ -7,6 +7,7 @@
       <header-chat 
           :socket=socket
           :roomId=roomId
+          :stream=localStream
           @menu="sideMenuShow"
       ></header-chat>
 
@@ -65,6 +66,8 @@ export default {
 
     const roomId = store.state.roomId
 
+    let localStream = ref(null)
+
     
     const userLogin = store.state.userLogin
     const userId = ref(null)
@@ -88,17 +91,15 @@ export default {
         router.push("/")
       } else {
         socket.data = inject("SocketClass")
-
-    
-        
        
-        const myAudio = document.createElement('audio')
-        myAudio.id = 'main';
-        myAudio.muted = false
+        // const myAudio = document.createElement('audio')
+        // myAudio.id = 'main';
+        // myAudio.muted = false
         navigator.mediaDevices.getUserMedia({
           audio: true
         }).then(stream => {
-
+          localStream.value = stream
+          console.log('localStream',localStream)
           socket.data.getConnect().on('user-connected', userId => {
             // const audio = document.createElement('audio')
             // audio.id = userId;
@@ -116,6 +117,14 @@ export default {
             console.log(users);
           })
 
+          socket.data.getConnect().on('userDisconnect', (userId) => {
+            console.log('disconnect', userId);
+            const element = document.getElementById(userId)
+            console.log(element)
+            element.remove();
+          })
+
+          
         })
 
           // answer
@@ -152,12 +161,7 @@ export default {
 
         })
 
-        socket.data.getConnect().on('userDisconnect', (userId) => {
-            console.log('disconnect', userId);
-            const element = document.getElementById(userId)
-            console.log(element)
-            element.remove();
-          })
+
 
 
        
@@ -205,7 +209,8 @@ export default {
       sideMenuShow,
       sideMenu,
       socket,
-      getMsgRef
+      getMsgRef,
+      localStream
     }
   }
 }

@@ -12,7 +12,7 @@ import {useStore} from "vuex"
 import {useRouter} from "vue-router"
 
 export default {
-    props: ['socket', 'roomId'],
+    props: ['socket', 'roomId', 'stream'],
     emit: ["menu"],
     setup(props, ctx) {
 
@@ -32,6 +32,11 @@ export default {
             store.state.roomId = null
             store.state.messages = []
             store.state.users = []
+
+            props.stream.getTracks().forEach(function (track) {
+         track.stop();
+      });
+            
         }
 
         return {
