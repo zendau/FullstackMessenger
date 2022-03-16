@@ -112,6 +112,7 @@ export default {
             // const audio = document.createElement('audio')
             // audio.id = userId;
             // document.body.append(audio)
+            console.log('userConnetSOcker', userId)
             connectToNewUser(userId, stream)
           })          
       
@@ -136,6 +137,7 @@ export default {
               call.answer(remoteStream)
               const audio = document.createElement('audio')
               audio.id = call.peer
+              console.log('peer', call)
               call.on('stream', userVideoStream => {
                 addVideoStream(audio, userVideoStream)
               })
@@ -145,8 +147,15 @@ export default {
 
         myPeer.on('open', id => {
           console.log('join', id)
-          socket.data.getConnect().emit('join-room', roomId, id)
+          socket.data.getConnect().emit('join-room', roomId, id, userLogin)
         })
+
+        socket.data.getConnect().on('userDisconnect', (userId) => {
+            console.log('disconnect', userId);
+            const element = document.getElementById(userId)
+            console.log(element)
+            element.remove();
+          })
 
       }
     })
