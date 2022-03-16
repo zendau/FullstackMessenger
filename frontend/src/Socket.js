@@ -6,11 +6,11 @@ export class Socket {
         this.socket = io(CONSTANT.URL)
     }
 
-    createRoom(roomId, userLogin) {
+    createRoom(roomId, userLogin, userId) {
         if (!this.socket.connected) {
             this.reconnect()
         }
-        this.socket.emit("room", [roomId, userLogin])
+        this.socket.emit("room", [roomId, userLogin, userId])
     }
 
 
@@ -35,6 +35,7 @@ export class Socket {
 
     getUsers(store) {
         this.socket.on("getUsers", (users) => {
+            console.log(users)
             store.commit("saveUsers", users)
         })
     }

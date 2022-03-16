@@ -89,16 +89,7 @@ export default {
       } else {
         socket.data = inject("SocketClass")
 
-        socket.data.createRoom(roomId, userLogin)
-        socket.data.getUserId(userId, store)
-        socket.data.getUsers(store)
-        socket.data.resiveMessage(store, function () {
-            return nextTick(() => {
-            const elem = messagesRef.value
-            elem.value.scrollTo(0, elem.value.scrollHeight)        
-          })
-        })
-
+    
         
        
         const myAudio = document.createElement('audio')
@@ -148,6 +139,17 @@ export default {
         myPeer.on('open', id => {
           console.log('join', id)
           socket.data.getConnect().emit('join-room', roomId, id, userLogin)
+
+          //socket.data.createRoom(roomId, userLogin, id)
+          socket.data.getUserId(userId, store)
+          socket.data.getUsers(store)
+          socket.data.resiveMessage(store, function () {
+            return nextTick(() => {
+            const elem = messagesRef.value
+            elem.value.scrollTo(0, elem.value.scrollHeight)        
+          })
+        })
+
         })
 
         socket.data.getConnect().on('userDisconnect', (userId) => {
@@ -156,6 +158,9 @@ export default {
             console.log(element)
             element.remove();
           })
+
+
+       
 
       }
     })
@@ -177,6 +182,7 @@ export default {
           addVideoStream(audio, userVideoStream)
         })
         call.on('close', () => {
+          console.log('!!!! CLOSE CONNECT')
           audio.remove()
         })
 

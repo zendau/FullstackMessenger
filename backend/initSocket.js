@@ -6,24 +6,6 @@ module.exports = function(io) {
     io.on("connection", (socket) => {
         console.log("user connect")
 
-        socket.on("room", (userData) => {
-            
-            const user = {
-                id: socket.id,
-                room: userData[0],
-                login: userData[1]
-            }
-
-            addUser(user)
-            socket.join(user.room)
-            io.to(user.room).emit("getUserId", user.id)
-            io.to(user.room).emit("getUsers", getRoomUser(user.room))
-            io.to(user.room).emit("message", `${user.login} has join to chat`)  
-
-                
-            
-        })
-
         socket.on('newMessage', (msg) => {
             console.log(`message ${msg[1]} from user ${msg[0]}, room ${msg[2]}`)
             console.log("msg", msg)
@@ -48,19 +30,31 @@ module.exports = function(io) {
 
 
         socket.on('join-room', (roomId, userId, userLogin) => {
+            console.log('peer room connected')
 
-            addPeerUser({
+            const user = {
                 id: userId,
                 room: roomId,
                 login: userLogin
-            })
+            }
+
+            addPeerUser(user)
+            socket.join(user.room)
+            console.log('room data')
+            io.to(user.room).emit("getUserId", user.id)
+            io.to(user.room).emit("getUsers", getRoomPeerUser(user.room))
+            io.to(user.room).emit("message", `${user.login} has join to chat`)  
+
+
             socket.join(roomId)
             socket.broadcast.emit('user-connected', userId)
         
             socket.on('disconnect', () => {
                 console.log('disconnet 2')
                 peerUserLeaveChat(userId)
-                socket.to(roomId).emit('userDisconnect', userId)
+                io.to(roomId).emit("userDisconnect", userId)
+                io.to(roomId).emit("message", `${userLogin} has left the chat`)  
+                io.to(roomId).emit("getUsers", getRoomPeerUser(roomId))
             })
           })
     })
