@@ -36,6 +36,7 @@ export class Socket {
     getUsers(store) {
         this.socket.on("getUsers", (users) => {
             this.changeAudioTagMute(users)
+            console.log("GET USERS")
             store.commit("saveUsers", users)
         })
     }

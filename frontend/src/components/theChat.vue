@@ -139,7 +139,7 @@ export default {
               call.answer(remoteStream)
               const audio = document.createElement('audio')
               audio.id = call.peer
-              console.log('peer', call)
+              audio.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
               call.on('stream', userVideoStream => {
                 addVideoStream(audio, userVideoStream)
               })
