@@ -35,7 +35,7 @@ export class Socket {
 
     getUsers(store) {
         this.socket.on("getUsers", (users) => {
-            console.log(users)
+            this.changeAudioTagMute(users)
             store.commit("saveUsers", users)
         })
     }
@@ -58,6 +58,14 @@ export class Socket {
 
     getConnect() {
         return this.socket
+    }
+
+    changeAudioTagMute(users) {
+        users.forEach(item => {
+            const audioELement = document.getElementById(item.id)
+            console.log('mute', audioELement, item.mute)
+            if (audioELement) audioELement.muted = item.mute
+        });
     }
 }
     

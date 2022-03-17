@@ -1,5 +1,5 @@
 const {addUser, getRoomUser, getUserById, userLeaveChat} = require("./users")
-const {addPeerUser, getRoomPeerUser, getPeerUserById, peerUserLeaveChat} = require("./peerUsers")
+const {addPeerUser, getRoomPeerUser, getPeerUserById, peerUserLeaveChat, changeMuteStatus} = require("./peerUsers")
 
 module.exports = function(io) {
     // Вывод сообщение что был подключен пользователь по сокету
@@ -35,7 +35,8 @@ module.exports = function(io) {
             const user = {
                 id: userId,
                 room: roomId,
-                login: userLogin
+                login: userLogin,
+                mute: false
             }
 
             addPeerUser(user)
@@ -55,6 +56,13 @@ module.exports = function(io) {
                 io.to(roomId).emit("userDisconnect", userId)
                 io.to(roomId).emit("message", `${userLogin} has left the chat`)  
                 io.to(roomId).emit("getUsers", getRoomPeerUser(roomId))
+            })
+
+
+            socket.on('userMute', (userId, muteStatus) => {
+
+                changeMuteStatus(userId)
+                io.to(user.room).emit("getUsers", getRoomPeerUser(user.room))
             })
           })
     })

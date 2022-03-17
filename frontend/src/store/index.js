@@ -6,7 +6,7 @@ export default createStore({
     userId: null,
     roomId: null,
     messages: [],
-    users: []
+    users: [],
   },
   mutations: {
     authUser(state, data) {

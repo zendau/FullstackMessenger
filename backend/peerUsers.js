@@ -17,9 +17,19 @@ function peerUserLeaveChat(id) {
     users = users.filter(user => user.id !== id)
 }
 
+function changeMuteStatus(id) {
+    users = users.map(item => {
+        if (item.id === id) {
+            item.mute = !item.mute
+        }
+        return item
+    })
+}
+
 module.exports = {
     addPeerUser,
     getRoomPeerUser,
     getPeerUserById,
-    peerUserLeaveChat
+    peerUserLeaveChat,
+    changeMuteStatus
 }

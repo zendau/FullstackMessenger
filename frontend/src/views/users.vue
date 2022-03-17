@@ -2,7 +2,7 @@
     <section v-show="sideMenu" class="section__users">
         <h1>Users online</h1>
         <ul class="users__list">
-            <li v-for="user in users" :key="user.id">{{user.login}}</li>
+            <li v-for="user in users" :key="user.id">{{user.login}} | Mute - {{user.mute}}</li>
         </ul>
     </section>
 </template>

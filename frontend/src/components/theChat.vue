@@ -55,6 +55,7 @@ export default {
 
   setup() {
 
+
     const socket = reactive({})
 
     const store = useStore()
@@ -65,6 +66,7 @@ export default {
         
 
     const roomId = store.state.roomId
+    const users = store.state.users
 
     let localStream = ref(null)
 
@@ -159,6 +161,13 @@ export default {
           })
         })
 
+        })
+
+        window.addEventListener('keypress', (event) => {
+          if (event.code === 'KeyM') {
+            console.log('click M', users)
+            socket.data.getConnect().emit('userMute', userId.value)
+          }
         })
 
 
