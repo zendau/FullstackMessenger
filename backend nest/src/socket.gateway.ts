@@ -4,6 +4,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
+import { AppService } from './app.service';
 
 @WebSocketGateway({
   cors: {
@@ -11,12 +12,22 @@ import { Server } from 'socket.io';
   },
 })
 export class SocketGateway {
+  constructor(private readonly appService: AppService) {}
+
   @WebSocketServer()
   server: Server;
 
   @SubscribeMessage('message')
   handleMessage(client: any, payload: any) {
     console.log(payload);
-    this.server.sockets.emit('answer', 'hello');
+    this.appService.addUser(payload);
+    //this.server.sockets.emit('answer', 'hello');
+  }
+
+  @SubscribeMessage('room')
+  roomEvent(client: any, payload: any) {
+    console.log(payload);
+    const room = this.appService.getRoomUser(payload);
+    this.server.sockets.emit('answer', room);
   }
 }

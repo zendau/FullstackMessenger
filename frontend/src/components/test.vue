@@ -1,6 +1,8 @@
 <template>
   <h1>Test</h1>
+  <input type="text" v-model.trim="userLogin">
   <button @click="btnSend">Send</button>
+  <button @click="testRoom">Room</button>
   <br>
   {{message}}
 </template>
@@ -18,6 +20,10 @@ export default {
 
         const message = ref('message')
 
+        const roomId = ref('123')
+
+        const userLogin = ref('')
+
       
 
         
@@ -27,7 +33,7 @@ export default {
         socket.on('connect', function() {
             console.log('Connected');
 
-            socket.emit('message', { test: 'test' });
+            //socket.emit('message', { test: 'test' });
         });
 
         socket.on('answer', function(data) {
@@ -35,12 +41,18 @@ export default {
         });
 
         function btnSend() {
-            socket.emit('message', { test: 'test' });
+            socket.emit('message', { userLogin: userLogin.value, roomId: roomId.value });
+        }
+
+        function testRoom() {
+            socket.emit('room', roomId.value);
         }
 
       return {
             btnSend,
-            message
+            message,
+            userLogin,
+            testRoom
         }
     }
 
