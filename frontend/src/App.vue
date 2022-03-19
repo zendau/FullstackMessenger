@@ -6,15 +6,15 @@
 
 <script>
 
-import {onMounted, provide} from "vue"
-import {Socket} from "./Socket"
+// import {onMounted, provide} from "vue"
+// import {Socket} from "./Socket"
 
 export default {
   setup() {
-    onMounted(() => {
-      const SocketClass = new Socket()
-      provide("SocketClass", SocketClass)
-    })
+    // onMounted(() => {
+    //   const SocketClass = new Socket()
+    //   provide("SocketClass", SocketClass)
+    // })
   },
 }
 </script>

@@ -5,10 +5,6 @@ export class IEditRoomDTO {
   @Min(1)
   id: number;
 
-  @IsInt()
-  @Min(1)
-  roomId: number;
-
   @IsString()
   @Length(2, 20, {
     message: 'Value is smaller than 2 or bigger than 20 signs',

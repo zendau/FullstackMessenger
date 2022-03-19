@@ -4,6 +4,7 @@ import { Repository } from 'typeorm/repository/Repository';
 import { IEditRoomDTO } from './dto/editRoom.dto';
 import { IRoomDTO } from './dto/room.dto';
 import { Room } from './entities/room.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class RoomService {
@@ -13,7 +14,10 @@ export class RoomService {
   ) {}
 
   async create(createRoomDTO: IRoomDTO) {
-    const resInsered = await this.roomRepository.save(createRoomDTO);
+    const resInsered = await this.roomRepository.save({
+      ...createRoomDTO,
+      roomId: uuidv4(),
+    });
     return resInsered;
   }
 
@@ -43,7 +47,7 @@ export class RoomService {
       .update()
       .set({
         adminLogin: updateRoomDTO.adminLogin,
-        roomId: updateRoomDTO.roomId,
+        roomId: uuidv4(),
         roomTitle: updateRoomDTO.roomTitle,
       })
       .where(`id = ${updateRoomDTO.id}`)

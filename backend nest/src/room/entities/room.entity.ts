@@ -6,7 +6,7 @@ export class Room {
   id: number;
 
   @Column()
-  roomId: number;
+  roomId: string;
 
   @Column()
   roomTitle: string;

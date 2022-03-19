@@ -5,6 +5,8 @@ import theLogin from "../components/theLogin"
 
 import test from '../components/test.vue'
 
+import createRoom from '../views/createRoom.vue'
+
 const routes = [
   {
     path: '/login',
@@ -21,6 +23,11 @@ const routes = [
     path: '/test',
     name: 'Test',
     component: test
+  },
+  {
+    path: '/room/create',
+    name: 'createRoom',
+    component: createRoom
   }
   
 ]
