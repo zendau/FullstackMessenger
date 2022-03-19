@@ -6,6 +6,7 @@ import theLogin from "../components/theLogin"
 import test from '../components/test.vue'
 
 import createRoom from '../views/createRoom.vue'
+import allRooms from '../views/allRooms.vue'
 
 const routes = [
   {
@@ -28,6 +29,11 @@ const routes = [
     path: '/room/create',
     name: 'createRoom',
     component: createRoom
+  },
+  {
+    path: '/room/all',
+    name: 'allRooms',
+    component: allRooms
   }
   
 ]
