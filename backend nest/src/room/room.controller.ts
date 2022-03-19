@@ -43,7 +43,7 @@ export class RoomController {
   }
 
   @Get('get/:id')
-  async findOne(@Param('id') roomId: number) {
+  async findOne(@Param('id') roomId: string) {
     const res = await this.roomService.getById(roomId).catch((err) => {
       return {
         status: false,

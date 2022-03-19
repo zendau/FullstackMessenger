@@ -7,6 +7,7 @@ import test from '../components/test.vue'
 
 import createRoom from '../views/createRoom.vue'
 import allRooms from '../views/allRooms.vue'
+import audioRoom from '../views/audioRoom'
 
 const routes = [
   {
@@ -34,6 +35,11 @@ const routes = [
     path: '/room/all',
     name: 'allRooms',
     component: allRooms
+  },
+  {
+    path: '/room/:id',
+    name: 'audioRoom',
+    component: audioRoom
   }
   
 ]

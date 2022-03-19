@@ -25,16 +25,16 @@ export class RoomService {
     return await this.roomRepository.createQueryBuilder().getMany();
   }
 
-  async getById(id: number) {
+  async getById(roomId: string) {
     const res = await this.roomRepository
       .createQueryBuilder()
-      .where('id = :id', { id })
+      .where('roomId = :roomId', { roomId })
       .getOne();
 
     if (res === undefined)
       return {
         status: false,
-        message: `id ${id} is not valid`,
+        message: `roomId ${roomId} is not valid`,
         httpCode: HttpStatus.BAD_REQUEST,
       };
 
