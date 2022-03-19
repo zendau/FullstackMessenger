@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SocketGateway } from './socket.gateway';
 import { SocketModule } from './socket/socket.module';
 import { RoomModule } from './room/room.module';
 
@@ -24,6 +23,6 @@ import { RoomModule } from './room/room.module';
     SocketModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SocketGateway],
+  providers: [AppService],
 })
 export class AppModule {}
