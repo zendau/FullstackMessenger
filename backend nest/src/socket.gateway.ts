@@ -3,7 +3,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { AppService } from './app.service';
 
 @WebSocketGateway({
@@ -16,6 +16,14 @@ export class SocketGateway {
 
   @WebSocketServer()
   server: Server;
+
+  handleConnection(socket: Socket) {
+    console.log('user connected');
+  }
+
+  handleDisconnect() {
+    console.log('user disconnected');
+  }
 
   @SubscribeMessage('message')
   handleMessage(client: any, payload: any) {
