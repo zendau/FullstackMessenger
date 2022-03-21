@@ -22,12 +22,18 @@ export class SocketGateway {
   }
 
   handleDisconnect(socket: Socket) {
-    console.log('user disconnected', socket.id);
+    console.log('user disconnected');
+
+    const userData = this.socketService.getUserById(socket.id);
+    console.log('userData', userData, socket.id, socket);
+    this.socketService.userLeaveChat(socket.id);
+    const roomUser = this.socketService.getRoomUser(userData.roomId);
+    this.server.to(userData.roomId).emit('getUsers', roomUser);
   }
 
   @SubscribeMessage('join-room')
   handleMessage(socket: Socket, payload: any) {
-    console.log(payload);
+    console.log('user-connected', payload);
     socket.join(payload.roomId);
     this.socketService.addUser(payload);
     const roomUser = this.socketService.getRoomUser(payload.roomId);
@@ -37,7 +43,7 @@ export class SocketGateway {
 
   @SubscribeMessage('exit-room')
   roomEvent(socket: Socket, payload: any) {
-    console.log(payload);
+    console.log('exit-room', payload);
     this.socketService.userLeaveChat(payload.userId);
     socket.leave(payload.roomId);
     const roomUser = this.socketService.getRoomUser(payload.roomId);

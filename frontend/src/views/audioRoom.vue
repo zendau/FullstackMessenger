@@ -20,38 +20,59 @@ import $api from '../axios'
 export default {
     async setup() {
 
-        //const router = useRouter()
-        const route = useRoute()
-
-        const socket = io('http://localhost:3000');
-
-
- 
-
-        const roomId = route.params.id
-        const userLogin = Date.now()
-        const userId = socket.id
-
-        const roomUsers = ref([])
-
         onUnmounted(() => {
             socket.emit('exit-room', {
-                userId,
-                roomId,
+                userId: userId.value,
+                roomId: roomData.roomId,
                 userLogin
             });
         })
 
 
+        //const router = useRouter()
+        const route = useRoute()
+
+        const roomUsers = ref([])
+
+        
+        const socket = io('http://localhost:3000');
+        socket.hello = 'world'
+
+        const roomId = route.params.id
+        const userLogin = Date.now()
+        const userId = ref(null)
+
         const res = await $api.get('/room/get/'+roomId)
         const roomData = reactive(res.data)
-        
-        console.log(roomData, socket)
-        socket.emit('join-room', { 
-            userId,
-            roomId: roomData.roomId,
-            userLogin
+
+        socket.on('connect', () => {
+            userId.value = socket.id
+
+            socket.emit('join-room', { 
+                userId: userId.value,
+                roomId: roomData.roomId,
+                userLogin
+            })
+
+            console.log( userId.value, roomData.roomId, userLogin)
         });
+
+        // socket.on('disconnect',function() {
+        //     socket.emit('exit-room', {
+        //         userId: userId.value,
+        //         roomId,
+        //         userLogin
+        //     });
+        // });
+
+        
+
+       
+
+        
+        //Object.keys(socket).forEach(item => console.log('!!! ', item, socket[item]))
+        //console.log('id',)
+        
 
         // socket.on('join-room', () => {
         //     console.log('Connected');
