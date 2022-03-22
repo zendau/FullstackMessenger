@@ -1,4 +1,5 @@
 export default interface IUser {
-  roomId: string;
+  userLogin: string;
+  roomId?: string;
   userId: string;
 }

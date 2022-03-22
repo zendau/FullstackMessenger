@@ -12,6 +12,9 @@ import {io} from "socket.io-client"
 
 export default {
     setup() {
+        const userLogin = Date.now()
+
+
         const router = useRouter()
         const route = useRoute()
 
@@ -23,6 +26,10 @@ export default {
         socket.on('connect', () => {
             console.log('connected gateway')
             socketConnected.value = true
+            socket.emit('connect-user', {
+                userLogin,
+                userId: socket.id
+            })
         })
 
         //console.log('inject', inject('message', 'test'))

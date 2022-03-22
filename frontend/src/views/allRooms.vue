@@ -7,13 +7,16 @@
         </div>
         </div>
   </div>
+  <free-users/>
 </template>
 
 <script>
 import $api from '../axios'
 import { ref } from 'vue'
+import freeUsers from '../components/freeUsers.vue'
 
 export default {
+  components: { freeUsers },
     async setup() {
 
         const res = await $api.get('/room/getAll')

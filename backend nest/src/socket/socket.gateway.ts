@@ -28,18 +28,33 @@ export class SocketGateway {
     console.log('userData', userData, socket.id);
 
     if (userData !== undefined) {
-      this.socketService.userLeaveChat(socket.id);
-      const roomUser = this.socketService.getRoomUser(userData.roomId);
+      this.socketService.clientLeaveRoom(socket.id);
+      const roomUser = this.socketService.getRoomUsers(userData.roomId);
       this.server.to(userData.roomId).emit('getUsers', roomUser);
     }
   }
 
+  @SubscribeMessage('connect-user')
+  connectEvent(socket: Socket, payload: any) {
+    console.log('test', payload);
+    this.socketService.addUser(payload);
+    console.log('free', this.socketService.getFreeUsers());
+  }
+
   @SubscribeMessage('join-room')
   handleMessage(socket: Socket, payload: any) {
+    console.log('start test section', payload, this.socketService.users);
+
+    const res = this.socketService.clientJoinRoom(
+      payload.userId,
+      payload.roomId,
+    );
+    console.log('end test section');
+
     console.log('user-connected', payload);
     socket.join(payload.roomId);
-    this.socketService.addUser(payload);
-    const roomUser = this.socketService.getRoomUser(payload.roomId);
+    //this.socketService.addUser(payload);
+    const roomUser = this.socketService.getRoomUsers(payload.roomId);
     console.log('join', roomUser, payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
   }
@@ -47,10 +62,10 @@ export class SocketGateway {
   @SubscribeMessage('exit-room')
   roomEvent(socket: Socket, payload: any) {
     console.log('exit-room', payload);
-    this.socketService.userLeaveChat(payload.userId);
+    this.socketService.clientLeaveRoom(payload.userId);
     socket.leave(payload.roomId);
-    const roomUser = this.socketService.getRoomUser(payload.roomId);
-    console.log('exit', roomUser);
+    const roomUser = this.socketService.getRoomUsers(payload.roomId);
+    console.log('exit', roomUser, this.socketService.users);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
   }
 }
