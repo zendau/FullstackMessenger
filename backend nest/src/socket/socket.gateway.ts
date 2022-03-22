@@ -26,9 +26,12 @@ export class SocketGateway {
 
     const userData = this.socketService.getUserById(socket.id);
     console.log('userData', userData, socket.id, socket);
-    this.socketService.userLeaveChat(socket.id);
-    const roomUser = this.socketService.getRoomUser(userData.roomId);
-    this.server.to(userData.roomId).emit('getUsers', roomUser);
+
+    if (userData !== undefined) {
+      this.socketService.userLeaveChat(socket.id);
+      const roomUser = this.socketService.getRoomUser(userData.roomId);
+      this.server.to(userData.roomId).emit('getUsers', roomUser);
+    }
   }
 
   @SubscribeMessage('join-room')

@@ -8,6 +8,9 @@ import test from '../components/test.vue'
 import createRoom from '../views/createRoom.vue'
 import allRooms from '../views/allRooms.vue'
 import audioRoom from '../views/audioRoom'
+import roomGateway from '../views/Room/RoomGateway.vue'
+
+import pageNotFound from '../views/404.vue'
 
 const routes = [
   {
@@ -27,19 +30,29 @@ const routes = [
     component: test
   },
   {
-    path: '/room/create',
-    name: 'createRoom',
-    component: createRoom
+    path: '/room',
+    component: roomGateway,
+    children: [
+      {
+        path: 'create',
+        name: 'createRoom',
+        component: createRoom
+      },
+      {
+        path: 'all',
+        name: 'allRooms',
+        component: allRooms
+      },
+      {
+        path: ':id',
+        name: 'audioRoom',
+        component: audioRoom
+      },
+    ]
   },
   {
-    path: '/room/all',
-    name: 'allRooms',
-    component: allRooms
-  },
-  {
-    path: '/room/:id',
-    name: 'audioRoom',
-    component: audioRoom
+    path: '/:pathMatch(.*)*',
+    component: pageNotFound
   }
   
 ]
