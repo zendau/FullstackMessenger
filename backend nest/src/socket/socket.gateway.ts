@@ -28,9 +28,10 @@ export class SocketGateway {
     console.log('userData', userData, socket.id);
 
     if (userData !== undefined) {
-      this.socketService.clientLeaveRoom(socket.id);
+      this.socketService.clientDisconnect(socket.id);
       const roomUser = this.socketService.getRoomUsers(userData.roomId);
       this.server.to(userData.roomId).emit('getUsers', roomUser);
+      this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
     }
   }
 
@@ -38,7 +39,7 @@ export class SocketGateway {
   connectEvent(socket: Socket, payload: any) {
     console.log('test', payload);
     this.socketService.addUser(payload);
-    console.log('free', this.socketService.getFreeUsers());
+    this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 
   @SubscribeMessage('join-room')
@@ -57,6 +58,7 @@ export class SocketGateway {
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     console.log('join', roomUser, payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
+    this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 
   @SubscribeMessage('exit-room')
@@ -67,5 +69,6 @@ export class SocketGateway {
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     console.log('exit', roomUser, this.socketService.users);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
+    this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 }
