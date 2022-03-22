@@ -6,7 +6,7 @@ import theLogin from "../components/theLogin"
 import test from '../components/test.vue'
 
 import createRoom from '../views/createRoom.vue'
-import allRooms from '../views/allRooms.vue'
+import AllRooms from '../views/AllRooms.vue'
 import audioRoom from '../views/audioRoom'
 import roomGateway from '../views/Room/RoomGateway.vue'
 
@@ -40,8 +40,8 @@ const routes = [
       },
       {
         path: 'all',
-        name: 'allRooms',
-        component: allRooms
+        name: 'AllRooms',
+        component: AllRooms
       },
       {
         path: ':id',

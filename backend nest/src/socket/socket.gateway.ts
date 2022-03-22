@@ -25,7 +25,7 @@ export class SocketGateway {
     console.log('user disconnected');
 
     const userData = this.socketService.getUserById(socket.id);
-    console.log('userData', userData, socket.id, socket);
+    console.log('userData', userData, socket.id);
 
     if (userData !== undefined) {
       this.socketService.userLeaveChat(socket.id);
@@ -40,7 +40,7 @@ export class SocketGateway {
     socket.join(payload.roomId);
     this.socketService.addUser(payload);
     const roomUser = this.socketService.getRoomUser(payload.roomId);
-    console.log('join', roomUser);
+    console.log('join', roomUser, payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
   }
 

@@ -11,51 +11,79 @@
 
 <script>
 import { useRoute } from 'vue-router'
-import {  reactive, onUnmounted, ref } from 'vue'
+import {  reactive, onUnmounted, ref, inject, watch } from 'vue'
 
-import {io} from "socket.io-client"
 
 import $api from '../axios'
 
 export default {
     async setup() {
-
-        onUnmounted(() => {
-            socket.emit('exit-room', {
-                userId: userId.value,
-                roomId: roomData.roomId,
-                userLogin
-            });
-        })
-
-
+        
         //const router = useRouter()
         const route = useRoute()
 
         const roomUsers = ref([])
 
-        
-        const socket = io('http://localhost:3000');
-        socket.hello = 'world'
-
+        // user Data
         const roomId = route.params.id
         const userLogin = Date.now()
         const userId = ref(null)
 
+        const socket = inject('socket', undefined)
+        const socketConnected = inject('connected', false)
+       
+        watch(socketConnected, (status) => {
+            if (status) {
+                userId.value = socket.id
+                console.log('join to the room')
+                socket.emit('join-room', { 
+                    userId: userId.value,
+                    roomId: roomId,
+                    userLogin
+                })
+            }
+        }, {
+            immediate: true
+        })
+
+        // socket.on('connect', () =>{
+        //     console.log('connected room')
+        //     userId.value = socket.id
+
+        //     socket.emit('join-room', { 
+        //         userId: userId.value,
+        //         roomId: roomData.roomId,
+        //         userLogin
+        //     })
+
+        //     console.log( userId.value, roomData.roomId, userLogin)
+        //     //Object.keys(socket).forEach(item => console.log(item + ' ' + socket[item]))
+        // })
+
+
+       
+        onUnmounted(() => {
+            socket.emit('exit-room', {
+                userId: userId.value,
+                roomId: roomId,
+                userLogin
+            });
+        })
+
+
+
+
+        socket.on('getUsers', (users) => {
+            console.log('users', users);
+            roomUsers.value = users
+            //socket.emit('message', { test: 'test' });
+        });
+
+
+
         const res = await $api.get('/room/get/'+roomId)
         const roomData = reactive(res.data)
-
-        socket.on('connect', () => {
-            userId.value = socket.id
-
-            socket.emit('join-room', { 
-                userId: userId.value,
-                roomId: roomData.roomId,
-                userLogin
-            })
-
-            console.log( userId.value, roomData.roomId, userLogin)
-        });
+        
 
         // socket.on('disconnect',function() {
         //     socket.emit('exit-room', {
@@ -80,12 +108,10 @@ export default {
         //     //
         // });
 
-        socket.on('getUsers', (users) => {
-            console.log('users', users);
-            roomUsers.value = users
-            //socket.emit('message', { test: 'test' });
-        });
+        // Object.keys(socket).forEach(item => console.log(item, socket[item]))
 
+      
+        // Object.keys(socket).forEach(item => console.log(item, socket[item]))
 
         return {
             roomData,

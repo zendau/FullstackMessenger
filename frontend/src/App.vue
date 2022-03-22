@@ -9,12 +9,15 @@
 // import {onMounted, provide} from "vue"
 // import {Socket} from "./Socket"
 
+//import { provide, ref } from 'vue'
+
 export default {
   setup() {
     // onMounted(() => {
     //   const SocketClass = new Socket()
     //   provide("SocketClass", SocketClass)
     // })
+    //provide(/* key */ 'message', /* value */ ref('hello!'))
   },
 }
 </script>

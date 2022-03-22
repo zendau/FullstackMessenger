@@ -15,9 +15,14 @@ import { ref } from 'vue'
 
 export default {
     async setup() {
+
         const res = await $api.get('/room/getAll')
         const rooms = ref(res.data)
         console.log(rooms)
+
+        //const message = inject('message', 'test')
+        
+
         return {
             rooms
         }
