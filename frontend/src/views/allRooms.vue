@@ -7,21 +7,35 @@
         </div>
         </div>
   </div>
-  <free-users/>
 </template>
 
 <script>
 import $api from '../axios'
-import { ref } from 'vue'
-import freeUsers from '../components/freeUsers.vue'
+import { ref, inject } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default {
-  components: { freeUsers },
     async setup() {
+
+        const router = useRouter()
+
+        const socket = inject('socket', undefined)
+        console.log(socket)
+
+
+        socket.on('userInviteRoom', (userData) => {
+            if (userData.userId === socket.id) {
+                console.log('if')
+                router.push(`/room/${userData.roomId}`)
+            }
+            console.log('invite room' , userData)
+        })
 
         const res = await $api.get('/room/getAll')
         const rooms = ref(res.data)
         console.log(rooms)
+
+        
 
         //const message = inject('message', 'test')
         

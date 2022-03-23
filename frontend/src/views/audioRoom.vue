@@ -6,7 +6,7 @@
   <ul>
       <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}</li>
   </ul>
-
+  <free-users :roomId='roomId' />
 </template>
 
 <script>
@@ -15,8 +15,9 @@ import {  reactive, onUnmounted, ref, inject, watch } from 'vue'
 
 
 import $api from '../axios'
-
+import freeUsers from '../components/freeUsers.vue'
 export default {
+    components: { freeUsers },
     async setup() {
         
         //const router = useRouter()
@@ -115,7 +116,8 @@ export default {
 
         return {
             roomData,
-            roomUsers
+            roomUsers,
+            roomId
         }
     }
 }

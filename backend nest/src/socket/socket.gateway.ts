@@ -42,6 +42,12 @@ export class SocketGateway {
     this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 
+  @SubscribeMessage('invite-user')
+  inviteUserToRoom(socket: Socket, payload: any) {
+    console.log('test', payload);
+    this.server.emit('userInviteRoom', payload);
+  }
+
   @SubscribeMessage('join-room')
   handleMessage(socket: Socket, payload: any) {
     console.log('start test section', payload, this.socketService.users);
