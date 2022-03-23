@@ -1,7 +1,7 @@
 <template>
   <div>
       <ul>
-          <li v-for="user in freeUsers" :key=user.userId>
+          <li v-for="user in users" :key=user.userId>
               <p>{{user.userId}}</p>
               <p>{{user.userLogin}}</p>
               <button class="btn btn-primary" @click="sendInvinteToRoom(user.userId, roomId)">invite</button>
@@ -11,22 +11,32 @@
 </template>
 
 <script>
-import { inject, onMounted } from '@vue/runtime-core'
+import { inject, onMounted, onUnmounted } from '@vue/runtime-core'
 import { ref } from "vue";
 export default {
-    props: ['roomId'],
-    setup(props) {
-        console.log('free', props)
-        onMounted(() => console.log('mounted'))
+    props: ['roomId', 'users'],
+    setup() {
+        console.log('setup free users')
+
+        //const mountedStatus = inject('freeUserStatus')
+
+        onMounted(() => console.log('mounted free users'))
+
+        onUnmounted(() => socket.removeAllListeners('getFreeUsers'))
+
         const freeUsers = ref(null)
 
         const socket = inject('socket')
         console.log(socket)
 
+        //Object.keys(socket._callbacks).forEach(item => console.log(item + ' ' + socket[item]))
         socket.on('getFreeUsers', (users) => {
            console.log('free users', users)
            freeUsers.value = users
         })
+        //console.log('=======================')
+        //Object.keys(socket._callbacks).forEach(item => console.log(item + ' ' + socket[item]))
+        
 
         // defineProps({
         //     roomId: String

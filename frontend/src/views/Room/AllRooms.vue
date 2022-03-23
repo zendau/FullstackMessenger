@@ -10,10 +10,9 @@
 </template>
 
 <script>
-import $api from '../axios'
+import $api from '../../axios'
 import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
-
 export default {
     async setup() {
 
@@ -34,11 +33,6 @@ export default {
         const res = await $api.get('/room/getAll')
         const rooms = ref(res.data)
         console.log(rooms)
-
-        
-
-        //const message = inject('message', 'test')
-        
 
         return {
             rooms

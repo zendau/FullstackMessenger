@@ -1,25 +1,28 @@
 <template>
   
-  <div>Room title - {{roomData.roomTitle}}</div>
-  <div>Room author - {{roomData.adminLogin}}</div>
-  <div>Room id - {{roomData.roomId}}</div>
-  <ul>
-      <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}. Mute status - {{!!user.mute}}</li>
-  </ul>
-  <free-users :roomId='roomId' />
+    <div>Room title - {{roomData.roomTitle}}</div>
+    <div>Room author - {{roomData.adminLogin}}</div>
+    <div>Room id - {{roomData.roomId}}</div>
+    <ul>
+        <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}. Mute status - {{!!user.mute}}</li>
+    </ul>
+    <free-users :roomId='roomId' :users="testUser" />
 </template>
 
 <script>
 import { useRoute } from 'vue-router'
-import {  reactive, onUnmounted, ref, inject, watch } from 'vue'
+import {  reactive, onUnmounted, ref, inject, watch, onMounted } from 'vue'
 
 
-import $api from '../axios'
-import freeUsers from '../components/freeUsers.vue'
+import $api from '../../axios'
+import freeUsers from '../../components/freeUsers.vue'
 export default {
     components: { freeUsers },
     async setup() {
         
+        console.log('setup audio room')
+        onMounted(() => console.log('mounted audio room'))
+
         //const router = useRouter()
         const route = useRoute()
 
@@ -29,6 +32,8 @@ export default {
         const roomId = route.params.id
         const userLogin = Date.now()
         const userId = ref(null)
+
+        const testUser = ref([])
 
         const socket = inject('socket', undefined)
         const socketConnected = inject('connected', false)
@@ -70,6 +75,7 @@ export default {
                 userLogin
             })
             window.removeEventListener('keypress', muteEvent)
+            socket.removeAllListeners('getUsers')
         })
 
 
@@ -80,6 +86,11 @@ export default {
             roomUsers.value = users
             //socket.emit('message', { test: 'test' });
         });
+
+        socket.on('getFreeUsers', (users) => {
+           console.log('free users2', users)
+           testUser.value = users
+        })
 
 
 
@@ -130,7 +141,8 @@ export default {
         return {
             roomData,
             roomUsers,
-            roomId
+            roomId,
+            testUser
         }
     }
 }

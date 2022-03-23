@@ -11,7 +11,7 @@
 <script>
 
 import { ref } from "vue"
-import $api from "../axios"
+import $api from "../../axios"
 
 export default {
     setup() {

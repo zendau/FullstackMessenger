@@ -5,9 +5,9 @@ import theLogin from "../components/theLogin"
 
 import test from '../components/test.vue'
 
-import createRoom from '../views/createRoom.vue'
-import AllRooms from '../views/AllRooms.vue'
-import audioRoom from '../views/audioRoom'
+import createRoom from '../views/Room/createRoom.vue'
+import AllRooms from '../views/Room/AllRooms.vue'
+import audioRoom from '../views/Room/audioRoom'
 import roomGateway from '../views/Room/RoomGateway.vue'
 
 import pageNotFound from '../views/404.vue'
