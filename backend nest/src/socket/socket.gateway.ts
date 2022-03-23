@@ -77,4 +77,12 @@ export class SocketGateway {
     this.server.to(payload.roomId).emit('getUsers', roomUser);
     this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
+
+  @SubscribeMessage('userMute')
+  userMute(socket: Socket, payload: any) {
+    console.log('mute', payload);
+    this.socketService.changeMuteStatus(payload.userId);
+    const roomUser = this.socketService.getRoomUsers(payload.roomId);
+    this.server.to(payload.roomId).emit('getUsers', roomUser);
+  }
 }

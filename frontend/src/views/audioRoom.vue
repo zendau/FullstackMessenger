@@ -4,7 +4,7 @@
   <div>Room author - {{roomData.adminLogin}}</div>
   <div>Room id - {{roomData.roomId}}</div>
   <ul>
-      <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}</li>
+      <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}. Mute status - {{!!user.mute}}</li>
   </ul>
   <free-users :roomId='roomId' />
 </template>
@@ -68,7 +68,8 @@ export default {
                 userId: userId.value,
                 roomId: roomId,
                 userLogin
-            });
+            })
+            window.removeEventListener('keypress', muteEvent)
         })
 
 
@@ -113,6 +114,18 @@ export default {
 
       
         // Object.keys(socket).forEach(item => console.log(item, socket[item]))
+
+        window.addEventListener('keypress', muteEvent)
+
+        function muteEvent(event) {
+          if (event.code === 'KeyM') {
+            console.log('click M', userId.value)
+            socket.emit('userMute', {
+                userId: userId.value,
+                roomId
+            })
+          }
+        }
 
         return {
             roomData,

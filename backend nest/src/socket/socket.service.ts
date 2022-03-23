@@ -39,4 +39,13 @@ export class SocketService {
       user.userId === id ? (user.roomId = roomId) : user,
     );
   }
+
+  changeMuteStatus(id) {
+    this.users = this.users.map((item) => {
+      if (item.userId === id) {
+        item.mute = !item.mute;
+      }
+      return item;
+    });
+  }
 }
