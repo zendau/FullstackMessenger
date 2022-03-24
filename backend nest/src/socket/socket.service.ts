@@ -34,10 +34,13 @@ export class SocketService {
     this.users = this.users.filter((user) => user.userId !== id);
   }
 
-  clientJoinRoom(id, roomId) {
-    this.users.forEach((user) =>
-      user.userId === id ? (user.roomId = roomId) : user,
-    );
+  clientJoinRoom(id, roomId, peerId) {
+    this.users.forEach((user) => {
+      if (user.userId === id) {
+        user.roomId = roomId;
+        user.peerId = peerId;
+      }
+    });
   }
 
   changeMuteStatus(id) {

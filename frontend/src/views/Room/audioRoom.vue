@@ -7,6 +7,7 @@
         <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}. Mute status - {{!!user.mute}}</li>
     </ul>
     <free-users :roomId='roomId' :users="testUser" />
+    <div ref="audioGroup"></div>
 </template>
 
 <script>
@@ -33,12 +34,18 @@ export default {
         const roomId = route.params.id
         const userLogin = Date.now()
         const userId = ref(null)
+        const peerId = ref(null)
 
         const testUser = ref([])
 
         const socket = inject('socket', undefined)
         const socketConnected = inject('connected', false)
+        const peerConnected = ref(false)
         
+        const audioGroup = ref(null)
+
+        const mainStream = ref(null)
+        const lastConnectedUserId = ref(null)
 
         // ==== hooks ==== //
 
@@ -47,15 +54,17 @@ export default {
 
         
        
-        watch(socketConnected, (status) => {
-            if (status) {
+        watch([socketConnected, peerConnected], ([socketStatus, peerStatus]) => {
+            if (socketStatus && peerStatus) {
                 userId.value = socket.id
                 console.log('join to the room')
                 socket.emit('join-room', { 
                     userId: userId.value,
+                    peerId: peerId.value,
                     roomId: roomId,
                     userLogin
                 })
+                //connectToNewUser()
             }
         }, {
             immediate: true
@@ -99,6 +108,12 @@ export default {
         socket.on('getFreeUsers', (users) => {
            console.log('free users2', users)
            testUser.value = users
+        })
+        
+        socket.on('userJoinedRoom', (userId) => {
+            lastConnectedUserId.value = userId
+            console.log('Connected user with id', lastConnectedUserId, mainStream)
+            connectToNewUser(lastConnectedUserId.value, mainStream.value)
         })
 
 
@@ -158,14 +173,103 @@ export default {
             host: '/',
             port: '9000'
         })
+        
 
         console.log('1x',myPeer)
+
+
+        const peers = {}
+
+        const getUserMedia =
+        navigator.mediaDevices.getUserMedia ||
+        navigator.mediaDevices.webkitGetUserMedia ||
+        navigator.mediaDevices.mozGetUserMedia;
+
+        getUserMedia({
+        audio: true
+        }).then(stream => {
+        //localStream.value = stream
+        //console.log('localStream',localStream)
+        mainStream.value = stream
+        console.log('localStream',stream) // new - temp
+        // socket.on('user-connected', userId => {
+        //     // const audio = document.createElement('audio')
+        //     // audio.id = userId;
+        //     // document.body.append(audio)
+        //     console.log('userConnetSOcker', userId)
+        //     //connectToNewUser(userId, stream)
+        // })          
+        })
+
+
+        myPeer.on('call', call => {
+            console.log("answer")
+
+            getUserMedia({
+              audio: true
+            }).then(stream => {
+              call.answer(stream)
+              console.log('remoteStream', stream)
+              const audio = document.createElement('audio')
+              audio.id = call.peer
+              //audio.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
+              call.on('stream', userVideoStream => {
+                console.log('answer audio stream')
+                addAudioStream(audio, userVideoStream)
+              })
+            })
+          }
+        )
+
+        myPeer.on('open', id => {
+          console.log('join peer server', id)
+          peerConnected.value = true
+          peerId.value = id
+        //   socket.data.getConnect().emit('join-room', roomId, id, userLogin)
+
+        //   //socket.data.createRoom(roomId, userLogin, id)
+        //   socket.data.getUserId(userId, store)
+        //   socket.data.getUsers(store)
+        //   socket.data.resiveMessage(store, function () {
+        //     return nextTick(() => {
+        //     const elem = messagesRef.value
+        //     elem.value.scrollTo(0, elem.value.scrollHeight)        
+        //   })
+        })
+
+        // eslint-disable-next-line no-unused-vars
+        function connectToNewUser(userId, stream) {
+            console.log('conntected to new user. Call to '+userId, myPeer, stream)
+            const call = myPeer.call(userId, stream)
+            const audio = document.createElement('audio')
+            audio.id = userId
+            call.on('stream', userVideoStream => {
+                console.log('connectToNewUser audio stream')
+                addAudioStream(audio, userVideoStream)
+            })
+            call.on('close', () => {
+                console.log('!!!! CLOSE CONNECT')
+                audio.remove()
+            })
+
+            peers[userId] = call
+        }
+
+        function addAudioStream(audio, stream) {
+            audio.srcObject = stream
+            console.log(stream, 'stream')
+            audio.addEventListener('loadedmetadata', () => {
+                audio.play()
+            })
+            audioGroup.value.append(audio)
+        }
 
         return {
             roomData,
             roomUsers,
             roomId,
-            testUser
+            testUser,
+            audioGroup
         }
     }
 }

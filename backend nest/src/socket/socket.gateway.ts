@@ -55,6 +55,7 @@ export class SocketGateway {
     const res = this.socketService.clientJoinRoom(
       payload.userId,
       payload.roomId,
+      payload.peerId,
     );
     console.log('end test section');
 
@@ -64,6 +65,7 @@ export class SocketGateway {
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     console.log('join', roomUser, payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
+    socket.broadcast.to(payload.roomId).emit('userJoinedRoom', payload.peerId);
     this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 
