@@ -31,6 +31,7 @@ export class SocketGateway {
       this.socketService.clientDisconnect(socket.id);
       const roomUser = this.socketService.getRoomUsers(userData.roomId);
       this.server.to(userData.roomId).emit('getUsers', roomUser);
+      this.server.to(userData.roomId).emit('UserLeave', userData.peerId);
       this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
     }
   }

@@ -130,6 +130,14 @@ export default {
             connectToNewUser(lastConnectedUserId.value, mainStream.value)
         })
 
+        socket.on('UserLeave', (userId) => {
+            console.log('disconnect', userId);
+            const element = document.getElementById(userId)
+            console.log(element)
+            element.remove();
+        })
+
+
         // socket.on('muteAudioStream', (userId) => {
         //     const audioElement = document.getElementById(userId)
         //     console.log('muted audio tag',audioElement, userId) 
