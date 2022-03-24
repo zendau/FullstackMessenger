@@ -45,6 +45,7 @@ export default {
         const audioGroup = ref(null)
 
         const mainStream = ref(null)
+        const childStream = []
         const lastConnectedUserId = ref(null)
 
         // ==== hooks ==== //
@@ -91,6 +92,16 @@ export default {
             })
             window.removeEventListener('keypress', muteEvent)
             socket.removeAllListeners('getUsers')
+            mainStream.value.getTracks().forEach(t => {
+                console.log(t)
+                t.stop()
+                console.log(t)
+            })
+            childStream.forEach(stream => {
+               stream.getTracks().forEach(track => {
+                track.stop()
+            })
+            })
         })
 
 
@@ -206,6 +217,7 @@ export default {
             getUserMedia({
               audio: true
             }).then(stream => {
+                childStream.push(stream)
               call.answer(stream)
               console.log('remoteStream', stream)
               const audio = document.createElement('audio')
