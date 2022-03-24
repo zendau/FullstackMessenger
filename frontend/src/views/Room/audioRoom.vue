@@ -12,7 +12,7 @@
 
 <script>
 import { useRoute } from 'vue-router'
-import {  reactive, onUnmounted, ref, inject, watch, onMounted } from 'vue'
+import {  reactive, onUnmounted, ref, inject, watch } from 'vue'
 
 
 import $api from '../../axios'
@@ -48,9 +48,6 @@ export default {
         const lastConnectedUserId = ref(null)
 
         // ==== hooks ==== //
-
-        console.log('setup audio room')
-        onMounted(() => console.log('mounted audio room'))
 
         
        
@@ -102,6 +99,12 @@ export default {
         socket.on('getUsers', (users) => {
             console.log('users', users);
             roomUsers.value = users
+
+            users.forEach(item => {
+                const audioELement = document.getElementById(item.peerId)
+                console.log('mute', audioELement, item.mute)
+                if (audioELement) audioELement.muted = item.mute
+            });
             //socket.emit('message', { test: 'test' });
         });
 
@@ -115,6 +118,12 @@ export default {
             console.log('Connected user with id', lastConnectedUserId, mainStream)
             connectToNewUser(lastConnectedUserId.value, mainStream.value)
         })
+
+        // socket.on('muteAudioStream', (userId) => {
+        //     const audioElement = document.getElementById(userId)
+        //     console.log('muted audio tag',audioElement, userId) 
+        //     audioElement.muted = !audioElement.muted
+        // })
 
 
         // ==== async ==== //
@@ -135,21 +144,13 @@ export default {
 
        
 
-        
-        //Object.keys(socket).forEach(item => console.log('!!! ', item, socket[item]))
-        //console.log('id',)
-        
-
         // socket.on('join-room', () => {
         //     console.log('Connected');
 
         //     //
         // });
 
-        // Object.keys(socket).forEach(item => console.log(item, socket[item]))
 
-      
-        // Object.keys(socket).forEach(item => console.log(item, socket[item]))
 
 
         // ==== events ==== //
@@ -173,9 +174,6 @@ export default {
             host: '/',
             port: '9000'
         })
-        
-
-        console.log('1x',myPeer)
 
 
         const peers = {}
