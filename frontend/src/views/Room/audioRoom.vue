@@ -16,12 +16,13 @@ import {  reactive, onUnmounted, ref, inject, watch, onMounted } from 'vue'
 
 import $api from '../../axios'
 import freeUsers from '../../components/freeUsers.vue'
+
+import Peer from 'peerjs';
 export default {
     components: { freeUsers },
     async setup() {
-        
-        console.log('setup audio room')
-        onMounted(() => console.log('mounted audio room'))
+
+        // ==== vars ==== //
 
         //const router = useRouter()
         const route = useRoute()
@@ -37,6 +38,14 @@ export default {
 
         const socket = inject('socket', undefined)
         const socketConnected = inject('connected', false)
+        
+
+        // ==== hooks ==== //
+
+        console.log('setup audio room')
+        onMounted(() => console.log('mounted audio room'))
+
+        
        
         watch(socketConnected, (status) => {
             if (status) {
@@ -79,7 +88,7 @@ export default {
         })
 
 
-
+        // ==== socket ==== //
 
         socket.on('getUsers', (users) => {
             console.log('users', users);
@@ -93,6 +102,7 @@ export default {
         })
 
 
+        // ==== async ==== //
 
         const res = await $api.get('/room/get/'+roomId)
         const roomData = reactive(res.data)
@@ -126,6 +136,8 @@ export default {
       
         // Object.keys(socket).forEach(item => console.log(item, socket[item]))
 
+
+        // ==== events ==== //
         window.addEventListener('keypress', muteEvent)
 
         function muteEvent(event) {
@@ -137,6 +149,17 @@ export default {
             })
           }
         }
+
+
+        // ==== peers ==== //
+
+        const myPeer = new Peer({
+            path: '/peer',
+            host: '/',
+            port: '9000'
+        })
+
+        console.log('1x',myPeer)
 
         return {
             roomData,
