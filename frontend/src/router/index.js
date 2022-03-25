@@ -1,10 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import theChat from "../components/theChat.vue"
-import theLogin from "../components/theLogin"
-
-import test from '../components/test.vue'
-
 import createRoom from '../views/Room/createRoom.vue'
 import AllRooms from '../views/Room/AllRooms.vue'
 import audioRoom from '../views/Room/audioRoom'
@@ -13,22 +8,6 @@ import roomGateway from '../views/Room/RoomGateway.vue'
 import pageNotFound from '../views/404.vue'
 
 const routes = [
-  {
-    path: '/login',
-    name: 'Login',
-    component: theLogin,
-    alias: "/"
-  },
-  {
-    path: '/chat',
-    name: 'Chat',
-    component: theChat,
-  },
-  {
-    path: '/test',
-    name: 'Test',
-    component: test
-  },
   {
     path: '/room',
     component: roomGateway,

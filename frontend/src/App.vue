@@ -6,18 +6,12 @@
 
 <script>
 
-// import {onMounted, provide} from "vue"
-// import {Socket} from "./Socket"
-
-//import { provide, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default {
   setup() {
-    // onMounted(() => {
-    //   const SocketClass = new Socket()
-    //   provide("SocketClass", SocketClass)
-    // })
-    //provide(/* key */ 'message', /* value */ ref('hello!'))
+    const router = useRouter()
+    router.push('/room/all')
   },
 }
 </script>
