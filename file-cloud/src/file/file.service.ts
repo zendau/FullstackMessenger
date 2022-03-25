@@ -1,26 +1,69 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFileDto } from './dto/create-file.dto';
-import { UpdateFileDto } from './dto/update-file.dto';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { IFileDTO } from './dto/file.dto';
+import { File } from './entities/file.entity';
 
 @Injectable()
 export class FileService {
-  create(createFileDto: CreateFileDto) {
-    return 'This action adds a new file';
+  constructor(
+    @InjectRepository(File)
+    private fileRepository: Repository<File>,
+  ) {}
+
+  async create(createFileDTO: IFileDTO) {
+    const resInsered = await this.fileRepository.save(createFileDTO);
+    console.log(resInsered);
+    return resInsered;
   }
 
-  findAll() {
-    return `This action returns all file`;
+  async getAll() {
+    return await this.fileRepository
+      .createQueryBuilder('file')
+      .innerJoinAndSelect('file.foulderId', 'foulder')
+      .getMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} file`;
+  async getById(id: number) {
+    const res = await this.fileRepository
+      .createQueryBuilder('file')
+      .innerJoinAndSelect('file.foulderId', 'foulder')
+      .where('file.id = :id', { id })
+      .getOne();
+
+    if (res === undefined)
+      return {
+        status: false,
+        message: `fileId ${id} is not valid`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+
+    return res;
   }
 
-  update(id: number, updateFileDto: UpdateFileDto) {
-    return `This action updates a #${id} file`;
+  async update(updateFileDTO: IFileDTO) {
+    const res = await this.fileRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        fileName: updateFileDTO.fileName,
+        fileTempName: updateFileDTO.fileTempName,
+        foulderId: updateFileDTO.foulderId,
+        userId: updateFileDTO.userId,
+      })
+      .where(`id = ${updateFileDTO.id}`)
+      .execute();
+
+    return !!res.affected;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} file`;
+  async remove(id: number) {
+    const res = await this.fileRepository
+      .createQueryBuilder()
+      .delete()
+      .where(`id = ${id}`)
+      .execute();
+
+    return !!res.affected;
   }
 }

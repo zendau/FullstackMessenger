@@ -1,34 +1,84 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  Res,
+} from '@nestjs/common';
 import { FileService } from './file.service';
-import { CreateFileDto } from './dto/create-file.dto';
-import { UpdateFileDto } from './dto/update-file.dto';
+import { IFileDTO } from './dto/file.dto';
+import { Response } from 'express';
 
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Post()
-  create(@Body() createFileDto: CreateFileDto) {
-    return this.fileService.create(createFileDto);
+  @Post('add')
+  async create(@Body() createFileDto: IFileDTO, @Res() response: Response) {
+    const res = await this.fileService.create(createFileDto).catch((err) => {
+      console.log(err);
+
+      const errorMessage =
+        err.errno === 1452 ? 'foulderId is not found' : err.sqlMessage;
+
+      response.status(HttpStatus.BAD_REQUEST).send({
+        status: false,
+        message: errorMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      });
+    });
+    response.send(res);
   }
 
-  @Get()
-  findAll() {
-    return this.fileService.findAll();
+  @Get('getAll')
+  async findAll() {
+    const res = await this.fileService.getAll().catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.fileService.findOne(+id);
+  @Get('get/:id')
+  async findOne(@Param('id') fileId: number) {
+    const res = await this.fileService.getById(fileId).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFileDto: UpdateFileDto) {
-    return this.fileService.update(+id, updateFileDto);
+  @Patch('edit')
+  async update(@Body() updateFileDto: IFileDTO) {
+    const res = await this.fileService.update(updateFileDto).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.fileService.remove(+id);
+  @Delete('delete/:id')
+  async remove(@Param('id') fileId: number) {
+    const res = await this.fileService.remove(fileId).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 }
