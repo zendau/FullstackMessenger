@@ -1,34 +1,86 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  Res,
+} from '@nestjs/common';
 import { FoulderService } from './foulder.service';
-import { CreateFoulderDto } from './dto/create-foulder.dto';
-import { UpdateFoulderDto } from './dto/update-foulder.dto';
+import { IFoulderDTO } from './dto/foulder.dto';
+import { Response } from 'express';
 
 @Controller('foulder')
 export class FoulderController {
   constructor(private readonly foulderService: FoulderService) {}
 
-  @Post()
-  create(@Body() createFoulderDto: CreateFoulderDto) {
-    return this.foulderService.create(createFoulderDto);
+  @Post('add')
+  async create(
+    @Body() createFoulderDto: IFoulderDTO,
+    @Res() response: Response,
+  ) {
+    const res = await this.foulderService
+      .create(createFoulderDto)
+      .catch((err) => {
+        response.status(HttpStatus.BAD_REQUEST).send({
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        });
+      });
+    response.send(res);
   }
 
-  @Get()
-  findAll() {
-    return this.foulderService.findAll();
+  @Get('getAll')
+  async findAll() {
+    const res = await this.foulderService.getAll().catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.foulderService.findOne(+id);
+  @Get('get/:id')
+  async findOne(@Param('id') foulderId: number) {
+    const res = await this.foulderService.getById(foulderId).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFoulderDto: UpdateFoulderDto) {
-    return this.foulderService.update(+id, updateFoulderDto);
+  @Patch('edit')
+  async update(@Body() updateFoulderDto: IFoulderDTO) {
+    const res = await this.foulderService
+      .update(updateFoulderDto)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.foulderService.remove(+id);
+  @Delete('delete/:id')
+  async remove(@Param('id') foulderId: number) {
+    const res = await this.foulderService.remove(foulderId).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 }

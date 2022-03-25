@@ -1,26 +1,62 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFoulderDto } from './dto/create-foulder.dto';
-import { UpdateFoulderDto } from './dto/update-foulder.dto';
+import { Foulder } from './entities/foulder.entity';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { IFoulderDTO } from './dto/foulder.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class FoulderService {
-  create(createFoulderDto: CreateFoulderDto) {
-    return 'This action adds a new foulder';
+  constructor(
+    @InjectRepository(Foulder)
+    private foulderRepository: Repository<Foulder>,
+  ) {}
+
+  async create(createFoulderDTO: IFoulderDTO) {
+    const resInsered = await this.foulderRepository.save(createFoulderDTO);
+    return resInsered;
   }
 
-  findAll() {
-    return `This action returns all foulder`;
+  async getAll() {
+    return await this.foulderRepository.createQueryBuilder().getMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} foulder`;
+  async getById(id: number) {
+    const res = await this.foulderRepository
+      .createQueryBuilder()
+      .where('id = :id', { id })
+      .getOne();
+
+    if (res === undefined)
+      return {
+        status: false,
+        message: `foulderId ${id} is not valid`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+
+    return res;
   }
 
-  update(id: number, updateFoulderDto: UpdateFoulderDto) {
-    return `This action updates a #${id} foulder`;
+  async update(updateFoulderDTO: IFoulderDTO) {
+    const res = await this.foulderRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        foulderId: updateFoulderDTO.foulderId,
+        name: updateFoulderDTO.name,
+      })
+      .where(`id = ${updateFoulderDTO.id}`)
+      .execute();
+
+    return !!res.affected;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} foulder`;
+  async remove(id: number) {
+    const res = await this.foulderRepository
+      .createQueryBuilder()
+      .delete()
+      .where(`id = ${id}`)
+      .execute();
+
+    return !!res.affected;
   }
 }
