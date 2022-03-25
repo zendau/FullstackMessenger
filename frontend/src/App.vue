@@ -1,20 +1,17 @@
 <template>
-  <div>
+  <suspense>
     <router-view/>
-  </div>
+  </suspense>
 </template>
 
 <script>
 
-import {onMounted, provide} from "vue"
-import {Socket} from "./Socket"
+import { useRouter } from 'vue-router'
 
 export default {
   setup() {
-    onMounted(() => {
-      const SocketClass = new Socket()
-      provide("SocketClass", SocketClass)
-    })
+    const router = useRouter()
+    router.push('/room/all')
   },
 }
 </script>
