@@ -3,13 +3,16 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { IFoulderDTO } from './dto/foulder.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as fs from 'fs';
 
 @Injectable()
 export class FoulderService {
   constructor(
     @InjectRepository(Foulder)
     private foulderRepository: Repository<Foulder>,
-  ) {}
+  ) {
+    this.syncDB();
+  }
 
   async create(createFoulderDTO: IFoulderDTO) {
     const resInsered = await this.foulderRepository.save(createFoulderDTO);
@@ -41,7 +44,6 @@ export class FoulderService {
       .createQueryBuilder()
       .update()
       .set({
-        foulderId: updateFoulderDTO.foulderId,
         name: updateFoulderDTO.name,
       })
       .where(`id = ${updateFoulderDTO.id}`)
@@ -58,5 +60,10 @@ export class FoulderService {
       .execute();
 
     return !!res.affected;
+  }
+
+  async syncDB() {
+    const foulders = await this.getAll();
+    console.log(foulders);
   }
 }

@@ -12,6 +12,6 @@ export class IFoulderDTO {
   name: string;
 
   @IsInt()
-  @Min(1)
-  foulderId: number;
+  @Min(0)
+  parentFoulderId: number;
 }
