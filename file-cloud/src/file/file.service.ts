@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IFileDTO } from './dto/file.dto';
 import { File } from './entities/file.entity';
+import * as fs from 'fs';
 
 @Injectable()
 export class FileService {
@@ -31,14 +32,14 @@ export class FileService {
   async getAll() {
     return await this.fileRepository
       .createQueryBuilder('file')
-      .innerJoinAndSelect('file.foulderId', 'foulder')
+      .innerJoinAndSelect('file.foulder', 'foulder')
       .getMany();
   }
 
   async getById(id: number) {
     const res = await this.fileRepository
       .createQueryBuilder('file')
-      .innerJoinAndSelect('file.foulderId', 'foulder')
+      .innerJoinAndSelect('file.foulder', 'foulder')
       .where('file.id = :id', { id })
       .getOne();
 
@@ -69,12 +70,35 @@ export class FileService {
   }
 
   async remove(id: number) {
-    const res = await this.fileRepository
-      .createQueryBuilder()
-      .delete()
-      .where(`id = ${id}`)
-      .execute();
+    const file = await this.getById(id);
+    if (file instanceof File) {
+      let error = null;
 
-    return !!res.affected;
+      fs.unlink(
+        `./storage/${file.foulder.path}/${file.fileTempName}`,
+        (err) => {
+          if (err && err.code == 'ENOENT') {
+            // file doens't exist
+            error = "File doesn't exist, won't remove it.";
+          } else if (err) {
+            // other errors, e.g. maybe we don't have enough permission
+            error = 'Error occurred while trying to remove file';
+          }
+        },
+      );
+      const res = await this.fileRepository
+        .createQueryBuilder()
+        .delete()
+        .where(`id = ${id}`)
+        .execute();
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      return !!res.affected;
+    } else {
+      return file;
+    }
   }
 }

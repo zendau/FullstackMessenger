@@ -81,6 +81,7 @@ export class FileController {
   @Get('getAll')
   async findAll() {
     const res = await this.fileService.getAll().catch((err) => {
+      console.log(err);
       return {
         status: false,
         message: err.sqlMessage,
@@ -117,11 +118,19 @@ export class FileController {
   @Delete('delete/:id')
   async remove(@Param('id') fileId: number) {
     const res = await this.fileService.remove(fileId).catch((err) => {
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      if (err.sqlMessage) {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      } else {
+        return {
+          status: false,
+          message: err.message,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      }
     });
     return res;
   }
