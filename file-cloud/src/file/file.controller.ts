@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   HttpException,
   UploadedFile,
+  Put,
 } from '@nestjs/common';
 import { FileService } from './file.service';
 import { IFileDTO } from './dto/file.dto';
@@ -18,8 +19,9 @@ import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import * as fs from 'fs';
-import * as uuid from 'uuid';
+
+import filenameStorage from 'src/multer/filename.storage';
+import destinationStorage from 'src/multer/destination.storage';
 
 @Controller('file')
 export class FileController {
@@ -29,24 +31,8 @@ export class FileController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: (req, file, cb) => {
-          const storagePath = './storage';
-          let path = req.body.path;
-
-          if (path.charAt(0) !== '/') {
-            path = '/' + path;
-          }
-          const filePath = storagePath + path;
-
-          if (fs.existsSync(filePath)) {
-            cb(null, filePath);
-          } else {
-            cb(new HttpException('wrong path', HttpStatus.BAD_REQUEST), null);
-          }
-        },
-        filename: (req, file, cb) => {
-          cb(null, `${uuid.v4()}${extname(file.originalname)}`);
-        },
+        destination: destinationStorage,
+        filename: filenameStorage,
       }),
     }),
   )
@@ -103,21 +89,46 @@ export class FileController {
     return res;
   }
 
-  @Patch('edit')
-  async update(@Body() updateFileDto: IFileDTO) {
-    const res = await this.fileService.update(updateFileDto).catch((err) => {
-      return {
+  @Put('edit')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: destinationStorage,
+        filename: filenameStorage,
+      }),
+    }),
+  )
+  async update(
+    @Body() updateFileDto: IFileDTO,
+    @UploadedFile() file: Express.Multer.File,
+    @Res() response: Response,
+  ) {
+    const fileData = {
+      ...updateFileDto,
+      fileName: file.originalname,
+      fileTempName: file.filename,
+      size: file.size,
+      mimetype: file.mimetype,
+    };
+
+    const res = await this.fileService.update(fileData).catch((err) => {
+      console.log(err);
+
+      const errorMessage =
+        err.errno === 1452 ? 'foulderId is not found' : err.sqlMessage;
+
+      response.status(HttpStatus.BAD_REQUEST).send({
         status: false,
-        message: err.sqlMessage,
+        message: errorMessage,
         httpCode: HttpStatus.BAD_REQUEST,
-      };
+      });
     });
-    return res;
+    response.send(res);
   }
 
   @Delete('delete/:id')
   async remove(@Param('id') fileId: number) {
-    const res = await this.fileService.remove(fileId).catch((err) => {
+    const res = await this.fileService.removeFromDb(fileId).catch((err) => {
       if (err.sqlMessage) {
         return {
           status: false,

@@ -54,45 +54,52 @@ export class FileService {
   }
 
   async update(updateFileDTO: IFileDTO) {
-    const res = await this.fileRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        fileName: updateFileDTO.fileName,
-        fileTempName: updateFileDTO.fileTempName,
-        //foulderId: updateFileDTO.foulderId,
-        userId: updateFileDTO.userId,
-      })
-      .where(`id = ${updateFileDTO.id}`)
-      .execute();
+    debugger;
+    const file = await this.getById(updateFileDTO.id);
+    if (file instanceof File) {
+      const error = this.removeFromStorage(file);
 
-    return !!res.affected;
+      if (typeof error === 'string') {
+        throw new Error(error);
+      }
+
+      const foulder = await this.foulderService.getByPath(updateFileDTO.path);
+      if (!(foulder instanceof Foulder)) {
+        return foulder;
+      }
+
+      const res = await this.fileRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          fileName: updateFileDTO.fileName,
+          fileTempName: updateFileDTO.fileTempName,
+          mimetype: updateFileDTO.mimetype,
+          size: updateFileDTO.size,
+          userId: updateFileDTO.userId,
+          foulder: foulder,
+        })
+        .where(`id = ${updateFileDTO.id}`)
+        .execute();
+
+      return !!res.affected;
+    } else {
+      return file;
+    }
   }
 
-  async remove(id: number) {
+  async removeFromDb(id: number) {
     const file = await this.getById(id);
     if (file instanceof File) {
-      let error = null;
+      const error = this.removeFromStorage(file);
 
-      fs.unlink(
-        `./storage/${file.foulder.path}/${file.fileTempName}`,
-        (err) => {
-          if (err && err.code == 'ENOENT') {
-            // file doens't exist
-            error = "File doesn't exist, won't remove it.";
-          } else if (err) {
-            // other errors, e.g. maybe we don't have enough permission
-            error = 'Error occurred while trying to remove file';
-          }
-        },
-      );
       const res = await this.fileRepository
         .createQueryBuilder()
         .delete()
         .where(`id = ${id}`)
         .execute();
 
-      if (error) {
+      if (typeof error === 'string') {
         throw new Error(error);
       }
 
@@ -100,5 +107,19 @@ export class FileService {
     } else {
       return file;
     }
+  }
+
+  async removeFromStorage(file) {
+    fs.unlink(
+      `${process.env.STORE_PATH}/${file.foulder.path}/${file.fileTempName}`,
+      (err) => {
+        if (err && err.code == 'ENOENT') {
+          return "File doesn't exist, won't remove it.";
+        } else if (err) {
+          return 'Error occurred while trying to remove file';
+        }
+      },
+    );
+    return true;
   }
 }
