@@ -8,5 +8,6 @@ import { FoulderController } from './foulder.controller';
   imports: [TypeOrmModule.forFeature([Foulder])],
   controllers: [FoulderController],
   providers: [FoulderService],
+  exports: [FoulderService],
 })
 export class FoulderModule {}

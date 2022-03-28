@@ -8,18 +8,62 @@ import {
   Delete,
   HttpStatus,
   Res,
+  UseInterceptors,
+  HttpException,
+  UploadedFile,
 } from '@nestjs/common';
 import { FileService } from './file.service';
 import { IFileDTO } from './dto/file.dto';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import * as fs from 'fs';
+import * as uuid from 'uuid';
 
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Post('add')
-  async create(@Body() createFileDto: IFileDTO, @Res() response: Response) {
-    const res = await this.fileService.create(createFileDto).catch((err) => {
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const storagePath = './storage';
+          let path = req.body.path;
+
+          if (path.charAt(0) !== '/') {
+            path = '/' + path;
+          }
+          const filePath = storagePath + path;
+
+          if (fs.existsSync(filePath)) {
+            cb(null, filePath);
+          } else {
+            cb(new HttpException('wrong path', HttpStatus.BAD_REQUEST), null);
+          }
+        },
+        filename: (req, file, cb) => {
+          cb(null, `${uuid.v4()}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async create(
+    @Body() createFileDto: IFileDTO,
+    @UploadedFile() file: Express.Multer.File,
+    @Res() response: Response,
+  ) {
+    const fileData = {
+      ...createFileDto,
+      fileName: file.originalname,
+      fileTempName: file.filename,
+      size: file.size,
+      mimetype: file.mimetype,
+    };
+
+    const res = await this.fileService.create(fileData).catch((err) => {
       console.log(err);
 
       const errorMessage =

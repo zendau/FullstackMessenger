@@ -1,3 +1,5 @@
+import { Foulder } from './../foulder/entities/foulder.entity';
+import { FoulderService } from './../foulder/foulder.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,10 +11,19 @@ export class FileService {
   constructor(
     @InjectRepository(File)
     private fileRepository: Repository<File>,
+    private foulderService: FoulderService,
   ) {}
 
   async create(createFileDTO: IFileDTO) {
-    const resInsered = await this.fileRepository.save(createFileDTO);
+    const foulder = await this.foulderService.getByPath(createFileDTO.path);
+    if (!(foulder instanceof Foulder)) {
+      return foulder;
+    }
+
+    const resInsered = await this.fileRepository.save({
+      ...createFileDTO,
+      foulder,
+    });
     console.log(resInsered);
     return resInsered;
   }
@@ -48,7 +59,7 @@ export class FileService {
       .set({
         fileName: updateFileDTO.fileName,
         fileTempName: updateFileDTO.fileTempName,
-        foulderId: updateFileDTO.foulderId,
+        //foulderId: updateFileDTO.foulderId,
         userId: updateFileDTO.userId,
       })
       .where(`id = ${updateFileDTO.id}`)

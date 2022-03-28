@@ -10,6 +10,8 @@ import {
   Query,
   Body,
   Catch,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { createReadStream } from 'fs';
@@ -55,7 +57,7 @@ export class AppController {
           if (fs.existsSync(filePath)) {
             cb(null, filePath);
           } else {
-            cb(new Error('wrong path'), null);
+            cb(new HttpException('wrong path', HttpStatus.BAD_REQUEST), null);
           }
         },
         filename: (req, file, cb) => {
@@ -64,15 +66,14 @@ export class AppController {
       }),
     }),
   )
-  uploadFile(
-    @Body('path') path: string,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
     console.log(file);
-    // const fileData = {
-    //   originalname: file.originalname,
-    //   mimetype: file.mimetype,
-    //   size: file.size,
-    // };
+    const fileData = {
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      fileName: file.filename,
+    };
+    return fileData;
   }
 }

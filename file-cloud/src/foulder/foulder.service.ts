@@ -39,6 +39,22 @@ export class FoulderService {
     return res;
   }
 
+  async getByPath(path: string) {
+    const res = await this.foulderRepository
+      .createQueryBuilder()
+      .where('path = :path', { path })
+      .getOne();
+
+    if (res === undefined)
+      return {
+        status: false,
+        message: `foulder path - ${path} is not found`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+
+    return res;
+  }
+
   async update(updateFoulderDTO: IFoulderDTO) {
     const res = await this.foulderRepository
       .createQueryBuilder()

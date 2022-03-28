@@ -9,8 +9,5 @@ export class Foulder {
   name: string;
 
   @Column()
-  parentFoulderId: number;
-
-  @Column()
   path: string;
 }
