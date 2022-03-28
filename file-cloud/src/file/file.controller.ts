@@ -3,25 +3,25 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpStatus,
   Res,
   UseInterceptors,
-  HttpException,
   UploadedFile,
   Put,
 } from '@nestjs/common';
 import { FileService } from './file.service';
 import { IFileDTO } from './dto/file.dto';
-import { Response } from 'express';
+import e, { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
 
 import filenameStorage from 'src/multer/filename.storage';
 import destinationStorage from 'src/multer/destination.storage';
+import { File } from './entities/file.entity';
+
+import * as fs from 'fs';
 
 @Controller('file')
 export class FileController {
@@ -144,5 +144,28 @@ export class FileController {
       }
     });
     return res;
+  }
+
+  @Get('download/:id')
+  async getHello(@Res() response: Response, @Param('id') fileId: number) {
+    const fileData = await this.fileService.getById(fileId);
+    if (fileData instanceof File) {
+      const filePath = `${process.env.STORE_PATH}/${fileData.foulder.path}/${fileData.fileTempName}`;
+      if (fs.existsSync(filePath)) {
+        response.download(filePath);
+      } else {
+        response.status(HttpStatus.BAD_REQUEST).send({
+          status: false,
+          message: `no such file with id ${fileId}`,
+          httpCode: HttpStatus.BAD_REQUEST,
+        });
+      }
+    } else {
+      response.status(fileData.httpCode).send({
+        status: fileData.status,
+        message: fileData.message,
+        httpCode: fileData.httpCode,
+      });
+    }
   }
 }

@@ -26,21 +26,6 @@ import { diskStorage } from 'multer';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('download')
-  getHello(@Res() response: Response, @Query('tets') test: string) {
-    // const file = 'packa2ge.json';
-
-    // if (fs.existsSync(file)) {
-    //   console.log('true');
-    // } else {
-    //   console.log('false');
-    // }
-    console.log(test);
-    return test;
-
-    // response.download(file);
-  }
-
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
