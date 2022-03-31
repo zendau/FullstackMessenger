@@ -60,6 +60,8 @@ export default {
                 text: message.value.value,
                 roomId
             })
+
+            message.value.value = ''
         }
 
         return {

@@ -6,6 +6,7 @@
       {{room.roomId}}
     </li>
   </ul>
+  <contacts/>
   <users-online/>
 </template>
 
@@ -14,10 +15,11 @@
 import {io} from "socket.io-client"
 import { provide } from '@vue/runtime-core'
 import usersOnline from '../../components/usersOnline.vue'
+import Contacts from '../../components/contacts.vue'
 
 
 export default {
-  components: { usersOnline },
+  components: { usersOnline, Contacts },
 
   setup() {
 
