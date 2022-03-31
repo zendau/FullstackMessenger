@@ -1,38 +1,81 @@
 import {
-  WebSocketGateway,
   SubscribeMessage,
-  MessageBody,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
-import { CreateSocketDto } from './dto/create-socket.dto';
-import { UpdateSocketDto } from './dto/update-socket.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: '*',
+  },
+})
 export class SocketGateway {
   constructor(private readonly socketService: SocketService) {}
 
-  @SubscribeMessage('createSocket')
-  create(@MessageBody() createSocketDto: CreateSocketDto) {
-    return this.socketService.create(createSocketDto);
+  @WebSocketServer()
+  server: Server;
+
+  handleConnection(socket: Socket) {
+    console.log('user connected');
   }
 
-  @SubscribeMessage('findAllSocket')
-  findAll() {
-    return this.socketService.findAll();
+  handleDisconnect(socket: Socket) {
+    console.log('user disconnected');
+
+    const userData = this.socketService.getUserById(socket.id);
+    console.log('userData', userData, socket.id);
+
+    if (userData !== undefined) {
+      this.socketService.clientDisconnect(socket.id);
+      const roomUsers = this.socketService.getRoomUsers(userData.roomId);
+      console.log('romUsers', roomUsers);
+      this.server.to(userData.roomId).emit('getUsers', roomUsers);
+      this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
+    }
   }
 
-  @SubscribeMessage('findOneSocket')
-  findOne(@MessageBody() id: number) {
-    return this.socketService.findOne(id);
+  @SubscribeMessage('connect-user')
+  connectEvent(socket: Socket, payload: any) {
+    console.log('test', payload);
+    this.socketService.addUser(payload);
+    this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 
-  @SubscribeMessage('updateSocket')
-  update(@MessageBody() updateSocketDto: UpdateSocketDto) {
-    return this.socketService.update(updateSocketDto.id, updateSocketDto);
+  @SubscribeMessage('invite-user')
+  inviteUserToRoom(socket: Socket, payload: any) {
+    console.log('test', payload);
+    this.server.emit('userInviteRoom', payload);
   }
 
-  @SubscribeMessage('removeSocket')
-  remove(@MessageBody() id: number) {
-    return this.socketService.remove(id);
+  @SubscribeMessage('join-room')
+  handleMessage(socket: Socket, payload: any) {
+    console.log('start test section', payload, this.socketService.users);
+
+    const res = this.socketService.clientJoinRoom(
+      payload.userId,
+      payload.roomId,
+      payload.peerId,
+    );
+    console.log('end test section');
+
+    console.log('user-connected', payload);
+    socket.join(payload.roomId);
+    const roomUser = this.socketService.getRoomUsers(payload.roomId);
+    console.log('join', roomUser, payload.roomId);
+    this.server.to(payload.roomId).emit('getUsers', roomUser);
+    this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
+  }
+
+  @SubscribeMessage('exit-room')
+  roomEvent(socket: Socket, payload: any) {
+    console.log('exit-room', payload);
+    this.socketService.clientLeaveRoom(payload.userId);
+    socket.leave(payload.roomId);
+    const roomUser = this.socketService.getRoomUsers(payload.roomId);
+    console.log('exit', roomUser, this.socketService.users);
+    this.server.to(payload.roomId).emit('getUsers', roomUser);
+    this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 }

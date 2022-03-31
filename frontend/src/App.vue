@@ -6,12 +6,12 @@
 
 <script>
 
-import { useRouter } from 'vue-router'
+//import { useRouter } from 'vue-router'
 
 export default {
   setup() {
-    const router = useRouter()
-    router.push('/room/all')
+    //const router = useRouter()
+    //router.push('/room/all')
   },
 }
 </script>

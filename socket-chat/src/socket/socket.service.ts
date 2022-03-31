@@ -1,26 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSocketDto } from './dto/create-socket.dto';
-import { UpdateSocketDto } from './dto/update-socket.dto';
+import IUser from './interfaces/IUser';
 
 @Injectable()
 export class SocketService {
-  create(createSocketDto: CreateSocketDto) {
-    return 'This action adds a new socket';
+  public users: IUser[] = [];
+
+  addUser(user: IUser) {
+    this.users.push(user);
+    console.log('pushed user', this.users);
   }
 
-  findAll() {
-    return `This action returns all socket`;
+  getRoomUsers(room) {
+    return this.users.filter((item) => item.roomId === room);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} socket`;
+  getFreeUsers() {
+    return this.users.filter(
+      (user) => user.roomId === null || user.roomId === undefined,
+    );
   }
 
-  update(id: number, updateSocketDto: UpdateSocketDto) {
-    return `This action updates a #${id} socket`;
+  getUserById(id) {
+    return this.users.find((user) => user.userId === id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} socket`;
+  clientLeaveRoom(id) {
+    this.users.forEach((user) => {
+      if (user.userId === id) user.roomId = null;
+    });
+  }
+
+  clientDisconnect(id) {
+    this.users = this.users.filter((user) => user.userId !== id);
+  }
+
+  clientJoinRoom(id, roomId, peerId) {
+    this.users.forEach((user) => {
+      if (user.userId === id) {
+        user.roomId = roomId;
+      }
+    });
   }
 }
