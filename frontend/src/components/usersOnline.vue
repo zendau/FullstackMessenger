@@ -1,7 +1,7 @@
 <template>
   <div>
       <ul>
-          <li v-for="user in users" :key=user.userId>
+          <li v-for="user in onlineUsers" :key=user.userId>
               <p>{{user.userId}}</p>
               <p>{{user.userLogin}}</p>
               <button class="btn btn-primary" @click="sendInvinteToRoom(user.userId, roomId)">invite</button>

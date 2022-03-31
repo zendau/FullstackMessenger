@@ -14,10 +14,8 @@ export class SocketService {
     return this.users.filter((item) => item.roomId === room);
   }
 
-  getFreeUsers() {
-    return this.users.filter(
-      (user) => user.roomId === null || user.roomId === undefined,
-    );
+  getOnlineUsers() {
+    return this.users;
   }
 
   getUserById(id) {

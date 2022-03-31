@@ -32,7 +32,7 @@ export class SocketGateway {
       const roomUsers = this.socketService.getRoomUsers(userData.roomId);
       console.log('romUsers', roomUsers);
       this.server.to(userData.roomId).emit('getUsers', roomUsers);
-      this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
+      this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
     }
   }
 
@@ -40,7 +40,7 @@ export class SocketGateway {
   connectEvent(socket: Socket, payload: any) {
     console.log('test', payload);
     this.socketService.addUser(payload);
-    this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
+    this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 
   @SubscribeMessage('invite-user')
@@ -65,7 +65,7 @@ export class SocketGateway {
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     console.log('join', roomUser, payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
-    this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
+    this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 
   @SubscribeMessage('exit-room')
@@ -76,6 +76,6 @@ export class SocketGateway {
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     console.log('exit', roomUser, this.socketService.users);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
-    this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
+    this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 }
