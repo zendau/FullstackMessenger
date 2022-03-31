@@ -5,8 +5,9 @@ import AllRooms from '../views/Room/AllRooms.vue'
 import audioRoom from '../views/Room/audioRoom'
 import roomGateway from '../views/Room/RoomGateway.vue'
 
-import chat from '../views/Chat/chatRoom.vue'
-import chatId from '../views/Chat/chat.vue'
+import chatGateway from '../views/Chat/chatGateway.vue'
+import chatRoom from '../views/Chat/chatRoom.vue'
+import chat from '../views/Chat/chat.vue'
 
 import pageNotFound from '../views/404.vue'
 
@@ -34,19 +35,25 @@ const routes = [
   },
   {
     path: '/chat',
-    component: chat,
-    name: 'chat'
-  },
-  {
-    path: '/chat/:id',
-    component: chatId,
-    name: 'chatId'
+    component: chatGateway,
+    children: [
+      {
+        path: '/chat/:id',
+        component: chat,
+        name: 'chat'
+      },
+      {
+        path: '/chat/all',
+        component: chatRoom,
+        name: 'chatRoom'
+      },
+     
+    ]
   },
   {
     path: '/:pathMatch(.*)*',
     component: pageNotFound
   }
-  
 ]
 
 const router = createRouter({

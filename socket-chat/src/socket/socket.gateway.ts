@@ -6,6 +6,8 @@ import {
 import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
 
+import * as uuid from 'uuid';
+
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -77,5 +79,13 @@ export class SocketGateway {
     console.log('exit', roomUser, this.socketService.users);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
     this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
+  }
+
+  @SubscribeMessage('sendMessage')
+  sendMessage(socket: Socket, payload: any) {
+    payload.id = uuid.v4();
+    console.log('sendMessage', payload);
+
+    this.server.emit('newMessage', payload);
   }
 }
