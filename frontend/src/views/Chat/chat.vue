@@ -58,7 +58,15 @@ export default {
             }
         })
 
+        console.log('join to the room')
+        socket.emit('join-room', { 
+            userId: socket.id,
+            roomId,
+        })
+
+
         socket.on('newMessage', (messageData) => {
+            console.log('NEEEEW')
             messages.push(messageData)
         })
 

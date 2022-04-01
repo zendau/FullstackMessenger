@@ -55,15 +55,13 @@ export class SocketGateway {
   handleMessage(socket: Socket, payload: any) {
     console.log('start test section', payload, this.socketService.users);
 
-    const res = this.socketService.clientJoinRoom(
-      payload.userId,
-      payload.roomId,
-      payload.peerId,
-    );
+    this.socketService.clientJoinRoom(payload.userId, payload.roomId);
     console.log('end test section');
 
     console.log('user-connected', payload);
+    console.log('before', socket.rooms);
     socket.join(payload.roomId);
+    console.log('after', socket.rooms);
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     console.log('join', roomUser, payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
@@ -84,8 +82,8 @@ export class SocketGateway {
   @SubscribeMessage('sendMessage')
   sendMessage(socket: Socket, payload: any) {
     payload.id = uuid.v4();
-    console.log('sendMessage', payload);
-
-    this.server.emit('newMessage', payload);
+    console.log('sendMessage', payload.roomId);
+    console.log('send rooms', socket.rooms);
+    this.server.to(payload.roomId).emit('newMessage', payload);
   }
 }
