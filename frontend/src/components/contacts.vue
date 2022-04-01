@@ -2,7 +2,7 @@
   <div>
       <h3>Hello {{login}}</h3>
       <ul>
-          <li v-for="user in contacts" :key=user.id>
+          <li v-for="user in contacts" :key=user.id @click="openUserChat(user.id)">
               <p>{{user.id}}</p>
               <p>{{user.login}}</p>
           </li>
@@ -24,9 +24,17 @@ export default {
 
         const contacts = res.data.filter((user) => user.login !== login)
 
+        function openUserChat(id) {
+
+            const userId = localStorage.getItem('id')
+
+            console.log('test', id, userId)
+        }
+
         return {
             login,
-            contacts
+            contacts,
+            openUserChat
         }
     }
 }

@@ -1,12 +1,21 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Chat } from './chat.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity()
 export class ChatUsers {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  chatId: string;
+  @ManyToOne(() => Chat, (chat) => chat.chatUsers, {
+    cascade: true,
+  })
+  chat: Chat;
 
   @Column()
   userId: number;

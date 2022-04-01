@@ -9,33 +9,56 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { CreateChatDto } from './dto/create-chat.dto';
+import { ChatDTO } from './dto/chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post()
-  create(@Body() createChatDto: CreateChatDto) {
-    return this.chatService.create(createChatDto);
+  @Get('getByUser/:id')
+  async getChats(@Param('id') id: number) {
+    const res = await this.chatService.getChats(id).catch((err) => {
+      console.log(err);
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateChatDto: UpdateChatDto) {
-    return this.chatService.update(+id, updateChatDto);
+  @Get('checkChat')
+  async checkChat(@Body() chatData: ChatDTO) {
+    const res = await this.chatService
+      .checkChat(chatData.userId, chatData.companionId)
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.chatService.remove(+id);
+  @Post('create')
+  async createChat(@Body() chatData: ChatDTO) {
+    const res = await this.chatService.createChat(chatData).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 
   @Get('getContacts')
   async getContacts() {
-    console.log('0');
     const res = await this.chatService.getContacts().catch((err) => {
-      console.log(err);
       return {
         status: false,
         message: err.sqlMessage,

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { ChatUsers } from './chatUsers.entity';
 
 @Entity()
 export class Chat {
@@ -9,5 +10,8 @@ export class Chat {
   chatId: string;
 
   @Column()
-  GroupType: boolean;
+  groupType: boolean;
+
+  @OneToMany(() => ChatUsers, (chatUsers) => chatUsers.chat)
+  chatUsers: ChatUsers[];
 }

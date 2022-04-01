@@ -1,6 +1,6 @@
 import { IsInt, Min } from 'class-validator';
 
-export class UpdateChatDto {
+export class ChatDTO {
   @IsInt()
   @Min(1)
   userId: number;
