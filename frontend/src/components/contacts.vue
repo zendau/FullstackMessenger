@@ -13,10 +13,13 @@
 <script>
 //import { ref } from "vue";
 import $api from '../axios';
+
+import { useRouter } from 'vue-router'
+
 export default {
     async setup() {
 
-
+        const router = useRouter()
         
         const res = await $api.get('/chat/getContacts')
 
@@ -24,11 +27,25 @@ export default {
 
         const contacts = res.data.filter((user) => user.login !== login)
 
-        function openUserChat(id) {
+        async function openUserChat(id) {
 
             const userId = localStorage.getItem('id')
 
             console.log('test', id, userId)
+
+            const res = await $api.post('/chat/check', {
+                
+                    userId,
+                    companionId: id
+                
+            })
+
+            if (res.data.status) {
+                console.log('redirect to', )
+                router.push(`/chat/${res.data.chatId}`)
+            } else {
+                console.log('create')
+            }
         }
 
         return {

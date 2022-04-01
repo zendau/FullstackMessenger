@@ -1,5 +1,5 @@
 import { Chat } from './entities/chat.entity';
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import { ChatDTO } from './dto/chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
@@ -43,24 +43,25 @@ export class ChatService {
     return res;
   }
 
-  async checkChat(userId: number, companionId: number) {
+  async checkChat(chatData: ChatDTO) {
+    console.log(chatData);
     const res = await this.chatRepository
       .createQueryBuilder('chat')
-      .select('chatUsers.chatId')
+      .select('chatUsers.chatId, chat.chatId')
       .innerJoin('chat.chatUsers', 'chatUsers')
       .addSelect('COUNT(chatUsers.userId)', 'userCount')
-      .where('chatUsers.userId = :userId', { userId })
-      .orWhere('chatUsers.userId = :companionId', { companionId })
+      .where('chatUsers.userId = :userId', { userId: chatData.userId })
+      .orWhere('chatUsers.userId = :companionId', {
+        companionId: chatData.companionId,
+      })
       .groupBy('chatUsers.chatId')
       .having('userCount > 1')
       .getRawMany();
-
+    console.log('res', res);
     // const res = await this.chatUserRepository
     //   .createQueryBuilder('chatUsers')
     //   .innerJoinAndSelect('chatUsers.chat', 'chat')
     //   .getMany();
-
-    console.log(userId, companionId, res);
     // if (res === undefined)
     //   return {
     //     status: false,
@@ -68,7 +69,26 @@ export class ChatService {
     //     httpCode: HttpStatus.BAD_REQUEST,
     //   };
 
-    return res.length > 0;
+    return { status: res.length > 0, chatId: res[0]?.chatId };
+  }
+
+  async getById(id: string) {
+    const res = await this.chatRepository
+      .createQueryBuilder()
+      .where('chatId = :id', { id })
+      .getOne();
+    console.log(res);
+    if (res === undefined)
+      return {
+        status: false,
+        message: `chatId ${id} is not valid`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+
+    return {
+      ...res,
+      status: true,
+    };
   }
 
   async createChat(chatData: ChatDTO) {
@@ -92,5 +112,30 @@ export class ChatService {
 
     const resInsered = await this.chatUserRepository.save(userChat);
     return resInsered;
+  }
+
+  // async update(updateRoomDTO: IEditRoomDTO) {
+  //   const res = await this.roomRepository
+  //     .createQueryBuilder()
+  //     .update()
+  //     .set({
+  //       adminLogin: updateRoomDTO.adminLogin,
+  //       roomId: uuidv4(),
+  //       roomTitle: updateRoomDTO.roomTitle,
+  //     })
+  //     .where(`id = ${updateRoomDTO.id}`)
+  //     .execute();
+
+  //   return !!res.affected;
+  // }
+
+  async remove(id: number) {
+    const res = await this.chatRepository
+      .createQueryBuilder()
+      .delete()
+      .where(`id = ${id}`)
+      .execute();
+
+    return !!res.affected;
   }
 }

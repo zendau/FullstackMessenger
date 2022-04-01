@@ -29,18 +29,29 @@ export class ChatController {
     return res;
   }
 
-  @Get('checkChat')
+  @Post('check')
   async checkChat(@Body() chatData: ChatDTO) {
-    const res = await this.chatService
-      .checkChat(chatData.userId, chatData.companionId)
-      .catch((err) => {
-        console.log(err);
-        return {
-          status: false,
-          message: err.sqlMessage,
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      });
+    const res = await this.chatService.checkChat(chatData).catch((err) => {
+      console.log(err);
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
+  }
+
+  @Get('checkId/:id')
+  async checkChatId(@Param('id') id: string) {
+    const res = await this.chatService.getById(id).catch((err) => {
+      console.log(err);
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
     return res;
   }
 
@@ -59,6 +70,18 @@ export class ChatController {
   @Get('getContacts')
   async getContacts() {
     const res = await this.chatService.getContacts().catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
+  }
+
+  @Delete('delete/:id')
+  async remove(@Param('id') chatId: number) {
+    const res = await this.chatService.remove(chatId).catch((err) => {
       return {
         status: false,
         message: err.sqlMessage,

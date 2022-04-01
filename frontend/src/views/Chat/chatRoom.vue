@@ -12,11 +12,9 @@
 
 <script>
 
-import {io} from "socket.io-client"
-import { provide } from '@vue/runtime-core'
 import usersOnline from '../../components/usersOnline.vue'
 import Contacts from '../../components/contacts.vue'
-
+import { inject } from 'vue'
 
 export default {
   components: { usersOnline, Contacts },
@@ -34,11 +32,11 @@ export default {
 
 
     const userLogin = Date.now()
-    const socket = io('http://localhost:3000');
 
-    provide('socket', socket)
+
+    const socket = inject('socket', undefined)
     
-    socket.on('connect', () => {
+    socket.on('test', () => {
       console.log('connected gateway')
       socket.emit('connect-user', {
           userLogin,

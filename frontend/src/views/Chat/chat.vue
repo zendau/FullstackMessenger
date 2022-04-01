@@ -17,13 +17,15 @@ import { reactive } from '@vue/reactivity'
 
 import { ref } from 'vue'
 
-import {useRoute} from "vue-router"
-import { inject } from '@vue/runtime-core'
+import {useRoute, useRouter} from "vue-router"
+import { inject, onMounted } from '@vue/runtime-core'
+import $api from '../../axios'
 
 export default {
     setup() {
 
         const route = useRoute()
+        const router = useRouter()
 
         const userLogin = Date.now()
 
@@ -48,6 +50,13 @@ export default {
 
 
         const roomId = route.params.id
+
+        onMounted(async () => {
+            const res =  await $api.get(`/chat/checkId/${roomId}`)
+            if (!res.data.status) {
+                router.push('/chat/all')
+            }
+        })
 
         socket.on('newMessage', (messageData) => {
             messages.push(messageData)

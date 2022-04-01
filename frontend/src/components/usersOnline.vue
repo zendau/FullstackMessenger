@@ -1,5 +1,6 @@
 <template>
   <div>
+      <h3>Online users</h3>
       <ul>
           <li v-for="user in onlineUsers" :key=user.userId>
               <p>{{user.userId}}</p>
