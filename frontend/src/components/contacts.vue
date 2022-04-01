@@ -41,10 +41,17 @@ export default {
             })
 
             if (res.data.status) {
-                console.log('redirect to', )
                 router.push(`/chat/${res.data.chatId}`)
             } else {
                 console.log('create')
+                const chatData = await $api.post('/chat/create', {
+                    userId,
+                    companionId: id
+                })
+
+                const chatId = chatData.data[0].chat.chatId
+
+                router.push(`/chat/${chatId}`)
             }
         }
 
