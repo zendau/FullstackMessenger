@@ -1,11 +1,6 @@
 <template>
   test chat room
-  <ul>
-    <li v-for="room in tempRoomData" :key="room.roomId">
-      <router-link :to="'/chat/'+room.roomId">Enter to room</router-link>
-      {{room.roomId}}
-    </li>
-  </ul>
+  <chats/>
   <contacts/>
   <users-online/>
 </template>
@@ -15,24 +10,14 @@
 import usersOnline from '../../components/usersOnline.vue'
 import Contacts from '../../components/contacts.vue'
 import { inject } from 'vue'
+import Chats from '../../components/chats.vue'
 
 export default {
-  components: { usersOnline, Contacts },
+  components: { usersOnline, Contacts, Chats },
 
   setup() {
 
-    const tempRoomData = [
-      {
-        roomId: 1,
-      },
-      {
-        roomId: 2,
-      }
-    ]
-
-
     const userLogin = Date.now()
-
 
     const socket = inject('socket', undefined)
     
@@ -43,11 +28,6 @@ export default {
           userId: socket.id
       })
     })
-
-
-    return {
-      tempRoomData,
-    }
 
   }
 
