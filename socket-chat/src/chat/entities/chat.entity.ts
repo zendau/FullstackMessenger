@@ -9,6 +9,11 @@ export class Chat {
   @Column()
   chatId: string;
 
+  @Column({
+    nullable: true,
+  })
+  groupName: string;
+
   @Column()
   groupType: boolean;
 

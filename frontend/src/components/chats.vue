@@ -1,7 +1,7 @@
 <template>
    <ul>
     <li v-for="room in roomData" :key="room.id">
-      <router-link :to="'/chat/'+room.chatId">Enter to room - {{room.chatId}}</router-link>
+      <router-link :to="'/chat/'+room.chatId">{{room.groupName}} <span v-if="room.groupType">[group]</span> </router-link>
       {{room.roomId}}
     </li>
   </ul>
@@ -18,11 +18,13 @@ export default {
         const roomData = reactive([])
         onMounted(async () => {
 
-            const userId = localStorage.getItem('id')
+            const userId = parseInt(localStorage.getItem('id'))
 
             const res = await $api.get(`/chat/getByUser/${userId}`)
-
+            console.log('resSS', res)
             roomData.push(...res.data)
+
+          
         })
 
 

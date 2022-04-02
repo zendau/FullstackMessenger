@@ -19,9 +19,7 @@ export class ChatService {
   ) {}
 
   async getContacts() {
-    console.log('1');
     const res = await this.connection.query('SELECT * FROM `Users`');
-    console.log('res', res);
     return res;
   }
 
@@ -40,6 +38,29 @@ export class ChatService {
         return 'chat.id IN' + subQuery;
       })
       .getMany();
+    const chatData = this.createNameToChat(res, userId);
+    return chatData;
+  }
+
+  createNameToChat(data: Chat[], userId: number) {
+    return Promise.all(
+      data.map(async (item) => {
+        if (item.groupName.length === 0) {
+          const chatUserId = item.chatUsers.filter(
+            (user) => user.userId != userId,
+          );
+          const userData = await this.getUserName(chatUserId[0].userId);
+          item.groupName = userData[0].login;
+        }
+        return item;
+      }),
+    );
+  }
+
+  async getUserName(id: number) {
+    const res = await this.connection.query(
+      `SELECT login FROM Users WHERE id = ${id}`,
+    );
     return res;
   }
 
@@ -50,9 +71,9 @@ export class ChatService {
       .select('chatUsers.chatId, chat.chatId')
       .innerJoin('chat.chatUsers', 'chatUsers')
       .addSelect('COUNT(chatUsers.userId)', 'userCount')
-      .where('chatUsers.userId = :userId', { userId: chatData.userId })
+      .where('chatUsers.userId = :userId', { userId: chatData.adminId })
       .orWhere('chatUsers.userId = :companionId', {
-        companionId: chatData.companionId,
+        companionId: chatData.users[0],
       })
       .groupBy('chatUsers.chatId')
       .having('userCount > 1')
@@ -92,26 +113,30 @@ export class ChatService {
   }
 
   async createChat(chatData: ChatDTO) {
-    const resInsered = [];
-
     const chatInseted = await this.chatRepository.save({
       chatId: uuid.v4(),
-      groupType: false,
+      groupType: chatData.groupType,
+      groupName: chatData?.groupName,
     });
 
-    resInsered.push(await this.addToChat(chatData.userId, chatInseted));
-    resInsered.push(await this.addToChat(chatData.companionId, chatInseted));
+    const usersEntity = [];
 
-    return resInsered;
+    usersEntity.push(this.createEntity(chatData.adminId, chatInseted));
+
+    chatData.users.forEach((userId) => {
+      usersEntity.push(this.createEntity(userId, chatInseted));
+    });
+
+    await this.chatUserRepository.save(usersEntity);
+
+    return chatInseted;
   }
 
-  async addToChat(userId: number, chat: Chat) {
+  createEntity(userId: number, chat: Chat) {
     const userChat = this.chatUserRepository.create();
     userChat.chat = chat;
     userChat.userId = userId;
-
-    const resInsered = await this.chatUserRepository.save(userChat);
-    return resInsered;
+    return userChat;
   }
 
   // async update(updateRoomDTO: IEditRoomDTO) {

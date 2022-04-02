@@ -58,6 +58,7 @@ export class ChatController {
   @Post('create')
   async createChat(@Body() chatData: ChatDTO) {
     const res = await this.chatService.createChat(chatData).catch((err) => {
+      console.log(err);
       return {
         status: false,
         message: err.sqlMessage,

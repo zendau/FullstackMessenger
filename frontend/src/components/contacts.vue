@@ -7,7 +7,11 @@
             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="groupType">
             <label class="form-check-label" for="flexSwitchCheckDefault">Group type</label>
         </div>
-        <button v-if="groupType" class="btn btn-primary" :disabled="clientLength" @click="createGroupChat">Create group</button>
+        <div v-if="groupType">
+            <input type="text" class="form-control" placeholder="Group name" v-model="roomName">
+            <button class="btn btn-primary" :disabled="clientLength" @click="createGroupChat">Create group</button>
+        </div>
+        
       <ul>
           <li v-for="user in contacts" :key=user.id>
               <p>{{user.id}}</p>
@@ -48,6 +52,8 @@ export default {
 
         const userId = localStorage.getItem('id')
 
+        const roomName = ref('')
+
         async function openUserChat(id) {
 
 
@@ -75,10 +81,30 @@ export default {
             }
         }
 
-        const clientLength = computed(() => clients.value.length < 2)
+        const clientLength = computed(() => {
+            if (clients.value.length < 2) {
+                if (roomName.value.length < 1) {
+                    return true
+                }
+                return true
+            }
 
-        function createGroupChat() {
-            console.log('groupChat', [userId, ...clients.value])
+            return false
+        })
+
+        async function createGroupChat() {
+       
+
+             const chatData = await $api.post('/chat/create', {
+                adminId: parseInt(userId),
+                groupName: roomName.value,
+                users: [...clients.value],
+                groupType: true
+            })
+
+            if (chatData.data) {
+                router.push(`/chat/${chatData.data.chatTitle}`)
+            } 
         }
 
         return {
@@ -89,7 +115,8 @@ export default {
             clients,
             clientLength,
             createGroupChat,
-            userId
+            userId,
+            roomName
         }
     }
 }
