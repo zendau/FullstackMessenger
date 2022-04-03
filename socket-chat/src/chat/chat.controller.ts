@@ -91,4 +91,31 @@ export class ChatController {
     });
     return res;
   }
+
+  @Get('groupUser/:id')
+  async getGroupUser(@Param('id') chatId: number) {
+    const res = await this.chatService.getGroupUsers(chatId).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
+  }
+
+  @Get('invaitedUsers')
+  async getInvaitedUsers(@Body('userData') usersId: number[]) {
+    const res = await this.chatService
+      .getInvaitedUsers(usersId)
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
+  }
 }

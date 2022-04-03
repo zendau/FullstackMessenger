@@ -59,7 +59,7 @@ export class ChatService {
 
   async getUserName(id: number) {
     const res = await this.connection.query(
-      `SELECT login FROM Users WHERE id = ${id}`,
+      `SELECT id, login FROM Users WHERE id = ${id}`,
     );
     return res;
   }
@@ -162,5 +162,29 @@ export class ChatService {
       .execute();
 
     return !!res.affected;
+  }
+
+  async getGroupUsers(chatId) {
+    const res = await this.chatRepository
+      .createQueryBuilder('chat')
+      .select('chatUsers.userId', 'userId')
+      .innerJoin('chat.chatUsers', 'chatUsers')
+      .where('chat.id = :chatId', { chatId })
+      .getRawMany();
+
+    const usersData = await Promise.all(
+      res.map(async (userData) => await this.getUserName(userData.userId)),
+    );
+    return usersData.flat();
+  }
+
+  async getInvaitedUsers(usersId: number[]) {
+    const allUsers = await this.getContacts();
+
+    const invaitedUsers = allUsers.filter(
+      (userData) => usersId.indexOf(userData.id) === -1,
+    );
+
+    return invaitedUsers;
   }
 }
