@@ -10,6 +10,17 @@
     <input type="text" placeholder="message" ref="message">
     <button @click="sendMessage">Send message</button>
 
+     <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="invateStatus">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Invate</label>
+    </div>
+    
+    <keep-alive>
+        <invaited-users v-if="invateStatus"/>
+        <group-users v-else/>
+    </keep-alive>
+    
+
 </template>
 
 <script>
@@ -18,11 +29,19 @@ import { reactive } from '@vue/reactivity'
 import { ref } from 'vue'
 
 import {useRoute, useRouter} from "vue-router"
-import { inject, onMounted } from '@vue/runtime-core'
+import { inject, onMounted, provide } from '@vue/runtime-core'
 import $api from '../../axios'
+import groupUsers from '../../components/groupUsers.vue'
+import InvaitedUsers from '../../components/invaitedUsers.vue'
 
 export default {
+  components: { groupUsers, InvaitedUsers },
     setup() {
+
+        console.log('provide')
+        const groupUsers = reactive([])
+        provide('groupUsers', groupUsers)
+
 
         const route = useRoute()
         const router = useRouter()
@@ -30,6 +49,8 @@ export default {
         const userLogin = Date.now()
 
         const message = ref(null)
+
+        const invateStatus = ref(false)
 
         const socket = inject('socket', undefined)
 
@@ -50,6 +71,8 @@ export default {
 
 
         const roomId = route.params.id
+
+        provide('roomId', roomId)
 
         onMounted(async () => {
             const res =  await $api.get(`/chat/checkId/${roomId}`)
@@ -85,7 +108,8 @@ export default {
             roomId,
             messages,
             message,
-            sendMessage
+            sendMessage,
+            invateStatus
         }
     }
 }

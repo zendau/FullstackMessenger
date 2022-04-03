@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatDTO } from './dto/chat.dto';
@@ -44,7 +45,7 @@ export class ChatController {
 
   @Get('checkId/:id')
   async checkChatId(@Param('id') id: string) {
-    const res = await this.chatService.getById(id).catch((err) => {
+    const res = await this.chatService.getChatById(id).catch((err) => {
       console.log(err);
       return {
         status: false,
@@ -93,7 +94,7 @@ export class ChatController {
   }
 
   @Get('groupUser/:id')
-  async getGroupUser(@Param('id') chatId: number) {
+  async getGroupUser(@Param('id') chatId: string) {
     const res = await this.chatService.getGroupUsers(chatId).catch((err) => {
       return {
         status: false,
@@ -105,9 +106,24 @@ export class ChatController {
   }
 
   @Get('invaitedUsers')
-  async getInvaitedUsers(@Body('userData') usersId: number[]) {
+  async getInvaitedUsers(@Query('userData') usersId: string[]) {
     const res = await this.chatService
       .getInvaitedUsers(usersId)
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
+  }
+
+  @Patch('invaiteToChat')
+  async invaiteUsersToChat(@Body() invateData: UpdateChatDto) {
+    const res = await this.chatService
+      .invaiteUsersToChat(invateData)
       .catch((err) => {
         console.log(err);
         return {

@@ -93,12 +93,11 @@ export class ChatService {
     return { status: res.length > 0, chatId: res[0]?.chatId };
   }
 
-  async getById(id: string) {
+  async getChatById(id: string) {
     const res = await this.chatRepository
       .createQueryBuilder()
       .where('chatId = :id', { id })
       .getOne();
-    console.log(res);
     if (res === undefined)
       return {
         status: false,
@@ -107,7 +106,7 @@ export class ChatService {
       };
 
     return {
-      ...res,
+      res,
       status: true,
     };
   }
@@ -164,12 +163,12 @@ export class ChatService {
     return !!res.affected;
   }
 
-  async getGroupUsers(chatId) {
+  async getGroupUsers(chatId: string) {
     const res = await this.chatRepository
       .createQueryBuilder('chat')
       .select('chatUsers.userId', 'userId')
       .innerJoin('chat.chatUsers', 'chatUsers')
-      .where('chat.id = :chatId', { chatId })
+      .where('chat.chatId = :chatId', { chatId })
       .getRawMany();
 
     const usersData = await Promise.all(
@@ -178,13 +177,31 @@ export class ChatService {
     return usersData.flat();
   }
 
-  async getInvaitedUsers(usersId: number[]) {
+  async getInvaitedUsers(usersId: string[]) {
     const allUsers = await this.getContacts();
 
+    const ids = usersId.map((id) => parseInt(id));
+
     const invaitedUsers = allUsers.filter(
-      (userData) => usersId.indexOf(userData.id) === -1,
+      (userData) => ids.indexOf(userData.id) === -1,
     );
 
     return invaitedUsers;
+  }
+
+  async invaiteUsersToChat(invateData: UpdateChatDto) {
+    const chat = await this.getChatById(invateData.roomId);
+
+    if (chat.status) {
+      const usersEntity = [];
+
+      invateData.usersId.forEach((userId) => {
+        usersEntity.push(this.createEntity(userId, chat.res));
+      });
+
+      return await this.chatUserRepository.save(usersEntity);
+    } else {
+      return chat;
+    }
   }
 }

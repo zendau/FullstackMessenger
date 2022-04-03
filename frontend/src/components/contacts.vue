@@ -34,7 +34,7 @@ import $api from '../axios';
 
 import { useRouter } from 'vue-router'
 
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 export default {
     async setup() {
@@ -45,7 +45,8 @@ export default {
 
         const login = localStorage.getItem('login')
 
-        const contacts = res.data.filter((user) => user.login !== login)
+        const contacts = reactive([])
+        contacts.push(...res.data.filter((user) => user.login !== login))
 
         const groupType = ref(false)
         const clients = ref([])
