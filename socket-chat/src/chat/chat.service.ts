@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as uuid from 'uuid';
 import { ChatUsers } from './entities/chatUsers.entity';
+import { exitChatDto } from './dto/exitChat.dto';
 
 @Injectable()
 export class ChatService {
@@ -203,5 +204,16 @@ export class ChatService {
     } else {
       return chat;
     }
+  }
+
+  async exitUserGroup(exitUserDTO: exitChatDto) {
+    const res = await this.chatUserRepository
+      .createQueryBuilder()
+      .delete()
+      .where('userId = :userId', { userId: exitUserDTO.userId })
+      .andWhere('chatId = :chatId', { chatId: exitUserDTO.chatId })
+      .execute();
+
+    return !!res.affected;
   }
 }

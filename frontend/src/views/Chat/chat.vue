@@ -15,6 +15,7 @@
             <label class="form-check-label" for="flexSwitchCheckDefault">Invate</label>
     </div>
     
+    <button @click="exitGroup">Exit group</button>
     <keep-alive>
         <invaited-users v-if="invateStatus"/>
         <group-users v-else/>
@@ -54,6 +55,8 @@ export default {
 
         const socket = inject('socket', undefined)
 
+        const userId = localStorage.getItem('id')
+
         const messages = reactive([
             {
                 id: 1,
@@ -74,8 +77,11 @@ export default {
 
         provide('roomId', roomId)
 
+        const chatId = ref(null)
+
         onMounted(async () => {
             const res =  await $api.get(`/chat/checkId/${roomId}`)
+            chatId.value = res.data.res.id
             if (!res.data.status) {
                 router.push('/chat/all')
             }
@@ -104,12 +110,27 @@ export default {
             message.value.value = ''
         }
 
+        async function exitGroup() {
+            console.log('exit user with id ',userId)
+            const res = await $api.delete('/chat/exitUser', {
+               params: {
+                chatId: chatId.value,
+                userId,
+               }
+            })
+
+            if (res.data) {
+                router.push('/chat/all')
+            }
+        }
+
         return {
             roomId,
             messages,
             message,
             sendMessage,
-            invateStatus
+            invateStatus,
+            exitGroup
         }
     }
 }

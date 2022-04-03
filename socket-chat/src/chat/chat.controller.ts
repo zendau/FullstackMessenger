@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatDTO } from './dto/chat.dto';
+import { exitChatDto } from './dto/exitChat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 
 @Controller('chat')
@@ -124,6 +125,22 @@ export class ChatController {
   async invaiteUsersToChat(@Body() invateData: UpdateChatDto) {
     const res = await this.chatService
       .invaiteUsersToChat(invateData)
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
+  }
+
+  @Delete('exitUser')
+  async exitUserGroup(@Query() exitUserDTO: exitChatDto) {
+    console.log(exitUserDTO);
+    const res = await this.chatService
+      .exitUserGroup(exitUserDTO)
       .catch((err) => {
         console.log(err);
         return {
