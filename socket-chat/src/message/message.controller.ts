@@ -1,34 +1,87 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  Res,
+} from '@nestjs/common';
 import { MessageService } from './message.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
+import { IMessageDTO } from './dto/message.dto';
+import { IUpdateMessageDTO } from './dto/update-message.dto';
+import { Response } from 'express';
 
 @Controller('message')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
-  @Post()
-  create(@Body() createMessageDto: CreateMessageDto) {
-    return this.messageService.create(createMessageDto);
+  @Post('add')
+  async create(
+    @Body() createMessageDto: IMessageDTO,
+    @Res() response: Response,
+  ) {
+    const res = await this.messageService
+      .create(createMessageDto)
+      .catch((err) => {
+        response.status(HttpStatus.BAD_REQUEST).send({
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        });
+      });
+    response.send(res);
   }
 
-  @Get()
-  findAll() {
-    return this.messageService.findAll();
+  @Get('getAllChat/:id')
+  async findAll(@Param('id') chatId: string) {
+    const res = await this.messageService.getAllByChat(chatId).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.messageService.findOne(+id);
+  @Get('get/:id')
+  async findOne(@Param('id') messageId: number) {
+    const res = await this.messageService.getById(messageId).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMessageDto: UpdateMessageDto) {
-    return this.messageService.update(+id, updateMessageDto);
+  @Patch('edit')
+  async update(@Body() updateMessageDto: IUpdateMessageDTO) {
+    const res = await this.messageService
+      .update(updateMessageDto)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.messageService.remove(+id);
+  @Delete('delete/:id')
+  async remove(@Param('id') messageId: number) {
+    const res = await this.messageService.remove(messageId).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
   }
 }
