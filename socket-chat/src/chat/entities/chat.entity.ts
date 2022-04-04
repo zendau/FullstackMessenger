@@ -17,6 +17,8 @@ export class Chat {
   @Column()
   groupType: boolean;
 
-  @OneToMany(() => ChatUsers, (chatUsers) => chatUsers.chat)
+  @OneToMany(() => ChatUsers, (chatUsers) => chatUsers.chat, {
+    cascade: true,
+  })
   chatUsers: ChatUsers[];
 }

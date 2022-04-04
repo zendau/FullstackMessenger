@@ -12,9 +12,7 @@ export class ChatUsers {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Chat, (chat) => chat.chatUsers, {
-    cascade: true,
-  })
+  @ManyToOne(() => Chat, (chat) => chat.chatUsers)
   chat: Chat;
 
   @Column()

@@ -62,8 +62,8 @@ export default {
 
             const res = await $api.post('/chat/check', {
                 
-                    userId,
-                    companionId: id
+                    adminId: userId,
+                    users: [id]
                 
             })
 
@@ -72,11 +72,12 @@ export default {
             } else {
                 console.log('create')
                 const chatData = await $api.post('/chat/create', {
-                    userId,
-                    companionId: id
+                    adminId: userId,
+                    users: [id],
+                    groupType: false
                 })
 
-                const chatId = chatData.data[0].chat.chatId
+                const chatId = chatData.data.chatId
 
                 router.push(`/chat/${chatId}`)
             }
@@ -104,7 +105,7 @@ export default {
             })
 
             if (chatData.data) {
-                router.push(`/chat/${chatData.data.chatTitle}`)
+                router.push(`/chat/${chatData.data.chatId}`)
             } 
         }
 

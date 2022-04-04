@@ -39,14 +39,14 @@ export class ChatService {
         return 'chat.id IN' + subQuery;
       })
       .getMany();
-    const chatData = this.createNameToChat(res, userId);
+    const chatData = await this.createNameToChat(res, userId);
     return chatData;
   }
 
-  createNameToChat(data: Chat[], userId: number) {
-    return Promise.all(
+  async createNameToChat(data: Chat[], userId: number) {
+    return await Promise.all(
       data.map(async (item) => {
-        if (item.groupName.length === 0) {
+        if (item.groupName === null) {
           const chatUserId = item.chatUsers.filter(
             (user) => user.userId != userId,
           );
@@ -66,18 +66,21 @@ export class ChatService {
   }
 
   async checkChat(chatData: ChatDTO) {
-    console.log(chatData);
+    console.log('chatData', chatData);
+    debugger;
     const res = await this.chatRepository
       .createQueryBuilder('chat')
       .select('chatUsers.chatId, chat.chatId')
+      .addSelect('chat.groupName')
       .innerJoin('chat.chatUsers', 'chatUsers')
       .addSelect('COUNT(chatUsers.userId)', 'userCount')
       .where('chatUsers.userId = :userId', { userId: chatData.adminId })
-      .orWhere('chatUsers.userId = :companionId', {
-        companionId: chatData.users[0],
+      .orWhere('chatUsers.userId = (:companionId)', {
+        companionId: chatData.users,
       })
       .groupBy('chatUsers.chatId')
       .having('userCount > 1')
+      .andHaving('chat.groupName IS NULL')
       .getRawMany();
     console.log('res', res);
     // const res = await this.chatUserRepository
@@ -113,6 +116,7 @@ export class ChatService {
   }
 
   async createChat(chatData: ChatDTO) {
+    debugger;
     const chatInseted = await this.chatRepository.save({
       chatId: uuid.v4(),
       groupType: chatData.groupType,

@@ -10,17 +10,20 @@
     <input type="text" placeholder="message" ref="message">
     <button @click="sendMessage">Send message</button>
 
-     <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="invateStatus">
-            <label class="form-check-label" for="flexSwitchCheckDefault">Invate</label>
+    <button @click="$router.back()">back</button>
+
+    <div v-if="isGroup">
+        <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="invateStatus">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Invate</label>
+        </div>
+        <button @click="exitGroup">Exit group</button>
+        <keep-alive>
+            <invaited-users v-if="invateStatus"/>
+            <group-users v-else/>
+        </keep-alive>
     </div>
-    
-    <button @click="exitGroup">Exit group</button>
-    <keep-alive>
-        <invaited-users v-if="invateStatus"/>
-        <group-users v-else/>
-    </keep-alive>
-    
+  
 
 </template>
 
@@ -79,11 +82,18 @@ export default {
 
         const chatId = ref(null)
 
+        const isGroup = ref(null)
+
         onMounted(async () => {
             const res =  await $api.get(`/chat/checkId/${roomId}`)
             chatId.value = res.data.res.id
             if (!res.data.status) {
                 router.push('/chat/all')
+            }
+            if (res.data.res.groupName === null) {
+                isGroup.value = false
+            } else {
+                isGroup.value = true
             }
         })
 
@@ -130,7 +140,8 @@ export default {
             message,
             sendMessage,
             invateStatus,
-            exitGroup
+            exitGroup,
+            isGroup
         }
     }
 }
