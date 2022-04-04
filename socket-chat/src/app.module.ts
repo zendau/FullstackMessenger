@@ -5,6 +5,7 @@ import { SocketModule } from './socket/socket.module';
 import { ChatModule } from './chat/chat.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     SocketModule,
     ChatModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

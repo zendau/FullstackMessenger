@@ -50,7 +50,7 @@ export default {
         const route = useRoute()
         const router = useRouter()
 
-        const userLogin = Date.now()
+        const userLogin = localStorage.getItem('login')
 
         const message = ref(null)
 
