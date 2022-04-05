@@ -97,7 +97,7 @@ export class SocketGateway {
     if ('chat' in res) {
       console.log('SEND', payload.chatId);
       this.server.to(payload.chatId).emit('newMessage', {
-        login: res.authorLogin,
+        authorLogin: res.authorLogin,
         text: res.text,
         created_at: res.created_at,
         id: res.id,

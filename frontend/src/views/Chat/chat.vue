@@ -2,13 +2,11 @@
   roomId - {{roomId}}
     
     <h1>Messages</h1>
-    <div  v-if="messages.length > 0">
+    <div class="messages-container" ref='scrollArea'>
+        <div ref='scrollEnd'></div>
         <p v-for="message in messages" :key="message.id">
-            {{message.login}} - {{message.text}} - {{message.created_at}}
+            {{message.authorLogin}} - {{message.text}} - {{message.created_at}}
         </p>
-    </div>
-    <div v-else>
-        <p>No messages</p>
     </div>
     <input type="text" placeholder="message" ref="message">
     <button @click="sendMessage">Send message</button>
@@ -65,6 +63,7 @@ export default {
 
         const messages = reactive([])
 
+        const scrollEnd = ref(null)
 
         const roomId = route.params.id
 
@@ -73,6 +72,13 @@ export default {
         const chatId = ref(null)
 
         const isGroup = ref(null)
+
+        const scrollArea = ref(null)
+
+        const page = ref(0)
+        const limit = ref(10)
+        const hasMore = ref(true)
+        const isLoadedMessages = ref(false)
 
         onMounted(async () => {
             const res =  await $api.get(`/chat/checkId/${roomId}`)
@@ -86,12 +92,46 @@ export default {
                 isGroup.value = true
             }
 
-            const messagesRes =  await $api.get(`/message/getAllChat/${chatId.value}`)
+            const messagesRes =  await $api.get(`/message/getAllChat/${chatId.value}`, {
+                params: {
+                    page: page.value,
+                    limit: limit.value
+                }
+            })
+            console.log('messagesRes', messagesRes)
             if (messagesRes.data.status !== false) {
                 messages.push(...messagesRes.data)
             }
-            
+
+            console.log('test', scrollEnd, scrollEnd.value)
+            observer.observe(scrollEnd.value)
+            console.log('test')
+
+            scrollArea.value.scrollTo(0, scrollArea.value.scrollHeight)  
+           
         })
+
+        const observer = new IntersectionObserver(async (entries) => {
+            if( entries[0].isIntersecting && hasMore.value) {
+                page.value++
+                isLoadedMessages.value = true
+                const messagesRes =  await $api.get(`/message/getAllChat/${chatId.value}`, {
+                    params: {
+                        page: page.value,
+                        limit: limit.value
+                    }
+                })
+                if (messagesRes.data.length === 0) {
+                    hasMore.value = false
+                }
+
+                messages.unshift(...messagesRes.data)
+                console.log('messagesRes', messagesRes)
+                isLoadedMessages.value = false
+                
+            }
+        })
+        
 
         console.log('join to the room')
         socket.emit('join-room', { 
@@ -101,7 +141,7 @@ export default {
 
 
         socket.on('newMessage', (messageData) => {
-            console.log('NEEEEW')
+            console.log('NEEEEW', messageData)
             messages.push(messageData)
         })
 
@@ -137,12 +177,18 @@ export default {
             sendMessage,
             invateStatus,
             exitGroup,
-            isGroup
+            isGroup,
+            scrollEnd,
+            scrollArea
         }
     }
 }
 </script>
 
 <style>
-
+    .messages-container {
+        overflow:scroll; 
+        height: 300px;
+        width: 600px;
+    }
 </style>

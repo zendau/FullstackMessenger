@@ -8,6 +8,7 @@ import {
   Delete,
   HttpStatus,
   Res,
+  Query,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { IMessageDTO } from './dto/message.dto';
@@ -36,14 +37,20 @@ export class MessageController {
   }
 
   @Get('getAllChat/:id')
-  async findAll(@Param('id') chatId: number) {
-    const res = await this.messageService.getAllByChat(chatId).catch((err) => {
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
+  async findAll(
+    @Param('id') chatId: number,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    const res = await this.messageService
+      .getAllByChat(chatId, page, limit)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
     return res;
   }
 

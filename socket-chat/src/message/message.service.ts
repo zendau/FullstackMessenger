@@ -46,28 +46,20 @@ export class MessageService {
     }
   }
 
-  async getAllByChat(chatId: number) {
+  async getAllByChat(chatId: number, page: number, limit: number) {
     // TODO: Пагинация
+    const skip = page * limit;
 
     const messages = await this.messageRepository
       .createQueryBuilder('message')
       .innerJoin('message.chat', 'chat')
       .where('chat.id = :chatId', { chatId })
-      // .skip()
-      // .take()
+      .skip(skip)
+      .take(limit)
+      .orderBy('message.id', 'DESC')
       .getMany();
 
-    const messagesWithLogin = await Promise.all(
-      messages.map(async (message: any) => {
-        const userData = await this.chatService.getUserName(message.authorId);
-        console.log('userData', userData);
-        message.login = userData[0].login;
-        console.log('message', message);
-        return message;
-      }),
-    );
-
-    return messagesWithLogin;
+    return messages;
   }
 
   async getById(messageId: number) {
