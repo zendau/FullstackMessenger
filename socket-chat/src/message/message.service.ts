@@ -7,6 +7,19 @@ import { IMessageDTO } from './dto/message.dto';
 import { IUpdateMessageDTO } from './dto/update-message.dto';
 import { Message } from './entities/message.entity';
 
+interface test {
+  status: boolean;
+  message: string;
+  httpCode: HttpStatus;
+}
+
+interface test2 {
+  chat: Chat;
+  authorLogin: string;
+  text: string;
+  id: number;
+}
+
 @Injectable()
 export class MessageService {
   constructor(
@@ -14,38 +27,22 @@ export class MessageService {
     private messageRepository: Repository<Message>,
     private chatService: ChatService,
   ) {}
-
   async create(createMessageDTO: IMessageDTO) {
     // TODO : Проверка пользователя на принадлежность к чату
 
-    const userData = await this.chatService.getUserName(
-      createMessageDTO.authorId,
+    const chatData = await this.chatService.getChatById(
+      createMessageDTO.chatId,
     );
 
-    if (userData.length > 0) {
-      console.log('userData', userData);
-
-      const chatData = await this.chatService.getChatById(
-        createMessageDTO.chatId,
-      );
-
-      if (chatData.res instanceof Chat) {
-        const chat = chatData.res;
-
-        const resInsered = await this.messageRepository.save({
-          ...createMessageDTO,
-          chat,
-        });
-        return resInsered;
-      } else {
-        return chatData;
-      }
+    if (chatData instanceof Chat) {
+      const resInsered = await this.messageRepository.save({
+        chat: chatData,
+        authorLogin: createMessageDTO.authorLogin,
+        text: createMessageDTO.text,
+      });
+      return resInsered;
     } else {
-      return {
-        status: false,
-        message: `userId ${createMessageDTO.authorId} is not found`,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      return chatData;
     }
   }
 
@@ -94,7 +91,7 @@ export class MessageService {
       .createQueryBuilder()
       .update()
       .set({
-        content: updateMessageDTO.content,
+        text: updateMessageDTO.text,
       })
       .where(`id = ${updateMessageDTO.id}`)
       .execute();

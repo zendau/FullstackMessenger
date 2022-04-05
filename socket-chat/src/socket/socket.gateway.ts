@@ -1,3 +1,5 @@
+import { Message } from './../message/entities/message.entity';
+import { MessageService } from './../message/message.service';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -14,7 +16,10 @@ import * as uuid from 'uuid';
   },
 })
 export class SocketGateway {
-  constructor(private readonly socketService: SocketService) {}
+  constructor(
+    private readonly socketService: SocketService,
+    private readonly messageService: MessageService,
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -80,10 +85,25 @@ export class SocketGateway {
   }
 
   @SubscribeMessage('sendMessage')
-  sendMessage(socket: Socket, payload: any) {
+  async sendMessage(socket: Socket, payload: any) {
     payload.id = uuid.v4();
-    console.log('sendMessage', payload.roomId);
+    console.log('sendMessage', payload);
     console.log('send rooms', socket.rooms);
-    this.server.to(payload.roomId).emit('newMessage', payload);
+    const res = await this.messageService.create({
+      authorLogin: payload.authorLogin,
+      text: payload.text,
+      chatId: payload.chatId,
+    });
+    if ('chat' in res) {
+      console.log('SEND', payload.chatId);
+      this.server.to(payload.chatId).emit('newMessage', {
+        login: res.authorLogin,
+        text: res.text,
+        created_at: res.created_at,
+        id: res.id,
+      });
+    } else {
+      console.log('NOT INSTANCEOF');
+    }
   }
 }

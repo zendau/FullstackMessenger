@@ -3,7 +3,7 @@
 export class IMessageDTO {
   chatId: string;
 
-  authorId: number;
+  authorLogin: string;
 
-  content: string;
+  text: string;
 }

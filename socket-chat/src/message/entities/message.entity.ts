@@ -18,9 +18,8 @@ export class Message {
   chat: Chat;
 
   @Column()
-  authorId: number;
+  authorLogin: string;
 
-  // TODO: заменить на text
   @Column()
-  content: string;
+  text: string;
 }

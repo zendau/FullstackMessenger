@@ -109,10 +109,7 @@ export class ChatService {
         httpCode: HttpStatus.BAD_REQUEST,
       };
 
-    return {
-      res,
-      status: true,
-    };
+    return res;
   }
 
   async createChat(chatData: ChatDTO) {
@@ -197,11 +194,11 @@ export class ChatService {
   async invaiteUsersToChat(invateData: UpdateChatDto) {
     const chat = await this.getChatById(invateData.roomId);
 
-    if (chat.status) {
+    if (chat instanceof Chat) {
       const usersEntity = [];
 
       invateData.usersId.forEach((userId) => {
-        usersEntity.push(this.createEntity(userId, chat.res));
+        usersEntity.push(this.createEntity(userId, chat));
       });
 
       return await this.chatUserRepository.save(usersEntity);

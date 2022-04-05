@@ -2,10 +2,13 @@
   roomId - {{roomId}}
     
     <h1>Messages</h1>
-    <div>
+    <div  v-if="messages.length > 0">
         <p v-for="message in messages" :key="message.id">
-            {{message.login}} - {{message.content}} - {{message.created_at}}
+            {{message.login}} - {{message.text}} - {{message.created_at}}
         </p>
+    </div>
+    <div v-else>
+        <p>No messages</p>
     </div>
     <input type="text" placeholder="message" ref="message">
     <button @click="sendMessage">Send message</button>
@@ -73,18 +76,21 @@ export default {
 
         onMounted(async () => {
             const res =  await $api.get(`/chat/checkId/${roomId}`)
-            chatId.value = res.data.res.id
-            if (!res.data.status) {
+            chatId.value = res.data.id
+            if (res.data.status === false) {
                 router.push('/chat/all')
             }
-            if (res.data.res.groupName === null) {
+            if (res.data.groupName === null) {
                 isGroup.value = false
             } else {
                 isGroup.value = true
             }
 
             const messagesRes =  await $api.get(`/message/getAllChat/${chatId.value}`)
-            messages.push(...messagesRes.data)
+            if (messagesRes.data.status !== false) {
+                messages.push(...messagesRes.data)
+            }
+            
         })
 
         console.log('join to the room')
@@ -102,9 +108,9 @@ export default {
         function sendMessage() {
             console.log(message)
             socket.emit('sendMessage', {
-                userId: userLogin,
+                authorLogin: userLogin,
                 text: message.value.value,
-                roomId
+                chatId: roomId
             })
 
             message.value.value = ''
