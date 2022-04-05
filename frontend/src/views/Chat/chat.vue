@@ -3,10 +3,11 @@
     
     <h1>Messages</h1>
     <div class="messages-container" ref='scrollArea'>
-        <div ref='scrollEnd'></div>
+        
         <p v-for="message in messages" :key="message.id">
-            {{message.authorLogin}} - {{message.text}} - {{message.created_at}}
+            {{message.authorLogin}} - {{message.text}} - {{convertDate(message.created_at)}}
         </p>
+        <div ref='scrollEnd'></div>
     </div>
     <input type="text" placeholder="message" ref="message">
     <button @click="sendMessage">Send message</button>
@@ -101,13 +102,14 @@ export default {
             console.log('messagesRes', messagesRes)
             if (messagesRes.data.status !== false) {
                 messages.push(...messagesRes.data)
+                //scrollArea.value.scrollTo(0, scrollArea.value.scrollHeight)  
+                observer.observe(scrollEnd.value)
             }
-
+           
             console.log('test', scrollEnd, scrollEnd.value)
-            observer.observe(scrollEnd.value)
             console.log('test')
 
-            scrollArea.value.scrollTo(0, scrollArea.value.scrollHeight)  
+            
            
         })
 
@@ -125,7 +127,7 @@ export default {
                     hasMore.value = false
                 }
 
-                messages.unshift(...messagesRes.data)
+                messages.push(...messagesRes.data)
                 console.log('messagesRes', messagesRes)
                 isLoadedMessages.value = false
                 
@@ -142,7 +144,7 @@ export default {
 
         socket.on('newMessage', (messageData) => {
             console.log('NEEEEW', messageData)
-            messages.push(messageData)
+            messages.unshift(messageData)
         })
 
         function sendMessage() {
@@ -170,6 +172,11 @@ export default {
             }
         }
 
+        function convertDate(date) {
+            const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}
+            return new Intl.DateTimeFormat('ru-RU', options).format(Date.parse(date));
+        }
+
         return {
             roomId,
             messages,
@@ -179,7 +186,8 @@ export default {
             exitGroup,
             isGroup,
             scrollEnd,
-            scrollArea
+            scrollArea,
+            convertDate
         }
     }
 }
@@ -187,6 +195,8 @@ export default {
 
 <style>
     .messages-container {
+        display: flex;
+  flex-direction: column-reverse;
         overflow:scroll; 
         height: 300px;
         width: 600px;
