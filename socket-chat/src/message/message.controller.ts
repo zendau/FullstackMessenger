@@ -36,7 +36,7 @@ export class MessageController {
   }
 
   @Get('getAllChat/:id')
-  async findAll(@Param('id') chatId: string) {
+  async findAll(@Param('id') chatId: number) {
     const res = await this.messageService.getAllByChat(chatId).catch((err) => {
       return {
         status: false,

@@ -16,29 +16,61 @@ export class MessageService {
   ) {}
 
   async create(createMessageDTO: IMessageDTO) {
-    const chatData = await this.chatService.getChatById(
-      createMessageDTO.chatId,
+    // TODO : Проверка пользователя на принадлежность к чату
+
+    const userData = await this.chatService.getUserName(
+      createMessageDTO.authorId,
     );
 
-    if (chatData.res instanceof Chat) {
-      const chat = chatData.res;
+    if (userData.length > 0) {
+      console.log('userData', userData);
 
-      const resInsered = await this.messageRepository.save({
-        ...createMessageDTO,
-        chat,
-      });
-      return resInsered;
+      const chatData = await this.chatService.getChatById(
+        createMessageDTO.chatId,
+      );
+
+      if (chatData.res instanceof Chat) {
+        const chat = chatData.res;
+
+        const resInsered = await this.messageRepository.save({
+          ...createMessageDTO,
+          chat,
+        });
+        return resInsered;
+      } else {
+        return chatData;
+      }
     } else {
-      return chatData;
+      return {
+        status: false,
+        message: `userId ${createMessageDTO.authorId} is not found`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
     }
   }
 
-  async getAllByChat(chatId: string) {
-    return await this.messageRepository
+  async getAllByChat(chatId: number) {
+    // TODO: Пагинация
+
+    const messages = await this.messageRepository
       .createQueryBuilder('message')
-      .innerJoinAndSelect('message.chat', 'chat')
-      .where('chat.chatId = :chatId', { chatId })
+      .innerJoin('message.chat', 'chat')
+      .where('chat.id = :chatId', { chatId })
+      // .skip()
+      // .take()
       .getMany();
+
+    const messagesWithLogin = await Promise.all(
+      messages.map(async (message: any) => {
+        const userData = await this.chatService.getUserName(message.authorId);
+        console.log('userData', userData);
+        message.login = userData[0].login;
+        console.log('message', message);
+        return message;
+      }),
+    );
+
+    return messagesWithLogin;
   }
 
   async getById(messageId: number) {

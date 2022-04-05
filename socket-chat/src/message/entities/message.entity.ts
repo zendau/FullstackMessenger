@@ -20,6 +20,7 @@ export class Message {
   @Column()
   authorId: number;
 
+  // TODO: заменить на text
   @Column()
   content: string;
 }

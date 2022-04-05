@@ -4,7 +4,7 @@
     <h1>Messages</h1>
     <div>
         <p v-for="message in messages" :key="message.id">
-            {{message.userId}} - {{message.text}}
+            {{message.login}} - {{message.content}} - {{message.created_at}}
         </p>
     </div>
     <input type="text" placeholder="message" ref="message">
@@ -60,20 +60,7 @@ export default {
 
         const userId = localStorage.getItem('id')
 
-        const messages = reactive([
-            {
-                id: 1,
-                userId: 1,
-                text: 'hello',
-                roomId: 1
-            },
-             {
-                id: 2,
-                userId: 2,
-                text: 'test',
-                roomId: 1
-            }
-        ])
+        const messages = reactive([])
 
 
         const roomId = route.params.id
@@ -95,6 +82,9 @@ export default {
             } else {
                 isGroup.value = true
             }
+
+            const messagesRes =  await $api.get(`/message/getAllChat/${chatId.value}`)
+            messages.push(...messagesRes.data)
         })
 
         console.log('join to the room')
