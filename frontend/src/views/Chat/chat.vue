@@ -3,7 +3,7 @@
     
     <h1>Messages</h1>
     <div class="messages-container" ref='scrollArea'>
-        
+        <p v-if='messages.length === 0'>Messages not found</p>
         <p v-for="message in messages" :key="message.id">
             {{message.authorLogin}} - {{message.text}} - {{convertDate(message.created_at)}}
         </p>
@@ -177,6 +177,27 @@ export default {
             return new Intl.DateTimeFormat('ru-RU', options).format(Date.parse(date));
         }
 
+        function isLink(text) {
+            const expression = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()[\]{};:'".,<>?«»“”‘’]))?/ig;
+            const regex = new RegExp(expression);
+
+            let result = ''
+            let restText = text
+            const res = text.match(regex)
+            if (res) {
+                res.forEach(link => {
+                    const temp = restText.replace(link, "<a href='$&'>ICON</a>").split('</a>')
+                    result += temp[0] + '</a>'
+                    restText = temp[1]
+                    console.log('resText', result)
+                });
+                console.log('res', res)
+                return result + restText
+            } else {
+                return false
+            }
+        }
+
         return {
             roomId,
             messages,
@@ -187,7 +208,8 @@ export default {
             isGroup,
             scrollEnd,
             scrollArea,
-            convertDate
+            convertDate,
+            isLink
         }
     }
 }
