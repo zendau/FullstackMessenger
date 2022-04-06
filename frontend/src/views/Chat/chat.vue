@@ -5,7 +5,7 @@
     <div class="messages-container" ref='scrollArea'>
         <p v-if='messages.length === 0'>Messages not found</p>
         <p v-for="message in messages" :key="message.id">
-            {{message.authorLogin}} - {{message.text}} - {{convertDate(message.created_at)}}
+            {{message.authorLogin}} - <span v-html="isLink(message.text)"/> - {{convertDate(message.created_at)}}
         </p>
         <div ref='scrollEnd'></div>
     </div>
@@ -186,15 +186,31 @@ export default {
             const res = text.match(regex)
             if (res) {
                 res.forEach(link => {
-                    const temp = restText.replace(link, "<a href='$&'>ICON</a>").split('</a>')
+
+                    const testLink = link.split('.')
+
+                    if (testLink[1] == '' || testLink[1].charAt(0) === testLink[1].charAt(0).toUpperCase()) {
+                        return link
+                    }
+
+                    const exp = /(http|https):\/\/([\w.]+\/?)\S*/ig
+                    const reg = new RegExp(exp);
+                    
+                    let url = null
+
+                    if (!link.match(reg)) {
+                        url = `http://${link}`
+                    } else {
+                        url = link
+                    }
+
+                    const temp = restText.replace(link, `<a target='_blank' href='${url}'>$&</a>`).split('</a>')
                     result += temp[0] + '</a>'
                     restText = temp[1]
-                    console.log('resText', result)
                 });
-                console.log('res', res)
                 return result + restText
             } else {
-                return false
+                return text
             }
         }
 
