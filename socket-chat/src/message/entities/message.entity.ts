@@ -1,3 +1,4 @@
+import { Media } from './media.entity';
 import { Chat } from 'src/chat/entities/chat.entity';
 import {
   Entity,
@@ -5,6 +6,8 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   ManyToOne,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -22,4 +25,8 @@ export class Message {
 
   @Column()
   text: string;
+
+  @OneToOne(() => Media)
+  @JoinColumn()
+  media: Media;
 }

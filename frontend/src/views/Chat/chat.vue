@@ -2,14 +2,17 @@
   roomId - {{roomId}}
     
     <h1>Messages</h1>
-    <div class="messages-container" ref='scrollArea'>
-        <p v-if='messages.length === 0'>Messages not found</p>
-        <p v-for="message in messages" :key="message.id">
-            {{message.authorLogin}} - <span v-html="isLink(message.text)"/> - {{convertDate(message.created_at)}}
-        </p>
-        <div ref='scrollEnd'></div>
-    </div>
-    <input type="text" placeholder="message" ref="message">
+    <file-upload>
+        <div class="messages-container" ref='scrollArea'>
+            <p v-if='messages.length === 0'>Messages not found</p>
+            <p v-for="message in messages" :key="message.id">
+                {{message.authorLogin}} - <span v-html="isLink(message.text)"/> - {{convertDate(message.created_at)}}
+            </p>
+            <div ref='scrollEnd'></div>
+        </div>
+     </file-upload>
+    <input type="text" placeholder="message" v-model="message">
+   
     <button @click="sendMessage">Send message</button>
 
     <button @click="$router.back()">back</button>
@@ -39,9 +42,10 @@ import { inject, onMounted, provide } from '@vue/runtime-core'
 import $api from '../../axios'
 import groupUsers from '../../components/groupUsers.vue'
 import InvaitedUsers from '../../components/invaitedUsers.vue'
+import FileUpload from '../../components/fileUpload.vue'
 
 export default {
-  components: { groupUsers, InvaitedUsers },
+  components: { groupUsers, InvaitedUsers, FileUpload },
     setup() {
 
         console.log('provide')
@@ -54,7 +58,8 @@ export default {
 
         const userLogin = localStorage.getItem('login')
 
-        const message = ref(null)
+        const message = ref('')
+        const file = ref(null)
 
         const invateStatus = ref(false)
 
@@ -148,14 +153,15 @@ export default {
         })
 
         function sendMessage() {
+            console.log('file',file.value.files)
             console.log(message)
             socket.emit('sendMessage', {
                 authorLogin: userLogin,
-                text: message.value.value,
+                text: message.value,
                 chatId: roomId
             })
 
-            message.value.value = ''
+            message.value = ''
         }
 
         async function exitGroup() {
@@ -218,6 +224,7 @@ export default {
             roomId,
             messages,
             message,
+            file,
             sendMessage,
             invateStatus,
             exitGroup,

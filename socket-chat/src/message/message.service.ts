@@ -1,3 +1,4 @@
+import { Media } from './entities/media.entity';
 import { Chat } from './../chat/entities/chat.entity';
 import { ChatService } from './../chat/chat.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
@@ -7,24 +8,13 @@ import { IMessageDTO } from './dto/message.dto';
 import { IUpdateMessageDTO } from './dto/update-message.dto';
 import { Message } from './entities/message.entity';
 
-interface test {
-  status: boolean;
-  message: string;
-  httpCode: HttpStatus;
-}
-
-interface test2 {
-  chat: Chat;
-  authorLogin: string;
-  text: string;
-  id: number;
-}
-
 @Injectable()
 export class MessageService {
   constructor(
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
+    @InjectRepository(Media)
+    private mediaRepository: Repository<Media>,
     private chatService: ChatService,
   ) {}
   async create(createMessageDTO: IMessageDTO) {
@@ -33,12 +23,15 @@ export class MessageService {
     const chatData = await this.chatService.getChatById(
       createMessageDTO.chatId,
     );
-
     if (chatData instanceof Chat) {
       const resInsered = await this.messageRepository.save({
         chat: chatData,
         authorLogin: createMessageDTO.authorLogin,
         text: createMessageDTO.text,
+      });
+      const res = await this.mediaRepository.create({
+        fileId: 1,
+        isMedia: true,
       });
       return resInsered;
     } else {

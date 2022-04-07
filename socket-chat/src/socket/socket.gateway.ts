@@ -86,7 +86,6 @@ export class SocketGateway {
 
   @SubscribeMessage('sendMessage')
   async sendMessage(socket: Socket, payload: any) {
-    payload.id = uuid.v4();
     console.log('sendMessage', payload);
     console.log('send rooms', socket.rooms);
     const res = await this.messageService.create({

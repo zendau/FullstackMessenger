@@ -30,6 +30,7 @@ export class FileService {
   }
 
   async getAll() {
+    debugger;
     return await this.fileRepository
       .createQueryBuilder('file')
       .innerJoinAndSelect('file.foulder', 'foulder')

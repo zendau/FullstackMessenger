@@ -113,7 +113,6 @@ export class ChatService {
   }
 
   async createChat(chatData: ChatDTO) {
-    debugger;
     const chatInseted = await this.chatRepository.save({
       chatId: uuid.v4(),
       groupType: chatData.groupType,
