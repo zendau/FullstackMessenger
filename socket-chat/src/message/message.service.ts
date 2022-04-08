@@ -17,23 +17,31 @@ export class MessageService {
     private mediaRepository: Repository<Media>,
     private chatService: ChatService,
   ) {}
-  async create(createMessageDTO: IMessageDTO) {
+  async create(createMessageDTO: IMessageDTO, files?: number[]) {
     // TODO : Проверка пользователя на принадлежность к чату
-
     const chatData = await this.chatService.getChatById(
       createMessageDTO.chatId,
     );
     if (chatData instanceof Chat) {
-      const resInsered = await this.messageRepository.save({
+      // TODO : подумать про то, стоит ли тут быть типу any
+      const messageInsered: any = await this.messageRepository.save({
         chat: chatData,
         authorLogin: createMessageDTO.authorLogin,
         text: createMessageDTO.text,
       });
-      const res = await this.mediaRepository.create({
-        fileId: 1,
-        isMedia: true,
-      });
-      return resInsered;
+      if (files !== null) {
+        const filesInsered = await Promise.all(
+          files.map(async (fileId) => {
+            const resInsered = await this.mediaRepository.save({
+              fileId,
+              message: messageInsered,
+            });
+            return resInsered.id;
+          }),
+        );
+        messageInsered.media = filesInsered;
+        return messageInsered;
+      }
     } else {
       return chatData;
     }

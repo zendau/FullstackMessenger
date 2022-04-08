@@ -22,14 +22,14 @@ export class FileService {
     }
 
     const resInsered = await Promise.all(
-      createFilesData.filesData.map(
-        async (file) =>
-          await this.fileRepository.save({
-            ...file,
-            userId: createFilesData.userId,
-            foulder,
-          }),
-      ),
+      createFilesData.filesData.map(async (file) => {
+        const fileInsered = await this.fileRepository.save({
+          ...file,
+          userId: createFilesData.userId,
+          foulder,
+        });
+        return fileInsered.id;
+      }),
     );
     return resInsered;
   }

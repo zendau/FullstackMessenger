@@ -87,14 +87,16 @@ export class SocketGateway {
 
   @SubscribeMessage('sendMessage')
   async sendMessage(socket: Socket, payload: any) {
-    debugger;
     console.log('sendMessage', payload);
     console.log('send rooms', socket.rooms);
-    const res = await this.messageService.create({
-      authorLogin: payload.authorLogin,
-      text: payload.text,
-      chatId: payload.chatId,
-    });
+    const res = await this.messageService.create(
+      {
+        authorLogin: payload.authorLogin,
+        text: payload.text,
+        chatId: payload.chatId,
+      },
+      payload.files,
+    );
     if ('chat' in res) {
       console.log('SEND', payload.chatId);
       this.server.to(payload.chatId).emit('newMessage', {
@@ -102,6 +104,7 @@ export class SocketGateway {
         text: res.text,
         created_at: res.created_at,
         id: res.id,
+        media: res.media,
       });
     } else {
       console.log('NOT INSTANCEOF');

@@ -42,8 +42,6 @@ export class FileController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Res() response: Response,
   ) {
-    debugger;
-
     const filesData = {
       ...filesUploadDTO,
       filesData: files.map((file) => {

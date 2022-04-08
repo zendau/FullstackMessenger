@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Message } from './message.entity';
 
 @Entity()
 export class Media {
@@ -6,8 +7,8 @@ export class Media {
   id: number;
 
   @Column()
-  isMedia: boolean;
-
-  @Column()
   fileId: number;
+
+  @ManyToOne(() => Message, (message) => message.id)
+  message: Message;
 }

@@ -57,7 +57,7 @@ export default {
         const route = useRoute()
         const router = useRouter()
 
-        //const userLogin = localStorage.getItem('login')
+        const userLogin = localStorage.getItem('login')
 
         const message = ref('')
         const files = ref(null)
@@ -154,7 +154,7 @@ export default {
             messages.unshift(messageData)
         })
 
-        function sendMessage() {
+        async function sendMessage() {
             console.log(message)
             const formData = new FormData()
 
@@ -168,16 +168,18 @@ export default {
 
             // TODO: исправить axios на $api при переносе на микросервисы
 
-            axios.post('http://localhost:5000/file/add', formData)
-
-            // socket.emit('sendMessage', new FormData({
-            //     authorLogin: userLogin,
-            //     text: message.value,
-            //     chatId: roomId,
-            //     files: files.value
-            // }))
-
-            // message.value = ''
+            const resFilesUpload = await axios.post('http://localhost:5000/file/add', formData)
+            
+            if (resFilesUpload.data.length > 0) {
+                socket.emit('sendMessage', {
+                    authorLogin: userLogin,
+                    text: message.value,
+                    chatId: roomId,
+                    files: resFilesUpload.data
+                })
+                message.value = ''
+                files.value = null
+            }    
         }
 
         async function exitGroup() {
