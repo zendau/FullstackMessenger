@@ -43,6 +43,7 @@ import $api from '../../axios'
 import groupUsers from '../../components/groupUsers.vue'
 import InvaitedUsers from '../../components/invaitedUsers.vue'
 import FileUpload from '../../components/fileUpload.vue'
+import axios from 'axios'
 
 export default {
   components: { groupUsers, InvaitedUsers, FileUpload },
@@ -56,10 +57,11 @@ export default {
         const route = useRoute()
         const router = useRouter()
 
-        const userLogin = localStorage.getItem('login')
+        //const userLogin = localStorage.getItem('login')
 
         const message = ref('')
-        const file = ref(null)
+        const files = ref(null)
+        provide('files', files)
 
         const invateStatus = ref(false)
 
@@ -153,15 +155,29 @@ export default {
         })
 
         function sendMessage() {
-            console.log('file',file.value.files)
             console.log(message)
-            socket.emit('sendMessage', {
-                authorLogin: userLogin,
-                text: message.value,
-                chatId: roomId
+            const formData = new FormData()
+
+            formData.append('path', roomId)
+            formData.append('userId', userId)
+            files.value.forEach(file => {
+                 formData.append('files', file)
             })
 
-            message.value = ''
+            
+
+            // TODO: исправить axios на $api при переносе на микросервисы
+
+            axios.post('http://localhost:5000/file/add', formData)
+
+            // socket.emit('sendMessage', new FormData({
+            //     authorLogin: userLogin,
+            //     text: message.value,
+            //     chatId: roomId,
+            //     files: files.value
+            // }))
+
+            // message.value = ''
         }
 
         async function exitGroup() {
@@ -224,7 +240,6 @@ export default {
             roomId,
             messages,
             message,
-            file,
             sendMessage,
             invateStatus,
             exitGroup,

@@ -10,11 +10,12 @@ import {
   UseInterceptors,
   UploadedFile,
   Put,
+  UploadedFiles,
 } from '@nestjs/common';
 import { FileService } from './file.service';
-import { IFileDTO } from './dto/file.dto';
-import e, { Response } from 'express';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { filesUploadDataDTO } from './dto/filesUploadData.dto';
+import { Response } from 'express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
 import filenameStorage from 'src/multer/filename.storage';
@@ -29,7 +30,7 @@ export class FileController {
 
   @Post('add')
   @UseInterceptors(
-    FileInterceptor('file', {
+    FilesInterceptor('files', 10, {
       storage: diskStorage({
         destination: destinationStorage,
         filename: filenameStorage,
@@ -37,19 +38,25 @@ export class FileController {
     }),
   )
   async create(
-    @Body() createFileDto: IFileDTO,
-    @UploadedFile() file: Express.Multer.File,
+    @Body() filesUploadDTO: filesUploadDataDTO,
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Res() response: Response,
   ) {
-    const fileData = {
-      ...createFileDto,
-      fileName: file.originalname,
-      fileTempName: file.filename,
-      size: file.size,
-      mimetype: file.mimetype,
+    debugger;
+
+    const filesData = {
+      ...filesUploadDTO,
+      filesData: files.map((file) => {
+        return {
+          fileName: file.originalname,
+          fileTempName: file.filename,
+          size: file.size,
+          mimetype: file.mimetype,
+        };
+      }),
     };
 
-    const res = await this.fileService.create(fileData).catch((err) => {
+    const res = await this.fileService.create(filesData).catch((err) => {
       console.log(err);
 
       const errorMessage =
@@ -99,31 +106,31 @@ export class FileController {
     }),
   )
   async update(
-    @Body() updateFileDto: IFileDTO,
+    @Body() updateFileDto: filesUploadDataDTO,
     @UploadedFile() file: Express.Multer.File,
     @Res() response: Response,
   ) {
-    const fileData = {
-      ...updateFileDto,
-      fileName: file.originalname,
-      fileTempName: file.filename,
-      size: file.size,
-      mimetype: file.mimetype,
-    };
+    // const fileData = {
+    //   ...updateFileDto,
+    //   fileName: file.originalname,
+    //   fileTempName: file.filename,
+    //   size: file.size,
+    //   mimetype: file.mimetype,
+    // };
 
-    const res = await this.fileService.update(fileData).catch((err) => {
-      console.log(err);
+    // const res = await this.fileService.update(fileData).catch((err) => {
+    //   console.log(err);
 
-      const errorMessage =
-        err.errno === 1452 ? 'foulderId is not found' : err.sqlMessage;
+    //   const errorMessage =
+    //     err.errno === 1452 ? 'foulderId is not found' : err.sqlMessage;
 
-      response.status(HttpStatus.BAD_REQUEST).send({
-        status: false,
-        message: errorMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      });
-    });
-    response.send(res);
+    //   response.status(HttpStatus.BAD_REQUEST).send({
+    //     status: false,
+    //     message: errorMessage,
+    //     httpCode: HttpStatus.BAD_REQUEST,
+    //   });
+    // });
+    // response.send(res);
   }
 
   @Delete('delete/:id')

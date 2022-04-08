@@ -16,13 +16,13 @@
 
 <script>
 
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 
 export default {
     setup() {
         const dragStatus = ref(false)
 
-        const files = ref(null)
+        const files = inject('files')
 
         function dragStart(e) {
             console.log("START", e)
@@ -35,7 +35,7 @@ export default {
         }
 
         function dataDrop(e) {
-            files.value = e.dataTransfer.files;
+            files.value = [...e.dataTransfer.files];
             dragStatus.value = false
             console.log(files.value)
         }

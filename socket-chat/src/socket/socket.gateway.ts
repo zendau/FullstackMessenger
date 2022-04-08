@@ -9,6 +9,7 @@ import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
 
 import * as uuid from 'uuid';
+import { debug } from 'console';
 
 @WebSocketGateway({
   cors: {
@@ -86,6 +87,7 @@ export class SocketGateway {
 
   @SubscribeMessage('sendMessage')
   async sendMessage(socket: Socket, payload: any) {
+    debugger;
     console.log('sendMessage', payload);
     console.log('send rooms', socket.rooms);
     const res = await this.messageService.create({

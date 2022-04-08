@@ -1,9 +1,9 @@
+import IFiles from './interfaces/IFiles';
 import { Foulder } from './../foulder/entities/foulder.entity';
 import { FoulderService } from './../foulder/foulder.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IFileDTO } from './dto/file.dto';
 import { File } from './entities/file.entity';
 import * as fs from 'fs';
 
@@ -15,17 +15,22 @@ export class FileService {
     private foulderService: FoulderService,
   ) {}
 
-  async create(createFileDTO: IFileDTO) {
-    const foulder = await this.foulderService.getByPath(createFileDTO.path);
+  async create(createFilesData: IFiles) {
+    const foulder = await this.foulderService.getByPath(createFilesData.path);
     if (!(foulder instanceof Foulder)) {
       return foulder;
     }
 
-    const resInsered = await this.fileRepository.save({
-      ...createFileDTO,
-      foulder,
-    });
-    console.log(resInsered);
+    const resInsered = await Promise.all(
+      createFilesData.filesData.map(
+        async (file) =>
+          await this.fileRepository.save({
+            ...file,
+            userId: createFilesData.userId,
+            foulder,
+          }),
+      ),
+    );
     return resInsered;
   }
 
@@ -54,39 +59,39 @@ export class FileService {
     return res;
   }
 
-  async update(updateFileDTO: IFileDTO) {
+  async update(updateFileDTO: IFiles) {
     debugger;
-    const file = await this.getById(updateFileDTO.id);
-    if (file instanceof File) {
-      const error = this.removeFromStorage(file);
+    // const file = await this.getById(updateFileDTO.id);
+    // if (file instanceof File) {
+    //   const error = this.removeFromStorage(file);
 
-      if (typeof error === 'string') {
-        throw new Error(error);
-      }
+    //   if (typeof error === 'string') {
+    //     throw new Error(error);
+    //   }
 
-      const foulder = await this.foulderService.getByPath(updateFileDTO.path);
-      if (!(foulder instanceof Foulder)) {
-        return foulder;
-      }
+    //   const foulder = await this.foulderService.getByPath(updateFileDTO.path);
+    //   if (!(foulder instanceof Foulder)) {
+    //     return foulder;
+    //   }
 
-      const res = await this.fileRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          fileName: updateFileDTO.fileName,
-          fileTempName: updateFileDTO.fileTempName,
-          mimetype: updateFileDTO.mimetype,
-          size: updateFileDTO.size,
-          userId: updateFileDTO.userId,
-          foulder: foulder,
-        })
-        .where(`id = ${updateFileDTO.id}`)
-        .execute();
+    //   const res = await this.fileRepository
+    //     .createQueryBuilder()
+    //     .update()
+    //     .set({
+    //       fileName: updateFileDTO.fileName,
+    //       fileTempName: updateFileDTO.fileTempName,
+    //       mimetype: updateFileDTO.mimetype,
+    //       size: updateFileDTO.size,
+    //       userId: updateFileDTO.userId,
+    //       foulder: foulder,
+    //     })
+    //     .where(`id = ${updateFileDTO.id}`)
+    //     .execute();
 
-      return !!res.affected;
-    } else {
-      return file;
-    }
+    //   return !!res.affected;
+    // } else {
+    //   return file;
+    // }
   }
 
   async removeFromDb(id: number) {
