@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { IMessageDTO } from './dto/message.dto';
 import { IUpdateMessageDTO } from './dto/update-message.dto';
 import { Message } from './entities/message.entity';
+import axios from 'axios';
 
 @Injectable()
 export class MessageService {
@@ -54,13 +55,34 @@ export class MessageService {
     const messages = await this.messageRepository
       .createQueryBuilder('message')
       .innerJoin('message.chat', 'chat')
+      .leftJoinAndSelect('message.media', 'media')
       .where('chat.id = :chatId', { chatId })
       .skip(skip)
       .take(limit)
       .orderBy('message.id', 'DESC')
       .getMany();
 
-    return messages;
+    // TODO : Удалить запрос на получение данныъ о файле и добавить в микросервисе запрос на получение данных о файлах из другого микросервиса
+    // TEMP AREA
+    const resMessages = await Promise.all(
+      messages.map(async (message: any) => {
+        if (message.media.length > 0) {
+          message.files = await Promise.all(
+            message.media.map(async (file) => {
+              const res = await axios.get(
+                `http://localhost:5000/file/get/${file.fileId}`,
+              );
+              return res.data;
+            }),
+          );
+          console.log('MESSAGE', message.files);
+        }
+        return message;
+      }),
+    );
+    // TEMP AREA
+
+    return resMessages;
   }
 
   async getById(messageId: number) {

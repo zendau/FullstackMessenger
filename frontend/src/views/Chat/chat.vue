@@ -7,6 +7,16 @@
             <p v-if='messages.length === 0'>Messages not found</p>
             <p v-for="message in messages" :key="message.id">
                 {{message.authorLogin}} - <span v-html="isLink(message.text)"/> - {{convertDate(message.created_at)}}
+                <span v-if="message.files">
+                    <a 
+                        style="display: block;" 
+                        v-for="file in message.files" 
+                        :key="file.id" 
+                        :href='`http://localhost:5000/file/download/${file.id}`'
+                        >
+                        ICON - {{file.fileName}}
+                    </a>
+                </span>
             </p>
             <div ref='scrollEnd'></div>
         </div>
@@ -99,16 +109,18 @@ export default {
             } else {
                 isGroup.value = true
             }
-
             const messagesRes =  await $api.get(`/message/getAllChat/${chatId.value}`, {
                 params: {
                     page: page.value,
                     limit: limit.value
                 }
             })
+
+         
             console.log('messagesRes', messagesRes)
             if (messagesRes.data.status !== false) {
                 messages.push(...messagesRes.data)
+                console.log('!!!!', messages)
                 //scrollArea.value.scrollTo(0, scrollArea.value.scrollHeight)  
                 observer.observe(scrollEnd.value)
             }

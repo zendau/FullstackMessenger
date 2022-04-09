@@ -157,6 +157,7 @@ export class FileController {
     if (fileData instanceof File) {
       const filePath = `${process.env.STORE_PATH}/${fileData.foulder.path}/${fileData.fileTempName}`;
       if (fs.existsSync(filePath)) {
+        // TODO: Пофиксить имя файла при возвращении (скачивании), подсатвлять оригинальное имя, а не временное
         response.download(filePath);
       } else {
         response.status(HttpStatus.BAD_REQUEST).send({

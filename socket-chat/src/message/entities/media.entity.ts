@@ -9,6 +9,6 @@ export class Media {
   @Column()
   fileId: number;
 
-  @ManyToOne(() => Message, (message) => message.id)
+  @ManyToOne(() => Message, (message) => message.media)
   message: Message;
 }
