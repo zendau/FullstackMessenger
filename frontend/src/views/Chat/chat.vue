@@ -2,14 +2,27 @@
   roomId - {{roomId}}
     
     <h1>Messages</h1>
-    <div class="messages-container" ref='scrollArea'>
-        <p v-if='messages.length === 0'>Messages not found</p>
-        <p v-for="message in messages" :key="message.id">
-            {{message.authorLogin}} - <span v-html="isLink(message.text)"/> - {{convertDate(message.created_at)}}
-        </p>
-        <div ref='scrollEnd'></div>
-    </div>
-    <input type="text" placeholder="message" ref="message">
+    <file-upload>
+        <div class="messages-container" ref='scrollArea'>
+            <p v-if='messages.length === 0'>Messages not found</p>
+            <p v-for="message in messages" :key="message.id">
+                {{message.authorLogin}} - <span v-html="isLink(message.text)"/> - {{convertDate(message.created_at)}}
+                <span v-if="message.files">
+                    <a 
+                        style="display: block;" 
+                        v-for="file in message.files" 
+                        :key="file.id" 
+                        :href='`http://localhost:5000/file/download/${file.id}`'
+                        >
+                        ICON - {{file.fileName}}
+                    </a>
+                </span>
+            </p>
+            <div ref='scrollEnd'></div>
+        </div>
+     </file-upload>
+    <input type="text" placeholder="message" v-model="message">
+   
     <button @click="sendMessage">Send message</button>
 
     <button @click="$router.back()">back</button>
@@ -39,9 +52,11 @@ import { inject, onMounted, provide } from '@vue/runtime-core'
 import $api from '../../axios'
 import groupUsers from '../../components/groupUsers.vue'
 import InvaitedUsers from '../../components/invaitedUsers.vue'
+import FileUpload from '../../components/fileUpload.vue'
+import axios from 'axios'
 
 export default {
-  components: { groupUsers, InvaitedUsers },
+  components: { groupUsers, InvaitedUsers, FileUpload },
     setup() {
 
         console.log('provide')
@@ -54,7 +69,9 @@ export default {
 
         const userLogin = localStorage.getItem('login')
 
-        const message = ref(null)
+        const message = ref('')
+        const files = ref(null)
+        provide('files', files)
 
         const invateStatus = ref(false)
 
@@ -92,16 +109,18 @@ export default {
             } else {
                 isGroup.value = true
             }
-
             const messagesRes =  await $api.get(`/message/getAllChat/${chatId.value}`, {
                 params: {
                     page: page.value,
                     limit: limit.value
                 }
             })
+
+         
             console.log('messagesRes', messagesRes)
             if (messagesRes.data.status !== false) {
                 messages.push(...messagesRes.data)
+                console.log('!!!!', messages)
                 //scrollArea.value.scrollTo(0, scrollArea.value.scrollHeight)  
                 observer.observe(scrollEnd.value)
             }
@@ -147,15 +166,35 @@ export default {
             messages.unshift(messageData)
         })
 
-        function sendMessage() {
+        async function sendMessage() {
             console.log(message)
+
+            let filesUpload = null
+
+            if (files.value !== null) {
+                   const formData = new FormData()
+
+            formData.append('path', roomId)
+            formData.append('userId', userId)
+            files.value.forEach(file => {
+                 formData.append('files', file)
+            })
+             // TODO: исправить axios на $api при переносе на микросервисы
+
+            const resUpload = await axios.post('http://localhost:5000/file/add', formData)
+            filesUpload = resUpload.data
+            
+            }
+
             socket.emit('sendMessage', {
                 authorLogin: userLogin,
-                text: message.value.value,
-                chatId: roomId
+                text: message.value,
+                chatId: roomId,
+                files: filesUpload
             })
-
-            message.value.value = ''
+            message.value = ''
+            files.value = null
+            
         }
 
         async function exitGroup() {

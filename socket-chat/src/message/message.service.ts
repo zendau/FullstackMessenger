@@ -1,3 +1,4 @@
+import { Media } from './entities/media.entity';
 import { Chat } from './../chat/entities/chat.entity';
 import { ChatService } from './../chat/chat.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
@@ -6,41 +7,42 @@ import { Repository } from 'typeorm';
 import { IMessageDTO } from './dto/message.dto';
 import { IUpdateMessageDTO } from './dto/update-message.dto';
 import { Message } from './entities/message.entity';
-
-interface test {
-  status: boolean;
-  message: string;
-  httpCode: HttpStatus;
-}
-
-interface test2 {
-  chat: Chat;
-  authorLogin: string;
-  text: string;
-  id: number;
-}
+import axios from 'axios';
 
 @Injectable()
 export class MessageService {
   constructor(
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
+    @InjectRepository(Media)
+    private mediaRepository: Repository<Media>,
     private chatService: ChatService,
   ) {}
-  async create(createMessageDTO: IMessageDTO) {
+  async create(createMessageDTO: IMessageDTO, files?: number[]) {
     // TODO : Проверка пользователя на принадлежность к чату
-
     const chatData = await this.chatService.getChatById(
       createMessageDTO.chatId,
     );
-
     if (chatData instanceof Chat) {
-      const resInsered = await this.messageRepository.save({
+      // TODO : подумать про то, стоит ли тут быть типу any
+      const messageInsered: any = await this.messageRepository.save({
         chat: chatData,
         authorLogin: createMessageDTO.authorLogin,
         text: createMessageDTO.text,
       });
-      return resInsered;
+      if (files !== null) {
+        const filesInsered = await Promise.all(
+          files.map(async (fileId) => {
+            const resInsered = await this.mediaRepository.save({
+              fileId,
+              message: messageInsered,
+            });
+            return resInsered.fileId;
+          }),
+        );
+        messageInsered.media = filesInsered;
+      }
+      return messageInsered;
     } else {
       return chatData;
     }
@@ -53,13 +55,34 @@ export class MessageService {
     const messages = await this.messageRepository
       .createQueryBuilder('message')
       .innerJoin('message.chat', 'chat')
+      .leftJoinAndSelect('message.media', 'media')
       .where('chat.id = :chatId', { chatId })
       .skip(skip)
       .take(limit)
       .orderBy('message.id', 'DESC')
       .getMany();
 
-    return messages;
+    // TODO : Удалить запрос на получение данныъ о файле и добавить в микросервисе запрос на получение данных о файлах из другого микросервиса
+    // TEMP AREA
+    const resMessages = await Promise.all(
+      messages.map(async (message: any) => {
+        if (message.media.length > 0) {
+          message.files = await Promise.all(
+            message.media.map(async (file) => {
+              const res = await axios.get(
+                `http://localhost:5000/file/get/${file.fileId}`,
+              );
+              return res.data;
+            }),
+          );
+          console.log('MESSAGE', message.files);
+        }
+        return message;
+      }),
+    );
+    // TEMP AREA
+
+    return resMessages;
   }
 
   async getById(messageId: number) {
