@@ -37,7 +37,7 @@ export class MessageService {
               fileId,
               message: messageInsered,
             });
-            return resInsered.id;
+            return resInsered.fileId;
           }),
         );
         messageInsered.media = filesInsered;
