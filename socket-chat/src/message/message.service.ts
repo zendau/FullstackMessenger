@@ -41,8 +41,8 @@ export class MessageService {
           }),
         );
         messageInsered.media = filesInsered;
-        return messageInsered;
       }
+      return messageInsered;
     } else {
       return chatData;
     }

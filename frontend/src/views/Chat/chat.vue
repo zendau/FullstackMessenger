@@ -168,30 +168,33 @@ export default {
 
         async function sendMessage() {
             console.log(message)
-            const formData = new FormData()
+
+            let filesUpload = null
+
+            if (files.value !== null) {
+                   const formData = new FormData()
 
             formData.append('path', roomId)
             formData.append('userId', userId)
             files.value.forEach(file => {
                  formData.append('files', file)
             })
+             // TODO: исправить axios на $api при переносе на микросервисы
 
+            const resUpload = await axios.post('http://localhost:5000/file/add', formData)
+            filesUpload = resUpload.data
             
+            }
 
-            // TODO: исправить axios на $api при переносе на микросервисы
-
-            const resFilesUpload = await axios.post('http://localhost:5000/file/add', formData)
+            socket.emit('sendMessage', {
+                authorLogin: userLogin,
+                text: message.value,
+                chatId: roomId,
+                files: filesUpload
+            })
+            message.value = ''
+            files.value = null
             
-            if (resFilesUpload.data.length > 0) {
-                socket.emit('sendMessage', {
-                    authorLogin: userLogin,
-                    text: message.value,
-                    chatId: roomId,
-                    files: resFilesUpload.data
-                })
-                message.value = ''
-                files.value = null
-            }    
         }
 
         async function exitGroup() {

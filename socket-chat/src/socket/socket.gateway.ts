@@ -101,7 +101,7 @@ export class SocketGateway {
     // TODO : Удалить запрос на получение данныъ о файле и добавить в микросервисе запрос на получение данных о файлах из другого микросервиса
     // TEMP AREA
 
-    if (res.media.length > 0) {
+    if (res?.media) {
       res.files = await Promise.all(
         res.media.map(async (file) => {
           const res = await axios.get(`http://localhost:5000/file/get/${file}`);
