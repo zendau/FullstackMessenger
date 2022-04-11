@@ -21,6 +21,16 @@ services:
       environment:
         - PMA_ARBITRARY=1
 
+  rabbitmq:
+      image: rabbitmq:management
+
+      restart: always
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      environment:
+        - RABBITMQ_DEFAULT_USER=user
+        - RABBITMQ_DEFAULT_PASS=root
 
 
 volumes:
