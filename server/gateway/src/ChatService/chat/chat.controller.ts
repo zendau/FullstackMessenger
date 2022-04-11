@@ -66,7 +66,7 @@ export class ChatController {
   @Get('getContacts')
   async getContacts() {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('chat/getContacts', null),
+      this.chatServiceClient.send('chat/getContacts', ''),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);

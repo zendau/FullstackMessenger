@@ -1,3 +1,5 @@
+import { MessageController } from './ChatService/message/message.controller';
+import { ChatController } from './ChatService/chat/chat.controller';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -41,7 +43,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  controllers: [AppController],
+  controllers: [AppController, ChatController, MessageController],
   providers: [AppService],
 })
 export class AppModule {}

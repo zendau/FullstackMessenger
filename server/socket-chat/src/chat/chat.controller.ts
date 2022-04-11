@@ -1,14 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpStatus,
-  Query,
-} from '@nestjs/common';
+import { Controller, HttpStatus } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ChatService } from './chat.service';
 import { ChatDTO } from './dto/chat.dto';
 import { exitChatDto } from './dto/exitChat.dto';
@@ -18,8 +9,8 @@ import { UpdateChatDto } from './dto/update-chat.dto';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Get('getByUser/:id')
-  async getChats(@Param('id') id: number) {
+  @MessagePattern('chat/getByUser')
+  async getChats(@Payload() id: number) {
     const res = await this.chatService.getChats(id).catch((err) => {
       console.log(err);
       return {
@@ -31,8 +22,8 @@ export class ChatController {
     return res;
   }
 
-  @Post('check')
-  async checkChat(@Body() chatData: ChatDTO) {
+  @MessagePattern('chat/check')
+  async checkChat(@Payload() chatData: ChatDTO) {
     const res = await this.chatService.checkChat(chatData).catch((err) => {
       console.log(err);
       return {
@@ -44,8 +35,8 @@ export class ChatController {
     return res;
   }
 
-  @Get('checkId/:id')
-  async checkChatId(@Param('id') id: string) {
+  @MessagePattern('chat/checkId')
+  async checkChatId(@Payload() id: string) {
     const res = await this.chatService.getChatById(id).catch((err) => {
       console.log(err);
       return {
@@ -57,8 +48,8 @@ export class ChatController {
     return res;
   }
 
-  @Post('create')
-  async createChat(@Body() chatData: ChatDTO) {
+  @MessagePattern('chat/create')
+  async createChat(@Payload() chatData: ChatDTO) {
     const res = await this.chatService.createChat(chatData).catch((err) => {
       console.log(err);
       return {
@@ -70,7 +61,7 @@ export class ChatController {
     return res;
   }
 
-  @Get('getContacts')
+  @MessagePattern('chat/getContacts')
   async getContacts() {
     const res = await this.chatService.getContacts().catch((err) => {
       return {
@@ -82,8 +73,8 @@ export class ChatController {
     return res;
   }
 
-  @Delete('delete/:id')
-  async remove(@Param('id') chatId: number) {
+  @MessagePattern('chat/delete')
+  async remove(@Payload() chatId: number) {
     const res = await this.chatService.remove(chatId).catch((err) => {
       return {
         status: false,
@@ -94,8 +85,8 @@ export class ChatController {
     return res;
   }
 
-  @Get('groupUser/:id')
-  async getGroupUser(@Param('id') chatId: string) {
+  @MessagePattern('chat/groupUser')
+  async getGroupUser(@Payload() chatId: string) {
     const res = await this.chatService.getGroupUsers(chatId).catch((err) => {
       return {
         status: false,
@@ -106,8 +97,8 @@ export class ChatController {
     return res;
   }
 
-  @Get('invaitedUsers')
-  async getInvaitedUsers(@Query('userData') usersId: string[]) {
+  @MessagePattern('chat/invaitedUsers')
+  async getInvaitedUsers(@Payload() usersId: string[]) {
     const res = await this.chatService
       .getInvaitedUsers(usersId)
       .catch((err) => {
@@ -121,8 +112,8 @@ export class ChatController {
     return res;
   }
 
-  @Patch('invaiteToChat')
-  async invaiteUsersToChat(@Body() invateData: UpdateChatDto) {
+  @MessagePattern('chat/invaiteToChat')
+  async invaiteUsersToChat(@Payload() invateData: UpdateChatDto) {
     const res = await this.chatService
       .invaiteUsersToChat(invateData)
       .catch((err) => {
@@ -136,8 +127,8 @@ export class ChatController {
     return res;
   }
 
-  @Delete('exitUser')
-  async exitUserGroup(@Query() exitUserDTO: exitChatDto) {
+  @MessagePattern('chat/exitUser')
+  async exitUserGroup(@Payload() exitUserDTO: exitChatDto) {
     console.log(exitUserDTO);
     const res = await this.chatService
       .exitUserGroup(exitUserDTO)
