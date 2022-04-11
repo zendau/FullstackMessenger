@@ -9,7 +9,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
-  @MessagePattern('chat/getByUser')
+  @MessagePattern('message/add')
   async create(@Payload() createMessageDto: IMessageDTO) {
     const res = await this.messageService
       .create(createMessageDto)
@@ -23,10 +23,11 @@ export class MessageController {
     return res;
   }
 
-  @MessagePattern('chat/getByUser')
+  @MessagePattern('message/getAllChat')
   async findAll(
     @Payload() userData: { chatId: number; page: number; limit: number },
   ) {
+    debugger;
     const res = await this.messageService
       .getAllByChat(userData.chatId, userData.page, userData.limit)
       .catch((err) => {
@@ -39,7 +40,7 @@ export class MessageController {
     return res;
   }
 
-  @MessagePattern('chat/getByUser')
+  @MessagePattern('message/get')
   async findOne(@Payload() messageId: number) {
     const res = await this.messageService.getById(messageId).catch((err) => {
       return {
@@ -51,7 +52,7 @@ export class MessageController {
     return res;
   }
 
-  @MessagePattern('chat/getByUser')
+  @MessagePattern('message/edit')
   async update(@Payload() updateMessageDto: IUpdateMessageDTO) {
     const res = await this.messageService
       .update(updateMessageDto)
@@ -65,7 +66,7 @@ export class MessageController {
     return res;
   }
 
-  @MessagePattern('chat/getByUser')
+  @MessagePattern('message/delete')
   async remove(@Payload() messageId: number) {
     const res = await this.messageService.remove(messageId).catch((err) => {
       return {

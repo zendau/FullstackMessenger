@@ -12,7 +12,7 @@ import * as uuid from 'uuid';
 import { debug } from 'console';
 import axios from 'axios';
 
-@WebSocketGateway({
+@WebSocketGateway(80, {
   cors: {
     origin: '*',
   },

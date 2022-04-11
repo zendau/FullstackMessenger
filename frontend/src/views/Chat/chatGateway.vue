@@ -18,7 +18,7 @@ export default {
         const router = useRouter()
         const route = useRoute()
 
-        const socket = io('http://localhost:3000');
+        const socket = io('http://localhost:80');
         provide('socket', socket)
         
         const socketConnected = ref(false)
