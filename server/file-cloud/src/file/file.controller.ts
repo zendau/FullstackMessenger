@@ -23,53 +23,29 @@ import destinationStorage from 'src/multer/destination.storage';
 import { File } from './entities/file.entity';
 
 import * as fs from 'fs';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Post('add')
-  @UseInterceptors(
-    FilesInterceptor('files', 10, {
-      storage: diskStorage({
-        destination: destinationStorage,
-        filename: filenameStorage,
-      }),
-    }),
-  )
-  async create(
-    @Body() filesUploadDTO: filesUploadDataDTO,
-    @UploadedFiles() files: Array<Express.Multer.File>,
-    @Res() response: Response,
-  ) {
-    const filesData = {
-      ...filesUploadDTO,
-      filesData: files.map((file) => {
-        return {
-          fileName: file.originalname,
-          fileTempName: file.filename,
-          size: file.size,
-          mimetype: file.mimetype,
-        };
-      }),
-    };
-
+  @MessagePattern('file/add')
+  async create(@Payload() filesData) {
+    debugger;
     const res = await this.fileService.create(filesData).catch((err) => {
-      console.log(err);
-
       const errorMessage =
         err.errno === 1452 ? 'foulderId is not found' : err.sqlMessage;
 
-      response.status(HttpStatus.BAD_REQUEST).send({
+      return {
         status: false,
         message: errorMessage,
         httpCode: HttpStatus.BAD_REQUEST,
-      });
+      };
     });
-    response.send(res);
+    return res;
   }
 
-  @Get('getAll')
+  @MessagePattern('message/getAll')
   async findAll() {
     const res = await this.fileService.getAll().catch((err) => {
       console.log(err);
@@ -82,8 +58,8 @@ export class FileController {
     return res;
   }
 
-  @Get('get/:id')
-  async findOne(@Param('id') fileId: number) {
+  @MessagePattern('message/get')
+  async findOne(@Payload() fileId: number) {
     const res = await this.fileService.getById(fileId).catch((err) => {
       return {
         status: false,
@@ -94,15 +70,7 @@ export class FileController {
     return res;
   }
 
-  @Put('edit')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: destinationStorage,
-        filename: filenameStorage,
-      }),
-    }),
-  )
+  @MessagePattern('message/getAllChat')
   async update(
     @Body() updateFileDto: filesUploadDataDTO,
     @UploadedFile() file: Express.Multer.File,
@@ -115,13 +83,10 @@ export class FileController {
     //   size: file.size,
     //   mimetype: file.mimetype,
     // };
-
     // const res = await this.fileService.update(fileData).catch((err) => {
     //   console.log(err);
-
     //   const errorMessage =
     //     err.errno === 1452 ? 'foulderId is not found' : err.sqlMessage;
-
     //   response.status(HttpStatus.BAD_REQUEST).send({
     //     status: false,
     //     message: errorMessage,
@@ -131,8 +96,8 @@ export class FileController {
     // response.send(res);
   }
 
-  @Delete('delete/:id')
-  async remove(@Param('id') fileId: number) {
+  @MessagePattern('message/delete')
+  async remove(@Payload() fileId: number) {
     const res = await this.fileService.removeFromDb(fileId).catch((err) => {
       if (err.sqlMessage) {
         return {
@@ -151,27 +116,27 @@ export class FileController {
     return res;
   }
 
-  @Get('download/:id')
-  async getHello(@Res() response: Response, @Param('id') fileId: number) {
-    const fileData = await this.fileService.getById(fileId);
-    if (fileData instanceof File) {
-      const filePath = `${process.env.STORE_PATH}/${fileData.foulder.path}/${fileData.fileTempName}`;
-      if (fs.existsSync(filePath)) {
-        // TODO: Пофиксить имя файла при возвращении (скачивании), подсатвлять оригинальное имя, а не временное
-        response.download(filePath, fileData.fileName);
-      } else {
-        response.status(HttpStatus.BAD_REQUEST).send({
-          status: false,
-          message: `no such file with id ${fileId}`,
-          httpCode: HttpStatus.BAD_REQUEST,
-        });
-      }
-    } else {
-      response.status(fileData.httpCode).send({
-        status: fileData.status,
-        message: fileData.message,
-        httpCode: fileData.httpCode,
-      });
-    }
+  @MessagePattern('message/getAllChat')
+  async getHello(@Payload() fileId: number) {
+    // const fileData = await this.fileService.getById(fileId);
+    // if (fileData instanceof File) {
+    //   const filePath = `${process.env.STORE_PATH}/${fileData.foulder.path}/${fileData.fileTempName}`;
+    //   if (fs.existsSync(filePath)) {
+    //     // TODO: Пофиксить имя файла при возвращении (скачивании), подсатвлять оригинальное имя, а не временное
+    //     response.download(filePath, fileData.fileName);
+    //   } else {
+    //     response.status(HttpStatus.BAD_REQUEST).send({
+    //       status: false,
+    //       message: `no such file with id ${fileId}`,
+    //       httpCode: HttpStatus.BAD_REQUEST,
+    //     });
+    //   }
+    // } else {
+    //   response.status(fileData.httpCode).send({
+    //     status: fileData.status,
+    //     message: fileData.message,
+    //     httpCode: fileData.httpCode,
+    //   });
+    // }
   }
 }

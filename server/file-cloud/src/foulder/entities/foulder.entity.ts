@@ -6,8 +6,5 @@ export class Foulder {
   id: number;
 
   @Column()
-  name: string;
-
-  @Column()
   path: string;
 }

@@ -1,12 +1,16 @@
+import { FoulderController } from './FileCloudService/foulder/foulder.controller';
 import { MessageController } from './ChatService/message/message.controller';
 import { ChatController } from './ChatService/chat/chat.controller';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { FileController } from './FileCloudService/file/file.controller';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     ClientsModule.register([
       {
         name: 'PEER_SERVICE',
@@ -43,7 +47,13 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  controllers: [AppController, ChatController, MessageController],
+  controllers: [
+    AppController,
+    ChatController,
+    MessageController,
+    FoulderController,
+    FileController,
+  ],
   providers: [AppService],
 })
 export class AppModule {}

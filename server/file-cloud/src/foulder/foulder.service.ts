@@ -10,9 +10,7 @@ export class FoulderService {
   constructor(
     @InjectRepository(Foulder)
     private foulderRepository: Repository<Foulder>,
-  ) {
-    this.syncDB();
-  }
+  ) {}
 
   async create(createFoulderDTO: IFoulderDTO) {
     const resInsered = await this.foulderRepository.save(createFoulderDTO);
@@ -60,7 +58,7 @@ export class FoulderService {
       .createQueryBuilder()
       .update()
       .set({
-        name: updateFoulderDTO.name,
+        path: updateFoulderDTO.path,
       })
       .where(`id = ${updateFoulderDTO.id}`)
       .execute();
@@ -76,10 +74,5 @@ export class FoulderService {
       .execute();
 
     return !!res.affected;
-  }
-
-  async syncDB() {
-    const foulders = await this.getAll();
-    console.log(foulders);
   }
 }
