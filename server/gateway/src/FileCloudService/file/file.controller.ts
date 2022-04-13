@@ -12,6 +12,7 @@ import {
   Inject,
   HttpException,
   UploadedFile,
+  HttpStatus,
 } from '@nestjs/common';
 import { filesUploadDataDTO } from './dto/filesUploadData.dto';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
@@ -22,6 +23,8 @@ import * as fs from 'fs';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { diskStorage } from 'multer';
+
+import { Response } from 'express';
 
 @Controller('file')
 export class FileController {
@@ -129,26 +132,22 @@ export class FileController {
   }
 
   @Get('download/:id')
-  async getHello(@Param('id') fileId: number) {
-    // const fileData = await this.fileService.getById(fileId);
-    // if (fileData instanceof File) {
-    //   const filePath = `${process.env.STORE_PATH}/${fileData.foulder.path}/${fileData.fileTempName}`;
-    //   if (fs.existsSync(filePath)) {
-    //     // TODO: Пофиксить имя файла при возвращении (скачивании), подсатвлять оригинальное имя, а не временное
-    //     response.download(filePath, fileData.fileName);
-    //   } else {
-    //     response.status(HttpStatus.BAD_REQUEST).send({
-    //       status: false,
-    //       message: `no such file with id ${fileId}`,
-    //       httpCode: HttpStatus.BAD_REQUEST,
-    //     });
-    //   }
-    // } else {
-    //   response.status(fileData.httpCode).send({
-    //     status: fileData.status,
-    //     message: fileData.message,
-    //     httpCode: fileData.httpCode,
-    //   });
-    // }
+  async dowloadFile(@Res() response: Response, @Param('id') fileId: number) {
+    const res = await firstValueFrom(
+      this.fileServiceClient.send('file/get', fileId),
+    );
+    if (res.status === false) {
+      throw new HttpException(res.message, res.httpCode);
+    }
+    const filePath = `${process.env.STORE_PATH}/${res.foulder.path}/${res.fileTempName}`;
+    if (fs.existsSync(filePath)) {
+      response.download(filePath, res.fileName);
+    } else {
+      response.status(HttpStatus.BAD_REQUEST).send({
+        status: false,
+        message: `no such file with id ${fileId}`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      });
+    }
   }
 }

@@ -11,7 +11,7 @@
                         style="display: block;" 
                         v-for="file in message.files" 
                         :key="file.id" 
-                        :href='`http://localhost:5000/file/download/${file.id}`'
+                        :href='`http://localhost:3000/file/download/${file.id}`'
                         >
                         ICON - {{file.fileName}}
                     </a>

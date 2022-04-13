@@ -45,7 +45,7 @@ export class FileController {
     return res;
   }
 
-  @MessagePattern('message/getAll')
+  @MessagePattern('file/getAll')
   async findAll() {
     const res = await this.fileService.getAll().catch((err) => {
       console.log(err);
@@ -58,7 +58,7 @@ export class FileController {
     return res;
   }
 
-  @MessagePattern('message/get')
+  @MessagePattern('file/get')
   async findOne(@Payload() fileId: number) {
     const res = await this.fileService.getById(fileId).catch((err) => {
       return {
@@ -70,7 +70,7 @@ export class FileController {
     return res;
   }
 
-  @MessagePattern('message/getAllChat')
+  @MessagePattern('file/getAllChat')
   async update(
     @Body() updateFileDto: filesUploadDataDTO,
     @UploadedFile() file: Express.Multer.File,
@@ -96,7 +96,7 @@ export class FileController {
     // response.send(res);
   }
 
-  @MessagePattern('message/delete')
+  @MessagePattern('file/delete')
   async remove(@Payload() fileId: number) {
     const res = await this.fileService.removeFromDb(fileId).catch((err) => {
       if (err.sqlMessage) {
