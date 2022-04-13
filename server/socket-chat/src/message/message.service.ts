@@ -62,27 +62,7 @@ export class MessageService {
       .orderBy('message.id', 'DESC')
       .getMany();
 
-    // TODO : Удалить запрос на получение данныъ о файле и добавить в микросервисе запрос на получение данных о файлах из другого микросервиса
-    // TEMP AREA
-    const resMessages = await Promise.all(
-      messages.map(async (message: any) => {
-        if (message.media.length > 0) {
-          message.files = await Promise.all(
-            message.media.map(async (file) => {
-              const res = await axios.get(
-                `http://localhost:5000/file/get/${file.fileId}`,
-              );
-              return res.data;
-            }),
-          );
-          console.log('MESSAGE', message.files);
-        }
-        return message;
-      }),
-    );
-    // TEMP AREA
-
-    return resMessages;
+    return messages;
   }
 
   async getById(messageId: number) {

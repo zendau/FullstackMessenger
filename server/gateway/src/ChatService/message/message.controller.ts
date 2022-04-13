@@ -17,7 +17,10 @@ import { IUpdateMessageDTO } from './dto/update-message.dto';
 
 @Controller('message')
 export class MessageController {
-  constructor(@Inject('CHAT_SERVICE') private chatServiceClient: ClientProxy) {}
+  constructor(
+    @Inject('CHAT_SERVICE') private chatServiceClient: ClientProxy,
+    @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
+  ) {}
 
   @Post('add')
   async create(@Body() createMessageDto: IMessageDTO) {
@@ -29,7 +32,6 @@ export class MessageController {
     }
     return res;
   }
-
   @Get('getAllChat/:id')
   async findAll(
     @Param('id') chatId: number,
@@ -46,7 +48,14 @@ export class MessageController {
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
     }
-    return res;
+
+    const resWithFileData = await firstValueFrom(
+      this.fileServiceClient.send('file/messagesFileData', res),
+    );
+    if (res.status === false) {
+      throw new HttpException(res.message, res.httpCode);
+    }
+    return resWithFileData;
   }
 
   @Get('get/:id')

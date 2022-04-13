@@ -128,4 +128,21 @@ export class FileService {
     );
     return true;
   }
+
+  async setFileDataToMessages(messages) {
+    const messagesWithFiles = await Promise.all(
+      messages.map(async (message: any) => {
+        if (message.media.length > 0) {
+          message.files = await Promise.all(
+            message.media.map(async (file) => {
+              return await this.getById(file.fileId);
+            }),
+          );
+          console.log('MESSAGE', message.files);
+        }
+        return message;
+      }),
+    );
+    return messagesWithFiles;
+  }
 }

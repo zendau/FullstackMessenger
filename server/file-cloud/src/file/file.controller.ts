@@ -139,4 +139,18 @@ export class FileController {
     //   });
     // }
   }
+
+  @MessagePattern('file/messagesFileData')
+  async messagesFileData(@Payload() messages: any) {
+    const res = await this.fileService
+      .setFileDataToMessages(messages)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
+  }
 }
