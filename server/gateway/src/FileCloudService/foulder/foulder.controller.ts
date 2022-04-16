@@ -3,11 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Inject,
   HttpException,
+  Put,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
@@ -19,6 +19,7 @@ export class FoulderController {
 
   @Post('add')
   async create(@Body() createFoulderDto: IFoulderDTO) {
+    console.log(createFoulderDto);
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/add', createFoulderDto),
     );
@@ -50,7 +51,7 @@ export class FoulderController {
     return res;
   }
 
-  @Patch('edit')
+  @Put('edit')
   async update(@Body() updateFoulderDto: IFoulderDTO) {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/edit', updateFoulderDto),

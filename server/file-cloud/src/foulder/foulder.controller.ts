@@ -1,17 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpStatus,
-  Res,
-} from '@nestjs/common';
+import { Controller, HttpStatus } from '@nestjs/common';
 import { FoulderService } from './foulder.service';
 import { IFoulderDTO } from './dto/foulder.dto';
-import { Response } from 'express';
+
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('foulder')
@@ -20,7 +10,6 @@ export class FoulderController {
 
   @MessagePattern('foulder/add')
   async create(@Payload() createFoulderDto: IFoulderDTO) {
-    debugger;
     const res = await this.foulderService
       .create(createFoulderDto)
       .catch((err) => {
@@ -30,6 +19,7 @@ export class FoulderController {
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
+
     return res;
   }
 

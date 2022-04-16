@@ -13,8 +13,27 @@ export class FoulderService {
   ) {}
 
   async create(createFoulderDTO: IFoulderDTO) {
-    const resInsered = await this.foulderRepository.save(createFoulderDTO);
-    return resInsered;
+    const foulderExist = await this.getByPath(createFoulderDTO.path);
+    if ('status' in foulderExist) {
+      const dir = `${process.env.STORE_PATH}/${createFoulderDTO.path}`;
+      fs.mkdir(dir, (err) => {
+        if (err) {
+          return {
+            status: false,
+            message: err.code,
+            httpCode: HttpStatus.BAD_REQUEST,
+          };
+        }
+      });
+      const resInsered = await this.foulderRepository.save(createFoulderDTO);
+      return resInsered;
+    } else {
+      return {
+        status: false,
+        message: `foulder with name '${createFoulderDTO.path}' is alredy exist`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
   }
 
   async getAll() {
@@ -54,25 +73,75 @@ export class FoulderService {
   }
 
   async update(updateFoulderDTO: IFoulderDTO) {
-    const res = await this.foulderRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        path: updateFoulderDTO.path,
-      })
-      .where(`id = ${updateFoulderDTO.id}`)
-      .execute();
+    const currFoulderExist = await this.getById(updateFoulderDTO.id);
+    if (currFoulderExist instanceof Foulder) {
+      const newFoulderExist = await this.getByPath(updateFoulderDTO.path);
+      if ('status' in newFoulderExist) {
+        const currNameDir = `${process.env.STORE_PATH}/${currFoulderExist.path}`;
+        const newNameDir = `${process.env.STORE_PATH}/${updateFoulderDTO.path}`;
+        fs.rename(currNameDir, newNameDir, (err) => {
+          if (err) {
+            return {
+              status: false,
+              message: err.code,
+              httpCode: HttpStatus.BAD_REQUEST,
+            };
+          }
+        });
+        const res = await this.foulderRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            path: updateFoulderDTO.path,
+          })
+          .where(`id = ${updateFoulderDTO.id}`)
+          .execute();
 
-    return !!res.affected;
+        return !!res.affected;
+      } else {
+        return {
+          status: false,
+          message: `foulder with new name '${newFoulderExist.path}' is alredy exist`,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+    } else {
+      return {
+        status: false,
+        message: `curr foulder with id '${updateFoulderDTO.id}' is not found`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
   }
 
   async remove(id: number) {
-    const res = await this.foulderRepository
-      .createQueryBuilder()
-      .delete()
-      .where(`id = ${id}`)
-      .execute();
+    const foulderExist = await this.getById(id);
+    if (foulderExist instanceof Foulder) {
+      const dir = `${process.env.STORE_PATH}/${foulderExist.path}`;
 
-    return !!res.affected;
+      fs.rm(dir, { recursive: true }, (err) => {
+        if (err) {
+          return {
+            status: false,
+            message: err.code,
+            httpCode: HttpStatus.BAD_REQUEST,
+          };
+        }
+      });
+
+      const res = await this.foulderRepository
+        .createQueryBuilder()
+        .delete()
+        .where(`id = ${id}`)
+        .execute();
+
+      return !!res.affected;
+    } else {
+      return {
+        status: false,
+        message: `foulder with id '${id}' is not found`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
   }
 }
