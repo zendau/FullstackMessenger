@@ -9,8 +9,10 @@ import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
 
 import * as uuid from 'uuid';
-import { debug } from 'console';
 import axios from 'axios';
+import { HttpException, Inject } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @WebSocketGateway(80, {
   cors: {
@@ -21,6 +23,7 @@ export class SocketGateway {
   constructor(
     private readonly socketService: SocketService,
     private readonly messageService: MessageService,
+    @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
   ) {}
 
   @WebSocketServer()
@@ -104,8 +107,14 @@ export class SocketGateway {
     if (res?.media) {
       res.files = await Promise.all(
         res.media.map(async (file) => {
-          const res = await axios.get(`http://localhost:5000/file/get/${file}`);
-          return res.data;
+          const res = await firstValueFrom(
+            this.fileServiceClient.send('file/get', file),
+          );
+          console.log('RES', res);
+          if (res.status === false) {
+            throw new HttpException(res.message, res.httpCode);
+          }
+          return res;
         }),
       );
       console.log('MESSAGE', res.files);

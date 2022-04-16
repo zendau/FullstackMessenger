@@ -18,7 +18,10 @@ import { UpdateChatDto } from './dto/update-chat.dto';
 
 @Controller('chat')
 export class ChatController {
-  constructor(@Inject('CHAT_SERVICE') private chatServiceClient: ClientProxy) {}
+  constructor(
+    @Inject('CHAT_SERVICE') private chatServiceClient: ClientProxy,
+    @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
+  ) {}
   @Get('getByUser/:id')
   async getChats(@Param('id') id: number) {
     const res = await firstValueFrom(
@@ -58,6 +61,15 @@ export class ChatController {
       this.chatServiceClient.send('chat/create', chatData),
     );
     if (res.status === false) {
+      throw new HttpException(res.message, res.httpCode);
+    }
+
+    const resFileInsert = await firstValueFrom(
+      this.fileServiceClient.send('foulder/add', {
+        path: res.chatId,
+      }),
+    );
+    if (resFileInsert.status === false) {
       throw new HttpException(res.message, res.httpCode);
     }
     return res;
