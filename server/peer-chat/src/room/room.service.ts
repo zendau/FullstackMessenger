@@ -1,8 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm/repository/Repository';
-import { IEditRoomDTO } from './dto/editRoom.dto';
-import { IRoomDTO } from './dto/room.dto';
+import { editRoomDTO } from './dto/editRoom.dto';
+import { roomDTO } from './dto/room.dto';
 import { Room } from './entities/room.entity';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,7 +13,7 @@ export class RoomService {
     private roomRepository: Repository<Room>,
   ) {}
 
-  async create(createRoomDTO: IRoomDTO) {
+  async create(createRoomDTO: roomDTO) {
     const resInsered = await this.roomRepository.save({
       ...createRoomDTO,
       roomId: uuidv4(),
@@ -41,7 +41,7 @@ export class RoomService {
     return res;
   }
 
-  async update(updateRoomDTO: IEditRoomDTO) {
+  async update(updateRoomDTO: editRoomDTO) {
     const res = await this.roomRepository
       .createQueryBuilder()
       .update()
@@ -49,6 +49,7 @@ export class RoomService {
         adminLogin: updateRoomDTO.adminLogin,
         roomId: uuidv4(),
         roomTitle: updateRoomDTO.roomTitle,
+        roomWithVideo: JSON.parse(updateRoomDTO.roomType),
       })
       .where(`id = ${updateRoomDTO.id}`)
       .execute();

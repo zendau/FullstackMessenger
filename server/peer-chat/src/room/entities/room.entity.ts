@@ -13,4 +13,7 @@ export class Room {
 
   @Column()
   adminLogin: string;
+
+  @Column()
+  roomWithVideo: boolean;
 }

@@ -3,7 +3,7 @@
        <div class="card" style="width: 18rem;" v-for="room in rooms" :key="room.id">
         <div class="card-body">
             <h5 class="card-title">{{room.roomTitle}}</h5>
-            <router-link :to='room.roomId'  class="btn btn-primary">Enter room</router-link>
+            <router-link :to='`${room.roomWithVideo  ? "video" : "audio" }/${room.roomId}`'  class="btn btn-primary">Enter room</router-link>
         </div>
         </div>
   </div>
@@ -35,7 +35,7 @@ export default {
         console.log(rooms)
 
         return {
-            rooms
+            rooms,
         }
     }
 }
@@ -44,9 +44,10 @@ export default {
 <style>
     .rooms-container {
         display: flex;
-        width: 800px;
+        width: 1000px;
         margin: 0 auto;
         margin-top: 80px;
+        flex-wrap: wrap;
     }
     .card {
         margin-right: 15px;

@@ -10,8 +10,8 @@ import {
   Res,
 } from '@nestjs/common';
 import { RoomService } from './room.service';
-import { IRoomDTO } from './dto/room.dto';
-import { IEditRoomDTO } from './dto/editRoom.dto';
+import { roomDTO } from './dto/room.dto';
+import { editRoomDTO } from './dto/editRoom.dto';
 import { Response } from 'express';
 
 @Controller('room')
@@ -19,7 +19,8 @@ export class RoomController {
   constructor(private readonly roomService: RoomService) {}
 
   @Post('add')
-  async create(@Body() createRoomDto: IRoomDTO, @Res() response: Response) {
+  async create(@Body() createRoomDto: roomDTO, @Res() response: Response) {
+    console.log(createRoomDto);
     const res = await this.roomService.create(createRoomDto).catch((err) => {
       response.status(HttpStatus.BAD_REQUEST).send({
         status: false,
@@ -55,7 +56,7 @@ export class RoomController {
   }
 
   @Patch('edit')
-  async update(@Body() updateRoomDto: IEditRoomDTO) {
+  async update(@Body() updateRoomDto: editRoomDTO) {
     const res = await this.roomService.update(updateRoomDto).catch((err) => {
       return {
         status: false,
