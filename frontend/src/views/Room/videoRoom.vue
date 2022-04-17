@@ -7,7 +7,7 @@
         <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}. Mute status - {{!!user.mute}}</li>
     </ul>
     <free-users :roomId='roomId' :users="testUser" />
-    <div ref="audioGroup"></div>
+    <div ref="videoGroup"></div>
 </template>
 
 <script>
@@ -42,7 +42,7 @@ export default {
         const socketConnected = inject('connected', false)
         const peerConnected = ref(false)
         
-        const audioGroup = ref(null)
+        const videoGroup = ref(null)
 
         const mainStream = ref(null)
         const childStream = []
@@ -112,9 +112,9 @@ export default {
             roomUsers.value = users
 
             users.forEach(item => {
-                const audioELement = document.getElementById(item.peerId)
-                console.log('mute', audioELement, item.mute)
-                if (audioELement) audioELement.muted = item.mute
+                const videoELement = document.getElementById(item.peerId)
+                console.log('mute', videoELement, item.mute)
+                if (videoELement) videoELement.muted = item.mute
             });
             //socket.emit('message', { test: 'test' });
         });
@@ -138,10 +138,10 @@ export default {
         })
 
 
-        // socket.on('muteAudioStream', (userId) => {
-        //     const audioElement = document.getElementById(userId)
-        //     console.log('muted audio tag',audioElement, userId) 
-        //     audioElement.muted = !audioElement.muted
+        // socket.on('mutevideoStream', (userId) => {
+        //     const videoElement = document.getElementById(userId)
+        //     console.log('muted video tag',videoElement, userId) 
+        //     videoElement.muted = !videoElement.muted
         // })
 
 
@@ -203,16 +203,23 @@ export default {
         navigator.mediaDevices.mozGetUserMedia;
 
         getUserMedia({
-        audio: true
+        video: true,
+        audio: true,
         }).then(stream => {
         //localStream.value = stream
         //console.log('localStream',localStream)
         mainStream.value = stream
         console.log('localStream',stream) // new - temp
+            const video = document.createElement('video')
+            video.muted = true
+            video.id = userId.value;
+            document.body.append(video)
+            console.log('userConnetSOcker', userId)
+            addvideoStream(video, stream)
         // socket.on('user-connected', userId => {
-        //     // const audio = document.createElement('audio')
-        //     // audio.id = userId;
-        //     // document.body.append(audio)
+        //     // const video = document.createElement('video')
+        //     // video.id = userId;
+        //     // document.body.append(video)
         //     console.log('userConnetSOcker', userId)
         //     //connectToNewUser(userId, stream)
         // })          
@@ -223,17 +230,18 @@ export default {
             console.log("answer")
 
             getUserMedia({
-              audio: true
+              video: true,
+              audio: true,
             }).then(stream => {
                 childStream.push(stream)
               call.answer(stream)
               console.log('remoteStream', stream)
-              const audio = document.createElement('audio')
-              audio.id = call.peer
-              //audio.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
+              const video = document.createElement('video')
+              video.id = call.peer
+              //video.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
               call.on('stream', userVideoStream => {
-                console.log('answer audio stream')
-                addAudioStream(audio, userVideoStream)
+                console.log('answer video stream')
+                addvideoStream(video, userVideoStream)
               })
             })
           }
@@ -259,27 +267,27 @@ export default {
         function connectToNewUser(userId, stream) {
             console.log('conntected to new user. Call to '+userId, myPeer, stream)
             const call = myPeer.call(userId, stream)
-            const audio = document.createElement('audio')
-            audio.id = userId
+            const video = document.createElement('video')
+            video.id = userId
             call.on('stream', userVideoStream => {
-                console.log('connectToNewUser audio stream')
-                addAudioStream(audio, userVideoStream)
+                console.log('connectToNewUser video stream')
+                addvideoStream(video, userVideoStream)
             })
             call.on('close', () => {
                 console.log('!!!! CLOSE CONNECT')
-                audio.remove()
+                video.remove()
             })
 
             peers[userId] = call
         }
 
-        function addAudioStream(audio, stream) {
-            audio.srcObject = stream
+        function addvideoStream(video, stream) {
+            video.srcObject = stream
             console.log(stream, 'stream')
-            audio.addEventListener('loadedmetadata', () => {
-                audio.play()
+            video.addEventListener('loadedmetadata', () => {
+                video.play()
             })
-            audioGroup.value.append(audio)
+            videoGroup.value.append(video)
         }
 
         return {
@@ -287,7 +295,7 @@ export default {
             roomUsers,
             roomId,
             testUser,
-            audioGroup
+            videoGroup
         }
     }
 }
