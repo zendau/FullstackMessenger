@@ -7,7 +7,18 @@
         <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}. Mute status - {{!!user.mute}}</li>
     </ul>
     <free-users :roomId='roomId' :users="testUser" />
-    <div ref="videoGroup"></div>
+    <button @click="playVideo(userId)">Play</button>
+    <button @click="pauseVideo(userId)">Pause</button>
+    <div ref="videoGroup">
+        <videoOverlay 
+            v-for='videoData in videos' 
+            :key="videoData.id" 
+            :id="videoData.id" 
+            :srcObject="videoData.stream" 
+            :muted="videoData.muted"
+            :pause='videoData.pause'
+            />
+    </div>
 </template>
 
 <script>
@@ -17,10 +28,11 @@ import {  reactive, onUnmounted, ref, inject, watch } from 'vue'
 
 import $api from '../../axios'
 import freeUsers from '../../components/freeUsers.vue'
+import videoOverlay from '../../components/videoOverlay.vue'
 
 import Peer from 'peerjs';
 export default {
-    components: { freeUsers },
+    components: { freeUsers, videoOverlay },
     async setup() {
 
         // ==== vars ==== //
@@ -47,6 +59,9 @@ export default {
         const mainStream = ref(null)
         const childStream = []
         const lastConnectedUserId = ref(null)
+
+        const videos = reactive([])
+        console.log(videos)
 
         // ==== hooks ==== //
 
@@ -103,6 +118,22 @@ export default {
             })
             })
         })
+
+        function pauseVideo(userId) {
+            videos.forEach(video => {
+                if (video.id === userId ) video.pause = true
+            })
+            //const el = document.getElementById(userId)
+            //el.pause()
+        }
+
+        function playVideo(userId) {
+            videos.forEach(video => {
+                if (video.id === userId ) video.pause = false
+            })
+            //const el = document.getElementById(userId)
+            //el.play()
+        }
 
 
         // ==== socket ==== //
@@ -215,7 +246,7 @@ export default {
             video.id = userId.value;
             document.body.append(video)
             console.log('userConnetSOcker', userId)
-            addvideoStream(video, stream)
+            addvideoStream(video, stream, userId.value)
         // socket.on('user-connected', userId => {
         //     // const video = document.createElement('video')
         //     // video.id = userId;
@@ -241,7 +272,7 @@ export default {
               //video.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
               call.on('stream', userVideoStream => {
                 console.log('answer video stream')
-                addvideoStream(video, userVideoStream)
+                addvideoStream(video, userVideoStream, call.peer)
               })
             })
           }
@@ -271,7 +302,7 @@ export default {
             video.id = userId
             call.on('stream', userVideoStream => {
                 console.log('connectToNewUser video stream')
-                addvideoStream(video, userVideoStream)
+                addvideoStream(video, userVideoStream, userId)
             })
             call.on('close', () => {
                 console.log('!!!! CLOSE CONNECT')
@@ -281,7 +312,17 @@ export default {
             peers[userId] = call
         }
 
-        function addvideoStream(video, stream) {
+        function addvideoStream(video, stream, id) {
+
+            videos.push({
+                id,
+                stream,
+                muted: false,
+                pause: false,
+            })
+
+            console.log('videos', stream)
+
             video.srcObject = stream
             console.log(stream, 'stream')
             video.addEventListener('loadedmetadata', () => {
@@ -295,7 +336,11 @@ export default {
             roomUsers,
             roomId,
             testUser,
-            videoGroup
+            videoGroup,
+            pauseVideo,
+            playVideo,
+            userId,
+            videos
         }
     }
 }
