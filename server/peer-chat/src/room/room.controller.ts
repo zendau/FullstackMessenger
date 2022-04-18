@@ -1,37 +1,27 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpStatus,
-  Res,
-} from '@nestjs/common';
+import { Controller, HttpStatus } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { roomDTO } from './dto/room.dto';
 import { editRoomDTO } from './dto/editRoom.dto';
-import { Response } from 'express';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('room')
 export class RoomController {
   constructor(private readonly roomService: RoomService) {}
 
-  @Post('add')
-  async create(@Body() createRoomDto: roomDTO, @Res() response: Response) {
+  @MessagePattern('room/add')
+  async create(@Payload() createRoomDto: roomDTO) {
     console.log(createRoomDto);
     const res = await this.roomService.create(createRoomDto).catch((err) => {
-      response.status(HttpStatus.BAD_REQUEST).send({
+      return {
         status: false,
         message: err.sqlMessage,
         httpCode: HttpStatus.BAD_REQUEST,
-      });
+      };
     });
-    response.send(res);
+    return res;
   }
 
-  @Get('getAll')
+  @MessagePattern('room/getAll')
   async findAll() {
     const res = await this.roomService.getAll().catch((err) => {
       return {
@@ -43,8 +33,9 @@ export class RoomController {
     return res;
   }
 
-  @Get('get/:id')
-  async findOne(@Param('id') roomId: string) {
+  @MessagePattern('room/get')
+  async findOne(@Payload() roomId: string) {
+    console.log(roomId);
     const res = await this.roomService.getById(roomId).catch((err) => {
       return {
         status: false,
@@ -55,9 +46,11 @@ export class RoomController {
     return res;
   }
 
-  @Patch('edit')
-  async update(@Body() updateRoomDto: editRoomDTO) {
+  @MessagePattern('room/edit')
+  async update(@Payload() updateRoomDto: editRoomDTO) {
+    console.log(updateRoomDto);
     const res = await this.roomService.update(updateRoomDto).catch((err) => {
+      console.log('err', err);
       return {
         status: false,
         message: err.sqlMessage,
@@ -67,8 +60,8 @@ export class RoomController {
     return res;
   }
 
-  @Delete('delete/:id')
-  async remove(@Param('id') roomId: number) {
+  @MessagePattern('room/delete')
+  async remove(@Payload() roomId: number) {
     const res = await this.roomService.remove(roomId).catch((err) => {
       return {
         status: false,

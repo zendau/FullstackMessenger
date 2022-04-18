@@ -1,3 +1,4 @@
+import { RoomController } from './PeerService/room/room.controller';
 import { FoulderController } from './FileCloudService/foulder/foulder.controller';
 import { MessageController } from './ChatService/message/message.controller';
 import { ChatController } from './ChatService/chat/chat.controller';
@@ -45,6 +46,17 @@ import { ConfigModule } from '@nestjs/config';
           },
         },
       },
+      {
+        name: 'PEER_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://user:root@localhost:5672'],
+          queue: 'peer_queue',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
     ]),
   ],
   controllers: [
@@ -53,6 +65,7 @@ import { ConfigModule } from '@nestjs/config';
     MessageController,
     FoulderController,
     FileController,
+    RoomController,
   ],
   providers: [AppService],
 })

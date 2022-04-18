@@ -47,9 +47,8 @@ export class RoomService {
       .update()
       .set({
         adminLogin: updateRoomDTO.adminLogin,
-        roomId: uuidv4(),
         roomTitle: updateRoomDTO.roomTitle,
-        roomWithVideo: JSON.parse(updateRoomDTO.roomType),
+        roomWithVideo: updateRoomDTO.roomWithVideo,
       })
       .where(`id = ${updateRoomDTO.id}`)
       .execute();
