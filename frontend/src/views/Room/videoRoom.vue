@@ -58,7 +58,7 @@ export default {
 
         const mainStream = ref(null)
         const childStream = []
-        const lastConnectedUserId = ref(null)
+
 
         const videos = reactive([])
         console.log(videos)
@@ -141,11 +141,23 @@ export default {
         socket.on('getUsers', (users) => {
             console.log('users', users);
             roomUsers.value = users
-
+ 
             users.forEach(item => {
-                const videoELement = document.getElementById(item.peerId)
-                console.log('mute', videoELement, item.mute)
-                if (videoELement) videoELement.muted = item.mute
+                
+                videos.find((video) => {
+                    if (video.id === item.peerId) {
+                        video.muted = item.mute
+                        return true
+                    } else {
+                        return false
+                    }
+                })
+
+                console.log('ZZZ', videos)
+                
+                //const videoELement = document.getElementById(item.peerId)
+                //console.log('mute', videoELement, item.mute)
+                //if (videoELement) videoELement.muted = item.mute
             });
             //socket.emit('message', { test: 'test' });
         });
@@ -156,9 +168,8 @@ export default {
         })
         
         socket.on('userJoinedRoom', (userId) => {
-            lastConnectedUserId.value = userId
-            console.log('Connected user with id', lastConnectedUserId, mainStream)
-            connectToNewUser(lastConnectedUserId.value, mainStream.value)
+            console.log('Connected user with id', userId, mainStream)
+            connectToNewUser(userId, mainStream.value)
         })
 
         socket.on('UserLeave', (userId) => {
@@ -241,12 +252,8 @@ export default {
         //console.log('localStream',localStream)
         mainStream.value = stream
         console.log('localStream',stream) // new - temp
-            const video = document.createElement('video')
-            video.muted = true
-            video.id = userId.value;
-            document.body.append(video)
             console.log('userConnetSOcker', userId)
-            addvideoStream(video, stream, userId.value)
+            addvideoStream(stream, userId.value)
         // socket.on('user-connected', userId => {
         //     // const video = document.createElement('video')
         //     // video.id = userId;
@@ -260,19 +267,24 @@ export default {
         myPeer.on('call', call => {
             console.log("answer")
 
+            let answerCount = 0
+
             getUserMedia({
               video: true,
               audio: true,
             }).then(stream => {
-                childStream.push(stream)
+              childStream.push(stream)
+          
               call.answer(stream)
               console.log('remoteStream', stream)
-              const video = document.createElement('video')
-              video.id = call.peer
               //video.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
               call.on('stream', userVideoStream => {
-                console.log('answer video stream')
-                addvideoStream(video, userVideoStream, call.peer)
+                if (answerCount !== 0) {
+                  return
+                } 
+                answerCount++
+                console.log('answer video stream', call.peer)
+                addvideoStream(userVideoStream, call.peer)
               })
             })
           }
@@ -294,25 +306,29 @@ export default {
         //   })
         })
 
-        // eslint-disable-next-line no-unused-vars
+
         function connectToNewUser(userId, stream) {
             console.log('conntected to new user. Call to '+userId, myPeer, stream)
+            
+            let answerCount = 0
             const call = myPeer.call(userId, stream)
-            const video = document.createElement('video')
-            video.id = userId
+            
             call.on('stream', userVideoStream => {
-                console.log('connectToNewUser video stream')
-                addvideoStream(video, userVideoStream, userId)
+               if (answerCount !== 0) {
+                  return
+                }
+                answerCount++
+                console.log('connectToNewUser video stream', userId)
+                addvideoStream(userVideoStream, userId)
             })
             call.on('close', () => {
                 console.log('!!!! CLOSE CONNECT')
-                video.remove()
             })
 
             peers[userId] = call
         }
 
-        function addvideoStream(video, stream, id) {
+        function addvideoStream(stream, id) {
 
             videos.push({
                 id,
@@ -323,12 +339,11 @@ export default {
 
             console.log('videos', stream)
 
-            video.srcObject = stream
             console.log(stream, 'stream')
-            video.addEventListener('loadedmetadata', () => {
-                video.play()
-            })
-            videoGroup.value.append(video)
+            //video.addEventListener('loadedmetadata', () => {
+            //    video.play()
+            //})
+            //videoGroup.value.append(video)
         }
 
         return {
