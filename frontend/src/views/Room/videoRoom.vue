@@ -256,7 +256,7 @@ export default {
         mainStream.value = stream
         console.log('localStream',stream) // new - temp
             console.log('userConnetSOcker', userId)
-            addvideoStream(stream, userId.value)
+            addvideoStream(stream, userId.value, true)
         // socket.on('user-connected', userId => {
         //     // const video = document.createElement('video')
         //     // video.id = userId;
@@ -282,7 +282,7 @@ export default {
               call.once('stream', userVideoStream => {
    
                 console.log('answer video stream', call.peer)
-                addvideoStream(userVideoStream, call.peer)
+                addvideoStream(userVideoStream, call.peer, false)
               })
             })
           }
@@ -314,7 +314,7 @@ export default {
             call.once('stream', userVideoStream => {
        
                 console.log('connectToNewUser video stream', userId)
-                addvideoStream(userVideoStream, userId)
+                addvideoStream(userVideoStream, userId, false)
             })
             call.on('close', () => {
                 console.log('!!!! CLOSE CONNECT')
@@ -323,12 +323,12 @@ export default {
             peers[userId] = call
         }
 
-        function addvideoStream(stream, id) {
+        function addvideoStream(stream, id, status) {
 
             videos.push({
                 id,
                 stream,
-                muted: false,
+                muted: status,
                 pause: false,
             })
 

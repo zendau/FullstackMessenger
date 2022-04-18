@@ -1,7 +1,7 @@
 <template>
   <div class="video-container">
       <div v-if='pause' class="overlay">No signal</div>
-      <video ref="videoRef" :id='id' :srcObject='srcObject' autoplay="autoplay" :muted='muted'></video>
+      <video ref="videoRef" :id='id' :srcObject='srcObject' autoplay="autoplay"></video>
       <slot/>
   </div>
 </template>
@@ -23,6 +23,8 @@ export default {
         videoRef.value.play()
       }
 
+      videoRef.value.muted = props.muted
+   
       
     })
 
