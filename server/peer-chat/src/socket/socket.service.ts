@@ -51,4 +51,13 @@ export class SocketService {
       return item;
     });
   }
+
+  changeVideoPause(id) {
+    this.users = this.users.map((item) => {
+      if (item.userId === id) {
+        item.pause = !item.pause;
+      }
+      return item;
+    });
+  }
 }

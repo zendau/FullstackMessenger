@@ -7,8 +7,7 @@
         <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}. Mute status - {{!!user.mute}}</li>
     </ul>
     <free-users :roomId='roomId' :users="testUser" />
-    <button @click="playVideo(userId)">Play</button>
-    <button @click="pauseVideo(userId)">Pause</button>
+    <button @click="changeVideoStatus(userId)"> {{ videoStatus ? 'Play' : 'Pause' }}</button>
     <div ref="videoGroup">
         <videoOverlay 
             v-for='videoData in videos' 
@@ -61,9 +60,13 @@ export default {
 
 
         const videos = reactive([])
+        
+        const videoStatus = ref(false)
+
         console.log(videos)
 
         // ==== hooks ==== //
+
 
         
        
@@ -119,20 +122,19 @@ export default {
             })
         })
 
-        function pauseVideo(userId) {
+        function changeVideoStatus(userId) {
+
+            videoStatus.value = !videoStatus.value
+
             videos.forEach(video => {
-                if (video.id === userId ) video.pause = true
+                if (video.id === userId ) video.pause = videoStatus.value
+            })
+            socket.emit('videoPause', {
+                userId,
+                roomId
             })
             //const el = document.getElementById(userId)
             //el.pause()
-        }
-
-        function playVideo(userId) {
-            videos.forEach(video => {
-                if (video.id === userId ) video.pause = false
-            })
-            //const el = document.getElementById(userId)
-            //el.play()
         }
 
 
@@ -147,6 +149,7 @@ export default {
                 videos.find((video) => {
                     if (video.id === item.peerId) {
                         video.muted = item.mute
+                        video.pause = item.pause
                         return true
                     } else {
                         return false
@@ -267,8 +270,6 @@ export default {
         myPeer.on('call', call => {
             console.log("answer")
 
-            let answerCount = 0
-
             getUserMedia({
               video: true,
               audio: true,
@@ -278,11 +279,8 @@ export default {
               call.answer(stream)
               console.log('remoteStream', stream)
               //video.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
-              call.on('stream', userVideoStream => {
-                if (answerCount !== 0) {
-                  return
-                } 
-                answerCount++
+              call.once('stream', userVideoStream => {
+   
                 console.log('answer video stream', call.peer)
                 addvideoStream(userVideoStream, call.peer)
               })
@@ -310,14 +308,11 @@ export default {
         function connectToNewUser(userId, stream) {
             console.log('conntected to new user. Call to '+userId, myPeer, stream)
             
-            let answerCount = 0
+
             const call = myPeer.call(userId, stream)
             
-            call.on('stream', userVideoStream => {
-               if (answerCount !== 0) {
-                  return
-                }
-                answerCount++
+            call.once('stream', userVideoStream => {
+       
                 console.log('connectToNewUser video stream', userId)
                 addvideoStream(userVideoStream, userId)
             })
@@ -352,10 +347,10 @@ export default {
             roomId,
             testUser,
             videoGroup,
-            pauseVideo,
-            playVideo,
+            changeVideoStatus,
             userId,
-            videos
+            videos,
+            videoStatus
         }
     }
 }

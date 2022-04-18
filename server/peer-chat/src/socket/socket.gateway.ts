@@ -88,4 +88,12 @@ export class SocketGateway {
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
   }
+
+  @SubscribeMessage('videoPause')
+  videoPause(socket: Socket, payload: any) {
+    console.log('videoPause', payload);
+    this.socketService.changeVideoPause(payload.userId);
+    const roomUser = this.socketService.getRoomUsers(payload.roomId);
+    this.server.to(payload.roomId).emit('getUsers', roomUser);
+  }
 }

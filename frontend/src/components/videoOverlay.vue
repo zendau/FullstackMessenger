@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="video-container">
       <div v-if='pause' class="overlay">No signal</div>
       <video ref="videoRef" :id='id' :srcObject='srcObject' autoplay="autoplay" :muted='muted'></video>
       <slot/>
@@ -47,4 +47,17 @@ export default {
     width: 100%;
     background-color: black;
   }
+
+  .video-container {
+    width: 500px;
+    height: auto;
+    position: relative;
+    margin: 20px;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+  }
+
 </style>

@@ -4,4 +4,5 @@ export default interface IUser {
   peerId?: string;
   userId: string;
   mute?: boolean;
+  pause?: boolean;
 }
