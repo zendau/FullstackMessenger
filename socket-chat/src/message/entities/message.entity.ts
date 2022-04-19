@@ -5,7 +5,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
+import { Media } from './media.entity';
 
 @Entity()
 export class Message {
@@ -22,4 +24,7 @@ export class Message {
 
   @Column()
   text: string;
+
+  @OneToMany(() => Media, (media) => media.message)
+  media: Media[];
 }

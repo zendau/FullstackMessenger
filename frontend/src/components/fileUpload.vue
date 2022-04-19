@@ -15,27 +15,33 @@
 </template>
 
 <script>
+
 import { inject, ref } from 'vue'
 export default {
     setup() {
         const dragStatus = ref(false)
         const files = inject('files')
+
         function dragStart(e) {
             console.log("START", e)
             dragStatus.value = true
         }
+
         function dragLeave(e) {
             console.log('LEAVE', e)
             dragStatus.value = false
         }
+
         function dataDrop(e) {
             files.value = [...e.dataTransfer.files];
             dragStatus.value = false
             console.log(files.value)
         }
+
         function removeFile(id) {
             files.value = Array.from(files.value).filter((_, index) => index !== id)
         }
+
         return {
             dragStatus,
             dragStart,
@@ -57,6 +63,7 @@ export default {
         align-items: center;
         justify-content: center;
     }
+
     .area2 {
         width: 600px;
         height: 300px;

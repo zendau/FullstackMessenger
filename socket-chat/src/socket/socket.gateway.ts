@@ -9,6 +9,8 @@ import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
 
 import * as uuid from 'uuid';
+import { debug } from 'console';
+import axios from 'axios';
 
 @WebSocketGateway({
   cors: {
@@ -86,14 +88,29 @@ export class SocketGateway {
 
   @SubscribeMessage('sendMessage')
   async sendMessage(socket: Socket, payload: any) {
-    payload.id = uuid.v4();
     console.log('sendMessage', payload);
     console.log('send rooms', socket.rooms);
-    const res = await this.messageService.create({
-      authorLogin: payload.authorLogin,
-      text: payload.text,
-      chatId: payload.chatId,
-    });
+    const res = await this.messageService.create(
+      {
+        authorLogin: payload.authorLogin,
+        text: payload.text,
+        chatId: payload.chatId,
+      },
+      payload.files,
+    );
+    // TODO : Удалить запрос на получение данныъ о файле и добавить в микросервисе запрос на получение данных о файлах из другого микросервиса
+    // TEMP AREA
+
+    if (res?.media) {
+      res.files = await Promise.all(
+        res.media.map(async (file) => {
+          const res = await axios.get(`http://localhost:5000/file/get/${file}`);
+          return res.data;
+        }),
+      );
+      console.log('MESSAGE', res.files);
+    }
+    // TEMP AREA
     if ('chat' in res) {
       console.log('SEND', payload.chatId);
       this.server.to(payload.chatId).emit('newMessage', {
@@ -101,6 +118,7 @@ export class SocketGateway {
         text: res.text,
         created_at: res.created_at,
         id: res.id,
+        files: res.files,
       });
     } else {
       console.log('NOT INSTANCEOF');

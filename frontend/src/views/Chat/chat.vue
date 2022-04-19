@@ -51,6 +51,7 @@ import $api from '../../axios'
 import groupUsers from '../../components/groupUsers.vue'
 import InvaitedUsers from '../../components/invaitedUsers.vue'
 import FileUpload from '../../components/fileUpload.vue'
+
 export default {
   components: { groupUsers, InvaitedUsers, FileUpload },
     setup() {
@@ -60,9 +61,11 @@ export default {
         const route = useRoute()
         const router = useRouter()
         const userLogin = localStorage.getItem('login')
+
         const message = ref('')
         const files = ref(null)
         provide('files', files)
+        
         const invateStatus = ref(false)
         const socket = inject('socket', undefined)
         const userId = localStorage.getItem('id')
@@ -137,21 +140,25 @@ export default {
             console.log('NEEEEW', messageData)
             messages.unshift(messageData)
         })
+
         async function sendMessage() {
             console.log(message)
             let filesUpload = null
             if (files.value !== null) {
                    const formData = new FormData()
+
             formData.append('path', roomId)
             formData.append('userId', userId)
             files.value.forEach(file => {
                  formData.append('files', file)
             })
              // TODO: исправить axios на $api при переносе на микросервисы
+
             const resUpload = await $api.post('file/add', formData)
             filesUpload = resUpload.data
             
             }
+
             socket.emit('sendMessage', {
                 authorLogin: userLogin,
                 text: message.value,
