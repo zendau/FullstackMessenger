@@ -17,11 +17,9 @@
 <script>
 
 import { inject, ref } from 'vue'
-
 export default {
     setup() {
         const dragStatus = ref(false)
-
         const files = inject('files')
 
         function dragStart(e) {

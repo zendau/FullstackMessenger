@@ -26,7 +26,7 @@ export default {
 
         const freeUsers = ref(null)
 
-        const socket = inject('socket')
+        const socket = inject('peerSocket')
         console.log(socket)
 
         //Object.keys(socket._callbacks).forEach(item => console.log(item + ' ' + socket[item]))

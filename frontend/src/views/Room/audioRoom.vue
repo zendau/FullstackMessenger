@@ -7,6 +7,7 @@
         <li v-for="user in roomUsers" :key="user.userId">User - {{user.userId}}. Mute status - {{!!user.mute}}</li>
     </ul>
     <free-users :roomId='roomId' :users="testUser" />
+    <chat-room-container/>
     <div ref="audioGroup"></div>
 </template>
 
@@ -17,10 +18,11 @@ import {  reactive, onUnmounted, ref, inject, watch } from 'vue'
 
 import $api from '../../axios'
 import freeUsers from '../../components/freeUsers.vue'
+import chatRoomContainer from '../../components/chatRoomContainer.vue'
 
 import Peer from 'peerjs';
 export default {
-    components: { freeUsers },
+    components: { freeUsers, chatRoomContainer },
     async setup() {
 
         // ==== vars ==== //
@@ -38,8 +40,8 @@ export default {
 
         const testUser = ref([])
 
-        const socket = inject('socket', undefined)
-        const socketConnected = inject('connected', false)
+        const socket = inject('peerSocket', undefined)
+        const socketConnected = inject('peerSocketConnected', false)
         const peerConnected = ref(false)
         
         const audioGroup = ref(null)

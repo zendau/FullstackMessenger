@@ -1,6 +1,8 @@
 <template>
   <suspense>
-    <router-view/>
+    <auth-layout>
+      <router-view/>
+    </auth-layout>
   </suspense>
 </template>
 
@@ -8,7 +10,10 @@
 
 //import { useRouter } from 'vue-router'
 
+import authLayout from './layouts/auth.layout.vue'
+
 export default {
+  components: {authLayout},
   setup() {
     //const router = useRouter()
     //router.push('/room/all')

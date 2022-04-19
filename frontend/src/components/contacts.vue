@@ -96,7 +96,7 @@ export default {
 
         async function createGroupChat() {
        
-
+            console.log('groupCreate')
              const chatData = await $api.post('/chat/create', {
                 adminId: parseInt(userId),
                 groupName: roomName.value,

@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import createRoom from '../views/Room/createRoom.vue'
 import AllRooms from '../views/Room/AllRooms.vue'
-import audioRoom from '../views/Room/audioRoom'
+import audioRoom from '../views/Room/audioRoom.vue'
+import videoRoom from '../views/Room/videoRoom'
 import roomGateway from '../views/Room/RoomGateway.vue'
 
 import chatGateway from '../views/Chat/chatGateway.vue'
@@ -27,9 +28,14 @@ const routes = [
         component: AllRooms
       },
       {
-        path: ':id',
+        path: 'audio/:id',
         name: 'audioRoom',
         component: audioRoom
+      },
+      {
+        path: 'video/:id',
+        name: 'videoRoom',
+        component: videoRoom
       },
     ]
   },
