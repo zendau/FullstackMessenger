@@ -40,8 +40,8 @@ export default {
 
         const testUser = ref([])
 
-        const socket = inject('socket', undefined)
-        const socketConnected = inject('connected', false)
+        const socket = inject('peerSocket', undefined)
+        const socketConnected = inject('peerSocketConnected', false)
         const peerConnected = ref(false)
         
         const audioGroup = ref(null)

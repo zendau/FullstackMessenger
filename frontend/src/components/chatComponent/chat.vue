@@ -34,7 +34,7 @@ export default {
       const userLogin = localStorage.getItem('login')
       const message = ref('')
       const files = ref(null)
-      const socket = inject('socket', undefined)
+      const socket = inject('chatSocket', undefined)
       const userId = localStorage.getItem('id')
       const messages = reactive([])
       const scrollEnd = ref(null)

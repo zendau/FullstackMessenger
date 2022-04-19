@@ -18,17 +18,19 @@ export default {
         const router = useRouter()
         const route = useRoute()
 
-        const socket = io('http://localhost:81');
-        provide('socket', socket)
         
-        const socketConnected = ref(false)
-        provide('connected', socketConnected)
-        socket.on('connect', () => {
+
+        const peerSocket = io('http://localhost:81');
+        provide('peerSocket', peerSocket)
+        
+        const peerSocketConnected = ref(false)
+        provide('peerSocketConnected', peerSocketConnected)
+        peerSocket.on('connect', () => {
             console.log('connected gateway')
-            socketConnected.value = true
-            socket.emit('connect-user', {
+            peerSocketConnected.value = true
+            peerSocket.emit('connect-user', {
                 userLogin,
-                userId: socket.id
+                userId: peerSocket.id
             })
         })
 
