@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/users.entity';
+import { User } from 'src/user/users.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { UserRole } from './userRole.entity';
 import IEditUserData from './interfaces/IEditUserData';
@@ -31,7 +31,7 @@ export class RoleService {
       })
       .where(`id = ${roleData.id}`)
       .execute();
-    return resUpdate;
+    return !!resUpdate.affected;
   }
 
   async getRoles() {
@@ -63,7 +63,7 @@ export class RoleService {
       .delete()
       .where(`id = ${roleId}`)
       .execute();
-    return resDeleted;
+    return !!resDeleted.affected;
   }
 
   addUserRole(userRoleData: userRoleDataDTO, manager: EntityManager): any;

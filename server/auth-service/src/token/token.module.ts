@@ -1,4 +1,4 @@
-import { UsersModule } from './../users/users.module';
+import { UsersModule } from '../user/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { Module, forwardRef } from '@nestjs/common';
 import { TokenService } from './token.service';

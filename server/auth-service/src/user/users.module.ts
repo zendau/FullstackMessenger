@@ -1,7 +1,7 @@
-import { RoleModule } from './../role/role.module';
-import { RoleService } from './../role/role.service';
-import { TokenModule } from './../token/token.module';
-import { TokenService } from './../token/token.service';
+import { RoleModule } from '../role/role.module';
+import { RoleService } from '../role/role.service';
+import { TokenModule } from '../token/token.module';
+import { TokenService } from '../token/token.service';
 import { User } from './users.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { forwardRef, Module } from '@nestjs/common';

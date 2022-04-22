@@ -1,5 +1,5 @@
-import { RoleService } from './../role/role.service';
-import { TokenService } from './../token/token.service';
+import { RoleService } from '../role/role.service';
+import { TokenService } from '../token/token.service';
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository, QueryRunner } from 'typeorm';

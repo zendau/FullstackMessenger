@@ -1,13 +1,15 @@
+import { RoleController } from './AuthService/RoleModule/role.controller';
+import { UserController } from './AuthService/UserModule/user.controller';
 import { RoomController } from './PeerService/room/room.controller';
 import { FoulderController } from './FileCloudService/foulder/foulder.controller';
 import { MessageController } from './ChatService/message/message.controller';
 import { ChatController } from './ChatService/chat/chat.controller';
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { FileController } from './FileCloudService/file/file.controller';
 import { ConfigModule } from '@nestjs/config';
+import { JwtStrategy } from './AuthService/strategies/jwt.strategy';
+import { RefreshStrategy } from './AuthService/strategies/refresh.strategy';
 
 @Module({
   imports: [
@@ -57,16 +59,28 @@ import { ConfigModule } from '@nestjs/config';
           },
         },
       },
+      {
+        name: 'AUTH_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://user:root@localhost:5672'],
+          queue: 'auth_queue',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
     ]),
   ],
   controllers: [
-    AppController,
     ChatController,
     MessageController,
     FoulderController,
     FileController,
     RoomController,
+    UserController,
+    RoleController,
   ],
-  providers: [AppService],
+  providers: [JwtStrategy, RefreshStrategy],
 })
 export class AppModule {}

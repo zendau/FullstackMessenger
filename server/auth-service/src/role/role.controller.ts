@@ -11,6 +11,7 @@ export class RoleController {
 
   @MessagePattern('role/add')
   async addNewRole(@Payload() roleData: Role) {
+    console.log(roleData);
     const res = await this.roleService.addNewRole(roleData).catch((err) => {
       console.log(err);
       return {
