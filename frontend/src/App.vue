@@ -10,7 +10,7 @@
 
 //import { useRouter } from 'vue-router'
 
-import authLayout from './layouts/auth.layout.vue'
+import authLayout from './layout/auth.layout.vue'
 
 export default {
   components: {authLayout},
