@@ -8,7 +8,6 @@ export const auth = {
   state: {
     user: {
         id: null,
-        login: null,
         email: null,
         role: []
     },
@@ -18,10 +17,11 @@ export const auth = {
   actions: {
     async login({ commit }, loginData) {
         try {
-            const resData = await $api.post('/auth/login', {
+            const resData = await $api.post('/user/register', {
                 email: loginData.email,
-                password: loginData.password
-            })
+                password: loginData.password,
+                confirmPassword: loginData.confirmPassword
+              })
 
             const tokenDecode = jwt_decode(resData.data.accessToken)
             commit('authSuccess', tokenDecode)
@@ -33,20 +33,20 @@ export const auth = {
     logout({ commit }) {
         localStorage.removeItem('token');
         commit('logout')
+        router.push('/')
 
     },
     async register({ commit }, registerData) {
         try {
-            const resData = await $api.post('/auth/register', {
+            const resData = await $api.post('/user/register', {
                 email: registerData.email,
                 password: registerData.password,
                 confirmPassword: registerData.confirmPassword
-            })
+              })
 
             const tokenDecode = jwt_decode(resData.data.accessToken)
-
             commit('authSuccess', tokenDecode)
-            router.push('/user')
+            router.push('/users')
         } catch (e) {
             commit('authFailed', e.response.data)
         }
@@ -61,7 +61,7 @@ export const auth = {
             const tokenDecode = jwt_decode(accessToken)
             console.log(tokenDecode)
             commit('authSuccess', tokenDecode)
-            //router.push('/user')
+            router.push('/users')
         } catch (e) {
             console.log('e', e)
             return
@@ -90,7 +90,6 @@ export const auth = {
     logout(state) {
         state.user = {
             id: null,
-            login: null,
             email: null,
             role: []
         },
@@ -105,6 +104,9 @@ export const auth = {
       getAuthStatus(state) {
           console.log('state', state)
           return state.authStatus
+      },
+      getUserData(state) {
+        return state.user
       }
   }
 };

@@ -12,6 +12,9 @@ import chat from '../views/Chat/chat.vue'
 
 import pageNotFound from '../views/404.vue'
 
+import register from '../views/register.vue'
+import users from '../views/users.vue'
+
 const routes = [
   {
     path: '/room',
@@ -55,6 +58,16 @@ const routes = [
       },
      
     ]
+  },
+  {
+    path: '/register',
+    component: register,
+    name: 'register',
+  },
+  {
+    path: '/users',
+    component: users,
+    name: 'users',
   },
   {
     path: '/:pathMatch(.*)*',
