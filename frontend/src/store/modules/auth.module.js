@@ -54,21 +54,23 @@ export const auth = {
     async checkAuth({ commit }) {
         try {
 
+            console.log('checkAuth')
 
-
-            const resData = await $api.get('/auth/refresh')
-            const accessToken = resData.data.accessToken
+            //const resData = await $api.get('/auth/refresh')
+            const accessToken = localStorage.getItem('token')
             const tokenDecode = jwt_decode(accessToken)
-
+            console.log(tokenDecode)
             commit('authSuccess', tokenDecode)
-            router.push('/user')
-        } catch {
+            //router.push('/user')
+        } catch (e) {
+            console.log('e', e)
             return
         }
     }
   },
   mutations: {
     authSuccess(state, userData) {
+        console.log('auth success')
         state.user = {
             id: userData.id,
             email: userData.email,
@@ -98,5 +100,11 @@ export const auth = {
     clearErrorMessage(state) {
         state.error = ""
     }
+  },
+  getters: {
+      getAuthStatus(state) {
+          console.log('state', state)
+          return state.authStatus
+      }
   }
 };

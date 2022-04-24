@@ -1,8 +1,8 @@
 <template>
   <suspense>
-    <auth-layout>
+    <component :is="getLayout">
       <router-view/>
-    </auth-layout>
+    </component>
   </suspense>
 </template>
 
@@ -11,12 +11,28 @@
 //import { useRouter } from 'vue-router'
 
 import authLayout from './layout/auth.layout.vue'
+import mainLayout from './layout/main.layout.vue'
+
+import { useStore } from 'vuex'
+import { computed } from '@vue/runtime-core'
 
 export default {
   components: {authLayout},
   setup() {
+
+    const store = useStore()
+
+    
+    store.dispatch('auth/checkAuth')
+
     //const router = useRouter()
     //router.push('/room/all')
+
+    const getLayout = computed(() => store.getters['auth/getAuthStatus'] ? authLayout : mainLayout )
+
+    return {
+      getLayout
+    }
   },
 }
 </script>
