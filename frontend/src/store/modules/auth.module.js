@@ -85,6 +85,7 @@ export const auth = {
         } else {
             state.error = msg[0]
         }
+        console.log(state)
     },
     logout(state) {
         state.user = {
@@ -106,6 +107,9 @@ export const auth = {
       },
       getUserData(state) {
         return state.user
+      },
+      getErrorMessage(state) {
+          return state.error
       }
   }
 };

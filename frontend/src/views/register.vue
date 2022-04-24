@@ -1,5 +1,5 @@
 <template>
-  <p v-if="errorMessage">{{errorMessage}}</p>
+  <error-message/>
   <form action="" @submit.prevent="onSubmitForm">
       <input type="text" placeholder="email" v-model.trim="email" required>
       <input type="password" placeholder="password" v-model.trim="password" required>
@@ -13,8 +13,10 @@
 import { ref } from 'vue'
 
 import { useStore } from 'vuex'
+import errorMessage from '../components/errorMessage.vue'
 
 export default {
+  components: { errorMessage },
     setup() {
         
         const email = ref(null)
