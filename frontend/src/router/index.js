@@ -13,6 +13,7 @@ import chat from '../views/Chat/chat.vue'
 import pageNotFound from '../views/404.vue'
 
 import register from '../views/register.vue'
+import login from '../views/login.vue'
 import users from '../views/users.vue'
 
 const routes = [
@@ -63,6 +64,11 @@ const routes = [
     path: '/register',
     component: register,
     name: 'register',
+  },
+  {
+    path: '/login',
+    component: login,
+    name: 'login',
   },
   {
     path: '/users',

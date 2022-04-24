@@ -17,15 +17,14 @@ export const auth = {
   actions: {
     async login({ commit }, loginData) {
         try {
-            const resData = await $api.post('/user/register', {
+            const resData = await $api.post('/user/login', {
                 email: loginData.email,
                 password: loginData.password,
-                confirmPassword: loginData.confirmPassword
               })
-
+            
             const tokenDecode = jwt_decode(resData.data.accessToken)
             commit('authSuccess', tokenDecode)
-            router.push('/user')
+            router.push('/users')
         } catch (e) {
             commit('authFailed', e.response.data)
         }
@@ -61,7 +60,7 @@ export const auth = {
             const tokenDecode = jwt_decode(accessToken)
             console.log(tokenDecode)
             commit('authSuccess', tokenDecode)
-            router.push('/users')
+            //router.push('/users')
         } catch (e) {
             console.log('e', e)
             return
