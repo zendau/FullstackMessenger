@@ -16,6 +16,10 @@ import register from '../views/register.vue'
 import login from '../views/login.vue'
 import users from '../views/users.vue'
 
+import { Role } from './roles'
+
+import store from '../store/index'
+
 const routes = [
   {
     path: '/room',
@@ -24,22 +28,38 @@ const routes = [
       {
         path: 'create',
         name: 'createRoom',
-        component: createRoom
+        component: createRoom,
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
       {
         path: 'all',
         name: 'AllRooms',
-        component: AllRooms
+        component: AllRooms,
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
       {
         path: 'audio/:id',
         name: 'audioRoom',
-        component: audioRoom
+        component: audioRoom,
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
       {
         path: 'video/:id',
         name: 'videoRoom',
-        component: videoRoom
+        component: videoRoom,
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
     ]
   },
@@ -50,12 +70,20 @@ const routes = [
       {
         path: '/chat/:id',
         component: chat,
-        name: 'chat'
+        name: 'chat',
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
       {
         path: '/chat/all',
         component: chatRoom,
-        name: 'chatRoom'
+        name: 'chatRoom',
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
      
     ]
@@ -64,26 +92,87 @@ const routes = [
     path: '/register',
     component: register,
     name: 'register',
+    meta: {
+      requiresAuth: false,
+      role: Role.noAuth
+    }
   },
   {
     path: '/login',
     component: login,
     name: 'login',
+    meta: {
+      requiresAuth: false,
+      role: Role.noAuth
+    }
   },
   {
     path: '/users',
     component: users,
     name: 'users',
+    meta: {
+      requiresAuth: true,
+      role: Role.User
+    }
   },
   {
     path: '/:pathMatch(.*)*',
-    component: pageNotFound
+    component: pageNotFound,
+    meta: {
+      requiresAuth: false,
+      role: Role.noAuth
+    }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+
+router.beforeEach((to, from, next) => {
+
+  debugger
+  const authStatus = store.getters['auth/getAuthStatus']
+  const userRole = store.getters['auth/getRoleAcessLevel']
+  console.log(authStatus, userRole)
+
+  if (to.meta.requiresAuth) {
+    if (authStatus) {
+      next()
+    }
+    else {
+      next('/login')
+    }
+  } else {
+    if (authStatus) {
+      next('/users')
+    }
+    else {
+      next()
+    }
+  }
+
+  // if (to.path === "/") {
+  //   if (userStatus) {
+  //     next("/requests")
+  //   } else {
+  //     next()
+  //   }
+  // } else {
+  //   if (to.meta.login && userStatus) {
+  //     next()
+  //   } else {
+  //     next({
+  //       path: "/",
+  //       query: {
+  //         error: "noAuth"
+  //       }
+  //     })
+  //   }
+  // }
+
 })
 
 export default router

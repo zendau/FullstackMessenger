@@ -22,8 +22,10 @@ export const auth = {
                 password: loginData.password,
               })
             
-            const tokenDecode = jwt_decode(resData.data.accessToken)
+            const accessToken = resData.data.accessToken
+            const tokenDecode = jwt_decode(accessToken)
             commit('authSuccess', tokenDecode)
+            localStorage.setItem('token', accessToken)
             router.push('/users')
         } catch (e) {
             commit('authFailed', e.response.data)
@@ -43,8 +45,10 @@ export const auth = {
                 confirmPassword: registerData.confirmPassword
               })
 
-            const tokenDecode = jwt_decode(resData.data.accessToken)
+            const accessToken = resData.data.accessToken
+            const tokenDecode = jwt_decode(accessToken)
             commit('authSuccess', tokenDecode)
+            localStorage.setItem('token', accessToken)
             router.push('/users')
         } catch (e) {
             commit('authFailed', e.response.data)
@@ -110,6 +114,9 @@ export const auth = {
       },
       getErrorMessage(state) {
           return state.error
+      },
+      getRoleAcessLevel(state) {
+          return state.user.role.accessLevel
       }
   }
 };

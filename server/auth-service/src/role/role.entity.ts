@@ -22,6 +22,9 @@ export class Role {
   @Column()
   desc: string;
 
+  @Column()
+  accessLevel: number;
+
   @OneToMany(() => UserRole, (userRole) => userRole.role)
   userId: UserRole[];
 }
