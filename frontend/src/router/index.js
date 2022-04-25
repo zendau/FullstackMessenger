@@ -133,46 +133,32 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
 
-  debugger
+  const noAuthRedicect = process.env.VUE_APP_ROUTER_REDIRECT_NO_AUTH_PATH
+  const wrongRoleRedicect = process.env.VUE_APP_ROUTER_REDIRECT_WRONG_ROLE_PATH
+  const startAuthPage = process.env.VUE_APP_ROUTER_START_AUTH_PAGE_PATH
+
   const authStatus = store.getters['auth/getAuthStatus']
   const userRole = store.getters['auth/getRoleAcessLevel']
-  console.log(authStatus, userRole)
 
   if (to.meta.requiresAuth) {
     if (authStatus) {
-      next()
+      if (to.meta.role <= userRole) {
+        next()
+      } else {
+        next(wrongRoleRedicect)
+      }
     }
     else {
-      next('/login')
+      next(noAuthRedicect)
     }
   } else {
     if (authStatus) {
-      next('/users')
+      next(startAuthPage)
     }
     else {
       next()
     }
   }
-
-  // if (to.path === "/") {
-  //   if (userStatus) {
-  //     next("/requests")
-  //   } else {
-  //     next()
-  //   }
-  // } else {
-  //   if (to.meta.login && userStatus) {
-  //     next()
-  //   } else {
-  //     next({
-  //       path: "/",
-  //       query: {
-  //         error: "noAuth"
-  //       }
-  //     })
-  //   }
-  // }
-
 })
 
 export default router
