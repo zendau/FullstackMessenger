@@ -28,6 +28,7 @@ export class RoleService {
       .set({
         value: roleData.value,
         desc: roleData.desc,
+        accessLevel: roleData.accessLevel,
       })
       .where(`id = ${roleData.id}`)
       .execute();

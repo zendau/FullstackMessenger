@@ -18,7 +18,7 @@ export default {
 
         const router = useRouter()
 
-        const socket = inject('socket', undefined)
+        const socket = inject('peerSocket', undefined)
         console.log(socket)
 
 

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Length } from 'class-validator';
+import { IsInt, IsString, Length, Min } from 'class-validator';
 
 export class roleDataDTO {
   @ApiProperty({
@@ -23,4 +23,8 @@ export class roleDataDTO {
     message: 'Value is smaller than 2 or bigger than 200 signs',
   })
   desc: string;
+
+  @IsInt()
+  @Min(1)
+  accessLevel: number;
 }
