@@ -12,6 +12,14 @@ import chat from '../views/Chat/chat.vue'
 
 import pageNotFound from '../views/404.vue'
 
+import register from '../views/register.vue'
+import login from '../views/login.vue'
+import users from '../views/users.vue'
+
+import { Role } from './roles'
+
+import store from '../store/index'
+
 const routes = [
   {
     path: '/room',
@@ -20,22 +28,38 @@ const routes = [
       {
         path: 'create',
         name: 'createRoom',
-        component: createRoom
+        component: createRoom,
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
       {
         path: 'all',
         name: 'AllRooms',
-        component: AllRooms
+        component: AllRooms,
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
       {
         path: 'audio/:id',
         name: 'audioRoom',
-        component: audioRoom
+        component: audioRoom,
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
       {
         path: 'video/:id',
         name: 'videoRoom',
-        component: videoRoom
+        component: videoRoom,
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
     ]
   },
@@ -46,25 +70,95 @@ const routes = [
       {
         path: '/chat/:id',
         component: chat,
-        name: 'chat'
+        name: 'chat',
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
       {
         path: '/chat/all',
         component: chatRoom,
-        name: 'chatRoom'
+        name: 'chatRoom',
+        meta: {
+          requiresAuth: true,
+          role: Role.User
+        }
       },
      
     ]
   },
   {
+    path: '/register',
+    component: register,
+    name: 'register',
+    meta: {
+      requiresAuth: false,
+      role: Role.noAuth
+    }
+  },
+  {
+    path: '/login',
+    component: login,
+    name: 'login',
+    meta: {
+      requiresAuth: false,
+      role: Role.noAuth
+    }
+  },
+  {
+    path: '/users',
+    component: users,
+    name: 'users',
+    meta: {
+      requiresAuth: true,
+      role: Role.User
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
-    component: pageNotFound
+    component: pageNotFound,
+    meta: {
+      requiresAuth: false,
+      role: Role.noAuth
+    }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+
+router.beforeEach((to, from, next) => {
+
+  const noAuthRedicect = process.env.VUE_APP_ROUTER_REDIRECT_NO_AUTH_PATH
+  const wrongRoleRedicect = process.env.VUE_APP_ROUTER_REDIRECT_WRONG_ROLE_PATH
+  const startAuthPage = process.env.VUE_APP_ROUTER_START_AUTH_PAGE_PATH
+
+  const authStatus = store.getters['auth/getAuthStatus']
+  const userRole = store.getters['auth/getRoleAcessLevel']
+
+  if (to.meta.requiresAuth) {
+    if (authStatus) {
+      if (to.meta.role <= userRole) {
+        next()
+      } else {
+        next(wrongRoleRedicect)
+      }
+    }
+    else {
+      next(noAuthRedicect)
+    }
+  } else {
+    if (authStatus) {
+      next(startAuthPage)
+    }
+    else {
+      next()
+    }
+  }
 })
 
 export default router
