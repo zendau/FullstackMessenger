@@ -7,119 +7,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <link href="./fonts/Roboto-Black.ttf" rel="stylesheet">
     <title>Document</title>
-    <style>
+    <link rel="stylesheet" href="scss/main.css">
+    <link rel="stylesheet" href="scss/videoConf.css">
+    <link rel="stylesheet" href="scss/conference.css">
+    <link rel="stylesheet" href="scss/video.css">
+    <link rel="stylesheet" href="scss/chat.css">
 
-        * {
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', sans-serif;
-        }
-
-    
-
-        body {
-            display: grid;
-            grid-template-rows: 40px 1fr 60px;
-            height: 100vh;
-            max-height: 100vh;
-        }
-
-        header {
-            height: 40px;
-            border: 1px solid orange;
-            box-sizing: border-box;
-        }
-
-        footer {
-            height: 60px;
-            border: 1px solid blue;
-            box-sizing: border-box;
-        }
-
-        .main-container {
-            overflow: hidden;
-            display: flex;
-        }
-
-        .conference-container {
-            flex: 1;
-            margin: 5px 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
-            overflow-y: scroll;
-            padding: 0 10px;
-            align-content: baseline;
-        }
-
-
-        .conference-container::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .conference-container::-webkit-scrollbar-track {
-            background-color: #e4e4e4;
-            border-radius: 100px;
-        }
-
-        .conference-container::-webkit-scrollbar-thumb {
-            background-color: #4F555C;
-            box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
-            border-radius: 100px;
-        }
-
-        .video__container {
-            display: block;
-            width: 100%;
-            position: relative;
-            aspect-ratio: 16/9;
-        }
-
-        video {
-            border: 1px solid black;
-            width: 100%;
-            height: 100%;
-        }
-
-        .video__info {
-            position: absolute;
-            display: flex;
-            bottom: 10px;
-            left: 5px;
-        }
-
-        /* video::before {
-            float: left;
-            padding-top: 56.25%;
-            content: '';
-        }
-
-        video::after {
-            display: block;
-            content: '';
-            clear: both;
-        } */
-        
-        .conference-chat {
-            display: flex;
-            flex-direction: column;
-            width: 300px;
-            border: 1px solid green;
-        }
-
-        .chat__header {
-            height: 30px;
-        }
-
-        .chat__body {
-            flex: 1;
-        }
-
-        .chat__footer {
-            height: 30px;
-        }
-
-    </style>
 </head>
 <body>
     <header>navbar</header>
@@ -236,7 +129,9 @@
         <div class="conference-chat">
             <div class="chat__header">Chat</div>
             <div class="chat__body"></div>
-            <div class="chat__footer"><input type="text"></div>
+            <div class="chat__footer">
+                <div contenteditable="true"></div> 
+            </div>
         </div>
         
     </section>

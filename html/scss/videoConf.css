@@ -1,0 +1,30 @@
+body {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: 40px 1fr 60px;
+      grid-template-rows: 40px 1fr 60px;
+  height: 100vh;
+  max-height: 100vh;
+}
+
+header {
+  height: 40px;
+  border: 1px solid orange;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+footer {
+  height: 60px;
+  border: 1px solid blue;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.main-container {
+  overflow: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+/*# sourceMappingURL=videoConf.css.map */
