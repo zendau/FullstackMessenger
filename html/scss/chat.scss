@@ -1,6 +1,8 @@
 .chat {
     &__header {
         height: 30px;
+        text-align: center;
+        font-size: 20px;
     }
 
     &__body {
@@ -11,15 +13,50 @@
         height: 30px;
         position: relative;
 
-        div {
-            border: 1px solid black;
-            position: absolute;
-            bottom: 0;
-            font-size: 16px;
-            width: 100%;
-            height: 50px;
-            overflow-y: scroll;
+    }
+
+    &__content {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+
+    &__input {
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 1.4em;
+        max-height: 10em;
+        padding: 0.3em 0.5em 0.3em 0.5em;
+        background-color: white;
+        font-size: 16px;
+        text-align: left;
+        border: 3px solid black;
+        border-radius: 5px;
+        overflow-y: auto;
+        
+        &:empty:before {
+            content: attr(data-placeholder);
+        }
+        // div {
+        //     border: none;
+        //     padding: 0;
+
+    }
+
+    &__files {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        margin: 3px;
+    }
+
+    &__file {
+        margin-bottom: 6px;
+        margin-right: 6px;
+        a {
+            text-decoration:  none;
         }
     }
+    
     
 };

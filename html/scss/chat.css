@@ -1,5 +1,7 @@
 .chat__header {
   height: 30px;
+  text-align: center;
+  font-size: 20px;
 }
 
 .chat__body {
@@ -13,13 +15,47 @@
   position: relative;
 }
 
-.chat__footer div {
-  border: 1px solid black;
+.chat__content {
   position: absolute;
   bottom: 0;
-  font-size: 16px;
   width: 100%;
-  height: 50px;
-  overflow-y: scroll;
+}
+
+.chat__input {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width: 100%;
+  min-height: 1.4em;
+  max-height: 10em;
+  padding: 0.3em 0.5em 0.3em 0.5em;
+  background-color: white;
+  font-size: 16px;
+  text-align: left;
+  border: 3px solid black;
+  border-radius: 5px;
+  overflow-y: auto;
+}
+
+.chat__input:empty:before {
+  content: attr(data-placeholder);
+}
+
+.chat__files {
+  list-style: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin: 3px;
+}
+
+.chat__file {
+  margin-bottom: 6px;
+  margin-right: 6px;
+}
+
+.chat__file a {
+  text-decoration: none;
 }
 /*# sourceMappingURL=chat.css.map */
