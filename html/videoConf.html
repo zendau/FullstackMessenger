@@ -12,10 +12,25 @@
     <link rel="stylesheet" href="scss/conference.css">
     <link rel="stylesheet" href="scss/video.css">
     <link rel="stylesheet" href="scss/chat.css">
+    <link rel="stylesheet" href="scss/navbar.css">
+    <link rel="stylesheet" href="scss/menu.css">
 
 </head>
 <body>
-    <header>navbar</header>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">Chats</a></li>
+                <li><a href="#">Conferences</a></li>
+                <li><a href="#">Create conference</a></li>
+            </ul>
+            <ul>
+                <li>Edit</li>
+                <li>Delete</li>
+                <li>Invite</li>
+            </ul>
+            <a href="#">Exit</a>
+        </nav></header>
     <section class="main-container">
         <div class="conference-container">
 
@@ -178,7 +193,18 @@
         </div>
         
     </section>
-    <footer>footer</footer>
+    <footer>
+        <div class="conference__menu">
+            <div class="menu__setting">
+                <button><i class="bi bi-mic-fill"></i> Mute</button>
+            </div>
+            <div class="menu__conference-data">
+                <h3 class="menu__conference-title">Conference name</h3>
+                <p class="menu__conference-admin">Admin</p>
+            </div>
+            <button class="menu__chat"><i class="bi bi-chat-dots"></i> Chat</button>
+        </div>
+    </footer>
     
 
     

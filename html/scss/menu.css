@@ -1,0 +1,24 @@
+.menu__setting button {
+  width: 50px;
+  height: 50px;
+  font-size: 14px;
+}
+
+.menu__setting button i {
+  font-size: 24px;
+}
+
+.menu__conference-title, .menu__conference-admin {
+  text-align: center;
+}
+
+.menu__chat {
+  width: 50px;
+  height: 50px;
+  font-size: 14px;
+}
+
+.menu__chat i {
+  font-size: 24px;
+}
+/*# sourceMappingURL=menu.css.map */
