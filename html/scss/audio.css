@@ -1,0 +1,41 @@
+.audio__info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border: 1px solid black;
+  height: 30px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.audio__info .mute {
+  border-right: 1px solid black;
+  height: 30px;
+  width: 30px;
+  text-align: center;
+  line-height: 30px;
+  font-size: 18px;
+}
+
+.audio__info p {
+  text-align: center;
+  padding: 15px;
+}
+
+.audio__info--active {
+  border: 2px solid blue;
+}
+
+.audio__info--active .mute {
+  border-right: 2px solid blue;
+}
+
+.audio__info--admin {
+  border: 2px solid red;
+}
+
+.audio__info--admin .mute {
+  border-right: 2px solid red;
+}
+/*# sourceMappingURL=audio.css.map */

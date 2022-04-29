@@ -1,0 +1,37 @@
+.audio {
+    &__info {
+        display: flex;
+        border: 1px solid black;
+        height: 30px;
+        align-items: center;
+
+        .mute {
+            border-right: 1px solid black;
+            height: 30px;
+            width: 30px;
+            text-align: center;
+            line-height: 30px;
+            font-size: 18px;
+        }
+
+        p {
+            text-align: center;
+            padding: 15px;
+        }
+
+        &--active {
+            border: 2px solid blue;
+            .mute {
+                border-right: 2px solid blue;
+            }
+        }
+
+        &--admin {
+            border: 2px solid red;
+            .mute {
+                border-right: 2px solid red;
+            }
+        }
+    }
+
+}
