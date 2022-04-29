@@ -1,25 +1,112 @@
-nav {
-    height: 100%;
-    width: 1000px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    ul {
-        list-style: none;
+.nav {
+    &__menu {
+        height: 100%;
+        width: 1000px;
+        margin: 0 auto;
         display: flex;
+        justify-content: space-between;
+        align-items: center;
 
-        li {
-            margin-right: 15px;
+        ul {
+            list-style: none;
+            display: flex;
+    
+            li {
+                margin-right: 15px;
+            }
+        }
+    
+        a {
+            text-decoration: none;
+            
+            &:hover {
+                color: darken( blue, 30%);
+            }
+        }
+    
+        button {
+            display: none;
         }
     }
 
-    a {
-        text-decoration: none;
-        
-        &:hover {
-            color: darken( blue, 30%);
+    &__btn {
+        display: none;
+    }
+}
+
+
+
+@media (max-width: 1140px) {
+
+    .nav {
+        &__menu {
+            width: 800px;
+        }
+    } 
+}
+// Убрать грид на нав, сделать флексом например
+// для футер меню сделать фикс высоту и прижать к нижу с помощью позиционировая
+
+
+@media (max-width: 960px) {
+
+    .nav {
+
+        &__menu {
+            width: 100%;
+            flex-direction: column;
+            background-color: gray;
+            height: auto;
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            &--active {
+                display: flex;
+            }
+    
+            ul {
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+    
+                li {
+                    margin: 0;
+                }
+            }
+    
+            a {
+                width: 100%;
+                text-align: center;
+                margin: 4px 0;
+                font-size: 20px;
+            }
+        }
+
+        &__btn {
+            display: block;
+            width: 50px;
+            height: 50px;
+            position: fixed;
+            bottom: 5px;
+            right: 10px;
+
+            &--active {
+                position: absolute;
+                right: 15px;
+                top: 20px;
+            }
         }
     }
+   
+}
+
+@media (max-width: 730px) {
+
+    .nav {
+        &__btn {
+            right: 5px;
+        }
+    }
+   
 }

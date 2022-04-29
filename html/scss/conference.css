@@ -30,6 +30,10 @@
   border-radius: 100px;
 }
 
+.conference-container--hide {
+  display: none;
+}
+
 .conference-chat {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -40,6 +44,10 @@
           flex-direction: column;
   width: 350px;
   border: 1px solid green;
+}
+
+.conference-chat--active {
+  width: 100%;
 }
 
 .conference__menu {
@@ -55,5 +63,22 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+@media (max-width: 960px) {
+  .conference__menu {
+    width: 600px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 730px) {
+  .conference-container {
+    display: block;
+  }
+  .conference__menu {
+    width: 275px;
+    margin: 0 auto;
+  }
 }
 /*# sourceMappingURL=conference.css.map */

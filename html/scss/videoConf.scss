@@ -21,3 +21,22 @@ footer {
     overflow: hidden;
     display: flex;
 }
+
+@media (max-width: 960px) {
+
+    body {
+        display: grid;
+        grid-template-rows: 1fr 60px;
+    }
+
+    header {
+        z-index: 2;
+        width: 100%;
+        position: absolute;
+    }
+
+    .main-container {
+        max-height: 100vh;
+    }
+    
+}
