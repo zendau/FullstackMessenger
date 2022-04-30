@@ -1,0 +1,46 @@
+.rooms {
+    &__container {
+        width: 1200px;
+        margin: 0 auto;
+    }
+
+    &__list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 250px);
+        gap: 15px;
+        justify-content: center;
+        margin-top: 35px;
+    }
+
+    &__item {
+        border: 1px solid black;
+        border-radius: 3%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.room {
+    &__title {
+        margin: 10px 0;
+    }
+
+    &__link {
+        margin: 10px 0;
+        text-decoration: none;
+        width: 100px;
+        height: 30px;
+        display: block;
+        text-align: center;
+        background-color: antiquewhite;
+        line-height: 30px;
+        border: 10%;
+        transition: .3s ease;
+
+        &:hover {
+            background-color: darken(antiquewhite, 20);
+        }
+    }
+}
