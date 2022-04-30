@@ -38,4 +38,10 @@
 .audio__info--admin .mute {
   border-right: 2px solid red;
 }
+
+@media (max-width: 730px) {
+  .audio__container {
+    margin-bottom: 10px;
+  }
+}
 /*# sourceMappingURL=audio.css.map */

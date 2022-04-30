@@ -78,6 +78,10 @@ footer {
 
 .conference-chat--active {
   width: 100%;
+  position: absolute;
+  z-index: 2;
+  background-color: white;
+  height: 100%;
 }
 
 .conference__menu {
@@ -109,6 +113,7 @@ footer {
   }
   .main-container {
     max-height: 100vh;
+    position: relative;
   }
   .conference__menu {
     width: 600px;

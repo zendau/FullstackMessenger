@@ -35,3 +35,12 @@
     }
 
 }
+
+@media (max-width: 730px) {
+
+    .audio {
+        &__container {
+            margin-bottom: 10px;
+        }
+    }
+}
