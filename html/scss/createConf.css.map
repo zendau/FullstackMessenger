@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AACK,AAAD,kBAAY,CAAC;EACT,KAAK,EAAE,MAAM;EACb,MAAM,EAAE,MAAM;CACjB;;AAEA,AAAD,cAAQ,CAAC;EACL,UAAU,EAAE,IAAI;EAChB,UAAU,EAAE,MAAM;CACrB;;AAEA,AAAD,aAAO,CAAC;EACJ,OAAO,EAAE,IAAI;EACb,cAAc,EAAE,MAAM;EACtB,KAAK,EAAE,KAAK;EACZ,WAAW,EAAE,MAAM;EACnB,MAAM,EAAE,MAAM;CACjB",
+    "sources": [
+        "createConf.scss"
+    ],
+    "names": [],
+    "file": "createConf.css"
+}
