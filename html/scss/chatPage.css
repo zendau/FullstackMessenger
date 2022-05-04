@@ -55,6 +55,10 @@ body {
           box-sizing: border-box;
 }
 
+.chat__list-item--exit span {
+  letter-spacing: 1px;
+}
+
 .chat__list-item--active {
   background-color: antiquewhite;
 }
@@ -160,6 +164,7 @@ body {
   right: 50px;
   border: 1px solid black;
   width: 150px;
+  background-color: white;
 }
 
 .chat__users--active {
@@ -318,7 +323,7 @@ body {
 }
 
 .message__container {
-  width: 340px;
+  width: 500px;
   border: 1px solid black;
   -webkit-box-align: start;
       -ms-flex-align: start;
@@ -366,5 +371,44 @@ body {
   -ms-grid-column: 2;
   -ms-grid-column-span: 1;
   grid-column: 2/3;
+}
+
+@media (max-width: 1140px) {
+  .message__container {
+    width: 400px;
+  }
+}
+
+@media (max-width: 960px) {
+  .chat__body {
+    padding: 10px;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .message__container {
+    width: 100%;
+    margin: 6px 0;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+  }
+  .message__container--author {
+    -ms-flex-item-align: center;
+        -ms-grid-row-align: center;
+        align-self: center;
+  }
+}
+
+@media (max-width: 720px) {
+  .chat__container {
+    -ms-grid-columns: 1fr;
+        grid-template-columns: 1fr;
+  }
+  .chat__contacts {
+    display: none;
+  }
+  .chat__contacts--active {
+    display: block;
+  }
 }
 /*# sourceMappingURL=chatPage.css.map */

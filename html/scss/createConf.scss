@@ -1,19 +1,35 @@
 .create {
     &__container {
-        width: 1200px;
-        margin: 0 auto;
+        width: 600px;
+        height: 400px;
+        background-color: aquamarine;
+        margin: 50px auto;
+        display: flex;
+        flex-direction: column;
     }
 
     &__title {
-        margin-top: 50px;
         text-align: center;
+        margin: 25px 0;
     }
 
     &__form {
         display: flex;
         flex-direction: column;
-        width: 600px;
         align-items: center;
         margin: 0 auto;
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        select, input {
+            width: 200px;
+            font-size: 16px;
+        }
+
+        select {
+            margin: 15px 0;
+        }
     }
 }

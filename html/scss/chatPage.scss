@@ -17,12 +17,8 @@ body {
         height: 100%;
         align-items: center;
         justify-content: space-between;
-        border-right: 1px solid black;
-
-        &:nth-child(2) {
-            // TODO: пофиксить спейсинг
-            //letter-spacing: 2px;
-        }
+        border-right: 1px solid black;    
+          
     }
 
     &__list {
@@ -36,6 +32,10 @@ body {
             padding: 5px 0;
             border: 1px solid red;
             box-sizing: border-box;
+
+            &--exit span {
+                letter-spacing: 1px;
+            }
     
             &--active {
                 background-color: antiquewhite;
@@ -127,6 +127,7 @@ body {
         right: 50px;
         border: 1px solid black;
         width: 150px;
+        background-color: white;
 
         &--active {
             display: block;
@@ -260,7 +261,7 @@ body {
 
 .message {
     &__container {
-        width: 340px;
+        width: 500px;
         border: 1px solid black;
         align-items: flex-start;
         margin: 5px 10px;
@@ -295,4 +296,57 @@ body {
     &__time {
         grid-column: 2/3;
     }
+}
+
+@media (max-width: 1140px) {
+    .message {
+        &__container {
+            width: 400px;
+        }
+    }
+    
+}
+
+
+@media (max-width: 960px) {
+
+    .chat {
+        &__body {
+            padding: 10px;
+            align-items: center;
+        }
+    }
+
+    .message {
+        &__container {
+            width: 100%;
+            margin: 6px 0;
+            box-sizing: border-box;
+
+            &--author {
+                align-self: center;
+            }
+
+        }
+    }
+    
+}
+
+
+@media (max-width: 720px) {
+    .chat {
+
+        &__container {
+            grid-template-columns: 1fr;
+        }
+
+        &__contacts {
+            display: none;
+
+            &--active {
+                display: block;
+            }
+        }
+    }
+    
 }
