@@ -41,10 +41,10 @@
     </header>
     <section class="chat__container">
         <div class="chat__contacts">
-            <button>Switch</button>
+            <button class="btn--chat">Switch</button>
             <form class="contacts__group-create">
                 <input type="text" placeholder="Group Name">
-                <button>Create group</button>
+                <button class="btn--chat">Create group</button>
             </form>
             <ul class="contacts__list">
                 <li class="contact__item">
@@ -156,16 +156,17 @@
                 <h1 class="chat__title">title</h1>
                 <p class="chat__count">3 peoples</p>
                 <div class="chat__topbar">
-                    <button class="chat__show-users">Group users</button>
-                    <ul class="chat__users chat__users--active">
+                    <button class="chat__show-users btn--chat">Group users</button>
+                    <!-- chat__users--active  -->
+                    <ul class="chat__users ">
                         <li class="chat__user">AdminAdminAdmin</li>
                         <li class="chat__user">Admin</li>
                         <li class="chat__user">Admin</li>
                         <li class="chat__user">Admin</li>
                     </ul>
-                    <button class="chat__add-group">Add group</button>
+                    <button class="chat__add-group btn--chat">Add group</button>
                 </div>
-                <a class="chat__exit" href="#">Exit</a>
+                <a class="chat__exit" href="#">Exit chat</a>
             </div>
             <div class="chat__body">
                 <div class="message__container">
@@ -173,7 +174,7 @@
                     <div class="message__body">
                         <p class="message__text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptas laborum, saepe quibusdam ducimus dignissimos asperiores! Rem aliquid nihil quo quae quidem consequatur nesciunt. Enim corrupti itaque, suscipit odit non nam voluptatem! Rerum, culpa veritatis! Eaque fugiat pariatur illo assumenda et voluptate. Consectetur assumenda corporis repellendus reiciendis temporibus aut ipsa, reprehenderit rerum quos nobis ex porro fuga corrupti eum similique earum ut iusto nihil? Earum nostrum impedit, in pariatur reiciendis asperiores a temporibus deleniti corrupti sequi quae? Facere voluptatem quaerat alias voluptate doloribus. Error a culpa explicabo blanditiis, provident quas cupiditate maiores veritatis similique dolorum perferendis illum molestias reiciendis dolorem sunt!</p>
                         <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
                     </div>
                     <span class="message__time">16:43</span>
                 </div>
@@ -182,7 +183,70 @@
                     <div class="message__body">
                         <p class="message__text">message of text</p>
                         <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
+                    </div>
+                    <span class="message__time">16:43</span>
+                </div>
+                <div class="message__container">
+                    <p class="message__author">Admin</p>
+                    <div class="message__body">
+                        <p class="message__text">message of text</p>
+                        <a href="#" class="message__link">localhost.com</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
+                    </div>
+                    <span class="message__time">16:43</span>
+                </div>
+                <div class="message__container message__container--author">
+                    <p class="message__author">Admin</p>
+                    <div class="message__body">
+                        <p class="message__text">message of text</p>
+                        <a href="#" class="message__link">localhost.com</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
+                    </div>
+                    <span class="message__time">16:43</span>
+                </div>
+                <div class="message__container">
+                    <p class="message__author">Admin</p>
+                    <div class="message__body">
+                        <p class="message__text">message of text</p>
+                        <a href="#" class="message__link">localhost.com</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
+                    </div>
+                    <span class="message__time">16:43</span>
+                </div>
+                <div class="message__container message__container--author">
+                    <p class="message__author">Admin</p>
+                    <div class="message__body">
+                        <p class="message__text">message of text</p>
+                        <a href="#" class="message__link">localhost.com</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
+                    </div>
+                    <span class="message__time">16:43</span>
+                </div>
+                <div class="message__container message__container--author">
+                    <p class="message__author">Admin</p>
+                    <div class="message__body">
+                        <p class="message__text">message of text</p>
+                        <a href="#" class="message__link">localhost.com</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
+                    </div>
+                    <span class="message__time">16:43</span>
+                </div>
+                <div class="message__container">
+                    <p class="message__author">Admin</p>
+                    <div class="message__body">
+                        <p class="message__text">message of text</p>
+                        <a href="#" class="message__link">localhost.com</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
+                    </div>
+                    <span class="message__time">16:43</span>
+                </div>
+                <div class="message__container message__container--author">
+                    <p class="message__author">Admin</p>
+                    <div class="message__body">
+                        <p class="message__text">message of text</p>
+                        <a href="#" class="message__link">localhost.com</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
                     </div>
                     <span class="message__time">16:43</span>
                 </div>
@@ -200,7 +264,7 @@
                     <div class="message__body">
                         <p class="message__text">message of text</p>
                         <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
                     </div>
                     <span class="message__time">16:43</span>
                 </div>
@@ -209,70 +273,7 @@
                     <div class="message__body">
                         <p class="message__text">message of text</p>
                         <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
-                    </div>
-                    <span class="message__time">16:43</span>
-                </div>
-                <div class="message__container message__container--author">
-                    <p class="message__author">Admin</p>
-                    <div class="message__body">
-                        <p class="message__text">message of text</p>
-                        <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
-                    </div>
-                    <span class="message__time">16:43</span>
-                </div>
-                <div class="message__container message__container--author">
-                    <p class="message__author">Admin</p>
-                    <div class="message__body">
-                        <p class="message__text">message of text</p>
-                        <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
-                    </div>
-                    <span class="message__time">16:43</span>
-                </div>
-                <div class="message__container">
-                    <p class="message__author">Admin</p>
-                    <div class="message__body">
-                        <p class="message__text">message of text</p>
-                        <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
-                    </div>
-                    <span class="message__time">16:43</span>
-                </div>
-                <div class="message__container message__container--author">
-                    <p class="message__author">Admin</p>
-                    <div class="message__body">
-                        <p class="message__text">message of text</p>
-                        <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
-                    </div>
-                    <span class="message__time">16:43</span>
-                </div>
-                <div class="message__container">
-                    <p class="message__author">Admin</p>
-                    <div class="message__body">
-                        <p class="message__text">message of text</p>
-                        <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
-                    </div>
-                    <span class="message__time">16:43</span>
-                </div>
-                <div class="message__container message__container--author">
-                    <p class="message__author">Admin</p>
-                    <div class="message__body">
-                        <p class="message__text">message of text</p>
-                        <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
-                    </div>
-                    <span class="message__time">16:43</span>
-                </div>
-                <div class="message__container">
-                    <p class="message__author">Admin</p>
-                    <div class="message__body">
-                        <p class="message__text">message of text</p>
-                        <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
                     </div>
                     <span class="message__time">16:43</span>
                 </div>
@@ -300,7 +301,7 @@
                     <div class="message__body">
                         <p class="message__text">message of text</p>
                         <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
                     </div>
                     <span class="message__time">16:43</span>
                 </div>
@@ -309,7 +310,7 @@
                     <div class="message__body">
                         <p class="message__text">message of text message of textmessage of textmessage of text</p>
                         <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
                     </div>
                     <span class="message__time">16:43</span>
                 </div>
@@ -318,7 +319,7 @@
                     <div class="message__body">
                         <p class="message__text">message of text</p>
                         <a href="#" class="message__link">localhost.com</a>
-                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i> text.txt</a>
+                        <a href="#" class="message__file"> <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a>
                     </div>
                     <span class="message__time">16:43</span>
                 </div>
@@ -326,11 +327,11 @@
             <div class="chat__content">
                 <div class="chat__input" contenteditable="true" data-placeholder="Type message"></div>
                 <ul class="chat__files">
-                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i> test1.txt</a></li>
-                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i> test2.txt</a></li>
-                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i> test3.txt</a></li>
-                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i> test4.txt</a></li>
-                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i> test5.txt</a></li>
+                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test1.txt</a></li>
+                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test2.txt</a></li>
+                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test3.txt</a></li>
+                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test4.txt</a></li>
+                    <li class="chat__file"><a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test5.txt</a></li>
                 </ul>
                 <button><i class="bi bi-send"></i></button>
             </div>
