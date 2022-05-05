@@ -26,10 +26,14 @@
 
 .nav__menu a {
   text-decoration: none;
+  color: rgba(255, 255, 255, 0.84);
+  padding: 6px;
+  -webkit-transition: .3s ease;
+  transition: .3s ease;
 }
 
 .nav__menu a:hover {
-  color: #000066;
+  color: #59b7ff;
 }
 
 .nav__menu button {

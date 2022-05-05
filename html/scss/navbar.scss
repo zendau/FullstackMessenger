@@ -1,3 +1,16 @@
+$menuColor: #0e1621;
+$textColor: rgba(255, 255, 255, 0.84);
+$secondTextColor: #aaaaaa;
+$itemColor: #202b36;
+$btnChat: #3a3a3d;
+$btnHover: #464649;
+$bgcColor: #17212b;
+$dangerColor: #e33741;
+$messageColor: #182533;
+$activeColor: #5eb5f7;
+$linkColor: #59b7ff;
+
+
 .nav {
     &__menu {
         height: 100%;
@@ -17,10 +30,13 @@
         }
     
         a {
-            text-decoration: none;
-            
+            text-decoration:  none;
+            color: $textColor;
+            padding: 6px;
+            transition: .3s ease;
+    
             &:hover {
-                color: darken( blue, 30%);
+                color: $linkColor;
             }
         }
     
