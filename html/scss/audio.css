@@ -1,12 +1,16 @@
+.audio__container {
+  background-color: #182533;
+}
+
 .audio__info {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  border: 1px solid black;
   height: 30px;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  color: rgba(255, 255, 255, 0.84);
 }
 
 .audio__info .mute {
@@ -24,19 +28,19 @@
 }
 
 .audio__info--active {
-  border: 2px solid blue;
+  border: 2px solid #5eb5f7;
 }
 
 .audio__info--active .mute {
-  border-right: 2px solid blue;
+  border-right: 2px solid #5eb5f7;
 }
 
 .audio__info--admin {
-  border: 2px solid red;
+  border: 2px solid #e33741;
 }
 
 .audio__info--admin .mute {
-  border-right: 2px solid red;
+  border-right: 2px solid #e33741;
 }
 
 @media (max-width: 730px) {
