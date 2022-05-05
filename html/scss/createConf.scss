@@ -1,11 +1,33 @@
+$menuColor: #0e1621;
+$textColor: rgba(255, 255, 255, 0.84);
+$secondTextColor: #aaaaaa;
+$itemColor: #202b36;
+$btnChat: #3a3a3d;
+$btnHover: #464649;
+$bgcColor: #17212b;
+$dangerColor: #e33741;
+$messageColor: #182533;
+$activeColor: #5eb5f7;
+$linkColor: #59b7ff;
+
+header {
+    height: 50px!important;
+}
+
+body {
+    background-color: $menuColor;
+}
+
 .create {
     &__container {
         width: 600px;
         height: 400px;
-        background-color: aquamarine;
+        background-color: $messageColor;
         margin: 50px auto;
         display: flex;
         flex-direction: column;
+        color: $textColor;
+        border-radius: 3px;
     }
 
     &__title {
@@ -18,18 +40,43 @@
         flex-direction: column;
         align-items: center;
         margin: 0 auto;
+        margin-top: 20px;
 
         label {
             margin-bottom: 5px;
         }
 
+        input {
+            border: none;
+            outline: none;
+            color: $textColor;
+            padding: 5px;
+            font-size: 18px;
+        }
+
+        input[type='submit'] {
+            background-color: $btnChat;
+            transition: .3s ease;
+            cursor: pointer;
+
+            &:hover {
+                background-color: $btnHover;
+            }
+        }
+
         select, input {
             width: 200px;
             font-size: 16px;
+            background-color: #242f3d;
         }
 
         select {
             margin: 15px 0;
+           
+            border: none;
+            outline: none;
+            color: $textColor;
+            border-radius: 0;
         }
     }
 }

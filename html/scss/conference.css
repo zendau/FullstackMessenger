@@ -7,13 +7,6 @@ body {
   max-height: 100vh;
 }
 
-header {
-  height: 100%;
-  background-color: #17212b;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
 footer {
   height: 60px;
   background-color: #17212b;

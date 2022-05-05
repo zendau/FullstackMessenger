@@ -10,6 +10,11 @@ $messageColor: #182533;
 $activeColor: #5eb5f7;
 $linkColor: #59b7ff;
 
+header {
+    height: 100%;
+    background-color: $bgcColor;
+    box-sizing: border-box; 
+}
 
 
 .nav {
@@ -133,7 +138,6 @@ $linkColor: #59b7ff;
         &__menu {
             width: 100%;
             flex-direction: column;
-            background-color: $menuColor;
             height: auto;
             display: none;
             align-items: center;

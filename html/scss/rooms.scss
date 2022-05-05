@@ -1,3 +1,24 @@
+$menuColor: #0e1621;
+$textColor: rgba(255, 255, 255, 0.84);
+$secondTextColor: #aaaaaa;
+$itemColor: #202b36;
+$btnChat: #3a3a3d;
+$btnHover: #464649;
+$bgcColor: #17212b;
+$dangerColor: #e33741;
+$messageColor: #182533;
+$activeColor: #5eb5f7;
+$linkColor: #59b7ff;
+
+
+header {
+    height: 50px!important;
+}
+
+body {
+    background-color: $menuColor;
+}
+
 .rooms {
     &__container {
         width: 1200px;
@@ -14,17 +35,27 @@
     }
 
     &__item {
-        border: 1px solid black;
+        padding: 5px;
         border-radius: 3%;
         display: flex;
         flex-direction: column;
         align-items: center;
+        background-color: $messageColor;
     }
 }
 
 .room {
     &__title {
         margin: 10px 0;
+        color: $textColor;
+    }
+
+    &__author {
+        color: $secondTextColor;
+    }
+
+    &__type {
+        color: $activeColor;
     }
 
     &__link {
@@ -34,13 +65,14 @@
         height: 30px;
         display: block;
         text-align: center;
-        background-color: antiquewhite;
+        background-color: $btnChat;
         line-height: 30px;
         border: 10%;
         transition: .3s ease;
+        color: $textColor;
 
         &:hover {
-            background-color: darken(antiquewhite, 20);
+            background-color: $btnHover;
         }
     }
 }

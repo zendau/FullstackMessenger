@@ -1,3 +1,11 @@
+header {
+  height: 50px !important;
+}
+
+body {
+  background-color: #0e1621;
+}
+
 .rooms__container {
   width: 1200px;
   margin: 0 auto;
@@ -17,7 +25,7 @@
 }
 
 .rooms__item {
-  border: 1px solid black;
+  padding: 5px;
   border-radius: 3%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -29,10 +37,20 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  background-color: #182533;
 }
 
 .room__title {
   margin: 10px 0;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.room__author {
+  color: #aaaaaa;
+}
+
+.room__type {
+  color: #5eb5f7;
 }
 
 .room__link {
@@ -42,15 +60,16 @@
   height: 30px;
   display: block;
   text-align: center;
-  background-color: antiquewhite;
+  background-color: #3a3a3d;
   line-height: 30px;
   border: 10%;
   -webkit-transition: .3s ease;
   transition: .3s ease;
+  color: rgba(255, 255, 255, 0.84);
 }
 
 .room__link:hover {
-  background-color: #efbe7c;
+  background-color: #464649;
 }
 
 @media (max-width: 1140px) {
