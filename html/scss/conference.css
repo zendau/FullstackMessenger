@@ -123,6 +123,7 @@ footer {
   }
   header {
     z-index: 2;
+    height: auto;
     width: 100%;
     position: absolute;
   }
