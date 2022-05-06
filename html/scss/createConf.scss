@@ -22,7 +22,7 @@ body {
     &__container {
         width: 600px;
         height: 400px;
-        background-color: $messageColor;
+        background-color: $bgcColor;
         margin: 50px auto;
         display: flex;
         flex-direction: column;
@@ -33,6 +33,7 @@ body {
     &__title {
         text-align: center;
         margin: 25px 0;
+        color: $textColor;
     }
 
     &__form {
@@ -44,6 +45,7 @@ body {
 
         label {
             margin-bottom: 5px;
+            color: $textColor;
         }
 
         input {
@@ -52,6 +54,10 @@ body {
             color: $textColor;
             padding: 5px;
             font-size: 18px;
+
+            &::placeholder {
+                color: $textColor;
+            }  
         }
 
         input[type='submit'] {
