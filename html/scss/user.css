@@ -1,0 +1,28 @@
+.user__hr {
+  width: 80%;
+  margin: 35px auto;
+  border-color: #aaaaaa;
+}
+
+.user__role {
+  text-align: center;
+}
+
+.user__title {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.user__form input {
+  margin-bottom: 20px;
+}
+
+.user__link {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  color: #59b7ff;
+  text-decoration: none;
+  margin-bottom: 15px;
+}
+/*# sourceMappingURL=user.css.map */

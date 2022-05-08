@@ -10,7 +10,7 @@ $messageColor: #182533;
 $activeColor: #5eb5f7;
 $linkColor: #59b7ff;
 
-.user-data {
+.user {
     &__hr {
         width: 80%;
         margin: 35px auto;
@@ -23,11 +23,19 @@ $linkColor: #59b7ff;
 
     &__title {
         text-align: center;
+        margin-bottom: 25px;
     }
 
     &__form {
         input {
             margin-bottom: 20px;
         }
+    }
+
+    &__link {
+        align-self: center;
+        color: $linkColor;
+        text-decoration: none;
+        margin-bottom: 15px;
     }
 }

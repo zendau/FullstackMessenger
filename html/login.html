@@ -9,6 +9,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="scss/main.css">
     <link rel="stylesheet" href="scss/navbar.css">
+    <link rel="stylesheet" href="scss/navbar.css">
     <link rel="stylesheet" href="scss/createConf.css">
     <link rel="stylesheet" href="scss/user.css">
     <link rel="stylesheet" href="scss/alert.css">
@@ -17,18 +18,9 @@
     <header>
         <nav class="nav__menu">
             <ul>
-                <li><a href="chat.html">Chats</a></li>
-                <li><a href="rooms.html">Conferences</a></li>
-                <li><a href="createConf.html">Create conference</a></li>
-                <li><a href="user.html">User</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
             </ul>
-            <ul>
-                <li><a href="#">Edit</a></li>
-                <li><a href="#">Delete</a></li>
-                <li><a href="#">Invite</a></li>
-                <li><a href="#">Exit conference</a></li>
-            </ul>
-            <a href="#">Exit</a>
         </nav>
         <div class="nav__btn">
             <input type="checkbox" name="" id="" />
@@ -39,23 +31,21 @@
             </div>
         </div>
     </header>
+
     <section class="create__container">
-        <h1 class="create__title">Hello Admin</h1>
-        <p class="user__role">Role: <span>Admin</span></p>
-        <hr class="user__hr">
-        <h2 class="user__title">Change user data</h2>
-        <div class="alert alert__success">
-            <p class="alert__text">Data is changed</p>
+        <h1 class="create__title">Login</h1>
+        <div class="alert alert__danger">
+            <p class="alert__text">Email is not found</p>
         </div>
-        <form class="create__form user__form">
+        <form class="create__form user-data__form">
             <label for="conferenceTitle">Login</label>
             <input type="text" id="conferenceTitle" placeholder="Login">
-            <label for="conferenceTitle">New password</label>
+            <label for="conferenceTitle">Password</label>
             <input type="password" id="conferenceTitle" placeholder="password">
-            <label for="conferenceTitle">Repeat new password</label>
-            <input type="password" id="conferenceTitle" placeholder="password">
-            <input type="submit" value="Change data">
+            <input type="submit" value="Login">
         </form>
+        <hr class="user__hr">
+        <a class="user__link" href="forgot.html">Forgot your password?</a>
     </section>    
 </body>
 </html>
