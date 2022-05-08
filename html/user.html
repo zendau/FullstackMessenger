@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="scss/main.css">
     <link rel="stylesheet" href="scss/navbar.css">
     <link rel="stylesheet" href="scss/createConf.css">
+    <link rel="stylesheet" href="scss/userData.css">
 
 </head>
 <body>
@@ -25,6 +26,7 @@
                 <li><a href="#">Edit</a></li>
                 <li><a href="#">Delete</a></li>
                 <li><a href="#">Invite</a></li>
+                <li><a href="#">Exit conference</a></li>
             </ul>
             <a href="#">Exit</a>
         </nav>
@@ -38,17 +40,18 @@
         </div>
     </header>
     <section class="create__container">
-        <h1 class="create__title">Create conference</h1>
-        <form class="create__form">
-            <label for="conferenceTitle">Conference title</label>
-            <input type="text" id="conferenceTitle" placeholder="title">
-
-            <select name="" id="conferenceType">
-                <option disabled selected>Select conference type</option>
-                <option value="audio">Audio</option>
-                <option value="video">Video</option>
-                <input type="submit" value="Create conference">
-            </select>
+        <h1 class="create__title">Hello Admin</h1>
+        <p class="user-data__role">Role: <span>Admin</span></p>
+        <hr class="user-data__hr">
+        <h2 class="user-data__title">Change user data</h2>
+        <form class="create__form user-data__form">
+            <label for="conferenceTitle">Login</label>
+            <input type="text" id="conferenceTitle" placeholder="Login">
+            <label for="conferenceTitle">New password</label>
+            <input type="password" id="conferenceTitle" placeholder="password">
+            <label for="conferenceTitle">Repeat new password</label>
+            <input type="password" id="conferenceTitle" placeholder="password">
+            <input type="submit" value="Change data">
         </form>
     </section>    
 </body>

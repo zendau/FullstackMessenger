@@ -133,6 +133,14 @@ header {
 
 @media (max-width: 960px) {
 
+    header {
+        background-color: inherit;
+    }
+
+    header.active {
+        background-color: $bgcColor;
+    }
+
     .nav {
 
         &__menu {
@@ -142,6 +150,7 @@ header {
             display: none;
             align-items: center;
             justify-content: center;
+            
 
             &--active {
                 display: flex;

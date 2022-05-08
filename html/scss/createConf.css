@@ -8,7 +8,6 @@ body {
 
 .create__container {
   width: 600px;
-  height: 400px;
   background-color: #17212b;
   margin: 50px auto;
   display: -webkit-box;
@@ -20,6 +19,7 @@ body {
           flex-direction: column;
   color: rgba(255, 255, 255, 0.84);
   border-radius: 3px;
+  padding: 15px 0;
 }
 
 .create__title {
@@ -54,6 +54,7 @@ body {
   color: rgba(255, 255, 255, 0.84);
   padding: 5px;
   font-size: 18px;
+  margin-bottom: 20px;
 }
 
 .create__form input::-webkit-input-placeholder {
@@ -95,5 +96,14 @@ body {
   outline: none;
   color: rgba(255, 255, 255, 0.84);
   border-radius: 0;
+}
+
+@media (max-width: 720px) {
+  .create__container {
+    width: 90%;
+    margin: 0 auto;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+  }
 }
 /*# sourceMappingURL=createConf.css.map */

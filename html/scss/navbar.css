@@ -141,6 +141,12 @@ header {
 }
 
 @media (max-width: 960px) {
+  header {
+    background-color: inherit;
+  }
+  header.active {
+    background-color: #17212b;
+  }
   .nav__menu {
     width: 100%;
     -webkit-box-orient: vertical;

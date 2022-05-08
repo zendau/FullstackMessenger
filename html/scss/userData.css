@@ -1,0 +1,18 @@
+.user-data__hr {
+  width: 80%;
+  margin: 35px auto;
+  border-color: #aaaaaa;
+}
+
+.user-data__role {
+  text-align: center;
+}
+
+.user-data__title {
+  text-align: center;
+}
+
+.user-data__form input {
+  margin-bottom: 20px;
+}
+/*# sourceMappingURL=userData.css.map */
