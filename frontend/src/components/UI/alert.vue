@@ -1,24 +1,26 @@
 <template>
-  <div class="alert" :class="'alert__'+type">
-        <p class="alert__text">{{text}}</p>
+  <div v-if="message.type" class="alert" :class="'alert__'+message.type">
+        <p class="alert__text">{{message.text}}</p>
     </div>
 </template>
 
 <script>
+
+import { useStore } from 'vuex'
+import { computed } from '@vue/runtime-core'
+
 export default {
-    props: {
-        type: {
-            validator: (value) => {
-                return ['success', 'danger'].indexOf(value) !== -1
-            },
-            type: String,
-            required: true,
-        },
-        text: {
-            type: String,
-            required: true,
+    setup() {
+
+        const store = useStore()
+
+        const message = computed(() => store.getters['auth/getAlertMessage'])
+
+        return {
+            message
         }
-    },
+
+    }
 }
 </script>
 

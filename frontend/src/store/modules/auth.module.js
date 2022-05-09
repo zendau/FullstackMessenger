@@ -3,6 +3,8 @@ import jwt_decode from "jwt-decode";
 
 import router from '../../router'
 
+import {alert} from '../../components/UI/alert'
+
 export const auth = {
   namespaced: true,
   state: {
@@ -12,7 +14,10 @@ export const auth = {
         role: []
     },
     authStatus: false,
-    error: ""
+  message: {
+    text: '',
+    type: null
+  }
   },
   actions: {
     async login({ commit }, loginData) {
@@ -85,9 +90,11 @@ export const auth = {
         const msg = error.message
 
         if (typeof msg === 'string') {
-            state.error = msg
+            state.message.text = msg
+            state.message.type = alert.danger
         } else {
-            state.error = msg[0]
+            state.message.text =  msg[0]
+            state.message.type = alert.danger
         }
         console.log(state)
     },
@@ -96,12 +103,12 @@ export const auth = {
             id: null,
             email: null,
             role: []
-        },
-        state.authStatus = false,
-        state.error = ""
+        }
+        state.authStatus = false
     },
     clearErrorMessage(state) {
-        state.error = ""
+        state.message.text = ""
+        state.message.type = null
     }
   },
   getters: {
@@ -112,8 +119,8 @@ export const auth = {
       getUserData(state) {
         return state.user
       },
-      getErrorMessage(state) {
-          return state.error
+      getAlertMessage(state) {
+          return state.message
       },
       getRoleAcessLevel(state) {
           return state.user.role.accessLevel

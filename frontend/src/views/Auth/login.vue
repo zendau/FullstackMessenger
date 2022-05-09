@@ -1,9 +1,8 @@
 <template>
     <h1 class="user__title">Login</h1>
-    <alert :text="message" :type="type"/>
-    <form class="user__form">
-
-        <form-input id="email" title="Email" type="email"/>
+    <alert/>
+    <form class="user__form" @submit.prevent="onSubmitForm">
+        <form-input id="email" title="Email" type="email" v-model="email"/>
         <form-input id="password" title="Password" type="password"/>
 
         <input type="submit" value="Login"/>
@@ -17,17 +16,36 @@
 import Alert from '../../components/UI/alert.vue'
 import FormInput from '../../components/UI/input.vue'
 
+import { useStore } from 'vuex'
+import {ref} from 'vue'
+
 export default {
     components: {Alert, FormInput},
     setup() {
 
-        const type = 'danger'
-        const message = 'Email is not found'
+        const email = ref(null)
+        const password = ref(null)
+
+        const store = useStore()
+
+        async function onSubmitForm() {
+
+            console.log(email.value, password.value)
+
+            store.dispatch('auth/login', {
+                email: email.value,
+                password: password.value,
+            })
+
+       
+        }
 
         return {
-            type,
-            message
+            email,
+            password,
+            onSubmitForm,
         }
+
     }
 }
 </script>

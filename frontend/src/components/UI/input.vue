@@ -1,6 +1,6 @@
 <template>
   <label :for="id">{{title}}</label>
-  <input :type="type" :id="id" :placeholder="title">
+  <input :type="type" :id="id" :placeholder="title" @input="updateValue">
 </template>
 
 <script>
@@ -21,6 +21,17 @@ export default {
           type: String,
           required: true,
     },
+    modelValue: String
+  },
+  setup(props, context) {
+
+    function updateValue(event) {
+      context.emit('update:modelValue', event.target.value);
+    }
+
+    return {
+      updateValue
+    }
   }
 }
 </script>
