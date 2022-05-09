@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link href="./fonts/Roboto-Black.ttf" rel="stylesheet">
+    <title>Document</title>
+    <link rel="stylesheet" href="scss/main.css">
+    <link rel="stylesheet" href="scss/navbar.css">
+    <link rel="stylesheet" href="scss/createConf.css">
+    <link rel="stylesheet" href="scss/user.css">
+    <link rel="stylesheet" href="scss/alert.css">
+</head>
+<body>
+    <header>
+        <nav class="nav__menu">
+            <ul>
+                <li><a href="chat.html">Chats</a></li>
+                <li><a href="rooms.html">Conferences</a></li>
+                <li><a href="createConf.html">Create conference</a></li>
+                <li><a href="user.html">User</a></li>
+            </ul>
+            <ul>
+                <li><a href="#">Edit</a></li>
+                <li><a href="#">Delete</a></li>
+                <li><a href="#">Invite</a></li>
+                <li><a href="#">Exit conference</a></li>
+            </ul>
+            <a href="#">Exit</a>
+        </nav>
+        <div class="nav__btn">
+            <input type="checkbox" name="" id="" />
+            <div class="hamburger-lines">
+                <span class="line line1"></span>
+                <span class="line line2"></span>
+                <span class="line line3"></span>
+            </div>
+        </div>
+    </header>
+    <section class="create__container">
+        <h1 class="create__title">Hello Admin</h1>
+        <p class="user__role">Role: <span>Admin</span></p>
+        <hr class="user__hr">
+        <h2 class="user__title">Change user data</h2>
+        <div class="alert alert__success">
+            <p class="alert__text">Data is changed</p>
+        </div>
+        <form class="create__form user__form">
+            <label for="conferenceTitle">Login</label>
+            <input type="text" id="conferenceTitle" placeholder="Login">
+            <label for="conferenceTitle">New password</label>
+            <input type="password" id="conferenceTitle" placeholder="password">
+            <label for="conferenceTitle">Repeat new password</label>
+            <input type="password" id="conferenceTitle" placeholder="password">
+            <input type="submit" value="Change data">
+        </form>
+    </section>    
+</body>
+</html>

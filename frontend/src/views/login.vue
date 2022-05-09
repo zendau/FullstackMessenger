@@ -50,9 +50,4 @@ export default {
 </script>
 
 <style>
-    form {
-        width: 400px;
-        display: grid;
-        row-gap: 5px;
-    }
 </style>

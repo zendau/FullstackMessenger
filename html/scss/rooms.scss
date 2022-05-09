@@ -1,0 +1,120 @@
+$menuColor: #0e1621;
+$textColor: rgba(255, 255, 255, 0.84);
+$secondTextColor: #aaaaaa;
+$itemColor: #202b36;
+$btnChat: #3a3a3d;
+$btnHover: #464649;
+$bgcColor: #17212b;
+$dangerColor: #e33741;
+$messageColor: #182533;
+$activeColor: #5eb5f7;
+$linkColor: #59b7ff;
+
+
+header {
+    height: 50px!important;
+}
+
+body {
+    background-color: $menuColor;
+}
+
+.rooms {
+    &__container {
+        width: 1200px;
+        margin: 0 auto;
+    }
+
+    &__list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 250px);
+        gap: 15px;
+        justify-content: center;
+        margin-top: 35px;
+    }
+
+    &__item {
+        padding: 5px;
+        border-radius: 3%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: $messageColor;
+    }
+}
+
+.room {
+    &__title {
+        margin: 10px 0;
+        color: $textColor;
+    }
+
+    &__author {
+        color: $secondTextColor;
+    }
+
+    &__type {
+        color: $activeColor;
+    }
+
+    &__link {
+        margin: 10px 0;
+        text-decoration: none;
+        width: 100px;
+        height: 30px;
+        display: block;
+        text-align: center;
+        background-color: $btnChat;
+        line-height: 30px;
+        border: 10%;
+        transition: .3s ease;
+        color: $textColor;
+
+        &:hover {
+            background-color: $btnHover;
+        }
+    }
+}
+
+@media (max-width: 1140px) {
+
+    .rooms {
+        &__container {
+            width: 1000px;
+        }
+    }
+}
+
+
+@media (max-width: 960px) {
+    .rooms {
+        &__container {
+            width: 800px;
+        }
+
+        &__list {
+            grid-template-columns: repeat(auto-fill, 200px);
+        }
+    }
+}
+
+@media (max-width: 730px) {
+    .rooms {
+
+        &__container {
+            width: 100%;
+        }
+
+        &__list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        &__item {
+            width: 300px;
+        }
+    }
+   
+}

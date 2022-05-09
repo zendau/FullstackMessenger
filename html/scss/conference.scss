@@ -1,0 +1,154 @@
+$menuColor: #0e1621;
+$textColor: rgba(255, 255, 255, 0.84);
+$secondTextColor: #aaaaaa;
+$itemColor: #202b36;
+$btnChat: #3a3a3d;
+$btnHover: #464649;
+$bgcColor: #17212b;
+$dangerColor: #e33741;
+$messageColor: #182533;
+$activeColor: #5eb5f7;
+$linkColor: #59b7ff;
+
+body {
+    display: grid;
+    grid-template-rows: 50px 1fr 60px;
+    height: 100vh;
+    max-height: 100vh;
+}
+
+footer {
+    height: 60px;
+    background-color: $bgcColor;
+    box-sizing: border-box;
+}
+
+.main-container {
+    overflow: hidden;
+    display: flex;
+    background-color: $menuColor;
+}
+
+.conference {
+
+    &-container {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 10px;
+        overflow-y: scroll;
+        padding: 5px 10px;
+        align-content: baseline;
+        
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: #3f4750;
+            border-radius: 100px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #9b9fa4;
+            box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+            border-radius: 10px;
+        }
+
+        &--hide {
+            display: none;
+        }
+    }
+
+    &-chat {
+        display: flex;
+        flex-direction: column;
+        width: 350px;
+  
+
+        &--active {
+            width: 100%;
+            position: absolute;
+            z-index: 2;
+            background-color: white;
+            height: 100%;
+        }
+    }
+
+    &__menu {
+        display: flex;
+        height: 100%;
+        width: 800px;
+        margin: 0 auto;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+}
+
+.chat {
+    &__body {
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: #3f4750;
+            border-radius: 100px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #9b9fa4;
+            box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+            border-radius: 10px;
+        }
+    }
+}
+
+
+@media (max-width: 1140px) {
+
+    
+}
+
+@media (max-width: 960px) {
+
+    body {
+        display: grid;
+        grid-template-rows: 1fr 60px;
+    }
+
+    header {
+        z-index: 2;
+        height: auto;
+        width: 100%;
+        position: absolute;
+    }
+
+    .main-container {
+        max-height: 100vh;
+        position: relative;
+    }
+
+    .conference {
+        &__menu {
+            width: 600px;
+            margin: 0 auto;
+        }
+    }
+}
+
+@media (max-width: 730px) {
+
+    .conference {
+
+        &-container {
+            display: block;
+        }
+
+        &__menu {
+            width: 275px;
+            margin: 0 auto;
+        }
+    }
+}

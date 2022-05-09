@@ -12,8 +12,10 @@ import chat from '../views/Chat/chat.vue'
 
 import pageNotFound from '../views/404.vue'
 
-import register from '../views/register.vue'
-import login from '../views/login.vue'
+import register from '../views/Auth/register.vue'
+import login from '../views/Auth/login.vue'
+import forgot from '../views/Auth/forgot.vue'
+
 import users from '../views/users.vue'
 
 import { Role } from './roles'
@@ -113,6 +115,15 @@ const routes = [
     meta: {
       requiresAuth: true,
       role: Role.User
+    }
+  },
+  {
+    path: '/forgot',
+    component: forgot,
+    name: 'forgot',
+    meta: {
+      requiresAuth: false,
+      role: Role.noAuth
     }
   },
   {

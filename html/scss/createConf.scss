@@ -1,28 +1,24 @@
-<template>
-    <navbar/>
-    <section class="user__container">
-      <slot/>
-    </section>    
-</template>
+$menuColor: #0e1621;
+$textColor: rgba(255, 255, 255, 0.84);
+$secondTextColor: #aaaaaa;
+$itemColor: #202b36;
+$btnChat: #3a3a3d;
+$btnHover: #464649;
+$bgcColor: #17212b;
+$dangerColor: #e33741;
+$messageColor: #182533;
+$activeColor: #5eb5f7;
+$linkColor: #59b7ff;
 
-<script>
-import Navbar from '../components/layout/navbar.vue'
-
-export default {
-  components: {Navbar}
-}
-</script>
-
-<style lang="scss">
 header {
-  height: 50px!important;
+    height: 50px!important;
 }
 
 body {
     background-color: $menuColor;
 }
 
-.user {
+.create {
     &__container {
         width: 600px;
         background-color: $bgcColor;
@@ -38,23 +34,6 @@ body {
         text-align: center;
         margin: 25px 0;
         color: $textColor;
-    }
-
-    &__hr {
-        width: 80%;
-        margin: 35px auto;
-        border-color: $secondTextColor;
-    }
-
-    &__role {
-        text-align: center;
-    }
-
-    &__link {
-        align-self: center;
-        color: $linkColor;
-        text-decoration: none;
-        margin-bottom: 15px;
     }
 
     &__form {
@@ -112,7 +91,7 @@ body {
 @media (max-width: 720px) {
 
    
-.user {
+.create {
     &__container {
         width: 90%;
         margin: 15px auto;
@@ -121,4 +100,3 @@ body {
 }
    
 }
-</style>
