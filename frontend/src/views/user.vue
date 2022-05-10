@@ -1,10 +1,10 @@
 <template>
-  <h1 class="user__title">Hello Admin</h1>
-  <p class="user__role">Role: <span>Admin</span></p>
+  <h1 class="user__title">Hello {{userData.email}}</h1>
+  <p class="user__role">Role: {{userData.role.value}}</p>
   <hr class="user__hr">
   <h2 class="user__title">Change user data</h2>
   <alert/>
-  <form class="user__form">
+  <form class="user__form" @submit="onSubmitForm">
       <form-input id="email" title="Email" type="email" v-model="email"/>
       <form-input id="password" title="Password" type="password" v-model="password"/>
       <form-input id="confirmPassword" title="Confirm password" type="password" v-model="password"/>

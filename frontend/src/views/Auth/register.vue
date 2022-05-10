@@ -1,7 +1,7 @@
 <template>
   <h1 class="user__title">Register</h1>
   <alert/>
-  <form class="user__form" @submit.prevent="onSubmitForm">
+  <form class="user__form" @submit="onSubmitForm">
 
       <form-input id="email" title="Email" type="email" v-model="email"/>
       <form-input id="password" title="Password" type="password" v-model="password"/>
