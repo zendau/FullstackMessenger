@@ -1,14 +1,22 @@
 <template>
    <header>
         <nav class="nav__menu">
-            <ul>
-                <li>
-                    <router-link to="/login">Login</router-link>
-                    </li>
-                <li>
-                    <router-link to="register">Register</router-link>
-                </li>
+            <ul v-if="authStatus">
+              <li v-for='(item, index) in navbarAuthList.items' :key="index">
+                <router-link :to="item.link">{{item.name}}</router-link>
+              </li>
             </ul>
+             <ul v-else>
+               <li v-for='(item, index) in navbarNoAuthList.items' :key="index">
+                <router-link :to="item.link">{{item.name}}</router-link>
+              </li>
+            </ul>
+            <ul v-if="authStatus">
+                <li><a href="#">Edit</a></li>
+                <li><a href="#">Delete</a></li>
+                <li><a href="#">Invite</a></li>
+            </ul>
+            <a v-if="authStatus" href="#">Exit</a>
         </nav>
         <div class="nav__btn">
             <input type="checkbox" name="" id="" />
@@ -22,8 +30,57 @@
 </template>
 
 <script>
-export default {
+import { computed } from '@vue/runtime-core'
 
+import { useStore } from 'vuex'
+
+export default {
+  
+  setup() {
+    const store = useStore()
+
+    const navbarAuthList = {
+      items: [
+        {
+          name: 'Chats',
+          link: '/chats'
+        },
+        {
+          name: 'Conferences',
+          link: '/conferences'
+        },
+        {
+          name: 'Create conference',
+          link: '/create'
+        },
+        {
+          name: 'User',
+          link: '/user'
+        }
+      ]
+    }
+
+    const navbarNoAuthList = {
+      items: [
+        {
+          name: 'Login',
+          link: '/login'
+        },
+        {
+          name: 'Register',
+          link: '/register'
+        }
+      ]
+    }
+
+    const authStatus = computed(() => store.getters['auth/getAuthStatus'])
+    console.log('auth',authStatus.value)
+    return {
+      authStatus,
+      navbarAuthList,
+      navbarNoAuthList
+    }
+  }
 }
 </script>
 

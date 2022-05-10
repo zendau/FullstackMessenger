@@ -1,7 +1,7 @@
 <template>
-  <div v-if="message.type" class="alert" :class="'alert__'+message.type">
-        <p class="alert__text">{{message.text}}</p>
-    </div>
+  <div v-if="message.text" class="alert" :class="'alert__'+message.type">
+    <p class="alert__text">{{message.text}}</p>
+  </div>
 </template>
 
 <script>
@@ -12,13 +12,13 @@ import { computed } from '@vue/runtime-core'
 export default {
     setup() {
 
-        const store = useStore()
+      const store = useStore()
 
-        const message = computed(() => store.getters['auth/getAlertMessage'])
+      const message = computed(() => store.getters['auth/getAlertMessage'])
 
-        return {
-            message
-        }
+      return {
+          message
+      }
 
     }
 }
@@ -27,24 +27,25 @@ export default {
 <style lang='scss'>
     .alert {
 
-    width: 250px;
-    height: 60px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+      width: 250px;
+      height: 60px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
     
     &__danger {
-        background-color: $dangerColor;
+      background-color: $dangerColor;
     }
 
     &__success {
-        background-color: $successColor;
+      background-color: $successColor;
     }
 
     &__text {
-        color: $textColor;
-        text-align: center;
+      color: $textColor;
+      text-align: center;
     }
 }
 </style>

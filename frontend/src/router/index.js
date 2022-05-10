@@ -16,7 +16,7 @@ import register from '../views/Auth/register.vue'
 import login from '../views/Auth/login.vue'
 import forgot from '../views/Auth/forgot.vue'
 
-import users from '../views/users.vue'
+import user from '../views/user.vue'
 
 import { Role } from './roles'
 
@@ -109,9 +109,9 @@ const routes = [
     }
   },
   {
-    path: '/users',
-    component: users,
-    name: 'users',
+    path: '/user',
+    component: user,
+    name: 'user',
     meta: {
       requiresAuth: true,
       role: Role.User

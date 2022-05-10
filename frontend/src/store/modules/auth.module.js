@@ -33,7 +33,13 @@ export const auth = {
             localStorage.setItem('token', accessToken)
             router.push('/users')
         } catch (e) {
-            commit('authFailed', e.response.data)
+            const message =  e.response.data
+
+            if (typeof message === 'string') {
+                commit('authFailed', message)
+            } else {
+                commit('authFailed', message[0])
+            }
         }
     },
     logout({ commit }) {
@@ -56,7 +62,13 @@ export const auth = {
             localStorage.setItem('token', accessToken)
             router.push('/users')
         } catch (e) {
-            commit('authFailed', e.response.data)
+            const message =  e.response.data
+
+            if (typeof message === 'string') {
+                commit('authFailed', message)
+            } else {
+                commit('authFailed', message[0])
+            }
         }
     },
     async checkAuth({ commit }) {
@@ -86,18 +98,6 @@ export const auth = {
         }
         state.authStatus = true
     },
-    authFailed(state, error) {
-        const msg = error.message
-
-        if (typeof msg === 'string') {
-            state.message.text = msg
-            state.message.type = alert.danger
-        } else {
-            state.message.text =  msg[0]
-            state.message.type = alert.danger
-        }
-        console.log(state)
-    },
     logout(state) {
         state.user = {
             id: null,
@@ -106,9 +106,17 @@ export const auth = {
         }
         state.authStatus = false
     },
-    clearErrorMessage(state) {
+    clearMessage(state) {
         state.message.text = ""
         state.message.type = null
+    },
+    setErrorMessage(state, text) {
+        state.message.text = text
+        state.message.type = alert.danger
+    },
+    setSuccessMessage(state, text) {
+        state.message.text = text
+        state.message.type = alert.success
     }
   },
   getters: {
