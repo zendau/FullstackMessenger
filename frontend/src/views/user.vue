@@ -3,32 +3,72 @@
   <p class="user__role">Role: <span>Admin</span></p>
   <hr class="user__hr">
   <h2 class="user__title">Change user data</h2>
-  <div class="alert alert__success">
-      <p class="alert__text">Data is changed</p>
-  </div>
+  <alert/>
   <form class="user__form">
-      <label for="conferenceTitle">Login</label>
-      <input type="text" id="conferenceTitle" placeholder="Login">
-      <label for="conferenceTitle">New password</label>
-      <input type="password" id="conferenceTitle" placeholder="password">
-      <label for="conferenceTitle">Repeat new password</label>
-      <input type="password" id="conferenceTitle" placeholder="password">
+      <form-input id="email" title="Email" type="email" v-model="email"/>
+      <form-input id="password" title="Password" type="password" v-model="password"/>
+      <form-input id="confirmPassword" title="Confirm password" type="password" v-model="password"/>
       <input type="submit" value="Change data">
   </form>
 </template>
 
 <script>
 import { computed } from '@vue/runtime-core'
-
 import { useStore } from 'vuex'
 
-export default {
-    setup() {
-        const store = useStore()
+import { useField, useForm } from 'vee-validate';
+import * as yup from 'yup';
 
-        return {
-            userData: computed(() => store.getters['auth/getUserData'])
-        }
+import FormInput from '../components/UI/input.vue'
+import Alert from '../components/UI/alert.vue'
+
+export default {
+    components: {Alert, FormInput},
+    setup() {
+      const store = useStore()
+
+      const schema = yup.object({
+          email: yup.string().required().email(),
+          password: yup.string().required().min(8),
+          confirmPassword: yup.string().required().oneOf([yup.ref('password'), null], 'Passwords must match'),
+      });
+
+      const { handleSubmit } = useForm({
+          validationSchema: schema,
+      });
+
+
+      const { value: email } = useField('email');
+      const { value: password } = useField('password');
+      const { value: confirmPassword } = useField('confirmPassword');
+
+
+      function onInvalidSubmit({ errors }) {
+        let message = ''
+
+        if (errors.email) message += `${errors.email}\n`
+        if (errors.password) message += `${errors.password}\n`
+        if (errors.confirmPassword) message += errors.confirmPassword
+
+        store.commit('auth/setErrorMessage', message)
+      }
+
+      const onSubmitForm = handleSubmit(value => {
+        console.log(value)
+        // store.dispatch('auth/register', {
+        //   email: value.email,
+        //   password: value.password,
+        //   confirmPassword: value.confirmPassword
+        // })
+      }, onInvalidSubmit)
+
+      return {
+        userData: computed(() => store.getters['auth/getUserData']),
+        onSubmitForm,
+        email,
+        password,
+        confirmPassword
+      }
     }
 }
 </script>

@@ -1,9 +1,12 @@
 <template>
   <error-message/>
   <form action="" @submit.prevent="onSubmitForm">
-      <input type="text" placeholder="email" v-model.trim="email" required>
+      <form-input id="email" title="Email" type="email" v-model="email"/>
+      <form-input id="password" title="Password" type="password" v-model="password"/>
+      <form-input id="confirmPassword" title="Confirm password" type="password" v-model="confirmPassword"/>
+      <!-- <input type="text" placeholder="email" v-model.trim="email" required>
       <input type="password" placeholder="password" v-model.trim="password" required>
-      <input type="password" placeholder="confirm password" v-model.trim="confirmPassword" required>
+      <input type="password" placeholder="confirm password" v-model.trim="confirmPassword" required> -->
       <button>Registration</button>
   </form>
 </template>
