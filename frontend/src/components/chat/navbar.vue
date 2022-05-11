@@ -2,14 +2,14 @@
   <header>
     <nav class="chat__menu">
       <ul class="chat__list">
-        <li>
-          <a class="chat__list-item chat__list-item--active" href="chat.html">
+        <li @click="showContacts = true">
+          <a class="chat__list-item" :class="{ 'chat__list-item--active': showContacts}" href="#">
             <i class="bi bi-chat-dots"></i>
             <span>Chats</span>
           </a>
         </li>
-        <li>
-          <a class="chat__list-item" href="#">
+        <li @click="showContacts = false">
+          <a class="chat__list-item" :class="{ 'chat__list-item--active': !showContacts}" href="#">
             <i class="bi bi-person-lines-fill"></i>
             <span>Contacts</span>
           </a>
@@ -36,8 +36,23 @@
 </template>
 
 <script>
-export default {
+import { inject } from '@vue/runtime-core'
 
+import { useRoute } from 'vue-router'
+
+export default {
+  setup() {
+    const route = useRoute()
+
+    const showContacts = inject('showContacts')
+
+    route.query.page = 'chat'
+    console.log('NAVBAR',route)
+
+    return {
+      showContacts
+    }
+  }
 }
 </script>
 

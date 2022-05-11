@@ -17,11 +17,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
   .chat__messages {
     display: grid;
     max-height: 100vh;
     overflow: hidden;
-    grid-template-rows: 50px 1fr;
+    grid-template-rows: 58px 1fr;
+    background-color: $menuColor;
   }
 </style>

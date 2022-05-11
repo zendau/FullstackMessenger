@@ -1,118 +1,122 @@
 <template>
   <div class="chat__contacts">
-    <button class="btn--chat">Switch</button>
-    <create-group/>
+    <button class="btn--chat" @click="groupType = !groupType">
+      {{ groupType ? "Close" : "Create group" }}
+    </button>
+    <create-group v-if="groupType" />
     <ul class="contacts__list">
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
+      <li
+        class="contact__item"
+        v-for="user in contacts"
+        :key="user.id"
+        @click="openUserChat(user.id)"
+      >
         <i class="bi bi-person"></i>
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <input type="checkbox" />
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <input type="checkbox" />
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <input type="checkbox" />
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <p>Contact name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-people"></i>
-        <p>Group name</p>
-      </li>
-      <li class="contact__item">
-        <i class="bi bi-person"></i>
-        <input type="checkbox" />
-        <p>Contact name</p>
+        <input v-if="groupType" type="checkbox" />
+        <p>{{ user.login }}</p>
       </li>
     </ul>
   </div>
 </template>
 
-<script>
 
-import createGroup from './createGroup.vue'
+<script>
+//import { ref } from "vue";
+import $api from "../../axios";
+
+import { useRouter } from "vue-router";
+
+import { computed, onMounted, reactive, ref } from "vue";
+import createGroup from "./createGroup.vue";
+
+import { useStore } from "vuex";
 
 export default {
-  components: { createGroup }
+  components: { createGroup },
+  setup() {
+    const router = useRouter();
+    const store = useStore();
+
+    const userData = computed(() => store.getters["auth/getUserData"]);
+    const contacts = reactive([]);
+
+    onMounted(async () => {
+      const res = await $api.get("/chat/getContacts");
+      contacts.push(...res.data.filter((user) => user.login !== login));
+      console.log("CONTACTS", contacts);
+    });
+
+    const login = userData.value.email;
+
+    const groupType = ref(false);
+    const clients = ref([]);
+
+    const userId = userData.value.id;
+
+    const roomName = ref("");
+
+    async function openUserChat(id) {
+      console.log("test", id, userId);
+      if (groupType.value) return;
+
+      const res = await $api.post("/chat/check", {
+        adminId: userId,
+        users: [id],
+      });
+
+      if (res.data.status) {
+        router.push(`/chat/${res.data.chatId}`);
+      } else {
+        console.log("create");
+        const chatData = await $api.post("/chat/create", {
+          adminId: userId,
+          users: [id],
+          groupType: false,
+        });
+
+        const chatId = chatData.data.chatId;
+
+        router.push(`/chat/${chatId}`);
+      }
+    }
+
+    const clientLength = computed(() => {
+      if (clients.value.length < 2) {
+        if (roomName.value.length < 1) {
+          return true;
+        }
+        return true;
+      }
+
+      return false;
+    });
+
+    async function createGroupChat() {
+      console.log("groupCreate");
+      const chatData = await $api.post("/chat/create", {
+        adminId: parseInt(userId),
+        groupName: roomName.value,
+        users: [...clients.value],
+        groupType: true,
+      });
+
+      if (chatData.data) {
+        router.push(`/chat/${chatData.data.chatId}`);
+      }
+    }
+
+    return {
+      login,
+      contacts,
+      openUserChat,
+      groupType,
+      clients,
+      clientLength,
+      createGroupChat,
+      userId,
+      roomName,
+    };
+  },
 };
 </script>
 
@@ -162,8 +166,11 @@ export default {
     align-items: center;
     transition: 0.3s ease;
     cursor: pointer;
-    padding: 5px 0;
     color: $textColor;
+
+    a {
+      padding: 14.5px 0;
+    }
 
     &:hover {
       background-color: $itemColor;

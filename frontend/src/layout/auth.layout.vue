@@ -11,8 +11,8 @@
 
 <script>
 
-import {io} from "socket.io-client"
-import { computed, provide, ref } from 'vue'
+//import {io} from "socket.io-client"
+import { computed } from 'vue'
 
 import { useRoute } from 'vue-router'
 
@@ -21,20 +21,20 @@ import Navbar from '../components/layout/navbar.vue'
 export default {
   components: {Navbar},
   setup() {
-    const chatSocket = io('http://localhost:80');
-        provide('chatSocket', chatSocket)
-        const userLogin = Date.now()
+    // const chatSocket = io('http://localhost:80');
+    //     provide('chatSocket', chatSocket)
+    //     const userLogin = Date.now()
         
-        const chatSocketConnected = ref(false)
-        provide('chatSocketConnected', chatSocketConnected)
-        chatSocket.on('connect', () => { 
-            console.log('connected gateway')
-            chatSocketConnected.value = true
-            chatSocket.emit('connect-user', {
-                userLogin,
-                userId: chatSocket.id
-            })
-        })
+    //     const chatSocketConnected = ref(false)
+    //     provide('chatSocketConnected', chatSocketConnected)
+    //     chatSocket.on('connect', () => { 
+    //         console.log('connected gateway')
+    //         chatSocketConnected.value = true
+    //         chatSocket.emit('connect-user', {
+    //             userLogin,
+    //             userId: chatSocket.id
+    //         })
+    //     })
     const route = useRoute()
     console.log("ROUTE", route)
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="chat__send">
+  <div class="chat__send" v-if="roomData">
     <div
       class="chat__input"
       contenteditable="true"
@@ -25,6 +25,20 @@
     <button><i class="bi bi-send"></i></button>
   </div>
 </template>
+
+<script>
+import { inject } from 'vue';
+export default {
+  setup()  {
+    
+    const roomData = inject('roomData')
+
+    return {
+      roomData
+    }
+  }
+};
+</script>
 
 <style lang="scss" scoped>
   .chat {

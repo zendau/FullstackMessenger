@@ -1,9 +1,5 @@
 <template>
-  <div class="chat__body">
-    <message />
-    <message />
-    <message />
-    <message />
+  <div class="chat__body" v-if="roomData">
     <message />
   </div>
 </template>
@@ -11,9 +7,16 @@
 <script>
 import Message from "./message.vue";
 
+import { inject } from "vue";
 export default {
   components: { Message },
-  setup() {},
+  setup() {
+    const roomData = inject("roomData");
+
+    return {
+      roomData,
+    };
+  },
 };
 </script>
 

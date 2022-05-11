@@ -1,7 +1,8 @@
 <template>
 		<chatNavbar/>
 		<section class="chat__container">
-			<contacts/>
+            <chats v-if="showContacts"/>
+			<contacts v-else/>
 			<messages/>
 		</section>
     <!-- <div v-if="chatId">
@@ -14,23 +15,60 @@
 </template>
 
 <script>
-import { computed } from '@vue/runtime-core'
+import { computed, provide } from '@vue/runtime-core'
 
 import { useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { useStore } from "vuex";
 
 import chatNavbar from '../../components/chat/navbar.vue'
 import Contacts from '../../components/chat/contacts.vue'
 import Messages from '../../components/chat/messages.vue'
+import Chats from '../../components/chat/chats.vue'
+
+import {io} from "socket.io-client"
 
 export default {
-	components: {chatNavbar, Contacts, Messages},
+	components: {chatNavbar, Contacts, Messages, Chats },
     setup() {
         const route = useRoute()
         const chatId = computed(() => route.params.id) 
 
+        const showContacts = ref(true)
+
+        const roomData = ref({
+            title: 'Test',
+            group: {
+                count: 4,
+                users: [1,2,3]
+            }
+        })
+
+        provide('roomData', roomData)
+        provide('showContacts', showContacts)
+
+        const store = useStore()
+        const userData = computed(() => store.getters["auth/getUserData"]);
+
+
+        const socket = io('http://localhost:80');
+        provide('socket', socket)
+        
+        const socketConnected = ref(false)
+        provide('connected', socketConnected)
+        socket.on('connect', () => {
+            console.log('connected gateway')
+            socketConnected.value = true
+            socket.emit('connect-user', {
+                userLogin: userData.email,
+                userId: socket.id
+            })
+        })
 
         return {
-            chatId
+            chatId,
+            showContacts,
+            Chats
         }
     },
 }
