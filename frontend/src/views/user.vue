@@ -1,15 +1,17 @@
 <template>
-  <h1 class="user__title">Hello {{userData.email}}</h1>
-  <p class="user__role">Role: {{userData.role.value}}</p>
-  <hr class="user__hr">
-  <h2 class="user__title">Change user data</h2>
-  <alert/>
-  <form class="user__form" @submit="onSubmitForm">
-      <form-input id="email" title="Email" type="email" v-model="email"/>
-      <form-input id="password" title="Password" type="password" v-model="password"/>
-      <form-input id="confirmPassword" title="Confirm password" type="password" v-model="password"/>
-      <input type="submit" value="Change data">
-  </form>
+  <section class="user__container">
+    <h1 class="user__title">Hello {{userData.email}}</h1>
+    <p class="user__role">Role: {{userData.role.value}}</p>
+    <hr class="user__hr">
+    <h2 class="user__title">Change user data</h2>
+    <alert/>
+    <form class="user__form" @submit="onSubmitForm">
+        <form-input id="email" title="Email" type="email" v-model="email"/>
+        <form-input id="password" title="Password" type="password" v-model="password"/>
+        <form-input id="confirmPassword" title="Confirm password" type="password" v-model="password"/>
+        <input type="submit" value="Change data">
+    </form>
+  </section>  
 </template>
 
 <script>

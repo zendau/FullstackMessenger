@@ -42,8 +42,8 @@ export default {
     const navbarAuthList = {
       items: [
         {
-          name: 'Chats',
-          link: '/chats'
+          name: 'Chat',
+          link: '/chat'
         },
         {
           name: 'Conferences',
@@ -84,7 +84,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
     header {
     height: 100%;
     background-color: $bgcColor;

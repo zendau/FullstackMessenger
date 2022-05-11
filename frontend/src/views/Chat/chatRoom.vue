@@ -1,33 +1,33 @@
 <template>
   test chat room
-  <chats/>
+  <!-- <chats/>
   <contacts/>
-  <users-online/>
+  <users-online/> -->
 </template>
 
 <script>
 
-import usersOnline from '../../components/usersOnline.vue'
-import Contacts from '../../components/contacts.vue'
-import { inject } from 'vue'
-import Chats from '../../components/chats.vue'
+// import usersOnline from '../../components/usersOnline.vue'
+// import Contacts from '../../components/contacts.vue'
+// import { inject } from 'vue'
+// import Chats from '../../components/chats.vue'
 
 export default {
-  components: { usersOnline, Contacts, Chats },
+  //components: { usersOnline, Contacts, Chats },
 
   setup() {
 
-    const userLogin = Date.now()
+    // const userLogin = Date.now()
 
-    const socket = inject('socket', undefined)
+    // const socket = inject('socket', undefined)
     
-    socket.on('test', () => {
-      console.log('connected gateway')
-      socket.emit('connect-user', {
-          userLogin,
-          userId: socket.id
-      })
-    })
+    // // socket.on('test', () => {
+    // //   console.log('connected gateway')
+    // //   socket.emit('connect-user', {
+    // //       userLogin,
+    // //       userId: socket.id
+    // //   })
+    // // })
 
   }
 

@@ -6,9 +6,10 @@ import audioRoom from '../views/Room/audioRoom.vue'
 import videoRoom from '../views/Room/videoRoom'
 import roomGateway from '../views/Room/RoomGateway.vue'
 
-import chatGateway from '../views/Chat/chatGateway.vue'
-import chatRoom from '../views/Chat/chatRoom.vue'
-import chat from '../views/Chat/chat.vue'
+// import chatGateway from '../views/Chat/chatGateway.vue'
+// import chatRoom from '../views/Chat/chatRoom.vue'
+//import chat from '../views/Chat/chat.vue'
+import chatTest from '../views/Chat/chatTest.vue'
 
 import pageNotFound from '../views/404.vue'
 
@@ -68,29 +69,31 @@ const routes = [
     ]
   },
   {
-    path: '/chat',
-    component: chatGateway,
-    children: [
-      {
-        path: '/chat/:id',
-        component: chat,
-        name: 'chat',
-        meta: {
-          requiresAuth: true,
-          role: Role.User
-        }
-      },
-      {
-        path: '/chat/all',
-        component: chatRoom,
-        name: 'chatRoom',
-        meta: {
-          requiresAuth: true,
-          role: Role.User
-        }
-      },
+    path: '/chat/:id?',
+    component: chatTest,
+    name: 'chat',
+    meta: {
+      requiresAuth: true,
+      role: Role.User
+    }
+    // children: [
+    //   {
+    //     path: '/chat/:id',
+    //     component: chat,
+    //     name: 'chat',
+        
+    //   },
+    //   {
+    //     path: '/chat/all',
+    //     component: chatRoom,
+    //     name: 'chatRoom',
+    //     meta: {
+    //       requiresAuth: true,
+    //       role: Role.User
+    //     }
+    //   },
      
-    ]
+    // ]
   },
   {
     path: '/register',
