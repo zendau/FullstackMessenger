@@ -14,8 +14,14 @@ export default {
   setup() {
     const roomData = inject("roomData");
     const scrollEnd = inject('scrollEnd')
-
+    const socket = inject('socket')
     const messages = inject('messages')
+
+
+    socket.on('newMessage', (messageData) => {
+        console.log('NEEEEW', messageData)
+        messages.push(messageData)
+    })
 
     return {
       roomData,

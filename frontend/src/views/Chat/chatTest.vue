@@ -109,6 +109,12 @@ export default {
 
       console.log("test", scrollEnd, scrollEnd.value);
       console.log("test");
+
+      console.log('join to the room')
+        socket.emit('join-room', { 
+            userId: socket.id,
+            roomId,
+      })
     }
 
     const observer = new IntersectionObserver(async (entries) => {
