@@ -14,6 +14,17 @@ export class RegisterData {
   email: string;
 
   @ApiProperty({
+    example: 'admin',
+    description: 'login for auth',
+    required: true,
+  })
+  @Length(6, 20, {
+    message: 'login is smaller than 6 signs or bigger than 20 signs',
+  })
+  @IsString({ message: 'Is not currect string' })
+  login: string;
+
+  @ApiProperty({
     example: 'rootpass',
     description: 'Password for register',
     required: true,

@@ -40,13 +40,14 @@ export default {
     const userData = computed(() => store.getters["auth/getUserData"]);
     const contacts = reactive([]);
 
+    const login = userData.value.login;
+
     onMounted(async () => {
       const res = await $api.get("/chat/getContacts");
       contacts.push(...res.data.filter((user) => user.login !== login));
-      console.log("CONTACTS", contacts);
+      console.log("CONTACTS", contacts, login);
     });
 
-    const login = userData.value.email;
 
     const groupType = ref(false);
     const clients = ref([]);

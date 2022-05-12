@@ -1,5 +1,5 @@
 <template>
-  <div class="chat__header" v-if="roomData">
+  <div class="chat__header" v-if="roomData.title">
     <h1 class="chat__title" :class="{'chat__title--private': !roomData.group}">{{roomData.title}}</h1>
     <p class="chat__count" v-if="roomData.group">3 peoples</p>
     <div class="chat__topbar" v-if="roomData.group">

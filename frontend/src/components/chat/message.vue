@@ -1,29 +1,25 @@
 <template>
   <div class="message__container">
-    <p class="message__author">Admin</p>
+    <p class="message__author">{{message.author}}</p>
     <div class="message__body">
-      <p class="message__text">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptas
-        laborum, saepe quibusdam ducimus dignissimos asperiores! Rem aliquid
-        nihil quo quae quidem consequatur nesciunt. Enim corrupti itaque,
-        suscipit odit non nam voluptatem! Rerum, culpa veritatis! Eaque fugiat
-        pariatur illo assumenda et voluptate. Consectetur assumenda corporis
-        repellendus reiciendis temporibus aut ipsa, reprehenderit rerum quos
-        nobis ex porro fuga corrupti eum similique earum ut iusto nihil? Earum
-        nostrum impedit, in pariatur reiciendis asperiores a temporibus deleniti
-        corrupti sequi quae? Facere voluptatem quaerat alias voluptate
-        doloribus. Error a culpa explicabo blanditiis, provident quas cupiditate
-        maiores veritatis similique dolorum perferendis illum molestias
-        reiciendis dolorem sunt!
-      </p>
-      <a href="#" class="message__link">localhost.com</a>
+      <p class="message__text">{{message.text}}</p>
+      <!-- <a href="#" class="message__link">localhost.com</a>
       <a href="#" class="message__file">
         <i class="bi bi-file-earmark-arrow-down"></i>text.txt</a
-      >
+      > -->
     </div>
-    <span class="message__time">16:43</span>
+    <span class="message__time">{{message.time}}</span>
   </div>
 </template>
+
+<script>
+export default {
+    props: ['message'],
+    setup() {
+        
+    },
+}
+</script>
 
 <style lang="scss" scoped>
 .message {

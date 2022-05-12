@@ -86,4 +86,18 @@ export class UserController {
     res.cookie('auth-cookie', resData.refreshToken, { httpOnly: false });
     return resData;
   }
+
+  @UseGuards(JwtRefreshGuard)
+  @Get('all')
+  async getAllUsers(@Req() request: Request,) {
+
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/all', ''),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
 }

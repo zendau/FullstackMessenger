@@ -1,5 +1,5 @@
 import { Chat } from './entities/chat.entity';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import { ChatDTO } from './dto/chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as uuid from 'uuid';
 import { ChatUsers } from './entities/chatUsers.entity';
 import { exitChatDto } from './dto/exitChat.dto';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class ChatService {
@@ -17,10 +19,17 @@ export class ChatService {
     @InjectRepository(ChatUsers)
     private chatUserRepository: Repository<ChatUsers>,
     private connection: Connection,
+    @Inject('AUTH_SERVICE') private authServiceClient: ClientProxy,
   ) {}
 
   async getContacts() {
-    const res = await this.connection.query('SELECT * FROM `Users`');
+    const res = await firstValueFrom(
+      this.authServiceClient.send('user/all', ''),
+    );
+
+    if (res.status === false) {
+      throw new HttpException(res.message, res.httpCode);
+    }
     return res;
   }
 

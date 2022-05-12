@@ -34,4 +34,10 @@ export class UsersController {
     const res = await this.UsersService.refreshToken(refreshToken);
     return res;
   }
+
+  @MessagePattern('user/all')
+  async getAllUsers() {
+    const res = await this.UsersService.getAllUsers();
+    return res;
+  }
 }

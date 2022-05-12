@@ -6,6 +6,7 @@ interface IRole {
 
 export default interface IUserDTO {
   id: number;
-  email: number;
+  email: string;
+  login: string;
   role: IRole;
 }

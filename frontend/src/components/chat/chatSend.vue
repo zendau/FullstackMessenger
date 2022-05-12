@@ -1,11 +1,11 @@
 <template>
-  <div class="chat__send" v-if="roomData">
+  <div class="chat__send" v-if="roomData.title">
     <div
       class="chat__input"
       contenteditable="true"
       data-placeholder="Type message"
     ></div>
-    <ul class="chat__files">
+    <ul class="chat__files" v-if="false">
       <li class="chat__file">
         <a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test1.txt</a>
       </li>
@@ -79,6 +79,7 @@ export default {
       background-color: inherit;
       outline: none;
       padding: 10px;
+      border-left: 1px solid black;
 
       &::-webkit-scrollbar {
         width: 0;

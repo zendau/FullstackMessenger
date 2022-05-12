@@ -1,6 +1,7 @@
 <template>
-  <div class="chat__body" v-if="roomData">
-    <message />
+  <div class="chat__body" v-if="roomData.title">
+    <message v-for='message in messages' :key="message.id" :message="message"  />
+    <div ref='scrollEnd'></div>
   </div>
 </template>
 
@@ -12,9 +13,14 @@ export default {
   components: { Message },
   setup() {
     const roomData = inject("roomData");
+    const scrollEnd = inject('scrollEnd')
+
+    const messages = inject('messages')
 
     return {
       roomData,
+      scrollEnd,
+      messages
     };
   },
 };

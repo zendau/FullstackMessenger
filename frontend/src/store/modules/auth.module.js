@@ -11,6 +11,7 @@ export const auth = {
     user: {
         id: null,
         email: null,
+        login: null,
         role: []
     },
     authStatus: false,
@@ -36,9 +37,9 @@ export const auth = {
             const message =  e.response.data
 
             if (typeof message === 'string') {
-                commit('authFailed', message)
+                commit('setErrorMessage', message)
             } else {
-                commit('authFailed', message[0])
+                commit('setErrorMessage', message[0])
             }
         }
     },
@@ -65,9 +66,9 @@ export const auth = {
             const message =  e.response.data
 
             if (typeof message === 'string') {
-                commit('authFailed', message)
+                commit('setErrorMessage', message)
             } else {
-                commit('authFailed', message[0])
+                commit('setErrorMessage', message[0])
             }
         }
     },
@@ -94,6 +95,7 @@ export const auth = {
         state.user = {
             id: userData.id,
             email: userData.email,
+            login: userData.login,
             role: userData.role
         }
         state.authStatus = true

@@ -37,6 +37,7 @@ export class UsersService {
     const userEntity = this.usersRepository.create();
     userEntity.email = userData.email;
     userEntity.password = hashPassword;
+    userEntity.login = userData.login;
 
     this.queryRunner = this.connection.createQueryRunner();
     await this.queryRunner.connect();
@@ -72,7 +73,7 @@ export class UsersService {
   async login(userData: IUserLogin) {
     const resUserData = await this.findByEmail(userData.email);
     if (!resUserData.status) return resUserData;
-
+    debugger;
     const resComparePasswords = await this.comparePassword(
       userData.password,
       resUserData.userData.password,
@@ -137,7 +138,7 @@ export class UsersService {
   private async findByEmail(email: string) {
     const user: any = await this.usersRepository
       .createQueryBuilder('u')
-      .select(['u.id', 'u.email', 'u.password', 'r.id', 'r.value', 'r.desc'])
+      .select(['u.id', 'u.email', 'u.login', 'u.password', 'r.id', 'r.value', 'r.desc'])
       .innerJoinAndSelect('u.roleId', 'ur')
       .innerJoinAndSelect('ur.role', 'r')
       .where('u.email = :email', { email })
@@ -194,6 +195,7 @@ export class UsersService {
     return {
       id: userData.id,
       email: userData.email,
+      login: userData.login,
       role: userData.role,
     };
   }
@@ -230,5 +232,14 @@ export class UsersService {
       },
       this.queryRunner.manager,
     );
+  }
+
+  async getAllUsers() {
+    const users = await this.usersRepository
+      .createQueryBuilder('user')
+      .select(['user.id', 'user.email', 'user.login'])
+      .getMany();
+
+    return users;
   }
 }
