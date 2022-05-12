@@ -7,7 +7,7 @@
         :key="room.id"
       >
         <router-link 
-          :to="'/chat/'+room.chatId">
+          :to="{name: 'chat', params: { id: room.chatId, title: room.groupName }}">
           <i class="bi bi-people" v-if="room.groupType">></i>
           <i class="bi bi-person" v-else></i>
           {{room.groupName}} 

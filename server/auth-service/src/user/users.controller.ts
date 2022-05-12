@@ -40,4 +40,10 @@ export class UsersController {
     const res = await this.UsersService.getAllUsers();
     return res;
   }
+
+  @MessagePattern('user/id')
+  async getUserById(@Payload() id: number) {
+    const res = await this.UsersService.getUserById(id);
+    return res;
+  }
 }

@@ -40,6 +40,8 @@ export default {
     const userData = computed(() => store.getters["auth/getUserData"]);
     const contacts = reactive([]);
 
+    
+
     const login = userData.value.login;
 
     onMounted(async () => {
@@ -57,7 +59,6 @@ export default {
     const roomName = ref("");
 
     async function openUserChat(id) {
-      console.log("test", id, userId);
       if (groupType.value) return;
 
       const res = await $api.post("/chat/check", {

@@ -30,7 +30,8 @@ import $api from "../../axios";
 
 export default {
   components: { chatNavbar, Contacts, Messages, Chats },
-  setup() {
+  props: ['id', 'title'],
+  setup(props) {
     const route = useRoute();
     const router = useRouter();
 
@@ -87,7 +88,7 @@ export default {
       } else {
         isGroup.value = true;
       }
-      roomData.title = chatId
+      roomData.title =  props.title
       const messagesRes = await $api.get(
         `/message/getAllChat/${chatId.value}`,
         {
@@ -131,7 +132,6 @@ export default {
         isLoadedMessages.value = false;
       }
     });
-    console.log("1", route.params.id);
     watch(
       () => route.params.id,
       (value) => checkRoom(value)

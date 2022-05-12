@@ -34,6 +34,7 @@ export class ChatService {
   }
 
   async getChats(userId: number) {
+    debugger;
     const res = await this.chatRepository
       .createQueryBuilder('chat')
       .innerJoinAndSelect('chat.chatUsers', 'chatUsers')
@@ -60,7 +61,8 @@ export class ChatService {
             (user) => user.userId != userId,
           );
           const userData = await this.getUserName(chatUserId[0].userId);
-          item.groupName = userData[0].login;
+          console.log('1', userData);
+          item.groupName = userData.login;
         }
         return item;
       }),
@@ -68,9 +70,13 @@ export class ChatService {
   }
 
   async getUserName(id: number) {
-    const res = await this.connection.query(
-      `SELECT id, login FROM Users WHERE id = ${id}`,
+    const res = await firstValueFrom(
+      this.authServiceClient.send('user/id', id),
     );
+
+    if (res.status === false) {
+      throw new HttpException(res.message, res.httpCode);
+    }
     return res;
   }
 

@@ -242,4 +242,14 @@ export class UsersService {
 
     return users;
   }
+
+  async getUserById(id: number) {
+    const users = await this.usersRepository
+      .createQueryBuilder('user')
+      .select(['user.id', 'user.email', 'user.login'])
+      .where('user.id = :id', {id})
+      .getOne();
+
+    return users;
+  }
 }

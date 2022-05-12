@@ -72,6 +72,7 @@ const routes = [
     path: '/chat/:id?',
     component: chatTest,
     name: 'chat',
+    props: true,
     meta: {
       requiresAuth: true,
       role: Role.User
