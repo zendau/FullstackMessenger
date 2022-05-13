@@ -25,7 +25,7 @@ export class MessageController {
 
   @MessagePattern('message/getAllChat')
   async findAll(
-    @Payload() userData: { chatId: number; page: number; limit: number },
+    @Payload() userData: { chatId: string; page: number; limit: number },
   ) {
     debugger;
     const res = await this.messageService

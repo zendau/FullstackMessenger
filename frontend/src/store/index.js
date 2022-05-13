@@ -1,14 +1,10 @@
 import { createStore } from 'vuex'
 import { auth } from './modules/auth.module'
+import { chat } from './modules/chat.module'
 
 export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
   modules: {
-    auth
+    auth,
+    chat
   }
 })

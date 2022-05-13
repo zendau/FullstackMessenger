@@ -1,5 +1,5 @@
 <template>
-  <div class="chat__send" v-if="roomData.title">
+  <div class="chat__send" v-if="chatData.title">
     <div
       class="chat__input"
       contenteditable="true"
@@ -36,14 +36,17 @@ import { useStore } from 'vuex'
 import {useRoute } from "vue-router"
 export default {
   setup() {
-    const roomData = inject("roomData");
+  
+    const store = useStore()
+    const chatData = computed(() => store.getters['chat/getChatData'])
+  
+
     const socket = inject('socket')
 
     const route = useRoute()
-    const store = useStore()
     const message = ref(null)
     const files = ref(null)
-    const roomId = route.params.id
+    const roomId = computed(() => route.params.id)
 
     const userData = computed(() => store.getters["auth/getUserData"]);
 
@@ -70,7 +73,7 @@ export default {
       socket.emit("sendMessage", {
         authorLogin: userLogin,
         text: message.value.textContent,
-        chatId: roomId,
+        chatId: roomId.value,
         files: filesUpload,
       });
       message.value.textContent = "";
@@ -79,7 +82,7 @@ export default {
 
     return {
       message,
-      roomData,
+      chatData,
       sendMessage
     };
   },

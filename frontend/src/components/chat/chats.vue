@@ -1,16 +1,13 @@
 <template>
   <div class="chat__contacts">
     <ul class="contacts__list">
-      <li
-        class="contact__item"
-        v-for="room in roomData" 
-        :key="room.id"
-      >
-        <router-link 
-          :to="{name: 'chat', params: { id: room.chatId, title: room.groupName }}">
-          <i class="bi bi-people" v-if="room.groupType">></i>
+      <li class="contact__item" v-for="chat in chatsData" :key="chat.id">
+        <router-link
+          :to="`/chat/${chat.chatId}`"
+        >
+          <i class="bi bi-people" v-if="chat.groupType">></i>
           <i class="bi bi-person" v-else></i>
-          {{room.groupName}} 
+          {{ chat.groupName }}
         </router-link>
       </li>
     </ul>
@@ -19,30 +16,19 @@
 
 
 <script>
-//import { ref } from "vue";
-import $api from "../../axios";
-
-import { computed, onMounted, reactive } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
 
 export default {
   setup() {
     const store = useStore();
-    const userData = computed(() => store.getters["auth/getUserData"]);
+    store.dispatch('chat/getChats')
 
-    const roomData = reactive([])
-        onMounted(async () => {
+    const chatsData = computed(() => store.getters['chat/getChats']);
 
-            const userId = userData.value.id
-
-            const res = await $api.get(`/chat/getByUser/${userId}`)
-            console.log('resSS', res)
-            roomData.push(...res.data)
-        })
-
-        return {
-            roomData,
-        }
+    return {
+      chatsData,
+    };
   },
 };
 </script>
@@ -100,8 +86,8 @@ export default {
       height: 100%;
       padding: 14.5px 0;
     }
-   
-     &:hover {
+
+    &:hover {
       background-color: $itemColor;
     }
     input {
@@ -116,7 +102,6 @@ export default {
 }
 
 .router-link-active {
-  background-color: #2B5278;
+  background-color: #2b5278;
 }
-
 </style>

@@ -26,7 +26,7 @@ import $api from "../../axios";
 
 import { useRouter } from "vue-router";
 
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import createGroup from "./createGroup.vue";
 
 import { useStore } from "vuex";
@@ -37,17 +37,16 @@ export default {
     const router = useRouter();
     const store = useStore();
 
-    const userData = computed(() => store.getters["auth/getUserData"]);
-    const contacts = reactive([]);
-
-    
+    const userData = computed(() => store.getters["auth/getUserData"])
+    const contacts = computed(() => store.getters['chat/getContacts'])
 
     const login = userData.value.login;
 
     onMounted(async () => {
-      const res = await $api.get("/chat/getContacts");
-      contacts.push(...res.data.filter((user) => user.login !== login));
-      console.log("CONTACTS", contacts, login);
+      store.dispatch('chat/getContacts')
+      // const res = await $api.get("/chat/getContacts");
+      // contacts.push(...res.data.filter((user) => user.login !== login));
+      // console.log("CONTACTS", contacts, login);
     });
 
 

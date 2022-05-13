@@ -48,7 +48,7 @@ export class MessageService {
     }
   }
 
-  async getAllByChat(chatId: number, page: number, limit: number) {
+  async getAllByChat(chatId: string, page: number, limit: number) {
     // TODO: Пагинация
     const skip = page * limit;
 
@@ -56,7 +56,7 @@ export class MessageService {
       .createQueryBuilder('message')
       .innerJoin('message.chat', 'chat')
       .leftJoinAndSelect('message.media', 'media')
-      .where('chat.id = :chatId', { chatId })
+      .where('chat.chatId = :chatId', { chatId })
       .skip(skip)
       .take(limit)
       .orderBy('message.id', 'DESC')

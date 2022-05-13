@@ -1,8 +1,8 @@
 <template>
-  <div class="chat__header" v-if="roomData.title">
-    <h1 class="chat__title" :class="{'chat__title--private': !roomData.group}">{{roomData.title}}</h1>
-    <p class="chat__count" v-if="roomData.group">3 peoples</p>
-    <div class="chat__topbar" v-if="roomData.group">
+  <div class="chat__header">
+    <h1 class="chat__title" :class="{'chat__title--private': !chatData.group}">{{chatData.title}}</h1>
+    <p class="chat__count" v-if="chatData.group">3 peoples</p>
+    <div class="chat__topbar" v-if="chatData.group">
       <button class="chat__show-users btn--chat">Group users</button>
       <!-- chat__users--active  -->
       <ul class="chat__users">
@@ -13,19 +13,21 @@
       </ul>
       <button class="chat__add-group btn--chat">Add group</button>
     </div>
-    <a class="chat__exit" href="#" v-if="roomData.group">Exit chat</a>
+    <a class="chat__exit" href="#" v-if="chatData.group">Exit chat</a>
   </div>
 </template>
 
 <script>
-import { inject } from 'vue';
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 export default {
-  setup()  {
-    
-    const roomData = inject('roomData')
+    setup() {
+
+    const store = useStore()
+    const chatData = computed(() => store.getters['chat/getChatData'])
 
     return {
-      roomData
+      chatData
     }
   }
 };

@@ -1,32 +1,79 @@
 <template>
-  <div class="chat__body" v-if="roomData.title">
-    <message v-for='message in messages' :key="message.id" :message="message"  />
-    <div ref='scrollEnd'></div>
+  <div class="chat__body" ref="scrollArea">
+    <message v-for="message in messages" :key="message.id" :message="message" />
+    <div ref="scrollEnd"></div>
   </div>
 </template>
 
 <script>
 import Message from "./message.vue";
+ 
+import $api from '../../axios'
 
-import { inject } from "vue";
+import { useRoute } from "vue-router";
+import { inject, ref, computed, onMounted, watch } from "vue";
 export default {
   components: { Message },
   setup() {
-    const roomData = inject("roomData");
-    const scrollEnd = inject('scrollEnd')
-    const socket = inject('socket')
-    const messages = inject('messages')
+    const socket = inject("socket");
+    const messages = inject("messages");
+    const scrollEnd = ref(null);
 
+    const route = useRoute();
 
-    socket.on('newMessage', (messageData) => {
-        console.log('NEEEEW', messageData)
-        messages.push(messageData)
+    socket.on("newMessage", (messageData) => {
+      console.log("NEEEEW", messageData);
+      messages.push(messageData);
+    });
+
+    // eslint-disable-next-line no-unused-vars
+    const scrollArea = ref(null);
+    const page = ref(0);
+    const limit = ref(10);
+    const hasMore = ref(true);
+    const isLoadedMessages = ref(false);
+
+    const chatId = computed(() => route.params.id);
+
+    const observer = new IntersectionObserver(async (entries) => {
+      console.log(entries, hasMore.value)
+      if (entries[0].isIntersecting && hasMore.value) {
+        page.value++;
+        isLoadedMessages.value = true;
+        const messagesRes = await $api.get(
+          `/message/getAllChat/${chatId.value}`,
+          {
+            params: {
+              page: page.value,
+              limit: limit.value,
+            },
+          }
+        );
+        if (messagesRes.data.length === 0) {
+          hasMore.value = false;
+        }
+        messages.push(...messagesRes.data);
+        console.log("messagesRes", messagesRes);
+        isLoadedMessages.value = false;
+      }
+    });
+
+    onMounted(() => {
+      console.log("MOUNTED")
+      console.log(scrollEnd.value)
+      observer.observe(scrollEnd.value);
     })
+    
+    watch((messages), () => {
+      console.log(scrollArea.value)
+      scrollEnd.value.scrollIntoView(false) 
+    })
+    
 
     return {
-      roomData,
       scrollEnd,
-      messages
+      messages,
+      scrollArea
     };
   },
 };

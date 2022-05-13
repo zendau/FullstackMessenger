@@ -30,8 +30,7 @@ import $api from "../../axios";
 
 export default {
   components: { chatNavbar, Contacts, Messages, Chats },
-  props: ['id', 'title'],
-  setup(props) {
+  setup() {
     const route = useRoute();
     const router = useRouter();
 
@@ -39,12 +38,6 @@ export default {
 
     const showContacts = ref(true);
 
-    const roomData = reactive({
-      title: null,
-      group: null,
-    });
-
-    provide("roomData", roomData);
     provide("showContacts", showContacts);
 
     const store = useStore();
@@ -65,82 +58,41 @@ export default {
     });
 
     const messages = reactive([]);
-    const scrollEnd = ref(null);
     const isGroup = ref(null);
-    // eslint-disable-next-line no-unused-vars
-    const scrollArea = ref(null);
-    const page = ref(0);
-    const limit = ref(10);
-    const hasMore = ref(true);
-    const isLoadedMessages = ref(false);
 
-    provide("scrollEnd", scrollEnd);
-    provide("messages", messages)
+    provide("messages", messages);
+
+    function enterToChat(roomId) {
+      messages.length = 0;
+      if (!roomId) return;
+
+      checkRoom(roomId);
+
+      store.commit("chat/setChatTitle", roomId);
+    }
 
     async function checkRoom(roomId) {
       const res = await $api.get(`/chat/checkId/${roomId}`);
-      chatId.value = res.data.id;
       if (res.data.status === false) {
-        router.push("/chat/");
+        router.push("/chat");
       }
       if (res.data.groupName === null) {
         isGroup.value = false;
       } else {
         isGroup.value = true;
       }
-      roomData.title =  props.title
-      const messagesRes = await $api.get(
-        `/message/getAllChat/${chatId.value}`,
-        {
-          params: {
-            page: page.value,
-            limit: limit.value,
-          },
-        }
-      );
 
-      console.log("messagesRes", messagesRes);
-      if (messagesRes.data.status !== false) {
-        messages.push(...messagesRes.data);
-        console.log("!!!!", messages);
-        //scrollArea.value.scrollTo(0, scrollArea.value.scrollHeight)
-        observer.observe(scrollEnd.value);
-      }
-
-      console.log("test", scrollEnd, scrollEnd.value);
-      console.log("test");
-
-      console.log('join to the room')
-        socket.emit('join-room', { 
-            userId: socket.id,
-            roomId,
-      })
+      console.log("join to the room");
+      socket.emit("join-room", {
+        userId: socket.id,
+        roomId,
+      });
     }
 
-    const observer = new IntersectionObserver(async (entries) => {
-      if (entries[0].isIntersecting && hasMore.value) {
-        page.value++;
-        isLoadedMessages.value = true;
-        const messagesRes = await $api.get(
-          `/message/getAllChat/${chatId.value}`,
-          {
-            params: {
-              page: page.value,
-              limit: limit.value,
-            },
-          }
-        );
-        if (messagesRes.data.length === 0) {
-          hasMore.value = false;
-        }
-        messages.push(...messagesRes.data);
-        console.log("messagesRes", messagesRes);
-        isLoadedMessages.value = false;
-      }
-    });
     watch(
       () => route.params.id,
-      (value) => checkRoom(value)
+      (value) => enterToChat(value),
+      { immediate: true }
     );
 
     return {
