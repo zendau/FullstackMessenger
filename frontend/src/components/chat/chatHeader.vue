@@ -53,6 +53,7 @@ export default {
     &--private {
       grid-row: 1/3;
       align-self: center;
+      width: 250px;
     }
   }
 

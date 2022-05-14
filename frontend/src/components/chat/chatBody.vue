@@ -5,6 +5,7 @@
         v-for="message in messages"
         :key="message.id"
         :message="message"
+        :author="userData.login"
       />
       <div ref="scrollEnd"></div>
     </div>
@@ -28,6 +29,8 @@ export default {
     const socket = inject("socket");
     const messages = computed(() => store.state.chat.messages);
     const scrollEnd = ref(null);
+
+    const userData = computed(() => store.getters['auth/getUserData'])
 
     const route = useRoute();
 
@@ -95,6 +98,7 @@ export default {
     return {
       scrollEnd,
       messages,
+      userData
     };
   },
 };
