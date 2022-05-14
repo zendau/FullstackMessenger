@@ -64,6 +64,9 @@ export const chat = {
         state.message.hasMore = false
       }
     },
+    addMessage(state, message) {
+      state.messages.unshift(message)
+    },
     setChatTitle(state, data) {
       const anotherUser = data.users.filter((user) => user.id !== data.userId)
       state.chatData.title = anotherUser[0].login

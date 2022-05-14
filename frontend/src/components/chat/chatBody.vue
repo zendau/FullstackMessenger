@@ -32,8 +32,8 @@ export default {
     const route = useRoute();
 
     socket.on("newMessage", (messageData) => {
-      console.log("NEEEEW", messageData);
-      messages.value.push(messageData);
+      console.log("NEEEEW", messageData)
+      store.commit('chat/addMessage', messageData)
     });
 
     const message = computed(() => store.getters['chat/getMessageData']);

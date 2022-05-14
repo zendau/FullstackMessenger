@@ -45,16 +45,18 @@ export default {
     const userLogin = userData.value.login;
 
     function removeFile(id) {
-      files.value = Array.from(files.value).filter((_, index) => index !== id);
+      files.value.push(...Array.from(files.value).filter((_, index) => index !== id))
     }
 
     async function sendMessage() {
       console.log(roomId);
       let filesUpload = null;
-      if (files.value !== null) {
+      console.log('1', typeof files.value, files, files.value)
+      // eslint-disable-next-line no-constant-condition
+      if (files.value.length > 0) {
         const formData = new FormData();
 
-        formData.append("path", roomId);
+        formData.append("path", roomId.value);
         formData.append("userId", userId);
         files.value.forEach((file) => {
           formData.append("files", file);
@@ -72,7 +74,7 @@ export default {
         files: filesUpload,
       });
       message.value.textContent = "";
-      files.value = null;
+      files.value.length = 0;
     }
 
     return {
