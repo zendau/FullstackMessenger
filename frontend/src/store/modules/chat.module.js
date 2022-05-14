@@ -9,17 +9,20 @@ export const chat = {
       title: null,
       group: null
     },
-    page: 0,
-    limit: 10,
-    hasMore: true,
+    message: {
+      page: 0,
+      limit: 10,
+      hasMore: true,
+    },
     messages: []
   },
   actions: {
     async getContacts( {commit, rootState}) {
+      
       const res = await $api.get("/chat/getContacts");
       const userLogin =  rootState.auth.user.login
       const contacts = res.data.filter((user) => user.login !== userLogin)
-
+      console.log('dispatch contacts')
       commit('saveContacts', contacts)
     },
     async getChats( {commit, rootState}) {
@@ -33,19 +36,21 @@ export const chat = {
         `/message/getAllChat/${chatId}`,
         {
           params: {
-            page: state.page,
-            limit: state.limit,
+            page: state.message.page,
+            limit: state.message.limit,
           },
         }
       )
 
       if (messagesRes.data.status !== false) {
+        console.log('commit messages')
         commit('saveMessages', messagesRes.data)
       }
     }
   },
   mutations: {
     saveContacts(state, constacts) {
+      console.log('mutation contacts')
       state.constacts = constacts
     },
     saveChats(state, chats) {
@@ -53,9 +58,24 @@ export const chat = {
     },
     saveMessages(state, messages) {
       state.messages.push(...messages)
+      state.message.page++
+
+      if (messages.length < state.message.limit) {
+        state.message.hasMore = false
+      }
     },
-    setChatTitle(state, title) {
-      state.chatData.title = title
+    setChatTitle(state, data) {
+      const anotherUser = data.users.filter((user) => user.id !== data.userId)
+      state.chatData.title = anotherUser[0].login
+    },
+    cleanMessages(state) {
+      console.log('clean')
+      state.messages = []
+      state.message = {
+        page: 0,
+        limit: 10,
+        hasMore: true
+      }
     }
   },
   getters: {
@@ -67,6 +87,13 @@ export const chat = {
     },
     getChatData(state) {
       return state.chatData
+    },
+    getMessageData(state) {
+      return state.message
+    },
+    getMessages(state) {
+      console.log('get messages')
+      return state.messages
     }
   }
 };

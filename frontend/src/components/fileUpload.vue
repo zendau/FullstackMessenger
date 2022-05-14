@@ -1,71 +1,75 @@
-<template>
-    
-    <div @dragover.prevent @drop.prevent>
-        <div class="area" v-if='dragStatus'  @dragleave.prevent="dragLeave" @drop="dataDrop">
-            Опустите файл(ы), для загрузки
-        </div>
-        <div v-else class="area2" @dragenter.prevent="dragStart">
-            <slot/>
-        </div>
+<template >
+  <div class="drag__container" @dragover.prevent @drop.prevent>
+    <div
+      class="area"
+      v-if="dragStatus"
+      @dragleave.prevent="dragLeave"
+      @drop="dataDrop"
+    >
+      Опустите файл(ы), для загрузки
     </div>
-    <ul>
-        <li v-for="(file, index) in files" :key="index" @click="removeFile(index)">{{file.name}}</li>
-    </ul>
-  
+    <div v-else class="area2" @dragenter.prevent="dragStart">
+      <slot />
+    </div>
+  </div>
 </template>
 
 <script>
-
-import { inject, ref } from 'vue'
+import { inject, ref } from "vue";
+//import { useStore } from 'vuex'
 export default {
-    setup() {
-        const dragStatus = ref(false)
-        const files = inject('files')
+  setup() {
 
-        function dragStart(e) {
-            console.log("START", e)
-            dragStatus.value = true
-        }
+    //const store = useStore()
 
-        function dragLeave(e) {
-            console.log('LEAVE', e)
-            dragStatus.value = false
-        }
+    const dragStatus = ref(false);
+    const files = inject('files')
 
-        function dataDrop(e) {
-            files.value = [...e.dataTransfer.files];
-            dragStatus.value = false
-            console.log(files.value)
-        }
-
-        function removeFile(id) {
-            files.value = Array.from(files.value).filter((_, index) => index !== id)
-        }
-
-        return {
-            dragStatus,
-            dragStart,
-            dragLeave,
-            dataDrop,
-            files,
-            removeFile
-        }
+    function dragStart(e) {
+      console.log("START", e);
+      dragStatus.value = true;
     }
-}
+
+    function dragLeave(e) {
+      console.log("LEAVE", e);
+      dragStatus.value = false;
+    }
+
+    function dataDrop(e) {
+      files.value.push(...e.dataTransfer.files);
+      dragStatus.value = false;
+      console.log(files.value);
+    }
+
+    return {
+      dragStatus,
+      dragStart,
+      dragLeave,
+      dataDrop,
+      files,
+    };
+  },
+};
 </script>
 
-<style>
-    .area {
-        width: 600px;
-        height: 300px;
-        display: flex;
-        border: 1px dashed black;
-        align-items: center;
-        justify-content: center;
-    }
+<style lang='scss' scoped>
+.area {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  border: 1px dashed black;
+  align-items: center;
+  justify-content: center;
+  color: $activeColor;
+  background-color: $activeBgcColor;
+}
+.drag__container {
+  overflow: hidden;
+}
 
-    .area2 {
-        width: 600px;
-        height: 300px;
-    }
+.area2 {
+    overflow: hidden;
+    height: 100%;
+}
+
 </style>

@@ -6,21 +6,14 @@
       data-placeholder="Type message"
       ref="message"
     ></div>
-    <ul class="chat__files" v-if="false">
-      <li class="chat__file">
-        <a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test1.txt</a>
-      </li>
-      <li class="chat__file">
-        <a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test2.txt</a>
-      </li>
-      <li class="chat__file">
-        <a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test3.txt</a>
-      </li>
-      <li class="chat__file">
-        <a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test4.txt</a>
-      </li>
-      <li class="chat__file">
-        <a href="#"><i class="bi bi-file-earmark-arrow-down"></i>test5.txt</a>
+    <ul class="chat__files" v-if="files.length > 0">
+      <li
+        class="chat__file"
+        v-for="(file, index) in files"
+        :key="index"
+        @click="removeFile(index)"
+      >
+        <i class="bi bi-file-earmark-arrow-down"></i>{{ file.name }}
       </li>
     </ul>
     <button @click="sendMessage"><i class="bi bi-send"></i></button>
@@ -28,30 +21,32 @@
 </template>
 
 <script>
-
-import $api from '../../axios'
+import $api from "../../axios";
 
 import { inject, ref, computed } from "vue";
-import { useStore } from 'vuex'
-import {useRoute } from "vue-router"
+import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 export default {
   setup() {
-  
-    const store = useStore()
-    const chatData = computed(() => store.getters['chat/getChatData'])
-  
+    const store = useStore();
+    const chatData = computed(() => store.getters["chat/getChatData"]);
 
-    const socket = inject('socket')
+    const socket = inject("socket");
 
-    const route = useRoute()
-    const message = ref(null)
-    const files = ref(null)
-    const roomId = computed(() => route.params.id)
+    const route = useRoute();
+    const message = ref(null);
+    const roomId = computed(() => route.params.id);
+
+    const files = inject("files");
 
     const userData = computed(() => store.getters["auth/getUserData"]);
 
-    const userId = userData.value.id
-    const userLogin = userData.value.login
+    const userId = userData.value.id;
+    const userLogin = userData.value.login;
+
+    function removeFile(id) {
+      files.value = Array.from(files.value).filter((_, index) => index !== id);
+    }
 
     async function sendMessage() {
       console.log(roomId);
@@ -83,7 +78,9 @@ export default {
     return {
       message,
       chatData,
-      sendMessage
+      sendMessage,
+      files,
+      removeFile,
     };
   },
 };
@@ -150,6 +147,7 @@ export default {
     padding: 3px;
     grid-column: 1/3;
     background-color: $bgcColor;
+    border-left: 1px solid black;
   }
 
   &__file {

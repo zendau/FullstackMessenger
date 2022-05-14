@@ -113,7 +113,7 @@ export class ChatService {
   }
 
   async getChatById(id: string) {
-    const res = await this.chatRepository
+    const res: any = await this.chatRepository
       .createQueryBuilder()
       .where('chatId = :id', { id })
       .getOne();
@@ -124,6 +124,7 @@ export class ChatService {
         httpCode: HttpStatus.BAD_REQUEST,
       };
 
+    res.users = await this.getGroupUsers(res.chatId);
     return res;
   }
 

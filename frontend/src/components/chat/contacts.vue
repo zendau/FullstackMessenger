@@ -26,7 +26,7 @@ import $api from "../../axios";
 
 import { useRouter } from "vue-router";
 
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import createGroup from "./createGroup.vue";
 
 import { useStore } from "vuex";
@@ -42,13 +42,7 @@ export default {
 
     const login = userData.value.login;
 
-    onMounted(async () => {
-      store.dispatch('chat/getContacts')
-      // const res = await $api.get("/chat/getContacts");
-      // contacts.push(...res.data.filter((user) => user.login !== login));
-      // console.log("CONTACTS", contacts, login);
-    });
-
+    store.dispatch('chat/getContacts')
 
     const groupType = ref(false);
     const clients = ref([]);

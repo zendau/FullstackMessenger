@@ -10,7 +10,7 @@
 import chatHeader from './chatHeader.vue'
 import chatBody from './chatBody.vue'
 import chatSend from './chatSend.vue'
-import { computed } from 'vue'
+import { computed, provide, ref } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
@@ -18,6 +18,9 @@ export default {
   setup() {
 
     const store = useStore()
+
+    const files = ref([])
+    provide('files', files)
 
     const chatData = computed(() => store.getters['chat/getChatData'])
     console.log('CHATDATA', chatData)

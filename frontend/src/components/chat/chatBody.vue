@@ -1,79 +1,100 @@
 <template>
-  <div class="chat__body" ref="scrollArea">
-    <message v-for="message in messages" :key="message.id" :message="message" />
-    <div ref="scrollEnd"></div>
-  </div>
+  <file-upload>
+    <div class="chat__body">
+      <message
+        v-for="message in messages"
+        :key="message.id"
+        :message="message"
+      />
+      <div ref="scrollEnd"></div>
+    </div>
+  </file-upload>
 </template>
 
 <script>
 import Message from "./message.vue";
- 
-import $api from '../../axios'
+
+//import $api from '../../axios'
 
 import { useRoute } from "vue-router";
-import { inject, ref, computed, onMounted, watch } from "vue";
+import { inject, ref, computed, onMounted, onUpdated, watch } from "vue";
+import { useStore } from "vuex";
+import FileUpload from "../fileUpload.vue";
 export default {
-  components: { Message },
+  components: { Message, FileUpload },
   setup() {
+    const store = useStore();
+
     const socket = inject("socket");
-    const messages = inject("messages");
+    const messages = computed(() => store.state.chat.messages);
     const scrollEnd = ref(null);
 
     const route = useRoute();
 
     socket.on("newMessage", (messageData) => {
       console.log("NEEEEW", messageData);
-      messages.push(messageData);
+      messages.value.push(messageData);
     });
 
-    // eslint-disable-next-line no-unused-vars
-    const scrollArea = ref(null);
-    const page = ref(0);
-    const limit = ref(10);
-    const hasMore = ref(true);
-    const isLoadedMessages = ref(false);
+    const message = computed(() => store.getters['chat/getMessageData']);
+    //const isLoadedMessages = ref(false);
 
     const chatId = computed(() => route.params.id);
 
     const observer = new IntersectionObserver(async (entries) => {
-      console.log(entries, hasMore.value)
-      if (entries[0].isIntersecting && hasMore.value) {
-        page.value++;
-        isLoadedMessages.value = true;
-        const messagesRes = await $api.get(
-          `/message/getAllChat/${chatId.value}`,
-          {
-            params: {
-              page: page.value,
-              limit: limit.value,
-            },
-          }
-        );
-        if (messagesRes.data.length === 0) {
-          hasMore.value = false;
-        }
-        messages.push(...messagesRes.data);
-        console.log("messagesRes", messagesRes);
-        isLoadedMessages.value = false;
+      console.log(entries, entries[0].isIntersecting, message.value.hasMore);
+      if (
+        entries[0].isIntersecting &&
+        message.value.hasMore &&
+        messages.value.length !== 0
+      ) {
+        console.log("observer");
+        store.dispatch("chat/getMessges", chatId.value);
+        //  message.value.page++;
+        // isLoadedMessages.value = true;
+        // const messagesRes = await $api.get(
+        //   `/message/getAllChat/${chatId.value}`,
+        //   {
+        //     params: {
+        //       page:  message.value.page,
+        //       limit:  message.value.limit,
+        //     },
+        //   }
+        // );
+        // if (messagesRes.data.length === 0) {
+        //    message.value.hasMore = false;
+        // }
+        // messages.value.push(...messagesRes.data);
+        // console.log("messagesRes", messagesRes);
+        // isLoadedMessages.value = false;
       }
     });
+    console.log("setup");
+    //store.dispatch('chat/getMessges', chatId.value)
+
+    onUpdated(() => {
+      console.log("updated");
+      
+    });
+
+    watch( messages, () => {
+      console.log("UPDATE")
+      if (messages.value.length === 0) {
+        store.dispatch("chat/getMessges", chatId.value);
+        // observer.observe(scrollEnd.value);
+      }
+    })
 
     onMounted(() => {
-      console.log("MOUNTED")
-      console.log(scrollEnd.value)
+      console.log("MOUNTED");
+
+      store.dispatch("chat/getMessges", chatId.value);
       observer.observe(scrollEnd.value);
-    })
-    
-    watch((messages), () => {
-      console.log(scrollArea.value)
-      scrollEnd.value.scrollIntoView(false) 
-    })
-    
+    });
 
     return {
       scrollEnd,
       messages,
-      scrollArea
     };
   },
 };
@@ -83,9 +104,12 @@ export default {
 .chat {
   &__body {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     overflow: auto;
     background-color: $menuColor;
+    padding: 1px 0;
+    
+    height: 100%;
 
     &::-webkit-scrollbar {
       width: 5px;

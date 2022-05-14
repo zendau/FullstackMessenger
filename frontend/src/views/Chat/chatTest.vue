@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { computed, provide, reactive } from "vue";
+import { computed, provide } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
 import { ref, watch } from "vue";
@@ -57,18 +57,14 @@ export default {
       });
     });
 
-    const messages = reactive([]);
     const isGroup = ref(null);
 
-    provide("messages", messages);
 
     function enterToChat(roomId) {
-      messages.length = 0;
+      store.commit('chat/cleanMessages')
       if (!roomId) return;
 
       checkRoom(roomId);
-
-      store.commit("chat/setChatTitle", roomId);
     }
 
     async function checkRoom(roomId) {
@@ -81,7 +77,10 @@ export default {
       } else {
         isGroup.value = true;
       }
-
+      store.commit("chat/setChatTitle", {
+        users: res.data.users, 
+        userId: userData.value.id
+      })
       console.log("join to the room");
       socket.emit("join-room", {
         userId: socket.id,

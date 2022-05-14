@@ -87,7 +87,7 @@ export default {
         }
 
         &--active {
-          background-color: #25303e;
+          background-color: $activeBgcColor;
 
           i, span {
             color: $activeColor;
