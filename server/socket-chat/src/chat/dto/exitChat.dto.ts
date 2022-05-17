@@ -1,5 +1,5 @@
 export class exitChatDto {
-  chatId: number;
+  chatId: string;
 
   userId: number;
 }

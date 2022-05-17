@@ -1,16 +1,12 @@
 <template>
   <file-upload>
     <div class="chat__body">
-      <message
-        v-for="message in messages"
-        :key="message.id"
-        :message="message"
-        :author="userData.login"
-      />
+      <message v-for="message in messages" :key="message.id" :message="message" :author="userData.login" />
       <div ref="scrollEnd"></div>
     </div>
   </file-upload>
 </template>
+
 
 <script>
 import Message from "./message.vue";
@@ -37,6 +33,11 @@ export default {
     socket.on("newMessage", (messageData) => {
       console.log("NEEEEW", messageData)
       store.commit('chat/addMessage', messageData)
+    });
+
+    socket.on("updateUserCount", (userId) => {
+      console.log("user exit from chat", userId)
+      store.commit('chat/removeUserFromGroup', userId)
     });
 
     const message = computed(() => store.getters['chat/getMessageData']);
@@ -77,10 +78,10 @@ export default {
 
     onUpdated(() => {
       console.log("updated");
-      
+
     });
 
-    watch( messages, () => {
+    watch(messages, () => {
       console.log("UPDATE")
       if (messages.value.length === 0) {
         store.dispatch("chat/getMessges", chatId.value);
@@ -112,7 +113,7 @@ export default {
     overflow: auto;
     background-color: $menuColor;
     padding: 1px 0;
-    
+
     height: 100%;
 
     &::-webkit-scrollbar {
@@ -131,6 +132,7 @@ export default {
     }
   }
 }
+
 @media (max-width: 960px) {
   .chat {
     &__body {

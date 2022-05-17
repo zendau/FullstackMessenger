@@ -6,6 +6,7 @@ import {
   Get,
   HttpException,
   Inject,
+  Param,
   Post,
   Req,
   Res,
@@ -93,6 +94,20 @@ export class UserController {
 
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/all', ''),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
+
+  //@UseGuards(JwtRefreshGuard)
+  @Get('getById/:id')
+  async getUserById(@Param('id') id: number) {
+
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/id', id),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);

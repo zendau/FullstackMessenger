@@ -1,9 +1,54 @@
 <template>
-  <form class="contacts__group-create">
-    <input type="text" placeholder="Group Name" />
-    <button class="btn--chat">Create group</button>
+  <form class="contacts__group-create" @submit.prevent="createGroupChat">
+    <input type="text" placeholder="Group Name" v-model="groupName" />
+    <button class="btn--chat" :disabled="groupUsersLength">Create group</button>
   </form>
 </template>
+
+<script>
+import { useRouter } from "vue-router";
+import $api from '../../axios'
+
+import { computed, ref } from "vue";
+
+export default {
+  props: ['groupUsers', 'adminId'],
+  setup(props) {
+
+    const groupName = ref([])
+
+    const router = useRouter()
+
+    const groupUsersLength = computed(() => {
+      if (props.groupUsers.length > 1 && groupName.value !== '') {
+        return false;
+      }
+
+      return true;
+    });
+
+    async function createGroupChat() {
+      const chatData = await $api.post("/chat/create", {
+        adminId: props.adminId,
+        groupName: groupName.value,
+        users: props.groupUsers
+      });
+
+      if (chatData.data) {
+        router.push(`/chat/${chatData.data.chatId}`);
+      }
+    }
+
+    return {
+      createGroupChat,
+      groupName,
+      groupUsersLength
+    }
+
+  }
+}
+
+</script>
 
 
 <style lang="scss" scoped>
@@ -27,6 +72,11 @@
 
   button {
     margin-top: 10px;
+  }
+
+  button:disabled,
+  button[disabled] {
+    cursor: not-allowed;
   }
 }
 </style>

@@ -14,8 +14,10 @@ export class Chat {
   })
   groupName: string;
 
-  @Column()
-  groupType: boolean;
+  @Column({
+    nullable: true,
+  })
+  adminId: number;
 
   @OneToMany(() => ChatUsers, (chatUsers) => chatUsers.chat, {
     cascade: true,

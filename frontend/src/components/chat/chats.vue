@@ -5,7 +5,7 @@
         <router-link
           :to="`/chat/${chat.chatId}`"
         >
-          <i class="bi bi-people" v-if="chat.groupType">></i>
+          <i class="bi bi-people" v-if="chat.adminId"></i>
           <i class="bi bi-person" v-else></i>
           {{ chat.groupName }}
         </router-link>

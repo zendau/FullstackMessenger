@@ -3,16 +3,11 @@
     <button class="btn--chat" @click="groupType = !groupType">
       {{ groupType ? "Close" : "Create group" }}
     </button>
-    <create-group v-if="groupType" />
+    <create-group v-if="groupType" :groupUsers="groupUsers" :adminId="userId" />
     <ul class="contacts__list">
-      <li
-        class="contact__item"
-        v-for="user in contacts"
-        :key="user.id"
-        @click="openUserChat(user.id)"
-      >
+      <li class="contact__item" v-for="user in contacts" :key="user.id" @click="openUserChat(user.id)">
         <i class="bi bi-person"></i>
-        <input v-if="groupType" type="checkbox" />
+        <input v-if="groupType" v-model="groupUsers" :value="user.id" type="checkbox">
         <p>{{ user.login }}</p>
       </li>
     </ul>
@@ -40,13 +35,13 @@ export default {
     const userData = computed(() => store.getters["auth/getUserData"])
     const contacts = computed(() => store.getters['chat/getContacts'])
 
+    const groupUsers = ref([]);
+
     const login = userData.value.login;
 
     store.dispatch('chat/getContacts')
 
     const groupType = ref(false);
-    const clients = ref([]);
-
     const userId = userData.value.id;
 
     const roomName = ref("");
@@ -75,23 +70,12 @@ export default {
       }
     }
 
-    const clientLength = computed(() => {
-      if (clients.value.length < 2) {
-        if (roomName.value.length < 1) {
-          return true;
-        }
-        return true;
-      }
-
-      return false;
-    });
-
     async function createGroupChat() {
       console.log("groupCreate");
       const chatData = await $api.post("/chat/create", {
         adminId: parseInt(userId),
         groupName: roomName.value,
-        users: [...clients.value],
+        users: [...groupUsers.value],
         groupType: true,
       });
 
@@ -105,8 +89,7 @@ export default {
       contacts,
       openUserChat,
       groupType,
-      clients,
-      clientLength,
+      groupUsers,
       createGroupChat,
       userId,
       roomName,
@@ -137,6 +120,7 @@ export default {
 .contacts {
   &__list {
     overflow: auto;
+    margin-top: 12.5px;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -162,6 +146,7 @@ export default {
     transition: 0.3s ease;
     cursor: pointer;
     color: $textColor;
+    padding: 14px 0;
 
     a {
       padding: 14.5px 0;

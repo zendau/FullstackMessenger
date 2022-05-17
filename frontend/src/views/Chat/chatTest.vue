@@ -57,7 +57,6 @@ export default {
       });
     });
 
-    const isGroup = ref(null);
 
 
     function enterToChat(roomId) {
@@ -73,14 +72,19 @@ export default {
         router.push("/chat");
       }
       if (res.data.groupName === null) {
-        isGroup.value = false;
+        store.commit("chat/setChatTitle", {
+          users: res.data.users,
+          userId: userData.value.id
+        })
       } else {
-        isGroup.value = true;
+        store.commit("chat/setGroupData", {
+          users: res.data.users,
+          title: res.data.groupName,
+          adminId: res.data.adminId
+        })
+        store.dispatch('chat/getInvaitedUsers')
       }
-      store.commit("chat/setChatTitle", {
-        users: res.data.users, 
-        userId: userData.value.id
-      })
+
       console.log("join to the room");
       socket.emit("join-room", {
         userId: socket.id,

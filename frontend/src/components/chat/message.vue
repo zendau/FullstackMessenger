@@ -16,20 +16,25 @@
         <i class="bi bi-file-earmark-arrow-down"></i>{{ file.fileName }}</a
       >
     </div>
-    <span class="message__time">
-      <p v-for="(date, index) in convertDate(message.created_at)" :key="index">
-        {{ date }}
-      </p>
+    <span class="message__time" :title="messageDate" >
+      {{messageTime}}
     </span>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
 import { isLink } from "./isLink";
+
 
 export default {
   props: ["message", "author"],
-  setup() {
+  setup(props) {
+
+    const messageDate = ref(null)
+    const messageTime = ref(null)
+
+
     function convertDate(date) {
       const options = {
         year: "numeric",
@@ -38,14 +43,20 @@ export default {
         hour: "numeric",
         minute: "numeric",
       };
-      return new Intl.DateTimeFormat("ru-RU", options)
+      const tempDate = new Intl.DateTimeFormat("ru-RU", options)
         .format(Date.parse(date))
         .split(",");
+
+      messageDate.value = tempDate[0]
+      messageTime.value = tempDate[1]
     }
+
+    convertDate(props.message.created_at)
 
     return {
       isLink,
-      convertDate,
+      messageDate,
+      messageTime
     };
   },
 };

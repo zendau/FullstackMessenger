@@ -78,6 +78,11 @@ export class SocketGateway {
     this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 
+  @SubscribeMessage('userLeave')
+  userLeaveChatGroup(socket: Socket, payload: any) {
+    socket.broadcast.to(payload.roomId).emit('updateUserCount', payload.userId);
+  }
+
   @SubscribeMessage('exit-room')
   roomEvent(socket: Socket, payload: any) {
     console.log('exit-room', payload);

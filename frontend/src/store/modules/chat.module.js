@@ -7,7 +7,9 @@ export const chat = {
     chats: [],
     chatData: {
       title: null,
-      group: null
+      group: null,
+      adminId: null,
+      invaitedUsers: null
     },
     message: {
       page: 0,
@@ -22,7 +24,6 @@ export const chat = {
       const res = await $api.get("/chat/getContacts");
       const userLogin =  rootState.auth.user.login
       const contacts = res.data.filter((user) => user.login !== userLogin)
-      console.log('dispatch contacts')
       commit('saveContacts', contacts)
     },
     async getChats( {commit, rootState}) {
@@ -46,11 +47,47 @@ export const chat = {
         console.log('commit messages')
         commit('saveMessages', messagesRes.data)
       }
+    },
+    async getInvaitedUsers( {commit, state}) {
+      const usersId = []
+      state.chatData.group.forEach(user => {
+        usersId.push(user.id)
+      })
+
+      const res = await $api.get('/chat/invaitedUsers/', {
+        params: {
+          userData: usersId
+        }
+      })
+
+      if (res.data) {
+        commit('saveInvaitedUsers', res.data)
+      }
+    },
+    async invaiteUserToChat({commit}, invaitedData) {
+      await $api.patch('/chat/invaiteToChat', {
+        userId: invaitedData.userId,
+        roomId: invaitedData.chatId
+      })
+
+      const res = await $api.get(`/user/getById/${invaitedData.userId}`)
+      commit('addUserToGroup', res.data)
+    },
+    async removeUserFromChat({commit}, removeData) {
+      const res = await $api.delete("/chat/exitUser", {
+        params: {
+          chatId: removeData.chatId,
+          userId: removeData.userId
+        }
+      })
+
+      if (res.data) {
+        commit('removeUserFromGroup', removeData.userId)
+      }
     }
   },
   mutations: {
     saveContacts(state, constacts) {
-      console.log('mutation contacts')
       state.constacts = constacts
     },
     saveChats(state, chats) {
@@ -70,15 +107,43 @@ export const chat = {
     setChatTitle(state, data) {
       const anotherUser = data.users.filter((user) => user.id !== data.userId)
       state.chatData.title = anotherUser[0].login
+      state.chatData.group = null
+    },
+    setGroupData(state, groupData) {
+      state.chatData.title = groupData.title
+      state.chatData.group = groupData.users
+      state.chatData.adminId = groupData.adminId
     },
     cleanMessages(state) {
-      console.log('clean')
       state.messages = []
       state.message = {
         page: 0,
         limit: 10,
         hasMore: true
       }
+    },
+    cleanChatData(state) {
+      state.chatData = {
+        title: null,
+        group: null,
+        adminId: null,
+        invaitedUsers: null
+      }
+    },
+    addUserToGroup(state, userData) {
+      state.chatData.group.push(userData)
+      state.invaitedUsers = state.invaitedUsers.filter(user => user.id !== userData.id)
+    },
+    removeUserFromGroup(state, removeUserId) {
+
+      const freeUser = state.chatData.group.find((user) => user.id === removeUserId)
+      state.invaitedUsers.push(freeUser)
+      state.chatData.group = state.chatData.group.filter((user) => user.id !== removeUserId)  
+
+      state.chatData.group = state.chatData.group.filter((user) => user.id !== removeUserId)
+    },
+    saveInvaitedUsers(state, invaitedUsers) {
+      state.invaitedUsers = invaitedUsers
     }
   },
   getters: {
@@ -95,8 +160,13 @@ export const chat = {
       return state.message
     },
     getMessages(state) {
-      console.log('get messages')
       return state.messages
+    },
+    getRemoveUserList(state, getters, rootState) {
+      if (!state.chatData.group) return null
+
+      const userId = rootState.auth.user.id
+      return state.chatData.group.filter((user) => user.id !== userId)
     }
   }
 };

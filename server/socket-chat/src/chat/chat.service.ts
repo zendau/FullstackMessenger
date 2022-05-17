@@ -85,7 +85,7 @@ export class ChatService {
     debugger;
     const res = await this.chatRepository
       .createQueryBuilder('chat')
-      .select('chatUsers.chatId, chat.chatId')
+      .select('chatUsers.chatId, chat.chatId, chat.adminId')
       .addSelect('chat.groupName')
       .innerJoin('chat.chatUsers', 'chatUsers')
       .addSelect('COUNT(chatUsers.userId)', 'userCount')
@@ -131,7 +131,7 @@ export class ChatService {
   async createChat(chatData: ChatDTO) {
     const chatInseted = await this.chatRepository.save({
       chatId: uuid.v4(),
-      groupType: chatData.groupType,
+      adminId: chatData?.adminId,
       groupName: chatData?.groupName,
     });
 
@@ -210,24 +210,22 @@ export class ChatService {
     const chat = await this.getChatById(invateData.roomId);
 
     if (chat instanceof Chat) {
-      const usersEntity = [];
+      const inseredUser = this.createEntity(invateData.userId, chat);
 
-      invateData.usersId.forEach((userId) => {
-        usersEntity.push(this.createEntity(userId, chat));
-      });
-
-      return await this.chatUserRepository.save(usersEntity);
+      return await this.chatUserRepository.save(inseredUser);
     } else {
       return chat;
     }
   }
 
   async exitUserGroup(exitUserDTO: exitChatDto) {
+    const chat = await this.getChatById(exitUserDTO.chatId);
+
     const res = await this.chatUserRepository
       .createQueryBuilder()
       .delete()
       .where('userId = :userId', { userId: exitUserDTO.userId })
-      .andWhere('chatId = :chatId', { chatId: exitUserDTO.chatId })
+      .andWhere('chatId = :chatId', { chatId: chat.id })
       .execute();
 
     return !!res.affected;

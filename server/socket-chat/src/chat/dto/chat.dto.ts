@@ -6,8 +6,5 @@ export class ChatDTO {
   adminId: number;
 
   users: number[];
-
-  groupType: boolean;
-
   groupName?: string;
 }
