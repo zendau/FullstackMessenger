@@ -1,21 +1,24 @@
 <template>
-    <component :is="getLayout">
+    <component :is="authLayout">
       <router-view/>
     </component>
 </template>
 
 <script>
 
-//import { useRouter } from 'vue-router'
-
-import authLayout from './layout/auth.layout.vue'
-import mainLayout from './layout/main.layout.vue'
 
 import { useStore } from 'vuex'
 import { computed } from '@vue/runtime-core'
 
+import AuthMainLayout from './layout/auth.main.layout.vue'
+import AuthChatLayout from './layout/auth.chat.layout.vue'
+import noAuthLayoutVue from './layout/noAuth.layout.vue'
+
+import { Layout } from './router/layouts'
+import { useRoute } from 'vue-router'
+
 export default {
-  components: {authLayout},
+  components: {},
   setup() {
 
     const store = useStore()
@@ -26,16 +29,37 @@ export default {
     //const router = useRouter()
     //router.push('/room/all')
 
-    const getLayout = computed(() => store.getters['auth/getAuthStatus'] ? authLayout : mainLayout )
+    const layouts = new Map()
+
+    layouts.set(Layout.Chat, AuthChatLayout)
+    layouts.set(Layout.Main, AuthMainLayout)
+    layouts.set(Layout.NoAuth, noAuthLayoutVue)
+
+
+    const authStatus = computed(() => store.getters['auth/getAuthStatus'])
+
+
+    const route = useRoute()
+    const authLayout = computed(() => {
+      if (authStatus) {
+        return layouts.get(route.meta.layout)
+      }
+
+      return noAuthLayoutVue
+    })
 
     return {
-      getLayout
+      authLayout
     }
   },
 }
 </script>
 
 <style lang="scss">
+
+body {
+  background-color: $menuColor;
+}
 
 * {
   margin: 0;

@@ -5,6 +5,7 @@ import AllRooms from '../views/Room/AllRooms.vue'
 import audioRoom from '../views/Room/audioRoom.vue'
 import videoRoom from '../views/Room/videoRoom'
 import roomGateway from '../views/Room/RoomGateway.vue'
+import conferences from '../views/conferences.vue'
 
 // import chatGateway from '../views/Chat/chatGateway.vue'
 // import chatRoom from '../views/Chat/chatRoom.vue'
@@ -22,6 +23,7 @@ import user from '../views/user.vue'
 import createConference from '../views/createConference.vue'
 
 import { Role } from './roles'
+import { Layout } from './layouts'
 
 import store from '../store/index'
 
@@ -36,7 +38,8 @@ const routes = [
         component: createRoom,
         meta: {
           requiresAuth: true,
-          role: Role.User
+          role: Role.User,
+          layout: Layout.Main
         }
       },
       {
@@ -45,7 +48,8 @@ const routes = [
         component: AllRooms,
         meta: {
           requiresAuth: true,
-          role: Role.User
+          role: Role.User,
+          layout: Layout.Main
         }
       },
       {
@@ -54,7 +58,8 @@ const routes = [
         component: audioRoom,
         meta: {
           requiresAuth: true,
-          role: Role.User
+          role: Role.User,
+          layout: Layout.Main
         }
       },
       {
@@ -63,10 +68,21 @@ const routes = [
         component: videoRoom,
         meta: {
           requiresAuth: true,
-          role: Role.User
+          role: Role.User,
+          layout: Layout.Main
         }
       },
     ]
+  },
+  {
+    path: '/conferences',
+    name: 'conferences',
+    component: conferences,
+    meta: {
+      requiresAuth: true,
+      role: Role.User,
+      layout: Layout.Main
+    }
   },
   {
     path: '/chat/:id?',
@@ -74,7 +90,8 @@ const routes = [
     name: 'chat',
     meta: {
       requiresAuth: true,
-      role: Role.User
+      role: Role.User,
+      layout: Layout.Chat
     }
     // children: [
     //   {
@@ -101,7 +118,8 @@ const routes = [
     name: 'register',
     meta: {
       requiresAuth: false,
-      role: Role.noAuth
+      role: Role.noAuth,
+      layout: Layout.NoAuth
     }
   },
   {
@@ -110,7 +128,8 @@ const routes = [
     name: 'login',
     meta: {
       requiresAuth: false,
-      role: Role.noAuth
+      role: Role.noAuth,
+      layout: Layout.NoAuth
     }
   },
   {
@@ -119,7 +138,8 @@ const routes = [
     name: 'user',
     meta: {
       requiresAuth: true,
-      role: Role.User
+      role: Role.User,
+      layout: Layout.Main
     }
   },
   {
@@ -128,7 +148,8 @@ const routes = [
     name: 'createConference',
     meta: {
       requiresAuth: true,
-      role: Role.User
+      role: Role.User,
+      layout: Layout.Main
     }
   },
   {
@@ -137,7 +158,8 @@ const routes = [
     name: 'forgot',
     meta: {
       requiresAuth: false,
-      role: Role.noAuth
+      role: Role.noAuth,
+      layout: Layout.noAuth
     }
   },
   {
@@ -145,7 +167,8 @@ const routes = [
     component: pageNotFound,
     meta: {
       requiresAuth: false,
-      role: Role.noAuth
+      role: Role.noAuth,
+      layout: Layout.noAuth
     }
   }
 ]

@@ -5,12 +5,6 @@
     <contacts v-else />
     <messages />
   </section>
-  <!-- <div v-if="chatId">
-        chat id - {{chatId}}
-    </div>
-    <div v-else>
-        no selected chat
-    </div> -->
 </template>
 
 <script>
@@ -107,14 +101,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
-#app {
-  display: grid;
-  grid-template-columns: 80px 1fr;
-  height: 100vh;
-  max-height: 100vh;
-}
-
+<style lang="scss" scoped>
 .chat__container {
   display: grid;
   grid-template-columns: 250px 1fr;

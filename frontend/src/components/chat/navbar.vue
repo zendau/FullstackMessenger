@@ -3,28 +3,28 @@
     <nav class="chat__menu">
       <ul class="chat__list">
         <li @click="showContacts = true">
-          <a class="chat__list-item" :class="{ 'chat__list-item--active': showContacts}" href="#">
+          <a class="chat__list-item" :class="{ 'chat__list-item--active': showContacts}">
             <i class="bi bi-chat-dots"></i>
             <span>Chats</span>
           </a>
         </li>
         <li @click="showContacts = false">
-          <a class="chat__list-item" :class="{ 'chat__list-item--active': !showContacts}" href="#">
+          <a class="chat__list-item" :class="{ 'chat__list-item--active': !showContacts}">
             <i class="bi bi-person-lines-fill"></i>
             <span>Contacts</span>
           </a>
         </li>
         <li>
-          <a class="chat__list-item" href="rooms.html">
+          <router-link class="chat__list-item" to="/conferences">
             <i class="bi bi-broadcast"></i>
             <span>Calls</span>
-          </a>
+          </router-link>
         </li>
         <li>
-          <a class="chat__list-item" href="user.html">
+          <router-link class="chat__list-item" to="/user">
             <i class="bi bi-person-circle"></i>
             <span>User</span>
-          </a>
+          </router-link>
         </li>
       </ul>
       <a class="chat__list-item chat__list-item--exit" href="#">
@@ -77,6 +77,7 @@ export default {
         width: 100%;
         padding: 5px 0;
         box-sizing: border-box;
+        cursor: pointer;
 
         i, span {
           color: $textColor;
