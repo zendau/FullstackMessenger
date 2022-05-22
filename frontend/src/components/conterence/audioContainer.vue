@@ -1,21 +1,48 @@
 <template>
   <div class="audio__container">
-    <div class="audio__info" >
+    <div class="audio__info">
       <span class="mute">
-        <i
-          class="bi" 
-          :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"/>
+        <i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'" />
       </span>
-      <p>{{userName}}</p>
+      <p>{{ userName }}</p>
     </div>
-    <audio></audio>
+    <audio ref="media"></audio>
   </div>
 </template>
 
 <script>
+import { onUpdated, ref } from 'vue'
+
 
 export default {
-  props: ['isActive', 'isAdmin', 'isMuted', 'userName']
+  props: ['isActive', 'isAdmin', 'isMuted', 'userName', 'peerId'],
+  setup(props) {
+
+    const media = ref(null)
+
+    onUpdated(() => {
+      mutedAudio()
+    })
+
+    function mutedAudio() {
+      media.value.muted = props.isMuted
+    }
+
+    function setStream(stream) {
+      media.value.srcObject = stream
+      console.log(stream, 'stream')
+      media.value.addEventListener('loadedmetadata', () => {
+        media.value.play()
+      })
+    }
+
+    return {
+      media,
+      mutedAudio,
+      setStream
+    }
+
+  }
 }
 
 </script>

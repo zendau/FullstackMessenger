@@ -6,7 +6,7 @@
         <p class="room__author">{{room.adminLogin}}</p>
         <small class="room__type" v-if='room.roomWithVideo'><i class="bi bi-camera-video-fill"></i> Video conference</small>
         <small class="room__type" v-else><i class="bi bi-mic-fill"></i> Audio conference</small>
-        <router-link class="room__link" :to="`/conference/${room.roomWithVideo ? 'video' : 'audio'}/${room.id}`">Enter</router-link>
+        <router-link class="room__link" :to="`/conference/${room.roomWithVideo ? 'video' : 'audio'}/${room.roomId}`">Enter</router-link>
       </li>
     </ul>
   </section>
