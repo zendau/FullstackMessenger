@@ -1,7 +1,7 @@
 <template>
-    <component :is="authLayout">
-      <router-view/>
-    </component>
+  <component :is="authLayout">
+    <router-view />
+  </component>
 </template>
 
 <script>
@@ -23,7 +23,7 @@ export default {
 
     const store = useStore()
 
-    
+
     store.dispatch('auth/checkAuth')
 
     //const router = useRouter()
@@ -56,7 +56,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 body {
   background-color: $menuColor;
 }

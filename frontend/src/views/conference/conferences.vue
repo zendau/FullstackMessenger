@@ -6,14 +6,14 @@
         <p class="room__author">{{room.adminLogin}}</p>
         <small class="room__type" v-if='room.roomWithVideo'><i class="bi bi-camera-video-fill"></i> Video conference</small>
         <small class="room__type" v-else><i class="bi bi-mic-fill"></i> Audio conference</small>
-        <a class="room__link" href="audioConf.html">Enter</a>
+        <router-link class="room__link" :to="`/conference/${room.roomWithVideo ? 'video' : 'audio'}/${room.id}`">Enter</router-link>
       </li>
     </ul>
   </section>
 </template>
 
 <script>
-import $api from '../axios'
+import $api from '../../axios'
 import { ref, inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 export default {

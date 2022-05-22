@@ -1,11 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import createRoom from '../views/Room/createRoom.vue'
-import AllRooms from '../views/Room/AllRooms.vue'
-import audioRoom from '../views/Room/audioRoom.vue'
-import videoRoom from '../views/Room/videoRoom'
-import roomGateway from '../views/Room/RoomGateway.vue'
-import conferences from '../views/conferences.vue'
+// import createRoom from '../views/Room/createRoom.vue'
+// import AllRooms from '../views/Room/AllRooms.vue'
+// import roomGateway from '../views/Room/RoomGateway.vue'
+const conferences = () => import('../views/conference/conferences.vue')
 
 // import chatGateway from '../views/Chat/chatGateway.vue'
 // import chatRoom from '../views/Chat/chatRoom.vue'
@@ -18,7 +16,7 @@ import register from '../views/Auth/register.vue'
 import login from '../views/Auth/login.vue'
 import forgot from '../views/Auth/forgot.vue'
 
-import user from '../views/user.vue'
+const user = () => import('../views/user.vue')
 
 import createConference from '../views/createConference.vue'
 
@@ -27,53 +25,37 @@ import { Layout } from './layouts'
 
 import store from '../store/index'
 
+import conference from '../layout/auth.conferecnce.vue'
+import audioConference from '../views/conference/audioConference.vue'
+import videoConference from '../views/conference/videoConference.vue'
+
 const routes = [
-  {
-    path: '/room',
-    component: roomGateway,
-    children: [
-      {
-        path: 'create',
-        name: 'createRoom',
-        component: createRoom,
-        meta: {
-          requiresAuth: true,
-          role: Role.User,
-          layout: Layout.Main
-        }
-      },
-      {
-        path: 'all',
-        name: 'AllRooms',
-        component: AllRooms,
-        meta: {
-          requiresAuth: true,
-          role: Role.User,
-          layout: Layout.Main
-        }
-      },
-      {
-        path: 'audio/:id',
-        name: 'audioRoom',
-        component: audioRoom,
-        meta: {
-          requiresAuth: true,
-          role: Role.User,
-          layout: Layout.Main
-        }
-      },
-      {
-        path: 'video/:id',
-        name: 'videoRoom',
-        component: videoRoom,
-        meta: {
-          requiresAuth: true,
-          role: Role.User,
-          layout: Layout.Main
-        }
-      },
-    ]
-  },
+  // {
+  //   path: '/room',
+  //   component: roomGateway,
+  //   children: [
+  //     {
+  //       path: 'create',
+  //       name: 'createRoom',
+  //       component: createRoom,
+  //       meta: {
+  //         requiresAuth: true,
+  //         role: Role.User,
+  //         layout: Layout.Main
+  //       }
+  //     },
+  //     {
+  //       path: 'all',
+  //       name: 'AllRooms',
+  //       component: AllRooms,
+  //       meta: {
+  //         requiresAuth: true,
+  //         role: Role.User,
+  //         layout: Layout.Main
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/conferences',
     name: 'conferences',
@@ -84,6 +66,52 @@ const routes = [
       layout: Layout.Main
     }
   },
+  {
+    path: '/conference',
+    name: 'conference',
+    component: conference,
+    children: [
+      {
+        path: 'audio/:id',
+        name: 'audioRoom',
+        component: audioConference,
+        meta: {
+          requiresAuth: true,
+          role: Role.User,
+          layout: Layout.Main
+        }
+      },
+      {
+        path: 'video/:id',
+        name: 'videoRoom',
+        component: videoConference,
+        meta: {
+          requiresAuth: true,
+          role: Role.User,
+          layout: Layout.Main
+        }
+      }
+    ]
+  },
+  // {
+
+  //   path: '/video/:id',
+  //   component: videoConference,
+  //   meta: {
+  //     requiresAuth: true,
+  //     role: Role.User,
+  //     layout: Layout.Main
+  //   }
+  // },
+  // {
+  //   path: '/audio/:id',
+  //   component: audioConference,
+  //   meta: {
+  //     requiresAuth: true,
+  //     role: Role.User,
+  //     layout: Layout.Main
+  //   }
+  // },
   {
     path: '/chat/:id?',
     component: chatTest,
@@ -98,7 +126,7 @@ const routes = [
     //     path: '/chat/:id',
     //     component: chat,
     //     name: 'chat',
-        
+
     //   },
     //   {
     //     path: '/chat/all',
@@ -109,7 +137,7 @@ const routes = [
     //       role: Role.User
     //     }
     //   },
-     
+
     // ]
   },
   {

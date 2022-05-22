@@ -75,6 +75,11 @@ export default {
 }
 </script>
 
+<style>
+  body {
+    background-color: red;
+  }
+</style>
 
 <style lang="scss" scoped>
 .user {
