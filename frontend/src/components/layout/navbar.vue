@@ -11,7 +11,7 @@
                 <router-link :to="item.link">{{item.name}}</router-link>
               </li>
             </ul>
-            <ul v-if="authStatus">
+            <ul v-if="isConferenceAdmin">
                 <li><a href="#">Edit</a></li>
                 <li><a href="#">Delete</a></li>
                 <li><a href="#">Invite</a></li>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { computed } from '@vue/runtime-core'
+import { computed, inject } from 'vue'
 
 import { useStore } from 'vuex'
 
@@ -38,6 +38,8 @@ export default {
   
   setup() {
     const store = useStore()
+
+    const isConferenceAdmin = inject('isConferenceAdmin')
 
     const navbarAuthList = {
       items: [
@@ -78,7 +80,8 @@ export default {
     return {
       authStatus,
       navbarAuthList,
-      navbarNoAuthList
+      navbarNoAuthList,
+      isConferenceAdmin
     }
   }
 }

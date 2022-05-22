@@ -8,7 +8,7 @@
         <h3 class="menu__conference-title">Conference name</h3>
         <p class="menu__conference-admin">Admin</p>
       </div>
-      <button class="menu__chat"><i class="bi bi-chat-dots"></i> Chat</button>
+      <button class="menu__chat" @click="$emit('showChat')"><i class="bi bi-chat-dots"></i> Chat</button>
     </div>
   </footer>
 </template>

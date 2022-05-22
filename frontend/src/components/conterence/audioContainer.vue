@@ -1,12 +1,9 @@
 <template>
   <div class="audio__container">
-    <div class="audio__info" :class="{
-      'audio__info--active': isActive,
-      'audio__info--admin': isAdmin
-    }">
+    <div class="audio__info" >
       <span class="mute">
         <i
-          class="bi bi-mic-fill" 
+          class="bi" 
           :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"/>
       </span>
       <p>{{userName}}</p>

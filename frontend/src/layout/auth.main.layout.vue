@@ -18,6 +18,9 @@ export default {
     const socket = io('http://localhost:81');
     provide('socket', socket)
 
+    const isConferenceAdmin = ref(false)
+    provide('isConferenceAdmin', isConferenceAdmin)
+
     const peerSocketConnected = ref(false)
     provide('peerSocketConnected', peerSocketConnected)
     socket.on('connect', () => {

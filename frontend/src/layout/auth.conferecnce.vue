@@ -3,19 +3,29 @@
      <div class="conference-container">
         <router-view />
      </div>
-    <div class="conference-chat">
+    <div v-if="showChat" class="conference-chat">
       <conference-chat />
     </div>
   </section>
-  <footer-component />
+  <footer-component @showChat="showChat = !showChat" />
 </template>
 
 <script>
   import footerComponent from '../components/conterence/footer.vue'
   import conferenceChat from '../components/conterence/chat.vue'
+import { ref } from 'vue'
 
   export default {
-    components: { footerComponent, conferenceChat }
+    components: { footerComponent, conferenceChat },
+    setup() {
+
+      const showChat = ref(false)
+
+      return {
+        showChat
+      }
+
+    }
   }
 </script>
 
