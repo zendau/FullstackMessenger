@@ -53,7 +53,7 @@ export class SocketGateway {
   handleMessage(socket: Socket, payload: any) {
     console.log('start test section', payload, this.socketService.users);
 
-    const res = this.socketService.clientJoinRoom(
+    this.socketService.clientJoinRoom(
       payload.userId,
       payload.roomId,
       payload.peerId,

@@ -52,6 +52,7 @@ export default {
 
   &__container {
     background-color: $messageColor;
+    max-width: 250px;
   }
 
   &__info {
