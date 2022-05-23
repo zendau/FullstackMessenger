@@ -1,32 +1,60 @@
 <template>
   <section class="main-container">
-     <div class="conference-container">
-        <router-view />
-     </div>
+    <div class="conference-container">
+      <router-view />
+    </div>
     <div v-if="showChat" class="conference-chat">
       <conference-chat />
     </div>
   </section>
-  <footer-component @showChat="showChat = !showChat" />
+  <footer-component 
+    @showChat="showChat = !showChat"
+    :conferenceTitle="roomData?.roomTitle"
+    :conferenceAdmin="roomData?.adminLogin"
+  />
 </template>
 
 <script>
-  import footerComponent from '../components/conterence/footer.vue'
-  import conferenceChat from '../components/conterence/chat.vue'
-import { ref } from 'vue'
+import footerComponent from '../components/conterence/footer.vue'
+import conferenceChat from '../components/conterence/chat.vue'
+import { onMounted, provide, ref } from "vue";
 
-  export default {
-    components: { footerComponent, conferenceChat },
-    setup() {
+import $api from '../axios';
+import { useRoute } from 'vue-router';
 
-      const showChat = ref(false)
+export default {
+  components: { footerComponent, conferenceChat },
+  setup() {
 
-      return {
-        showChat
-      }
+    const showChat = ref(false)
 
+    const roomData = ref(null)
+
+    const route = useRoute()
+    const roomId = route.params.id
+
+    const isMuted = ref(false)
+    provide('isMuted', isMuted)
+
+
+    const isConferenceAdmin = ref(false)
+    provide('isConferenceAdmin', isConferenceAdmin)
+
+
+    onMounted(async () => {
+      const res = await $api.get('/room/get/' + roomId)
+      console.log('res', res)
+      roomData.value = res.data
+    })
+
+    return {
+      showChat,
+      roomData,
+      isMuted
     }
+
   }
+}
 </script>
 
 <style>

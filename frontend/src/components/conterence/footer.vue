@@ -2,16 +2,34 @@
   <footer>
     <div class="conference__menu">
       <div class="menu__setting">
-        <button><i class="bi bi-mic-fill"></i> Mute</button>
+        <button @click="isMuted = !isMuted"><i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"></i>{{isMuted ? 'Upmute' : 'Mute'}}</button>
       </div>
       <div class="menu__conference-data">
-        <h3 class="menu__conference-title">Conference name</h3>
-        <p class="menu__conference-admin">Admin</p>
+        <h3 class="menu__conference-title">{{conferenceTitle}}</h3>
+        <p class="menu__conference-admin">{{conferenceAdmin}}</p>
       </div>
       <button class="menu__chat" @click="$emit('showChat')"><i class="bi bi-chat-dots"></i> Chat</button>
     </div>
   </footer>
 </template>
+
+<script>
+import { inject } from 'vue'
+
+  export default {
+    props: ['conferenceTitle', 'conferenceAdmin'],
+    setup() {
+      
+      const isMuted = inject('isMuted')
+
+
+      return {
+        isMuted
+      }
+
+    }
+  }
+</script>
 
 <style lang="scss" scoped>
 

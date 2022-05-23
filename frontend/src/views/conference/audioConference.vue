@@ -6,10 +6,8 @@
 
 <script>
 import { useRoute } from 'vue-router'
-import { onUnmounted, ref, inject, watch, onMounted, onBeforeUpdate } from 'vue'
+import { onUnmounted, ref, inject, watch, onBeforeUpdate } from 'vue'
 
-
-import $api from '../../axios'
 import audioContainerVue from '../../components/conterence/audioContainer.vue'
 
 import Peer from 'peerjs';
@@ -25,7 +23,6 @@ export default {
     // room data
     const roomUsers = ref([])
     const freeUsers = ref([])
-    const roomData = ref(null)
 
     // user data
     const roomId = route.params.id
@@ -35,6 +32,8 @@ export default {
     const socket = inject('socket', undefined)
     const socketConnected = inject('peerSocketConnected', false)
     const peerConnected = ref(false)
+
+    const isMuted = inject('isMuted')
 
 
     let mainStream = null
@@ -64,10 +63,7 @@ export default {
       immediate: true
     })
 
-    onMounted(async () => {
-      const res = await $api.get('/room/get/' + roomId)
-      roomData.value = res.data
-    })
+
 
 
     onUnmounted(() => {
@@ -126,13 +122,16 @@ export default {
     function muteEvent(event) {
       if (event.code === 'KeyM') {
         console.log('click M', userId.value)
-        socket.emit('userMute', {
-          userId: userId.value,
-          roomId
-        })
+        isMuted.value = !isMuted.value
       }
     }
 
+    watch(isMuted, () => {
+      socket.emit('userMute', {
+          userId: userId.value,
+          roomId
+        })
+    })
 
     // ==== peers ==== //
 
@@ -215,9 +214,7 @@ export default {
     }
 
     return {
-      roomData,
       roomUsers,
-      roomId,
       freeUsers,
       setItemRef
     }
