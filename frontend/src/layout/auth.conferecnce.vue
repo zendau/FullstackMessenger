@@ -4,7 +4,7 @@
       <router-view />
     </div>
     <div v-if="showChat" class="conference-chat">
-      <conference-chat />
+      <conference-chat roomId="46549cab-90a2-4bfe-8840-1bbc5a015ca2" />
     </div>
   </section>
   <footer-component 
@@ -16,7 +16,7 @@
 
 <script>
 import footerComponent from '../components/conterence/footer.vue'
-import conferenceChat from '../components/conterence/chat.vue'
+import conferenceChat from '../components/conterence/chat/chat.vue'
 import { onMounted, provide, ref } from "vue";
 
 import $api from '../axios';
@@ -108,6 +108,7 @@ export default {
   &-chat {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     width: 350px;
 
 

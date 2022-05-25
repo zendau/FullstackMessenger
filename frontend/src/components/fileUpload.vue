@@ -65,6 +65,7 @@ export default {
 }
 .drag__container {
   overflow: hidden;
+  height: 100%;
 }
 
 .area2 {
