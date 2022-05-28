@@ -9,6 +9,9 @@ export class Room {
   roomId: string;
 
   @Column()
+  chatId: string;
+
+  @Column()
   roomTitle: string;
 
   @Column()
