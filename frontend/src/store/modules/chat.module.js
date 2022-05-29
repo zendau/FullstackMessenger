@@ -6,6 +6,7 @@ export const chat = {
     constacts: [],
     chats: [],
     chatData: {
+      id: null,
       title: null,
       group: null,
       adminId: null,
@@ -84,6 +85,18 @@ export const chat = {
       if (res.data) {
         commit('removeUserFromGroup', removeData.userId)
       }
+    },
+    async createChat({ commit }, chatData) {
+      $api.post("/chat/create", {
+        adminId: chatData.adminId,
+        users: chatData.users,
+        groupName: chatData?.groupName
+      }).then(async res => {
+        await commit('setChatId', res.data.chatId)
+      }).catch(error => {
+        commit('auth/setErrorMessage', error.response.data.message, { root: true })
+      })
+
     }
   },
   mutations: {
@@ -103,6 +116,10 @@ export const chat = {
     },
     addMessage(state, message) {
       state.messages.unshift(message)
+    },
+    setChatId(state, chatId) {
+      state.chatData.id = chatId
+      console.log(state.chatData.id)
     },
     setChatTitle(state, data) {
       const anotherUser = data.users.filter((user) => user.id !== data.userId)

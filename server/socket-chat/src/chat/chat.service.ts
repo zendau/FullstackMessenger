@@ -60,7 +60,9 @@ export class ChatService {
           const chatUserId = item.chatUsers.filter(
             (user) => user.userId != userId,
           );
+          debugger;
           const userData = await this.getUserName(chatUserId[0].userId);
+          debugger;
           console.log('1', userData);
           item.groupName = userData.login;
         }
@@ -73,7 +75,6 @@ export class ChatService {
     const res = await firstValueFrom(
       this.authServiceClient.send('user/id', id),
     );
-
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
     }

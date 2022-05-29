@@ -113,6 +113,7 @@ export const auth = {
         state.message.type = null
     },
     setErrorMessage(state, text) {
+        console.log(text)
         state.message.text = text
         state.message.type = alert.danger
     },

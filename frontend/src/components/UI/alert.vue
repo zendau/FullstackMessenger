@@ -1,6 +1,6 @@
 <template>
   <div v-if="message.text" class="alert" :class="'alert__'+message.type">
-    <p class="alert__text">{{message.text}}</p>
+    <p class="alert__text" v-html="message.text"/>
   </div>
 </template>
 
@@ -45,7 +45,9 @@ export default {
 
     &__text {
       color: $textColor;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 }
 </style>

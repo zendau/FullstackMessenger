@@ -6,12 +6,12 @@
 
       <form-input id="title" title="Conference title" type="text" v-model="title" />
 
-      <select name="" id="conferenceType">
+      <select name="" id="conferenceType" v-model="type">
         <option disabled selected>Select conference type</option>
-        <option value="audio">Audio</option>
-        <option value="video">Video</option>
-        <input type="submit" value="Create conference">
+        <option :value="false">Audio</option>
+        <option :value="true">Video</option>
       </select>
+      <input type="submit" value="Create conference">
     </form>
   </section>
 </template>
@@ -25,15 +25,18 @@ import { useStore } from 'vuex'
 
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
+import { computed, watch } from 'vue';
 
 export default {
   components: { Alert, FormInput },
   setup() {
     const store = useStore()
 
+    const userData = computed(() => store.state.auth.user)
 
     const schema = yup.object({
-      title: yup.string().required().min(6)
+      title: yup.string().required().min(6),
+      type: yup.boolean().required()
     });
 
     const { handleSubmit } = useForm({
@@ -42,6 +45,7 @@ export default {
 
 
     const { value: title } = useField('title');
+    const { value: type } = useField('type');
 
 
     function onInvalidSubmit({ errors }) {
@@ -50,21 +54,37 @@ export default {
 
       let message = ''
 
-      if (errors.title) message += errors.title
-
+      Object.keys(errors).forEach(item => message += `<span>${errors[item]}</span>`)
+      console.log(message)
       store.commit('auth/setErrorMessage', message)
     }
+    let formData = null
 
     const onSubmitForm = handleSubmit(value => {
 
-      store.dispatch('auth', {
-        title: value.title,
+      store.dispatch('chat/createChat', {
+        adminId: userData.value.id,
+        users: [],
+        groupName: `[Conference] - ${value.title}`,
       })
+      formData = value
+
+     
     }, onInvalidSubmit)
+
+    watch(() => store.state.chat.chatData.id, (chatId) => {
+       store.dispatch('conference/createConference', {
+        title: formData.title,
+        adminLogin: userData.value.login,
+        chatId,
+        type: formData.type
+      })
+    })
 
     return {
       onSubmitForm,
-      title
+      title,
+      type
     }
 
   }

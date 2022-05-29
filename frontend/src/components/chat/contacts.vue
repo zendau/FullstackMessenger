@@ -61,7 +61,6 @@ export default {
         const chatData = await $api.post("/chat/create", {
           adminId: userId,
           users: [id],
-          groupType: false,
         });
 
         const chatId = chatData.data.chatId;
@@ -76,7 +75,6 @@ export default {
         adminId: parseInt(userId),
         groupName: roomName.value,
         users: [...groupUsers.value],
-        groupType: true,
       });
 
       if (chatData.data) {
