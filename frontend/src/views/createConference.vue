@@ -32,7 +32,7 @@ export default {
   setup() {
     const store = useStore()
 
-    const userData = computed(() => store.state.auth.user)
+    const adminId = computed(() => store.state.auth.user.id)
 
     const schema = yup.object({
       title: yup.string().required().min(6),
@@ -63,7 +63,7 @@ export default {
     const onSubmitForm = handleSubmit(value => {
 
       store.dispatch('chat/createChat', {
-        adminId: userData.value.id,
+        adminId: adminId.value,
         users: [],
         groupName: `[Conference] - ${value.title}`,
       })
@@ -75,7 +75,7 @@ export default {
     watch(() => store.state.chat.chatData.id, (chatId) => {
        store.dispatch('conference/createConference', {
         title: formData.title,
-        adminLogin: userData.value.login,
+        adminId: adminId.value,
         chatId,
         type: formData.type
       })

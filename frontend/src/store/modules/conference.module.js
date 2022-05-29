@@ -6,6 +6,7 @@ import router from '../../router'
 export const conference = {
   namespaced: true,
   state: {
+    adminId: null,
     adminLogin: null,
     chatId: null,
     title: null,
@@ -15,7 +16,7 @@ export const conference = {
       
       $api.post('/room/add', {
         roomTitle: conferenceData.title,
-        adminLogin: conferenceData.adminLogin,
+        adminId: conferenceData.adminId,
         chatId: conferenceData.chatId,
         roomWithVideo: conferenceData.type
 
@@ -24,6 +25,9 @@ export const conference = {
         const roomType = res.data.roomWithVideo ? 'video' : 'audio'
         router.push(`/conference/${roomType}/${res.data.roomId}`)
       }).catch(error => {
+
+        $api.delete(`/chat/delete/${conferenceData.chatId}`)
+
         commit('auth/setErrorMessage', error.response.data.message, { root: true })
       })
     }

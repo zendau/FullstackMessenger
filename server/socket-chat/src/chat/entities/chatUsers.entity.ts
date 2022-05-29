@@ -12,7 +12,10 @@ export class ChatUsers {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Chat, (chat) => chat.chatUsers)
+  @ManyToOne(() => Chat, (chat) => chat.chatUsers, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   chat: Chat;
 
   @Column()

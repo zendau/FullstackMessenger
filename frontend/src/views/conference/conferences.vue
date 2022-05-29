@@ -1,14 +1,17 @@
 <template>
   <section class="rooms__container">
-    <ul class="rooms__list">
+    <ul class="rooms__list" v-if="rooms?.length > 0">
       <li class="rooms__item" v-for="room in rooms" :key="room.id">
-        <h3 class="room__title">{{room.roomTitle}}</h3>
-        <p class="room__author">{{room.adminLogin}}</p>
-        <small class="room__type" v-if='room.roomWithVideo'><i class="bi bi-camera-video-fill"></i> Video conference</small>
+        <h3 class="room__title">{{ room.roomTitle }}</h3>
+        <p class="room__author">{{ room.adminLogin }}</p>
+        <small class="room__type" v-if='room.roomWithVideo'><i class="bi bi-camera-video-fill"></i> Video
+          conference</small>
         <small class="room__type" v-else><i class="bi bi-mic-fill"></i> Audio conference</small>
-        <router-link class="room__link" :to="`/conference/${room.roomWithVideo ? 'video' : 'audio'}/${room.roomId}`">Enter</router-link>
+        <router-link class="room__link" :to="`/conference/${room.roomWithVideo ? 'video' : 'audio'}/${room.roomId}`">
+          Enter</router-link>
       </li>
     </ul>
+    <p v-else class="rooms__message">No conferences created</p>
   </section>
 </template>
 
@@ -16,6 +19,7 @@
 import $api from '../../axios'
 import { ref, inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+
 export default {
   setup() {
 
@@ -72,6 +76,15 @@ export default {
     flex-direction: column;
     align-items: center;
     background-color: $messageColor;
+  }
+
+  &__message {
+    color: $textColor;
+    min-height: 100%;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 

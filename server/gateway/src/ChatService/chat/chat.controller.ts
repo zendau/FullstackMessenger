@@ -87,7 +87,8 @@ export class ChatController {
   }
 
   @Delete('delete/:id')
-  async remove(@Param('id') chatId: number) {
+  async remove(@Param('id') chatId: string) {
+    console.log('id', chatId);
     const res = await firstValueFrom(
       this.chatServiceClient.send('chat/delete', chatId),
     );

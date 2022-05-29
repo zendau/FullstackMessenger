@@ -171,11 +171,11 @@ export class ChatService {
   //   return !!res.affected;
   // }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const res = await this.chatRepository
       .createQueryBuilder()
       .delete()
-      .where(`id = ${id}`)
+      .where(`chatId = :id`, { id })
       .execute();
 
     return !!res.affected;

@@ -17,16 +17,18 @@
 <script>
 import footerComponent from '../components/conterence/footer.vue'
 import conferenceChat from '../components/conterence/chat/chat.vue'
-import { onMounted, provide, ref } from "vue";
+import { inject, onMounted, onUnmounted, provide, ref } from "vue";
 
 import $api from '../axios';
 import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 
 export default {
   components: { footerComponent, conferenceChat },
   setup() {
 
     const showChat = ref(false)
+    const store = useStore()
 
     const roomData = ref(null)
 
@@ -37,14 +39,21 @@ export default {
     provide('isMuted', isMuted)
 
 
-    const isConferenceAdmin = ref(false)
-    provide('isConferenceAdmin', isConferenceAdmin)
+    const isConferenceAdmin = inject('isConferenceAdmin')
 
 
     onMounted(async () => {
       const res = await $api.get('/room/get/' + roomId)
-      console.log('res', res)
+      console.log('res', res, store.state.auth.user.id)
       roomData.value = res.data
+      if (res.data.adminId === store.state.auth.user.id) {
+        isConferenceAdmin.value = true
+      }
+      console.log(isConferenceAdmin.value, 'isConferenceAdmin')
+    })
+
+    onUnmounted(() => {
+      isConferenceAdmin.value = false
     })
 
     return {

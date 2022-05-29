@@ -19,8 +19,6 @@ export class Chat {
   })
   adminId: number;
 
-  @OneToMany(() => ChatUsers, (chatUsers) => chatUsers.chat, {
-    cascade: true,
-  })
+  @OneToMany(() => ChatUsers, (chatUsers) => chatUsers.chat)
   chatUsers: ChatUsers[];
 }

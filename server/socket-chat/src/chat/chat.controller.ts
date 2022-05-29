@@ -74,8 +74,10 @@ export class ChatController {
   }
 
   @MessagePattern('chat/delete')
-  async remove(@Payload() chatId: number) {
+  async remove(@Payload() chatId: string) {
+    console.log('chatId', chatId);
     const res = await this.chatService.remove(chatId).catch((err) => {
+      console.log('err', err);
       return {
         status: false,
         message: err.sqlMessage,
