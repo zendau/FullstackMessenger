@@ -15,6 +15,13 @@ export class SocketService {
   }
 
   getFreeUsers() {
+    console.log(
+      '```',
+      this.users,
+      this.users.filter(
+        (user) => user.roomId === null || user.roomId === undefined,
+      ),
+    );
     return this.users.filter(
       (user) => user.roomId === null || user.roomId === undefined,
     );

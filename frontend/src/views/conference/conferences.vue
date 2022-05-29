@@ -18,24 +18,15 @@
 <script>
 import $api from '../../axios'
 import { ref, inject, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 
 export default {
   setup() {
 
-    const router = useRouter()
 
     const socket = inject('socket', undefined)
     console.log('SOCKET', socket)
     const rooms = ref(null)
 
-    socket.on('userInviteRoom', (userData) => {
-      if (userData.userId === socket.id) {
-        console.log('if')
-        router.push(`/room/${userData.roomId}`)
-      }
-      console.log('invite room', userData)
-    })
 
     onMounted(async () => {
       const res = await $api.get('/room/getAll')

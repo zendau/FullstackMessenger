@@ -11,11 +11,7 @@
                 <router-link :to="item.link">{{item.name}}</router-link>
               </li>
             </ul>
-            <ul v-if="isConferenceAdmin">
-                <li><a href="#">Edit</a></li>
-                <li><a href="#">Delete</a></li>
-                <li><a href="#">Invite</a></li>
-            </ul>
+            <navbar-conf-admin/>
             <a v-if="authStatus" href="#">Exit</a>
         </nav>
         <div class="nav__btn">
@@ -30,60 +26,56 @@
 </template>
 
 <script>
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
 
 import { useStore } from 'vuex'
+import NavbarConfAdmin from './navbarConfAdmin.vue'
 
 export default {
-  
-  setup() {
-    const store = useStore()
-
-    const isConferenceAdmin = inject('isConferenceAdmin')
-
-    const navbarAuthList = {
-      items: [
-        {
-          name: 'Chat',
-          link: '/chat'
-        },
-        {
-          name: 'Conferences',
-          link: '/conferences'
-        },
-        {
-          name: 'Create conference',
-          link: '/create'
-        },
-        {
-          name: 'User',
-          link: '/user'
-        }
-      ]
-    }
-
-    const navbarNoAuthList = {
-      items: [
-        {
-          name: 'Login',
-          link: '/login'
-        },
-        {
-          name: 'Register',
-          link: '/register'
-        }
-      ]
-    }
-
-    const authStatus = computed(() => store.getters['auth/getAuthStatus'])
-    console.log('auth',authStatus.value)
-    return {
-      authStatus,
-      navbarAuthList,
-      navbarNoAuthList,
-      isConferenceAdmin
-    }
-  }
+    components: { NavbarConfAdmin },
+    setup() {
+        const store = useStore();
+        const navbarAuthList = {
+            items: [
+                {
+                    name: "Chat",
+                    link: "/chat"
+                },
+                {
+                    name: "Conferences",
+                    link: "/conferences"
+                },
+                {
+                    name: "Create conference",
+                    link: "/create"
+                },
+                {
+                    name: "User",
+                    link: "/user"
+                }
+            ]
+        };
+        const navbarNoAuthList = {
+            items: [
+                {
+                    name: "Login",
+                    link: "/login"
+                },
+                {
+                    name: "Register",
+                    link: "/register"
+                }
+            ]
+        };
+        const authStatus = computed(() => store.getters["auth/getAuthStatus"]);
+        console.log("auth", authStatus.value);
+        return {
+            authStatus,
+            navbarAuthList,
+            navbarNoAuthList,
+        };
+    },
+    
 }
 </script>
 
@@ -113,7 +105,7 @@ export default {
             }
         }
     
-        a {
+        :deep(a) {
             text-decoration:  none;
             color: $textColor;
             padding: 6px;
@@ -234,7 +226,7 @@ export default {
                 display: flex;
             }
     
-            ul {
+            :deep(ul) {
                 flex-direction: column;
                 align-items: center;
                 width: 100%;

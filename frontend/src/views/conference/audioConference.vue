@@ -22,7 +22,7 @@ export default {
 
     // room data
     const roomUsers = ref([])
-    const freeUsers = ref([])
+
 
     // user data
     const roomId = route.params.id
@@ -96,10 +96,7 @@ export default {
       roomUsers.value = users
     });
 
-    socket.on('getFreeUsers', (users) => {
-      console.log('free users', users)
-      freeUsers.value = users
-    })
+
 
     socket.on('userJoinedRoom', (userId) => {
       console.log('containersRefs', containersRefs)
@@ -215,7 +212,6 @@ export default {
 
     return {
       roomUsers,
-      freeUsers,
       setItemRef
     }
   }

@@ -7,11 +7,8 @@
       <conference-chat roomId="46549cab-90a2-4bfe-8840-1bbc5a015ca2" />
     </div>
   </section>
-  <footer-component 
-    @showChat="showChat = !showChat"
-    :conferenceTitle="roomData?.roomTitle"
-    :conferenceAdmin="roomData?.adminLogin"
-  />
+  <footer-component @showChat="showChat = !showChat" :conferenceTitle="roomData?.roomTitle"
+    :conferenceAdmin="roomData?.adminLogin" />
 </template>
 
 <script>
@@ -37,7 +34,6 @@ export default {
 
     const isMuted = ref(false)
     provide('isMuted', isMuted)
-
 
     const isConferenceAdmin = inject('isConferenceAdmin')
 
