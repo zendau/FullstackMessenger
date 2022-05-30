@@ -11,7 +11,8 @@ export const conference = {
     chatId: null,
     title: null,
     type: null,
-    id: null
+    id: null,
+    rooms: null
   },
   actions: {
     async createConference({ commit }, conferenceData) {
@@ -38,7 +39,7 @@ export const conference = {
         const res = await $api.get('/room/get/' + roomId)
         commit('saveConferenceData', res.data)
       } catch (error) {
-        commit('auth/setErrorMessage', error.response.data.message, { root: true })
+        router.push('/404')
       }
     },
     async editConference({ commit, state }, conferenceData) {
@@ -60,8 +61,22 @@ export const conference = {
         const roomType = conferenceData.type ? 'video' : 'audio'
         router.push(`/conference/${roomType}/${conferenceData.roomId}`)
       } catch (error) {
-        $api.delete(`/chat/delete/${conferenceData.chatId}`)
-
+        commit('auth/setErrorMessage', error.response.data.message, { root: true })
+      }
+    },
+    async deleteConference({ commit }, id) {
+      try {
+        await $api.delete(`/room/delete/${id}`)
+        commit('clearConferenceData')
+      } catch (error) {
+        commit('auth/setErrorMessage', error.response.data.message, { root: true })
+      }
+    },
+    async getConferesRooms({ commit }) {
+      try {
+        const res = await $api.get('/room/getAll')
+        commit('saveRoomsData', res.data)
+      } catch (error) {
         commit('auth/setErrorMessage', error.response.data.message, { root: true })
       }
     }
@@ -74,6 +89,17 @@ export const conference = {
       state.adminId = conferenceData.adminId
       state.type = conferenceData.roomWithVideo
       state.id = conferenceData.id
+    },
+    clearConferenceData(state) {
+      state.adminLogin = null
+      state.chatId = null
+      state.title = null
+      state.adminId = null
+      state.type = null
+      state.id = null
+    },
+    saveRoomsData(state, roomsData) {
+      state.rooms = roomsData
     }
   },
   getters: {

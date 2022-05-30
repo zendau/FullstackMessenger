@@ -1,9 +1,11 @@
 <template>
   <ul v-if="isConferenceAdmin">
-    <li><router-link :to="`/edit/${roomId}`">Edit conference</router-link></li>
+    <li>
+      <router-link :to="`/edit/${roomId}`">Edit conference</router-link>
+    </li>
     <li class="navbar__invaite">
       <a @click="showInvaitedUsers = !showInvaitedUsers" href="#">Invite user</a>
-      <free-users v-show='showInvaitedUsers'/>
+      <free-users v-show='showInvaitedUsers' />
     </li>
     <li class="navbar__delete" @click="deleteConference">Delete conference</li>
   </ul>
@@ -12,45 +14,56 @@
 <script>
 import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 import FreeUsers from './freeUsers.vue'
 
 
 export default {
-    setup() {
-        const isConferenceAdmin = inject("isConferenceAdmin");
-        const showInvaitedUsers = ref(false);
+  setup() {
+    const isConferenceAdmin = inject("isConferenceAdmin");
+    const showInvaitedUsers = ref(false);
 
-        const route = useRoute()
-        const roomId = computed(() => route.params.id) 
+    const route = useRoute()
+    const roomId = computed(() => route.params.id)
 
-        function deleteConference() {
-          console.log('delete ', roomId)
-        }
+    const store = useStore()
+    const conferenceId = computed(() => store.state.conference.id)
+    const socket = inject('socket')
 
-        return {
-            isConferenceAdmin,
-            showInvaitedUsers,
-            roomId,
-            deleteConference
+    async function deleteConference() {
+      console.log('delete ', roomId, socket)
+      store.dispatch('conference/deleteConference', conferenceId.value).then(() => {
+        socket.emit('deleteRoom', {
+          roomId: roomId.value
+        })
+      })
+    }
 
-        };
-    },
-    components: { FreeUsers }
+    return {
+      isConferenceAdmin,
+      showInvaitedUsers,
+      roomId,
+      deleteConference
+
+    };
+  },
+  components: { FreeUsers }
 }
 
 </script>
 
 <style scoped lang="scss">
-  .navbar__invaite {
-    position: relative;
-  }
+.navbar__invaite {
+  position: relative;
+}
 
-  .navbar__delete {
-    color: $dangerColor;
-    cursor: pointer;
-    transition: .3s ease;
-    &:hover {
-      color: darken($dangerColor, 10);
-    }
+.navbar__delete {
+  color: $dangerColor;
+  cursor: pointer;
+  transition: .3s ease;
+
+  &:hover {
+    color: darken($dangerColor, 10);
   }
+}
 </style>

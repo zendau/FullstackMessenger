@@ -8,16 +8,15 @@
       <conference-chat :roomId="roomData.chatId" />
     </div>
   </section>
-  <footer-component @showChat="showChat = !showChat" :conferenceTitle="roomData?.roomTitle"
-    :conferenceAdmin="roomData?.adminLogin" />
+  <footer-component @showChat="showChat = !showChat" :conferenceTitle="roomData.title"
+    :conferenceAdmin="roomData.adminLogin" />
 </template>
 
 <script>
 import footerComponent from '../components/conterence/footer.vue'
 import conferenceChat from '../components/conterence/chat/chat.vue'
-import { inject, onMounted, onUnmounted, provide, ref } from "vue";
+import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "vue";
 
-import $api from '../axios';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -28,7 +27,7 @@ export default {
     const showChat = ref(false)
     const store = useStore()
 
-    const roomData = ref(null)
+    const roomData = computed(() => store.state.conference)
 
     const route = useRoute()
     const router = useRouter()
@@ -38,24 +37,26 @@ export default {
     provide('isMuted', isMuted)
 
     const isConferenceAdmin = inject('isConferenceAdmin')
+    const socket = inject('socket')
 
     onMounted(async () => {
+      store.dispatch('conference/getConferenceData', roomId)
+    })
+    
 
-      try {
-        const res = await $api.get('/room/get/' + roomId)
-        console.log('res', res, store.state.auth.user.id)
-        roomData.value = res.data
-        if (res.data.adminId === store.state.auth.user.id) {
+    watch(() => store.state.conference.adminId, adminId => {
+      if (adminId === store.state.auth.user.id) {
           isConferenceAdmin.value = true
         }
-        console.log(isConferenceAdmin.value, 'isConferenceAdmin')
-      } catch (e) {
-        router.push('/404')
-      }
     })
 
     onUnmounted(() => {
       isConferenceAdmin.value = false
+    })
+
+    socket.on('redirectUsers', () => {
+      store.dispatch('conference/getConferesRooms')
+      router.push('/conferences')
     })
 
     return {

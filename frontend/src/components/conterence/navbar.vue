@@ -3,7 +3,7 @@
         <nav class="nav__menu">
             <ul v-if="authStatus">
               <li v-for='(item, index) in navbarAuthList.items' :key="index">
-                <router-link :to="item.link">{{item.name}}</router-link>
+                <router-link :to="item.link" replace>{{item.name}}</router-link>
               </li>
             </ul>
              <ul v-else>

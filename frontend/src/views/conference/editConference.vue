@@ -25,13 +25,15 @@ import { useStore } from 'vuex'
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
   components: { Alert, FormInput },
   setup() {
     const store = useStore()
     const route = useRoute()
+    const router = useRouter()
+
     const roomId = computed(() => route.params.id) 
 
     const adminId = computed(() => store.state.conference.adminId)
@@ -87,7 +89,8 @@ export default {
       if (adminIdVal === userIdVal) {
         confirmedAdmin = true
       } else {
-        confirmedAdmin = false
+        router.push('/conferences')
+        
       }
     }, {
       immediate: true

@@ -16,25 +16,26 @@
 </template>
 
 <script>
-import $api from '../../axios'
-import { ref, inject, onMounted } from 'vue'
+import { computed, onActivated, onMounted, onUpdated } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   setup() {
 
+    const store = useStore()
+    const rooms = computed(() => store.state.conference.rooms)
 
-    const socket = inject('socket', undefined)
-    console.log('SOCKET', socket)
-    const rooms = ref(null)
-
-
-    onMounted(async () => {
-      const res = await $api.get('/room/getAll')
-      rooms.value = res.data
+    onMounted(() => {
+      store.dispatch('conference/getConferesRooms')
     })
 
+    onUpdated(() => {
+      console.log('updated')
+    })
 
-
+    onActivated(() => {
+      console.log('active')
+    })
 
     return {
       rooms,

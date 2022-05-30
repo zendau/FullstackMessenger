@@ -49,6 +49,12 @@ export class SocketGateway {
     this.server.emit('userInviteRoom', payload);
   }
 
+  @SubscribeMessage('deleteRoom')
+  deleteConferenceRoom(socket: Socket, payload: any) {
+    console.log('test', payload, socket.rooms);
+    this.server.to(payload.roomId).emit('redirectUsers');
+  }
+
   @SubscribeMessage('join-room')
   handleMessage(socket: Socket, payload: any) {
     console.log('start test section', payload, this.socketService.users);
