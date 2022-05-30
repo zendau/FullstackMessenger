@@ -202,6 +202,15 @@ const routes = [
     }
   },
   {
+    path: '/404',
+    component: pageNotFound,
+    meta: {
+      requiresAuth: true,
+      role: Role.noAuth,
+      layout: Layout.Main
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: pageNotFound,
     meta: {

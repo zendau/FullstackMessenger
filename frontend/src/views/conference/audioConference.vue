@@ -73,10 +73,10 @@ export default {
       })
       window.removeEventListener('keypress', muteEvent)
       socket.removeAllListeners('getUsers')
-      mainStream.getTracks().forEach(t => {
+      mainStream?.getTracks().forEach(t => {
         t.stop()
       })
-      childStream.forEach(stream => {
+      childStream?.forEach(stream => {
         stream.getTracks().forEach(track => {
           track.stop()
         })

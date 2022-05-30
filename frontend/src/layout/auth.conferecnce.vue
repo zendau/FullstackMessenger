@@ -1,3 +1,4 @@
+
 <template>
   <section class="main-container">
     <div class="conference-container">
@@ -17,7 +18,7 @@ import conferenceChat from '../components/conterence/chat/chat.vue'
 import { inject, onMounted, onUnmounted, provide, ref } from "vue";
 
 import $api from '../axios';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 export default {
@@ -30,6 +31,7 @@ export default {
     const roomData = ref(null)
 
     const route = useRoute()
+    const router = useRouter()
     const roomId = route.params.id
 
     const isMuted = ref(false)
@@ -38,13 +40,18 @@ export default {
     const isConferenceAdmin = inject('isConferenceAdmin')
 
     onMounted(async () => {
-      const res = await $api.get('/room/get/' + roomId)
-      console.log('res', res, store.state.auth.user.id)
-      roomData.value = res.data
-      if (res.data.adminId === store.state.auth.user.id) {
-        isConferenceAdmin.value = true
+
+      try {
+        const res = await $api.get('/room/get/' + roomId)
+        console.log('res', res, store.state.auth.user.id)
+        roomData.value = res.data
+        if (res.data.adminId === store.state.auth.user.id) {
+          isConferenceAdmin.value = true
+        }
+        console.log(isConferenceAdmin.value, 'isConferenceAdmin')
+      } catch (e) {
+        router.push('/404')
       }
-      console.log(isConferenceAdmin.value, 'isConferenceAdmin')
     })
 
     onUnmounted(() => {
