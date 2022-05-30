@@ -12,7 +12,7 @@ export const conference = {
     title: null,
     type: null,
     id: null,
-    rooms: null
+    rooms: []
   },
   actions: {
     async createConference({ commit }, conferenceData) {
@@ -25,9 +25,20 @@ export const conference = {
           roomWithVideo: conferenceData.type
   
         })
-        commit('saveConferenceData', res.data)
-        const roomType = res.data.roomWithVideo ? 'video' : 'audio'
-        router.push(`/conference/${roomType}/${res.data.roomId}`)
+
+        const room = res.data
+
+        commit('saveConferenceData', room)
+        conferenceData.socket.emit('insertNewRoom', {
+          adminId: room.adminId,
+          chatId: room.chatId,
+          id: room.id,
+          roomId: room.roomId,
+          roomTitle: room.roomTitle,
+          roomWithVideo: room.roomWithVideo,
+        })
+        const roomType = room.roomWithVideo ? 'video' : 'audio'
+        router.push(`/conference/${roomType}/${room.roomId}`)
       } catch (error) {
         $api.delete(`/chat/delete/${conferenceData.chatId}`)
 
@@ -100,6 +111,10 @@ export const conference = {
     },
     saveRoomsData(state, roomsData) {
       state.rooms = roomsData
+    },
+    insertNewConferenceRoom(state, newRoom) {
+      state.rooms.push(newRoom)
+      console.log(state)
     }
   },
   getters: {

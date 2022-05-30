@@ -25,7 +25,7 @@ import { useStore } from 'vuex'
 
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
-import { computed, watch } from 'vue';
+import { computed, inject, watch } from 'vue';
 
 export default {
   components: { Alert, FormInput },
@@ -43,6 +43,7 @@ export default {
       validationSchema: schema,
     });
 
+    const socket = inject('socket')
 
     const { value: title } = useField('title');
     const { value: type } = useField('type');
@@ -77,7 +78,8 @@ export default {
         title: formData.title,
         adminId: adminId.value,
         chatId,
-        type: formData.type
+        type: formData.type,
+        socket
       })
     })
 

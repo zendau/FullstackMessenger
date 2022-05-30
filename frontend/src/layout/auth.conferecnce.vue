@@ -48,6 +48,8 @@ export default {
       if (adminId === store.state.auth.user.id) {
           isConferenceAdmin.value = true
         }
+    }, {
+      immediate: true
     })
 
     onUnmounted(() => {

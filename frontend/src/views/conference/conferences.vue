@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { computed, onActivated, onMounted, onUpdated } from 'vue'
+import { computed, inject, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
@@ -24,18 +24,21 @@ export default {
 
     const store = useStore()
     const rooms = computed(() => store.state.conference.rooms)
+    const socket = inject('socket')
 
     onMounted(() => {
       store.dispatch('conference/getConferesRooms')
     })
 
-    onUpdated(() => {
-      console.log('updated')
+    onUnmounted(() => {
+      socket.removeAllListeners('updateListOfRooms')
     })
 
-    onActivated(() => {
-      console.log('active')
+    socket.on('updateListOfRooms', newRoom => {
+      store.commit('conference/insertNewConferenceRoom', newRoom)
     })
+
+
 
     return {
       rooms,

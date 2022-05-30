@@ -49,6 +49,11 @@ export class SocketGateway {
     this.server.emit('userInviteRoom', payload);
   }
 
+  @SubscribeMessage('insertNewRoom')
+  insertNewRoom(socket: Socket, payload: any) {
+    socket.broadcast.emit('updateListOfRooms', payload);
+  }
+
   @SubscribeMessage('deleteRoom')
   deleteConferenceRoom(socket: Socket, payload: any) {
     console.log('test', payload, socket.rooms);
