@@ -1,16 +1,17 @@
 <template>
   <ul v-if="isConferenceAdmin">
-    <li><a href="#">Edit conference</a></li>
-    <li><a href="#">Delete conference</a></li>
+    <li><router-link :to="`/edit/${roomId}`">Edit conference</router-link></li>
     <li class="navbar__invaite">
       <a @click="showInvaitedUsers = !showInvaitedUsers" href="#">Invite user</a>
       <free-users v-show='showInvaitedUsers'/>
     </li>
+    <li class="navbar__delete" @click="deleteConference">Delete conference</li>
   </ul>
 </template>
 
 <script>
-import { inject, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
+import { useRoute } from 'vue-router';
 import FreeUsers from './freeUsers.vue'
 
 
@@ -18,9 +19,20 @@ export default {
     setup() {
         const isConferenceAdmin = inject("isConferenceAdmin");
         const showInvaitedUsers = ref(false);
+
+        const route = useRoute()
+        const roomId = computed(() => route.params.id) 
+
+        function deleteConference() {
+          console.log('delete ', roomId)
+        }
+
         return {
             isConferenceAdmin,
-            showInvaitedUsers
+            showInvaitedUsers,
+            roomId,
+            deleteConference
+
         };
     },
     components: { FreeUsers }
@@ -28,8 +40,17 @@ export default {
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .navbar__invaite {
     position: relative;
+  }
+
+  .navbar__delete {
+    color: $dangerColor;
+    cursor: pointer;
+    transition: .3s ease;
+    &:hover {
+      color: darken($dangerColor, 10);
+    }
   }
 </style>

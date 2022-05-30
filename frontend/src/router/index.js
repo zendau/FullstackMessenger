@@ -18,7 +18,8 @@ import forgot from '../views/Auth/forgot.vue'
 
 const user = () => import('../views/user.vue')
 
-import createConference from '../views/createConference.vue'
+import createConference from '../views/conference/createConference.vue'
+import editConference from '../views/conference/editConference.vue'
 
 import { Role } from './roles'
 import { Layout } from './layouts'
@@ -174,6 +175,16 @@ const routes = [
     path: '/create',
     component: createConference,
     name: 'createConference',
+    meta: {
+      requiresAuth: true,
+      role: Role.User,
+      layout: Layout.Main
+    }
+  },
+  {
+    path: '/edit/:id',
+    component: editConference,
+    name: 'editConference',
     meta: {
       requiresAuth: true,
       role: Role.User,

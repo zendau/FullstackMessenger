@@ -60,7 +60,6 @@ export class RoomService {
       .createQueryBuilder()
       .update()
       .set({
-        adminId: updateRoomDTO.adminId,
         roomTitle: updateRoomDTO.roomTitle,
         roomWithVideo: updateRoomDTO.roomWithVideo,
       })

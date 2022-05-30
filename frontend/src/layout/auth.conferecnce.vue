@@ -4,7 +4,7 @@
       <router-view />
     </div>
     <div v-if="showChat" class="conference-chat">
-      <conference-chat roomId="46549cab-90a2-4bfe-8840-1bbc5a015ca2" />
+      <conference-chat :roomId="roomData.chatId" />
     </div>
   </section>
   <footer-component @showChat="showChat = !showChat" :conferenceTitle="roomData?.roomTitle"
@@ -36,7 +36,6 @@ export default {
     provide('isMuted', isMuted)
 
     const isConferenceAdmin = inject('isConferenceAdmin')
-
 
     onMounted(async () => {
       const res = await $api.get('/room/get/' + roomId)

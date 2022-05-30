@@ -1,6 +1,6 @@
 <template>
   <label :for="id">{{title}}</label>
-  <input :type="type" :id="id" :placeholder="title" @input="updateValue">
+  <input :type="type" :id="id" :placeholder="title" :value="modelValue" @input="updateValue">
 </template>
 
 <script>

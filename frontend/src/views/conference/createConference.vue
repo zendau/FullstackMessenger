@@ -18,8 +18,8 @@
 
 <script>
 
-import FormInput from '../components/UI/input.vue'
-import Alert from '../components/UI/alert.vue'
+import FormInput from '../../components/UI/input.vue'
+import Alert from '../../components/UI/alert.vue'
 
 import { useStore } from 'vuex'
 
