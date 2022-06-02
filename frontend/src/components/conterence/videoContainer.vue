@@ -9,7 +9,7 @@
       </span>
       <p>{{ userName }}</p>
     </div>
-    <div v-if="placeholder" class="video__placeholder">
+    <div v-if="isPauseVideo" class="video__placeholder">
       <i class="bi bi-camera-video-off" />
     </div>
     <video ref="media"></video>
@@ -17,15 +17,14 @@
 </template>
 
 <script>
-import { inject, onUpdated, ref, watch } from 'vue'
+import { onUpdated, ref, watch } from 'vue'
 
 
 export default {
-  props: ['isActive', 'isAdmin', 'isMuted', 'isOffVideo', 'userName', 'peerId'],
+  props: ['isActive', 'isAdmin', 'isMuted', 'isPauseVideo', 'userName', 'peerId'],
   setup(props) {
 
     const media = ref(null)
-    const playVideo = inject('playVideo')
 
     const placeholder = ref(false)
 
@@ -37,8 +36,8 @@ export default {
       media.value.muted = props.isMuted
     }
 
-    watch(playVideo, (newStatus) => {
-      console.log(playVideo)
+    watch(() => props.isPauseVideo, (newStatus) => {
+      console.log(props.isPauseVideo)
       if (newStatus) {
         media.value.pause()
         placeholder.value = true
@@ -87,7 +86,7 @@ export default {
     bottom: 10px;
     left: 5px;
     color: $textColor;
-    z-index: 3;
+    z-index: 7;
   }
 
   &__placeholder {

@@ -37,8 +37,8 @@ export default {
     provide('isMuted', isMuted)
 
     
-    const playVideo = ref(true)
-    provide('playVideo', playVideo)
+    const isPauseVideo = ref(false)
+    provide('isPauseVideo', isPauseVideo)
 
 
     const isConferenceAdmin = inject('isConferenceAdmin')

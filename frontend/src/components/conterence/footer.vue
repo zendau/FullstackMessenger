@@ -3,11 +3,11 @@
     <div class="conference__menu">
       <div class="menu__setting">
         <button @click="isMuted = !isMuted"><i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"></i>{{
-            isMuted ? 'Upmute' : 'Mute'
+            isMuted ? 'Unmute' : 'Mute'
         }}</button>
-        <button v-if="type" @click="playVideo = !playVideo"><i class="bi"
-            :class="playVideo ? 'bi-camera-video-off-fill' : 'bi-camera-video-fill'"></i>{{ playVideo ? 'On' :
-                'Off'
+        <button v-if="type" @click="isPauseVideo = !isPauseVideo"><i class="bi"
+            :class="isPauseVideo ? 'bi-camera-video-off-fill' : 'bi-camera-video-fill'"></i>{{ isPauseVideo ? 'Off' :
+                'On'
             }}</button>
       </div>
       <div class="menu__conference-data">
@@ -30,12 +30,12 @@ export default {
     const type = computed(() => store.state.conference.type)
 
     const isMuted = inject('isMuted')
-    const playVideo = inject('playVideo')
+    const isPauseVideo = inject('isPauseVideo')
 
 
     return {
       isMuted,
-      playVideo,
+      isPauseVideo,
       type
     }
 

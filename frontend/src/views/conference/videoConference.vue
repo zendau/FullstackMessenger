@@ -1,6 +1,6 @@
 <template>
   <video-container-vue v-for='user in roomUsers' :key='user.userId' :peerId="user.peerId" :isMuted="user.mute"
-    :userName='user.userLogin' :ref="setItemRef" />
+    :userName='user.userLogin' :isPauseVideo="user.pause" :ref="setItemRef" />
 </template>
 
 <script>
@@ -33,6 +33,7 @@ export default {
     const peerConnected = ref(false)
 
     const isMuted = inject('isMuted')
+    const isPauseVideo = inject('isPauseVideo')
 
 
     let mainStream = null
@@ -129,6 +130,14 @@ export default {
       })
     })
 
+    watch(isPauseVideo, () => {
+      socket.emit('videoPause', {
+        userId: userId.value,
+        roomId
+      })
+    })
+
+
     // ==== peers ==== //
 
     const myPeer = new Peer({
@@ -145,7 +154,7 @@ export default {
 
     getUserMedia({
       audio: true,
-      video: {aspectRatio: 16/9}
+      video: { aspectRatio: 16 / 9 }
     }).then(stream => {
       //localStream.value = stream
       //console.log('localStream',localStream)
@@ -165,7 +174,7 @@ export default {
 
       getUserMedia({
         audio: true,
-        video: true
+        video: { aspectRatio: 16 / 9 }
       }).then(stream => {
         childStream.push(stream)
         call.answer(stream)
