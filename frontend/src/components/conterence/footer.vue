@@ -3,6 +3,7 @@
     <div class="conference__menu">
       <div class="menu__setting">
         <button @click="isMuted = !isMuted"><i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"></i>{{isMuted ? 'Upmute' : 'Mute'}}</button>
+        <button v-if="type" @click="isMuted = !isMuted"><i class="bi" :class="isMuted ? 'bi-camera-video-off-fill' : 'bi-camera-video-fill'"></i>{{isMuted ? 'Upmute' : 'Mute'}}</button>
       </div>
       <div class="menu__conference-data">
         <h3 class="menu__conference-title">{{conferenceTitle}}</h3>
@@ -14,17 +15,21 @@
 </template>
 
 <script>
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
+import { useStore } from 'vuex'
 
   export default {
     props: ['conferenceTitle', 'conferenceAdmin'],
     setup() {
-      
+      const store = useStore()
+      const type = computed(() => store.state.conference.type)
+
       const isMuted = inject('isMuted')
 
 
       return {
-        isMuted
+        isMuted,
+        type
       }
 
     }

@@ -14,11 +14,13 @@ $linkColor: #59b7ff;
 .video {
     &__container {
         display: block;
-        width: 100%;
         position: relative;
         aspect-ratio: 16/9;
         background-color: $messageColor;
         border-radius: 3px;
+        max-width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
     &__info {
@@ -55,3 +57,14 @@ video::after {
     content: '';
     clear: both;
 } */
+
+@media (max-width: 730px) {
+
+    .video {
+        &__container {
+          margin-bottom: 5px;
+          top: 0;
+          transform: none;
+        }
+    }
+}

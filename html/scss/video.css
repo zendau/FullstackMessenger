@@ -1,10 +1,13 @@
 .video__container {
   display: block;
-  width: 100%;
   position: relative;
   aspect-ratio: 16/9;
   background-color: #182533;
   border-radius: 3px;
+  max-width: 100%;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
 }
 
 .video__info {
@@ -43,4 +46,12 @@ video::after {
     content: '';
     clear: both;
 } */
+@media (max-width: 730px) {
+  .video__container {
+    margin-bottom: 5px;
+    top: 0;
+    -webkit-transform: none;
+            transform: none;
+  }
+}
 /*# sourceMappingURL=video.css.map */
