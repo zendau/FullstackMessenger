@@ -2,12 +2,17 @@
   <footer>
     <div class="conference__menu">
       <div class="menu__setting">
-        <button @click="isMuted = !isMuted"><i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"></i>{{isMuted ? 'Upmute' : 'Mute'}}</button>
-        <button v-if="type" @click="isMuted = !isMuted"><i class="bi" :class="isMuted ? 'bi-camera-video-off-fill' : 'bi-camera-video-fill'"></i>{{isMuted ? 'Upmute' : 'Mute'}}</button>
+        <button @click="isMuted = !isMuted"><i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"></i>{{
+            isMuted ? 'Upmute' : 'Mute'
+        }}</button>
+        <button v-if="type" @click="playVideo = !playVideo"><i class="bi"
+            :class="playVideo ? 'bi-camera-video-off-fill' : 'bi-camera-video-fill'"></i>{{ playVideo ? 'On' :
+                'Off'
+            }}</button>
       </div>
       <div class="menu__conference-data">
-        <h3 class="menu__conference-title">{{conferenceTitle}}</h3>
-        <p class="menu__conference-admin">{{conferenceAdmin}}</p>
+        <h3 class="menu__conference-title">{{ conferenceTitle }}</h3>
+        <p class="menu__conference-admin">{{ conferenceAdmin }}</p>
       </div>
       <button class="menu__chat" @click="$emit('showChat')"><i class="bi bi-chat-dots"></i> Chat</button>
     </div>
@@ -18,77 +23,84 @@
 import { computed, inject } from 'vue'
 import { useStore } from 'vuex'
 
-  export default {
-    props: ['conferenceTitle', 'conferenceAdmin'],
-    setup() {
-      const store = useStore()
-      const type = computed(() => store.state.conference.type)
+export default {
+  props: ['conferenceTitle', 'conferenceAdmin'],
+  setup() {
+    const store = useStore()
+    const type = computed(() => store.state.conference.type)
 
-      const isMuted = inject('isMuted')
+    const isMuted = inject('isMuted')
+    const playVideo = inject('playVideo')
 
 
-      return {
-        isMuted,
-        type
-      }
-
+    return {
+      isMuted,
+      playVideo,
+      type
     }
+
   }
+}
 </script>
 
 <style lang="scss" scoped>
-
 footer {
-    height: 60px;
-    background-color: $bgcColor;
-    box-sizing: border-box;
+  height: 60px;
+  background-color: $bgcColor;
+  box-sizing: border-box;
 }
 
 
 .menu {
 
-    &__setting button, &__chat {
-        width: 50px;
-        height: 50px;
-        border: none;
-        background-color: inherit;
-        color: $textColor;
-        cursor: pointer;
-        transition: .3s ease;
+  &__setting button,
+  &__chat {
+    width: 50px;
+    height: 50px;
+    border: none;
+    background-color: inherit;
+    color: $textColor;
+    cursor: pointer;
+    transition: .3s ease;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-        &:hover {
-            color: $activeColor;
-        }
-        
-        i {
-            font-size: 24px;
-        }
-
-        font-size: 14px;
+    &:hover {
+      color: $activeColor;
     }
 
-    &__conference-title {
-        color: $textColor;
+    i {
+      font-size: 24px;
     }
 
-    &__conference-admin {
-        color: $secondTextColor;
-     }
+    font-size: 14px;
+  }
 
-    &__conference-title, &__conference-admin {
-        text-align: center;
-        
+  &__conference-title {
+    color: $textColor;
+  }
+
+  &__conference-admin {
+    color: $secondTextColor;
+  }
+
+  &__conference-title,
+  &__conference-admin {
+    text-align: center;
+
+  }
+
+  &__chat {
+    width: 50px;
+    height: 50px;
+
+    i {
+      font-size: 24px;
     }
 
-    &__chat {
-        width: 50px;
-        height: 50px;      
-        i {
-            font-size: 24px;
-        }
-
-        font-size: 14px;
-    }
+    font-size: 14px;
+  }
 }
-
 </style>

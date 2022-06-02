@@ -9,7 +9,7 @@
       </span>
       <p>{{ userName }}</p>
     </div>
-    <div v-if="isOffVideo" class="video__placeholder">
+    <div v-if="placeholder" class="video__placeholder">
       <i class="bi bi-camera-video-off" />
     </div>
     <video ref="media"></video>
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { onUpdated, ref } from 'vue'
+import { inject, onUpdated, ref, watch } from 'vue'
 
 
 export default {
@@ -25,6 +25,9 @@ export default {
   setup(props) {
 
     const media = ref(null)
+    const playVideo = inject('playVideo')
+
+    const placeholder = ref(false)
 
     onUpdated(() => {
       mutedAudio()
@@ -33,6 +36,17 @@ export default {
     function mutedAudio() {
       media.value.muted = props.isMuted
     }
+
+    watch(playVideo, (newStatus) => {
+      console.log(playVideo)
+      if (newStatus) {
+        media.value.pause()
+        placeholder.value = true
+      } else {
+        media.value.play()
+        placeholder.value = false
+      }
+    })
 
     function setStream(stream) {
       media.value.srcObject = stream
@@ -45,6 +59,7 @@ export default {
     return {
       media,
       mutedAudio,
+      placeholder,
       setStream
     }
 
@@ -79,9 +94,18 @@ export default {
     position: absolute;
     font-size: 70px;
     color: $textColor;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    background-color: $messageColor;
+    width: 100%;
+    height: 100%;
+
+    z-index: 5;
+
+    i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 }
 

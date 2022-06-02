@@ -36,6 +36,11 @@ export default {
     const isMuted = ref(false)
     provide('isMuted', isMuted)
 
+    
+    const playVideo = ref(true)
+    provide('playVideo', playVideo)
+
+
     const isConferenceAdmin = inject('isConferenceAdmin')
     const socket = inject('socket')
 
