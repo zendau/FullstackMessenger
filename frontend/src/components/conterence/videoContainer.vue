@@ -4,22 +4,51 @@
     'video__container--admin': isAdmin
   }">
     <div class="video__info">
-       <span class="mute">
-        <i
-          class="bi" 
-          :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"/>
+      <span class="mute">
+        <i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'" />
       </span>
-      <p>{{userName}}</p>
+      <p>{{ userName }}</p>
     </div>
-    <div v-if="isOffVideo" class="video__placeholder"><i class="bi bi-camera-video-off"></i></div>
-    <video></video>
+    <div v-if="isOffVideo" class="video__placeholder">
+      <i class="bi bi-camera-video-off" />
+    </div>
+    <video ref="media"></video>
   </div>
 </template>
 
 <script>
+import { onUpdated, ref } from 'vue'
+
 
 export default {
-  props: ['isActive', 'isAdmin', 'isMuted', 'isOffVideo', 'userName']
+  props: ['isActive', 'isAdmin', 'isMuted', 'isOffVideo', 'userName', 'peerId'],
+  setup(props) {
+
+    const media = ref(null)
+
+    onUpdated(() => {
+      mutedAudio()
+    })
+
+    function mutedAudio() {
+      media.value.muted = props.isMuted
+    }
+
+    function setStream(stream) {
+      media.value.srcObject = stream
+      console.log('stream', stream)
+      media.value.addEventListener('loadedmetadata', () => {
+        media.value.play()
+      })
+    }
+
+    return {
+      media,
+      mutedAudio,
+      setStream
+    }
+
+  }
 }
 
 </script>
@@ -28,19 +57,13 @@ export default {
 .video {
   &__container {
     display: block;
-    width: 100%;
     position: relative;
     aspect-ratio: 16/9;
     background-color: $messageColor;
     border-radius: 3px;
-
-    &--active {
-      border: 2px solid $activeColor;
-    }
-
-    &--admin {
-      border: 2px solid $dangerColor;
-    }
+    max-width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   &__info {
@@ -49,24 +72,46 @@ export default {
     bottom: 10px;
     left: 5px;
     color: $textColor;
+    z-index: 3;
   }
 
   &__placeholder {
     position: absolute;
     font-size: 70px;
     color: $textColor;
-    background-color: $messageColor;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 
 video {
   width: 100%;
   height: 100%;
+  position: absolute;
+  z-index: 2;
+}
+
+/* video::before {
+    float: left;
+    padding-top: 56.25%;
+    content: '';
+}
+
+video::after {
+    display: block;
+    content: '';
+    clear: both;
+} */
+
+@media (max-width: 730px) {
+
+  .video {
+    &__container {
+      margin-bottom: 5px;
+      top: 0;
+      transform: none;
+    }
+  }
 }
 </style>

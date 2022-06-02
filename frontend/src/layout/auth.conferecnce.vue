@@ -42,12 +42,12 @@ export default {
     onMounted(async () => {
       store.dispatch('conference/getConferenceData', roomId)
     })
-    
+
 
     watch(() => store.state.conference.adminId, adminId => {
       if (adminId === store.state.auth.user.id) {
-          isConferenceAdmin.value = true
-        }
+        isConferenceAdmin.value = true
+      }
     }, {
       immediate: true
     })
@@ -77,7 +77,13 @@ export default {
   grid-template-rows: 50px 1fr 60px;
   height: 100vh;
   max-height: 100vh;
+}
 
+@media (max-width: 960px) {
+
+  #app {
+    grid-template-rows: 1fr 60px;
+  }
 }
 </style>
 
@@ -96,8 +102,8 @@ export default {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 10px;
     overflow-y: scroll;
-    padding: 5px 10px;
-    align-content: baseline;
+    justify-items: center;
+    margin: 3px;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -122,7 +128,6 @@ export default {
   &-chat {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     width: 350px;
 
 
@@ -161,6 +166,46 @@ export default {
       background-color: #9b9fa4;
       box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
       border-radius: 10px;
+    }
+  }
+}
+
+
+@media (max-width: 1140px) {}
+
+@media (max-width: 960px) {
+
+  header {
+    z-index: 2;
+    height: auto !important;
+    width: 100%;
+    position: absolute;
+  }
+
+  .main-container {
+    max-height: 100vh;
+    position: relative;
+  }
+
+  .conference {
+    &__menu {
+      width: 600px;
+      margin: 0 auto;
+    }
+  }
+}
+
+@media (max-width: 730px) {
+
+  .conference {
+
+    &-container {
+      display: block;
+    }
+
+    &__menu {
+      width: 275px;
+      margin: 0 auto;
     }
   }
 }

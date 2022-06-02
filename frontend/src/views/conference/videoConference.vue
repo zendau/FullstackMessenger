@@ -145,12 +145,18 @@ export default {
 
     getUserMedia({
       audio: true,
-      video: true
+      video: {aspectRatio: 16/9}
     }).then(stream => {
       //localStream.value = stream
       //console.log('localStream',localStream)
       mainStream = stream
-      console.log('localStream', stream) // new - temp      
+      console.log('localStream', stream) // new - temp    
+      containersRefs.forEach(item => {
+        if (item.peerId === peerId.value) {
+          item.setStream(stream)
+        }
+      })
+
     })
 
 
