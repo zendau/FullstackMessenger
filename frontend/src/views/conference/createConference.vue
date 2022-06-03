@@ -7,7 +7,7 @@
       <form-input id="title" title="Conference title" type="text" v-model="title" />
 
       <select name="" id="conferenceType" v-model="type">
-        <option disabled selected>Select conference type</option>
+        <option disabled selected :value="null">Select conference type</option>
         <option :value="false">Audio</option>
         <option :value="true">Video</option>
       </select>
@@ -36,7 +36,7 @@ export default {
 
     const schema = yup.object({
       title: yup.string().required().min(6),
-      type: yup.boolean().required()
+      type: yup.boolean().required().typeError('type must be selected')
     });
 
     const { handleSubmit } = useForm({
@@ -46,7 +46,7 @@ export default {
     const socket = inject('socket')
 
     const { value: title } = useField('title');
-    const { value: type } = useField('type');
+    const { value: type } = useField('type', {}, { initialValue: null,  });
 
 
     function onInvalidSubmit({ errors }) {
@@ -54,7 +54,7 @@ export default {
       console.log('errors', errors)
 
       let message = ''
-
+ 
       Object.keys(errors).forEach(item => message += `<span>${errors[item]}</span>`)
       console.log(message)
       store.commit('auth/setErrorMessage', message)

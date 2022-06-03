@@ -28,7 +28,7 @@ export default {
     .alert {
 
       width: 250px;
-      height: 60px;
+      height: auto;
       margin: 0 auto;
       display: flex;
       align-items: center;

@@ -1,7 +1,7 @@
 
 <template>
   <section class="main-container">
-    <div class="conference-container">
+    <div class="conference-container" :class="{ 'conference-container--audio': !roomData.type }">
       <router-view />
     </div>
     <div v-if="showChat" class="conference-chat">
@@ -36,7 +36,7 @@ export default {
     const isMuted = ref(false)
     provide('isMuted', isMuted)
 
-    
+
     const isPauseVideo = ref(false)
     provide('isPauseVideo', isPauseVideo)
 
@@ -109,6 +109,15 @@ export default {
     overflow-y: scroll;
     justify-items: center;
     margin: 3px;
+
+    &--audio {
+      grid-template-rows: repeat(auto-fit, 50px);
+      align-content: center;
+      grid-template-columns: repeat(auto-fit, 300px);
+      justify-content: center;
+      grid-auto-flow: column;
+    }
+
 
     &::-webkit-scrollbar {
       width: 5px;

@@ -52,27 +52,30 @@ export default {
 
   &__container {
     background-color: $messageColor;
-    max-width: 250px;
+    width: 250px;
+    height: 40px;
+    align-self: center;
   }
 
   &__info {
     display: flex;
-    height: 30px;
+    height: 40px;
     align-items: center;
     color: $textColor;
 
     .mute {
       border-right: 1px solid black;
-      height: 30px;
-      width: 30px;
+      height: 40px;
+      width: 40px;
       text-align: center;
-      line-height: 30px;
+      line-height: 40px;
       font-size: 18px;
     }
 
     p {
       text-align: center;
       padding: 15px;
+      justify-self: center;
     }
 
     &--active {
