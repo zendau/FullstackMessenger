@@ -1,7 +1,7 @@
 export default interface IUser {
   email: string;
-  login: string;
+  login?: string;
   password: string;
-  confirmPassword: string;
+  confirmPassword?: string;
   roleId?: number;
 }

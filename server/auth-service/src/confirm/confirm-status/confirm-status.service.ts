@@ -15,7 +15,7 @@ export class ConfirmCodeService {
 
 
     const res = await manager.save(Confirm, {
-      confirmCode: null,
+      confirmCode: uuid.v4(),
       isActivate: false,
       user
     })
@@ -33,22 +33,31 @@ export class ConfirmCodeService {
     return activateStatus;
   }
 
-  async createCode(userId: number) {
-    const confirmCode = uuid.v4()
-    console.log(confirmCode);
+  async setConfirmCode(userId: number) {
     const res = await this.confirmRepository
       .createQueryBuilder()
       .update()
       .set({
-        confirmCode
+        confirmCode: uuid.v4()
       })
       .where('userId = :userId', { userId })
       .execute();
-    console.log('res', res);
     return res;
   }
 
+  async checkConfirmCode(userConfrimCode: string, userId: number) {
+    const confirmStatus = await this.confirmRepository
+      .createQueryBuilder('u')
+      .select('u.confirmCode')
+      .where('u.userId = :userId', { userId })
+      .getOne();
+
+    if (confirmStatus.confirmCode === userConfrimCode) return true;
+    return false;
+  }
+
   async activateAccount(userId: number) {
+    console.log(userId);
     const res = await this.confirmRepository
       .createQueryBuilder()
       .update()
@@ -59,7 +68,7 @@ export class ConfirmCodeService {
       .where('userId = :userId', { userId })
       .execute();
     console.log('res', res);
-    return res;
+    return !!res.affected;
   }
 
 }

@@ -7,6 +7,7 @@ import {
   HttpException,
   Inject,
   Param,
+  Patch,
   Post,
   Req,
   Res,
@@ -25,7 +26,7 @@ import { HttpErrorDTO } from '../dto/httpError.dto';
 @ApiTags('Auth microservice - User controller')
 @Controller('user')
 export class UserController {
-  constructor(@Inject('AUTH_SERVICE') private authServiceClient: ClientProxy) {}
+  constructor(@Inject('AUTH_SERVICE') private authServiceClient: ClientProxy) { }
 
   @ApiOperation({ summary: 'Register new user' })
   @ApiResponse({ status: 200, type: RegisterData })
@@ -115,6 +116,39 @@ export class UserController {
 
     return resData;
   }
+
+  @Patch('activate')
+  async activateAccount(@Body() activateData: 
+  {
+    confirmCode: string,
+    userId: number
+  }) {
+    console.log('activate data', activateData);
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/activate', activateData),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
+
+  @Patch('activateByAdmin')
+  async activateAccountByAdmin(@Body() activateData: 
+  {
+    userId: number
+  }) {
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/activateByAdmin', activateData.userId),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
+
 
   @Get('test')
   async test() {

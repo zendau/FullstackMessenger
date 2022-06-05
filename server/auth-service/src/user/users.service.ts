@@ -214,7 +214,6 @@ export class UsersService {
 
     const confirmStatus = await this.confirmCodeService.createStatus(userData, this.queryRunner.manager);
 
-
     return await this.insertTokens(
       {
         ...convertUserDTO(userData),
