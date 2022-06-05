@@ -115,4 +115,16 @@ export class UserController {
 
     return resData;
   }
+
+  @Get('test')
+  async test() {
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/test', ''),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
 }

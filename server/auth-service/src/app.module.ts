@@ -6,11 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from './token/token.module';
 import { ConfigModule } from '@nestjs/config';
 import { RoleModule } from './role/role.module';
+import { ConfirmModule } from './confirm/confirm.module';
 
 @Module({
   imports: [
     UsersModule,
     TokenModule,
+    ConfirmModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -23,6 +25,7 @@ import { RoleModule } from './role/role.module';
       synchronize: true,
     }),
     RoleModule,
+    ConfirmModule,
   ],
   controllers: [UsersController, RoleController],
 })

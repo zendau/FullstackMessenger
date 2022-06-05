@@ -1,7 +1,6 @@
+import { ConfirmModule } from './../confirm/confirm.module';
 import { RoleModule } from '../role/role.module';
-import { RoleService } from '../role/role.service';
 import { TokenModule } from '../token/token.module';
-import { TokenService } from '../token/token.service';
 import { User } from './users.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { forwardRef, Module } from '@nestjs/common';
@@ -13,6 +12,7 @@ import { UsersController } from './users.controller';
     TypeOrmModule.forFeature([User]),
     forwardRef(() => TokenModule),
     forwardRef(() => RoleModule),
+    forwardRef(() => ConfirmModule),
   ],
   controllers: [UsersController],
   providers: [UsersService],

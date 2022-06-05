@@ -1,3 +1,5 @@
+import { ConfirmCodeService } from '../confirm/confirm-status/confirm-status.service';
+import { NodeMailerService } from './../confirm/nodemailer/nodemailer.service';
 import { RoleService } from '../role/role.service';
 import { TokenService } from '../token/token.service';
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
@@ -9,6 +11,7 @@ import IUser from './interfaces/IUserData';
 import IUserLogin from './interfaces/IUserLogin';
 import IUserDTO from './dto/user.dto';
 import e from 'express';
+import IRoleData from './interfaces/IRoleData';
 
 @Injectable()
 export class UsersService {
@@ -19,10 +22,13 @@ export class UsersService {
     private usersRepository: Repository<User>,
     private tokenService: TokenService,
     private roleService: RoleService,
+    private nodeMailerService: NodeMailerService,
+    private confirmCodeService: ConfirmCodeService,
     private connection: Connection,
-  ) {}
+  ) { }
 
   async register(userData: IUser, typeStatus: boolean): Promise<any> {
+
     const resCheckEmail = await this.checkEmail(userData.email);
     if (!resCheckEmail.status) return resCheckEmail;
 
@@ -46,14 +52,18 @@ export class UsersService {
     try {
       const resInsered = await this.queryRunner.manager.save(User, userEntity);
       let tokens;
-
+      debugger;
       if (!typeStatus) {
-        tokens = await this.registerTransaction(resInsered, userData.roleId);
+        //tokens = await this.insertInTransaction(resInsered, userData.roleId);
       } else {
         const role = await this.roleService.getRoleByName(
           process.env.BASE_USER_ROLE,
         );
-        tokens = await this.registerTransaction(resInsered, role.id);
+        tokens = await this.insertInTransaction(resInsered, {
+          id: role.id,
+          name: role.value,
+          accessLevel: role.accessLevel
+        });
       }
       await this.queryRunner.commitTransaction();
       return tokens;
@@ -191,47 +201,53 @@ export class UsersService {
     };
   }
 
-  private convertUserDTO(userData: IUserDTO) {
+  private convertUserDTO(userData: User) {
     return {
       id: userData.id,
       email: userData.email,
       login: userData.login,
-      role: userData.role,
     };
   }
 
-  private async saveTokens(resInsert, manager: any) {
-    const tokens = await this.tokenService.generateTokens(
-      this.convertUserDTO(resInsert),
-    );
+  private async saveTokens(toketData, manager: any) {
+    const tokens = await this.tokenService.generateTokens(toketData);
     await this.tokenService.saveToken(
-      resInsert.id,
+      toketData.id,
       tokens.refreshToken,
       manager,
     );
     return tokens;
   }
 
-  private async registerTransaction(userData: User, roleId: number) {
+  private async insertInTransaction(userData: User, roleData: IRoleData) {
     const userRoleData = await this.roleService.addUserRole(
       {
-        roleId: roleId,
+        roleId: roleData.id,
         userId: userData.id,
       },
       this.queryRunner.manager,
     );
 
-    const roleData = await this.roleService.getRoleById(userRoleData.roleId);
+    console.log('role', userRoleData);
+    const confirmStatus = await this.confirmCodeService.createStatus(userData, this.queryRunner.manager);
+
 
     return await this.saveTokens(
       {
-        ...userData,
+        ...this.convertUserDTO(userData),
         role: {
-          ...roleData,
+          roleId: roleData.id,
+          roleName: roleData.name,
+          roleAccess: roleData.accessLevel
         },
+        confirm: {
+          confrimCode: confirmStatus.confirmCode,
+          isActivate: confirmStatus.isActivate
+        }
       },
       this.queryRunner.manager,
     );
+
   }
 
   async getAllUsers() {
@@ -244,12 +260,18 @@ export class UsersService {
   }
 
   async getUserById(id: number) {
-    const users = await this.usersRepository
+    const user = await this.usersRepository
       .createQueryBuilder('user')
       .select(['user.id', 'user.email', 'user.login'])
-      .where('user.id = :id', {id})
+      .where('user.id = :id', { id })
       .getOne();
+    console.log(user);
+    await this.confirmCodeService.activateAccount(user.id);
+    return user;
+  }
 
-    return users;
+  async test() {
+    const res = await this.nodeMailerService.test()
+    return res;
   }
 }

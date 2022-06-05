@@ -43,6 +43,7 @@ export class UsersController {
 
   @MessagePattern('user/id')
   async getUserById(@Payload() id: number) {
+    debugger;
     console.log(id);
     const res = await this.UsersService.getUserById(id);
     console.log(id, res);
