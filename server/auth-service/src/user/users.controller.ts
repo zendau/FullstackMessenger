@@ -9,7 +9,7 @@ export class UsersController {
 
   @MessagePattern('user/register')
   async registerUser(@Payload() userData: IUser) {
-    const res = await this.UsersService.register(userData, true).catch(
+    const res = await this.UsersService.register(userData).catch(
       (err) => {
         console.log(err);
         return {

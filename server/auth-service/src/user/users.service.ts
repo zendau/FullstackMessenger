@@ -2,16 +2,17 @@ import { ConfirmCodeService } from '../confirm/confirm-status/confirm-status.ser
 import { NodeMailerService } from './../confirm/nodemailer/nodemailer.service';
 import { RoleService } from '../role/role.service';
 import { TokenService } from '../token/token.service';
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository, QueryRunner } from 'typeorm';
 import { User } from './users.entity';
-import * as bcrypt from 'bcrypt';
+
 import IUser from './interfaces/IUserData';
 import IUserLogin from './interfaces/IUserLogin';
-import IUserDTO from './dto/user.dto';
-import e from 'express';
 import IRoleData from './interfaces/IRoleData';
+
+import convertUserDTO from './assets/createUserDTO';
+import { comparePassword, equalPasswords, hashPassword } from './assets/passwordWorker';
 
 @Injectable()
 export class UsersService {
@@ -27,22 +28,22 @@ export class UsersService {
     private connection: Connection,
   ) { }
 
-  async register(userData: IUser, typeStatus: boolean): Promise<any> {
+  async register(userData: IUser): Promise<any> {
 
     const resCheckEmail = await this.checkEmail(userData.email);
     if (!resCheckEmail.status) return resCheckEmail;
 
-    const resCheckPasswords = await this.equalPasswords(
+    const resCheckPasswords = await equalPasswords(
       userData.password,
       userData.confirmPassword,
     );
     if (!resCheckPasswords.status) return resCheckPasswords;
 
-    const hashPassword = await this.hashPassword(userData.password);
+    const hashedPassword = await hashPassword(userData.password);
 
     const userEntity = this.usersRepository.create();
     userEntity.email = userData.email;
-    userEntity.password = hashPassword;
+    userEntity.password = hashedPassword;
     userEntity.login = userData.login;
 
     this.queryRunner = this.connection.createQueryRunner();
@@ -50,21 +51,17 @@ export class UsersService {
     await this.queryRunner.startTransaction();
 
     try {
-      const resInsered = await this.queryRunner.manager.save(User, userEntity);
-      let tokens;
-      debugger;
-      if (!typeStatus) {
-        //tokens = await this.insertInTransaction(resInsered, userData.roleId);
-      } else {
-        const role = await this.roleService.getRoleByName(
-          process.env.BASE_USER_ROLE,
-        );
-        tokens = await this.insertInTransaction(resInsered, {
-          id: role.id,
-          name: role.value,
-          accessLevel: role.accessLevel
-        });
-      }
+      const resUserInsered = await this.queryRunner.manager.save(User, userEntity);
+      const role = await this.roleService.getRoleById(
+        parseInt(process.env.BASE_USER_ROLE_ID),
+      );
+    
+      const tokens = await this.insertInTransaction(resUserInsered, {
+        id: role.id,
+        name: role.value,
+        accessLevel: role.accessLevel
+      });
+
       await this.queryRunner.commitTransaction();
       return tokens;
     } catch (e) {
@@ -83,8 +80,8 @@ export class UsersService {
   async login(userData: IUserLogin) {
     const resUserData = await this.findByEmail(userData.email);
     if (!resUserData.status) return resUserData;
-    debugger;
-    const resComparePasswords = await this.comparePassword(
+
+    const resComparePasswords = await comparePassword(
       userData.password,
       resUserData.userData.password,
     );
@@ -93,10 +90,17 @@ export class UsersService {
       return resComparePasswords;
     }
 
-    const tokens = this.saveTokens(
+    const { activateStatus, role }  = await this.getAdditionalUserData(resUserData.userData.id)
+
+    const tokens = this.insertTokens(
       {
-        ...resUserData.userData,
-        role: resUserData.userData.roleId,
+        ...convertUserDTO(resUserData.userData),
+        role: {
+          roleId: role.id,
+          roleName: role.value,
+          roleAccess: role.accessLevel
+        },
+        isActivate: activateStatus
       },
       null,
     );
@@ -116,9 +120,17 @@ export class UsersService {
       return userCheck;
     }
 
-    const tokens = this.saveTokens(
+    const { activateStatus, role }  = await this.getAdditionalUserData(userCheck.userData.id)
+
+    const tokens = this.insertTokens(
       {
-        ...userTokenData.userData,
+        ...convertUserDTO(userCheck.userData),
+        role: {
+          roleId: role.id,
+          roleName: role.value,
+          roleAccess: role.accessLevel
+        },
+        isActivate: activateStatus
       },
       null,
     );
@@ -169,47 +181,19 @@ export class UsersService {
     };
   }
 
-  private async equalPasswords(password: string, confirmPassword: string) {
-    if (password === confirmPassword)
-      return {
-        status: true,
-      };
-    else
-      return {
-        status: false,
-        message: `password and confirm password is not equals`,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-  }
 
-  private async hashPassword(password: string) {
-    return await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT));
-  }
 
-  private async comparePassword(password: string, hash: string) {
-    const resCompare = await bcrypt.compare(password, hash);
-
-    if (!resCompare)
-      return {
-        status: false,
-        message: `Password is wrong`,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+  private async getAdditionalUserData(userId: number) {
+    const role = await this.roleService.getRoleById(userId);
+    const activateStatus = await this.confirmCodeService.getActivateStatus(userId);
 
     return {
-      status: true,
-    };
+      role,
+      activateStatus
+    }
   }
 
-  private convertUserDTO(userData: User) {
-    return {
-      id: userData.id,
-      email: userData.email,
-      login: userData.login,
-    };
-  }
-
-  private async saveTokens(toketData, manager: any) {
+  private async insertTokens(toketData, manager: any) {
     const tokens = await this.tokenService.generateTokens(toketData);
     await this.tokenService.saveToken(
       toketData.id,
@@ -220,7 +204,7 @@ export class UsersService {
   }
 
   private async insertInTransaction(userData: User, roleData: IRoleData) {
-    const userRoleData = await this.roleService.addUserRole(
+    await this.roleService.addUserRole(
       {
         roleId: roleData.id,
         userId: userData.id,
@@ -228,22 +212,18 @@ export class UsersService {
       this.queryRunner.manager,
     );
 
-    console.log('role', userRoleData);
     const confirmStatus = await this.confirmCodeService.createStatus(userData, this.queryRunner.manager);
 
 
-    return await this.saveTokens(
+    return await this.insertTokens(
       {
-        ...this.convertUserDTO(userData),
+        ...convertUserDTO(userData),
         role: {
           roleId: roleData.id,
           roleName: roleData.name,
           roleAccess: roleData.accessLevel
         },
-        confirm: {
-          confrimCode: confirmStatus.confirmCode,
-          isActivate: confirmStatus.isActivate
-        }
+        isActivate: confirmStatus.isActivate
       },
       this.queryRunner.manager,
     );

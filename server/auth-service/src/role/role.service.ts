@@ -40,15 +40,6 @@ export class RoleService {
     return allRoles;
   }
 
-  async getRoleByName(name: string) {
-    const roleData = await this.rolesRepository
-      .createQueryBuilder()
-      .where('value = :name', { name })
-      .getOne();
-
-    return roleData;
-  }
-
   async getRoleById(id: number) {
     const roleData = await this.rolesRepository
       .createQueryBuilder()

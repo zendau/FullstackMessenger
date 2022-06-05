@@ -23,6 +23,16 @@ export class ConfirmCodeService {
     return res;
   }
 
+  async getActivateStatus(userId: number) {
+    const activateStatus = await this.confirmRepository
+      .createQueryBuilder()
+      .select('isActivate')
+      .where('userId = :userId', { userId })
+      .getOne();
+
+    return activateStatus;
+  }
+
   async createCode(userId: number) {
     const confirmCode = uuid.v4()
     console.log(confirmCode);
