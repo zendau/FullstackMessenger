@@ -169,6 +169,40 @@ export class UsersService {
     return this.login(updatedUserData);
   }
 
+  
+  async resetUserPassword(userData: IUser) {
+      debugger;
+      const newPassword = Math.random().toString(36).slice(-8);
+
+      const hashedPassword = await hashPassword(newPassword);
+
+      const statusUpdated = await this.usersRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          password: hashedPassword
+        })
+        .where('id = :id', { id: userData.id })
+        .execute();
+
+      if (!statusUpdated.affected) {
+        return {
+          status: false,
+          message: 'Not valid reset data',
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+
+    await this.confirmCodeService.activateAccount(userData.id);
+
+    // return this.login({
+    //   email: userData.email,
+    //   password: newPassword
+    // });
+    
+    return newPassword;
+  }
+
   async refreshToken(refreshToken: string) {
     const userTokenData = await this.tokenService.findTokenAndGet(refreshToken);
     if (!userTokenData.status) {

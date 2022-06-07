@@ -118,11 +118,11 @@ export class UserController {
   }
 
   @Patch('activate')
-  async activateAccount(@Body() activateData: 
-  {
-    confirmCode: string,
-    userId: number
-  }) {
+  async activateAccount(@Body() activateData:
+    {
+      confirmCode: string,
+      userId: number
+    }) {
     console.log('activate data', activateData);
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/activate', activateData),
@@ -135,10 +135,10 @@ export class UserController {
   }
 
   @Patch('activateByAdmin')
-  async activateAccountByAdmin(@Body() activateData: 
-  {
-    userId: number
-  }) {
+  async activateAccountByAdmin(@Body() activateData:
+    {
+      userId: number
+    }) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/activateByAdmin', activateData.userId),
     );
@@ -149,10 +149,10 @@ export class UserController {
     return resData;
   }
 
-  @Get('codeEditData/:id')
+  @Get('setConfirmCode/:id')
   async getCodeEditData(@Param('id') id: number) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('user/codeEditData', id),
+      this.authServiceClient.send('user/setConfirmCode', id),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -165,14 +165,34 @@ export class UserController {
   @Patch('editData')
   async editUserData(
     @Res({ passthrough: true }) res: Response,
-    @Body() editData: 
-  {
-    userData: any,
-    confirmCode: string
-  }) {
+    @Body() editData:
+      {
+        userData: any,
+        confirmCode: string
+      }) {
     console.log(editData);
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/editData', editData),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true });
+    return resData;
+  }
+
+  @Patch('resetPassword')
+  async resetUserPassword(
+    @Res({ passthrough: true }) res: Response,
+    @Body() resetData:
+      {
+        userData: any
+        confirmCode: string
+      }) {
+    console.log(resetData);
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/resetPassword', resetData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);

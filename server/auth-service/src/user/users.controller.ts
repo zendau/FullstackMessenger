@@ -68,7 +68,7 @@ export class UsersController {
     return res;
   }
 
-  @MessagePattern('user/codeEditData')
+  @MessagePattern('user/setConfirmCode')
   async getCodeEditData(@Payload() userId: number) {
     const userData = await this.getUserById(userId);
 
@@ -79,11 +79,10 @@ export class UsersController {
   @MessagePattern('user/editData')
   async changeUserData(@Payload() editData:
     {
-      confirmCode: string,
       userData: IUser
+      confirmCode: string,
     }) {
-    console.log(editData);
-    debugger;
+
     const checkCode = await this.confirmCodeService.checkConfirmCode(editData.confirmCode, editData.userData.id);
 
     if (checkCode.status) {
@@ -93,6 +92,24 @@ export class UsersController {
 
     return checkCode;
   }
+
+  @MessagePattern('user/resetPassword')
+  async resetUserPassword(@Payload() resetData:
+  {
+    resetData: IUser,
+    confirmCode: string
+  }) {
+
+    const checkCode = await this.confirmCodeService.checkConfirmCode(resetData.confirmCode, resetData.resetData.id);
+
+    if (checkCode.status) {
+      const res = await this.UsersService.resetUserPassword(resetData.resetData);
+      return res;
+    }
+
+    return checkCode;
+  }
+
 
   @MessagePattern('user/all')
   async getAllUsers() {
