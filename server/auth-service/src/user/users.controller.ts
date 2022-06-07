@@ -46,9 +46,9 @@ export class UsersController {
         confirmCode: string,
         userId: number
       }) {
-        console.log('activate data', activateData);
+    console.log('activate data', activateData);
     const checkCode = await this.confirmCodeService.checkConfirmCode(activateData.confirmCode, activateData.userId);
-    
+
     if (checkCode) {
       await this.confirmCodeService.activateAccount(activateData.userId);
       return true
@@ -68,9 +68,30 @@ export class UsersController {
     return res;
   }
 
-  @MessagePattern('user/changeData')
-  async changeUserData(@Payload() userData: IUser) {
-    console.log(userData);
+  @MessagePattern('user/codeEditData')
+  async getCodeEditData(@Payload() userId: number) {
+    const userData = await this.getUserById(userId);
+
+    const res = await this.confirmCodeService.setConfirmCode(userData);
+    return res;
+  }
+
+  @MessagePattern('user/editData')
+  async changeUserData(@Payload() editData:
+    {
+      confirmCode: string,
+      userData: IUser
+    }) {
+    console.log(editData);
+    debugger;
+    const checkCode = await this.confirmCodeService.checkConfirmCode(editData.confirmCode, editData.userData.id);
+
+    if (checkCode.status) {
+      const res = await this.UsersService.editUserData(editData.userData);
+      return res;
+    }
+
+    return checkCode;
   }
 
   @MessagePattern('user/all')

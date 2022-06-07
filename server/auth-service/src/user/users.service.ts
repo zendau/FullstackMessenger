@@ -5,7 +5,7 @@ import { TokenService } from '../token/token.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository, QueryRunner } from 'typeorm';
-import { User } from './users.entity';
+import { User } from './user.entity';
 
 import IUser from './interfaces/IUserData';
 import IUserLogin from './interfaces/IUserLogin';
@@ -55,7 +55,7 @@ export class UsersService {
       const role = await this.roleService.getRoleById(
         parseInt(process.env.BASE_USER_ROLE_ID),
       );
-    
+
       const tokens = await this.insertInTransaction(resUserInsered, {
         id: role.id,
         name: role.value,
@@ -89,23 +89,84 @@ export class UsersService {
     if (!resComparePasswords.status) {
       return resComparePasswords;
     }
-
-    const { activateStatus, role }  = await this.getAdditionalUserData(resUserData.userData.id)
-
+    debugger
+    const activateStatus = await this.confirmCodeService.getActivateStatus(resUserData.userData.id);
+  
     const tokens = this.insertTokens(
       {
         ...convertUserDTO(resUserData.userData),
-        role: {
-          roleId: role.id,
-          roleName: role.value,
-          roleAccess: role.accessLevel
-        },
-        isActivate: activateStatus
+        ...activateStatus
       },
       null,
     );
 
     return tokens;
+  }
+
+  async editUserData(userData: IUser) {
+
+    const updatedUserData = {
+      email: null,
+      password: null
+    };
+
+    const statusUpdated = await this.usersRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        email: userData.email,
+        login: userData.login
+      })
+      .where('id = :id', { id: userData.id })
+      .execute();
+
+
+    if (!statusUpdated.affected) {
+      return {
+        status: false,
+        message: 'Not valid updated data',
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    if (userData.password !== undefined) {
+
+      const resCheckPasswords = await equalPasswords(
+        userData.password,
+        userData.confirmPassword,
+      );
+      if (!resCheckPasswords.status) return resCheckPasswords;
+
+      const hashedPassword = await hashPassword(userData.password);
+
+      const statusUpdated = await this.usersRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          password: hashedPassword
+        })
+        .where('id = :id', { id: userData.id })
+        .execute();
+
+      updatedUserData.email = userData.email;
+      updatedUserData.password = userData.password;
+
+      if (!statusUpdated.affected) {
+        return {
+          status: false,
+          message: 'Not valid updated data',
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+    } else {
+      const tempUserData = await this.getUserById(userData.id);
+      updatedUserData.email = tempUserData.email;
+      updatedUserData.password = tempUserData.password;
+    }
+
+    await this.confirmCodeService.activateAccount(userData.id);
+
+    return this.login(updatedUserData);
   }
 
   async refreshToken(refreshToken: string) {
@@ -120,7 +181,7 @@ export class UsersService {
       return userCheck;
     }
 
-    const { activateStatus, role }  = await this.getAdditionalUserData(userCheck.userData.id)
+    const { activateStatus, role } = await this.getAdditionalUserData(userCheck.userData.id, userCheck.userData.roleId)
 
     const tokens = this.insertTokens(
       {
@@ -161,13 +222,13 @@ export class UsersService {
     const user: any = await this.usersRepository
       .createQueryBuilder('u')
       .select(['u.id', 'u.email', 'u.login', 'u.password', 'r.id', 'r.value', 'r.desc'])
-      .innerJoinAndSelect('u.roleId', 'ur')
+      .innerJoinAndSelect('u.role', 'ur')
       .innerJoinAndSelect('ur.role', 'r')
       .where('u.email = :email', { email })
       .getOne();
 
     if (user !== undefined) {
-      user.roleId = user.roleId[0].role;
+      user.role = user.role[0].role;
       return {
         status: true,
         userData: user,
@@ -183,10 +244,12 @@ export class UsersService {
 
 
 
-  private async getAdditionalUserData(userId: number) {
-    const role = await this.roleService.getRoleById(userId);
+  private async getAdditionalUserData(userId: number, roleId: number) {
+    console.log('roleId', roleId)
+    const role = await this.roleService.getRoleById(roleId);
+    console.log('role', role)
     const activateStatus = await this.confirmCodeService.getActivateStatus(userId);
-
+    console.log('activa', activateStatus)
     return {
       role,
       activateStatus
@@ -211,17 +274,19 @@ export class UsersService {
       },
       this.queryRunner.manager,
     );
-
+    console.log('userData', userData);
     const confirmStatus = await this.confirmCodeService.createStatus(userData, this.queryRunner.manager);
 
     return await this.insertTokens(
       {
-        ...convertUserDTO(userData),
-        role: {
-          roleId: roleData.id,
-          roleName: roleData.name,
-          roleAccess: roleData.accessLevel
-        },
+        ...convertUserDTO(
+          Object.assign(userData, {
+          role: {
+            roleId: roleData.id,
+            roleName: roleData.name,
+            roleAccess: roleData.accessLevel
+          }
+        })),
         isActivate: confirmStatus.isActivate
       },
       this.queryRunner.manager,

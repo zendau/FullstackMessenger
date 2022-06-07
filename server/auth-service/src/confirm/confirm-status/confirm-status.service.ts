@@ -1,5 +1,5 @@
-import { User } from './../../user/users.entity';
-import { Injectable } from '@nestjs/common';
+import { User } from '../../user/user.entity';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import * as uuid from 'uuid';
@@ -13,9 +13,12 @@ export class ConfirmCodeService {
 
   async createStatus(user: User, manager: EntityManager) {
 
+    const confirmCode = uuid.v4()
+
+    console.log(`send confirm - ${confirmCode} to ${user.email}`);
 
     const res = await manager.save(Confirm, {
-      confirmCode: uuid.v4(),
+      confirmCode,
       isActivate: false,
       user
     })
@@ -25,24 +28,28 @@ export class ConfirmCodeService {
 
   async getActivateStatus(userId: number) {
     const activateStatus = await this.confirmRepository
-      .createQueryBuilder()
-      .select('isActivate')
-      .where('userId = :userId', { userId })
+      .createQueryBuilder('confirm')
+      .select('confirm.isActivate')
+      .where('confirm.userId = :userId', { userId })
       .getOne();
 
     return activateStatus;
   }
 
-  async setConfirmCode(userId: number) {
+  async setConfirmCode(user: User) {
+    const confirmCode = uuid.v4()
+
+    console.log(`send confirm - ${confirmCode} to ${user.email}`);
+
     const res = await this.confirmRepository
       .createQueryBuilder()
       .update()
       .set({
-        confirmCode: uuid.v4()
+        confirmCode
       })
-      .where('userId = :userId', { userId })
+      .where('userId = :userId', { userId: user.id })
       .execute();
-    return res;
+    return !!res.affected;
   }
 
   async checkConfirmCode(userConfrimCode: string, userId: number) {
@@ -52,8 +59,23 @@ export class ConfirmCodeService {
       .where('u.userId = :userId', { userId })
       .getOne();
 
-    if (confirmStatus.confirmCode === userConfrimCode) return true;
-    return false;
+    debugger
+    if (confirmStatus === undefined)
+      return {
+        status: false,
+        message: `Confirm code is not found`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+
+    if (confirmStatus.confirmCode === userConfrimCode)
+      return {
+        status: true,
+      };
+    return {
+      status: false,
+      message: `Confirm code is not valid`,
+      httpCode: HttpStatus.BAD_REQUEST,
+    };
   }
 
   async activateAccount(userId: number) {

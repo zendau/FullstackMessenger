@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/users.entity';
+import { User } from 'src/user/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { UserRole } from './userRole.entity';
 import IEditUserData from './interfaces/IEditUserData';

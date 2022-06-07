@@ -149,6 +149,39 @@ export class UserController {
     return resData;
   }
 
+  @Get('codeEditData/:id')
+  async getCodeEditData(@Param('id') id: number) {
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/codeEditData', id),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
+
+  // TODO: пофиксить тип userData
+  @Patch('editData')
+  async editUserData(
+    @Res({ passthrough: true }) res: Response,
+    @Body() editData: 
+  {
+    userData: any,
+    confirmCode: string
+  }) {
+    console.log(editData);
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/editData', editData),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true });
+    return resData;
+  }
+
 
   @Get('test')
   async test() {

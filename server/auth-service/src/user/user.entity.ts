@@ -16,5 +16,5 @@ export class User {
   password: string;
 
   @OneToMany(() => UserRole, (userRole) => userRole.user)
-  roleId: UserRole[];
+  role: UserRole[];
 }

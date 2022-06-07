@@ -1,5 +1,5 @@
 import { UserRole } from './userRole.entity';
-import { User } from 'src/user/users.entity';
+import { User } from 'src/user/user.entity';
 import {
   Entity,
   Column,

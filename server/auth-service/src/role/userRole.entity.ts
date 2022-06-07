@@ -1,5 +1,5 @@
 import { Role } from './role.entity';
-import { User } from 'src/user/users.entity';
+import { User } from 'src/user/user.entity';
 import {
   Entity,
   Column,
@@ -26,7 +26,7 @@ export class UserRole {
     unique: true,
   })
   userId: number;
-  @ManyToOne(() => User, (user) => user.roleId, {
+  @ManyToOne(() => User, (user) => user.role, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
