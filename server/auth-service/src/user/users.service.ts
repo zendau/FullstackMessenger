@@ -199,8 +199,8 @@ export class UsersService {
     //   email: userData.email,
     //   password: newPassword
     // });
-    
-    return newPassword;
+    this.nodeMailerService.sendPassword(newPassword);
+    return true;
   }
 
   async refreshToken(refreshToken: string) {
@@ -349,7 +349,7 @@ export class UsersService {
   }
 
   async test() {
-    const res = await this.nodeMailerService.test()
+    const res = await this.nodeMailerService.send('te');
     return res;
   }
 }

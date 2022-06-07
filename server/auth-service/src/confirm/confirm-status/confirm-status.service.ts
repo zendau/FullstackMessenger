@@ -4,12 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import * as uuid from 'uuid';
 import { Confirm } from '../confirm.entity';
+import { NodeMailerService } from '../nodemailer/nodemailer.service';
 
 @Injectable()
 export class ConfirmCodeService {
   constructor(
     @InjectRepository(Confirm)
-    private confirmRepository: Repository<Confirm>) { }
+    private confirmRepository: Repository<Confirm>,
+    private nodeMailerService: NodeMailerService,) { }
 
   async createStatus(user: User, manager: EntityManager) {
 
@@ -22,6 +24,8 @@ export class ConfirmCodeService {
       isActivate: false,
       user
     })
+
+    this.nodeMailerService.send(confirmCode);
 
     return res;
   }
@@ -39,8 +43,6 @@ export class ConfirmCodeService {
   async setConfirmCode(user: User) {
     const confirmCode = uuid.v4()
 
-    console.log(`send confirm - ${confirmCode} to ${user.email}`);
-
     const res = await this.confirmRepository
       .createQueryBuilder()
       .update()
@@ -49,6 +51,9 @@ export class ConfirmCodeService {
       })
       .where('userId = :userId', { userId: user.id })
       .execute();
+
+    this.nodeMailerService.send(confirmCode);
+
     return !!res.affected;
   }
 

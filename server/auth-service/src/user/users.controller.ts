@@ -1,3 +1,4 @@
+import { NodeMailerService } from './../confirm/nodemailer/nodemailer.service';
 import { ConfirmCodeService } from '../confirm/confirm-status/confirm-status.service';
 import { UsersService } from './users.service';
 import { Controller, HttpStatus } from '@nestjs/common';
@@ -123,6 +124,12 @@ export class UsersController {
     console.log(id);
     const res = await this.UsersService.getUserById(id);
     console.log(id, res);
+    return res;
+  }
+
+  @MessagePattern('user/test')
+  async test() {
+    const res = await this.UsersService.test();
     return res;
   }
 }
