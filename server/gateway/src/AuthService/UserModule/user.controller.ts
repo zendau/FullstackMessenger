@@ -23,6 +23,8 @@ import { LoginData } from './dto/login.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpErrorDTO } from '../dto/httpError.dto';
 
+import IConfirmData from './interfaces/IConfirmData'
+
 @ApiTags('Auth microservice - User controller')
 @Controller('user')
 export class UserController {
@@ -149,10 +151,10 @@ export class UserController {
     return resData;
   }
 
-  @Get('setConfirmCode/:id')
-  async getCodeEditData(@Param('id') id: number) {
+  @Post('setConfirmCode')
+  async getCodeEditData(@Body() confirmData: IConfirmData) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('user/setConfirmCode', id),
+      this.authServiceClient.send('user/setConfirmCode', confirmData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -168,7 +170,8 @@ export class UserController {
     @Body() editData:
       {
         userData: any,
-        confirmCode: string
+        confirmCode: string,
+        confirmId: string
       }) {
     console.log(editData);
     const resData = await firstValueFrom(
@@ -187,7 +190,7 @@ export class UserController {
     @Res({ passthrough: true }) res: Response,
     @Body() resetData:
       {
-        userData: any
+        email: string
         confirmCode: string
       }) {
     console.log(resetData);

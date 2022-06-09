@@ -1,5 +1,5 @@
 export default interface IRoleData {
   id: number,
-  name: string,
+  value: string,
   accessLevel: number
 }

@@ -1,18 +1,18 @@
-import { ConfirmCodeService } from '../confirm/confirm-status/confirm-status.service';
-import { NodeMailerService } from './../confirm/nodemailer/nodemailer.service';
+import { ConfirmCodeService } from '../access/access-confirm/access-confirm';
+import { NodeMailerService } from '../access/nodemailer/nodemailer.service';
 import { RoleService } from '../role/role.service';
 import { TokenService } from '../token/token.service';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository, QueryRunner } from 'typeorm';
 import { User } from './user.entity';
 
 import IUser from './interfaces/IUserData';
-import IUserLogin from './interfaces/IUserLogin';
 import IRoleData from './interfaces/IRoleData';
 
 import convertUserDTO from './assets/createUserDTO';
 import { comparePassword, equalPasswords, hashPassword } from './assets/passwordWorker';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class UsersService {
@@ -26,9 +26,16 @@ export class UsersService {
     private nodeMailerService: NodeMailerService,
     private confirmCodeService: ConfirmCodeService,
     private connection: Connection,
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache
   ) { }
 
   async register(userData: IUser): Promise<any> {
+    const checkCode = await this.confirmCodeService.checkConfirmCode(userData.confirmCode, userData.email);
+
+    if (!checkCode.status) {
+      return checkCode
+    }
 
     const resCheckPasswords = await equalPasswords(
       userData.password,
@@ -55,11 +62,12 @@ export class UsersService {
 
       const tokens = await this.insertInTransaction(resUserInsered, {
         id: role.id,
-        name: role.value,
+        value: role.value,
         accessLevel: role.accessLevel
       });
 
       await this.queryRunner.commitTransaction();
+      await this.confirmCodeService.deleteConfirmCode(userData.email);
       return tokens;
     } catch (e) {
       await this.queryRunner.rollbackTransaction();
@@ -74,7 +82,7 @@ export class UsersService {
     }
   }
 
-  async login(userData: IUserLogin) {
+  async login(userData: IUser) {
     const resUserData = await this.findByEmail(userData.email);
     if (!resUserData.status) return resUserData;
 
@@ -86,21 +94,27 @@ export class UsersService {
     if (!resComparePasswords.status) {
       return resComparePasswords;
     }
-    debugger
-    const activateStatus = await this.confirmCodeService.getActivateStatus(resUserData.userData.id);
-  
+
+    const bannedStatus = await this.confirmCodeService.getBannedStatus(resUserData.userData.id);
+    
     const tokens = this.insertTokens(
       {
         ...convertUserDTO(resUserData.userData),
-        ...activateStatus
+        isBanned: bannedStatus.isBanned
       },
       null,
     );
 
+    await this.confirmCodeService.deleteConfirmCode(userData.email);
     return tokens;
   }
 
   async editUserData(userData: IUser) {
+    const checkCode = await this.confirmCodeService.checkConfirmCode(userData.confirmCode, userData.email);
+
+    if (!checkCode.status) {
+      return checkCode
+    }
 
     const updatedUserData = {
       email: null,
@@ -161,42 +175,41 @@ export class UsersService {
       updatedUserData.password = tempUserData.password;
     }
 
-    await this.confirmCodeService.activateAccount(userData.id);
-
     return this.login(updatedUserData);
   }
 
-  
+
   async resetUserPassword(userData: IUser) {
-      debugger;
-      const newPassword = Math.random().toString(36).slice(-8);
+    debugger
+    const checkCode = await this.confirmCodeService.checkConfirmCode(userData.confirmCode, userData.email);
 
-      const hashedPassword = await hashPassword(newPassword);
+    if (!checkCode.status) {
+      return checkCode
+    }
 
-      const statusUpdated = await this.usersRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          password: hashedPassword
-        })
-        .where('id = :id', { id: userData.id })
-        .execute();
+    const newPassword = Math.random().toString(36).slice(-8);
 
-      if (!statusUpdated.affected) {
-        return {
-          status: false,
-          message: 'Not valid reset data',
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      }
+    const hashedPassword = await hashPassword(newPassword);
 
-    await this.confirmCodeService.activateAccount(userData.id);
+    const statusUpdated = await this.usersRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        password: hashedPassword
+      })
+      .where('id = :id', { id: userData.id })
+      .execute();
 
-    // return this.login({
-    //   email: userData.email,
-    //   password: newPassword
-    // });
-    this.nodeMailerService.sendPassword(newPassword);
+    if (!statusUpdated.affected) {
+      return {
+        status: false,
+        message: 'Not valid reset data',
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    await this.confirmCodeService.deleteConfirmCode(userData.email);
+    this.nodeMailerService.sendPassword(newPassword, userData.email);
     return true;
   }
 
@@ -212,7 +225,7 @@ export class UsersService {
       return userCheck;
     }
 
-    const { activateStatus, role } = await this.getAdditionalUserData(userCheck.userData.id, userCheck.userData.roleId)
+    const { bannedStatus, role } = await this.getAdditionalUserData(userCheck.userData.id, userCheck.userData.roleId)
 
     const tokens = this.insertTokens(
       {
@@ -222,7 +235,7 @@ export class UsersService {
           roleName: role.value,
           roleAccess: role.accessLevel
         },
-        isActivate: activateStatus
+        isBanned: bannedStatus
       },
       null,
     );
@@ -260,11 +273,11 @@ export class UsersService {
     console.log('roleId', roleId)
     const role = await this.roleService.getRoleById(roleId);
     console.log('role', role)
-    const activateStatus = await this.confirmCodeService.getActivateStatus(userId);
-    console.log('activa', activateStatus)
+    const bannedStatus = await this.confirmCodeService.getBannedStatus(userId);
+
     return {
       role,
-      activateStatus
+      bannedStatus
     }
   }
 
@@ -286,20 +299,20 @@ export class UsersService {
       },
       this.queryRunner.manager,
     );
-    console.log('userData', userData);
-    const confirmStatus = await this.confirmCodeService.createStatus(userData, this.queryRunner.manager);
+
+    const accessData = await this.confirmCodeService.initAcceesNote(userData, this.queryRunner.manager);
 
     return await this.insertTokens(
       {
         ...convertUserDTO(
           Object.assign(userData, {
-          role: {
-            roleId: roleData.id,
-            roleName: roleData.name,
-            roleAccess: roleData.accessLevel
-          }
-        })),
-        isActivate: confirmStatus.isActivate
+            role: {
+              id: roleData.id,
+              value: roleData.value,
+              accessLevel: roleData.accessLevel
+            }
+          })),
+        isBanned: accessData.isBanned
       },
       this.queryRunner.manager,
     );
@@ -322,12 +335,14 @@ export class UsersService {
       .where('user.id = :id', { id })
       .getOne();
     console.log(user);
-    await this.confirmCodeService.activateAccount(user.id);
+    // await this.confirmCodeService.activateAccount(user.id);
     return user;
   }
 
-  async test() {
-    const res = await this.nodeMailerService.send('te');
-    return res;
+  async confirmEmail() {
+    //const res = await this.nodeMailerService.send('te');
+    this.cacheManager.set('test', 'tet');
+
+    return this.cacheManager.get('test');
   }
 }

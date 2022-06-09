@@ -9,9 +9,9 @@ export class NodeMailerService {
     ''
   ]
 
-  send(code: string) {
+  sendConfirmCode(code: string, email: string) {
     this.mailerService.sendMail({
-      to: 'cowalyow2012@gmail.com',
+      to: email,
       from: 'nest@exampla.com',
       subject: 'Confirm code',
       html: `<p>your confirm code - ${code}</p>`,
@@ -19,9 +19,9 @@ export class NodeMailerService {
     return true;
   }
 
-  sendPassword(password: string) {
+  sendPassword(password: string, email: string) {
     this.mailerService.sendMail({
-      to: 'cowalyow2012@gmail.com',
+      to: email,
       from: 'nest@exampla.com',
       subject: 'Reseted password',
       html: `<p>your new password - ${password}</p>`,

@@ -1,12 +1,12 @@
 import { RoleController } from './role/role.controller';
-import { UsersController } from './user/users.controller';
+import { UsersController } from './user/user.controller';
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user/users.module';
+import { UsersModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from './token/token.module';
 import { ConfigModule } from '@nestjs/config';
 import { RoleModule } from './role/role.module';
-import { ConfirmModule } from './confirm/confirm.module';
+import { ConfirmModule } from './access/access.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -34,6 +34,8 @@ import * as Joi from '@hapi/joi';
           NODEMAILER_PORT: Joi.number().required(),
           NODEMAILER_EMAIL: Joi.string().required(),
           NODEMAILER_PASSWORD: Joi.string().required(),
+          REDIS_HOST: Joi.string().required(),
+          REDIS_PORT: Joi.number().required(),
         })
       }
     ),

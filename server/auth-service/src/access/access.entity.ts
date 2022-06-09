@@ -2,17 +2,14 @@ import { User } from 'src/user/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 
 @Entity()
-export class Confirm {
+export class UserAccess {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  isActivate: boolean;
-
   @Column({
-    nullable: true
+    default: false
   })
-  confirmCode: string;
+  isBanned: boolean;
 
   @OneToOne(() => User)
   @JoinColumn()

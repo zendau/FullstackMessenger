@@ -4,5 +4,6 @@ export default interface IUser {
   login?: string;
   password: string;
   confirmPassword?: string;
-  roleId?: number;
+  confirmId?: string;
+  confirmCode?: string;
 }

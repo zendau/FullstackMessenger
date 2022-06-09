@@ -31,9 +31,9 @@ export default {
 
     const store = useStore()
 
-    const isConfirmCode = ref(false)
     let registerData = null
 
+    const isConfirmCode = ref(false)
 
     const schema = yup.object({
       email: yup.string().required().email(),
@@ -66,12 +66,7 @@ export default {
 
     const onSubmitForm = handleSubmit(value => {
 
-      registerData = {
-        email: value.email,
-        password: value.password,
-        confirmPassword: value.confirmPassword
-      }
-
+      registerData = value
       isConfirmCode.value = true
       store.commit('auth/clearMessage')
       //store.dispatch('auth/register', )
