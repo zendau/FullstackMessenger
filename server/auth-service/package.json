@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "@nestjs-modules/mailer": "^1.6.1",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^1.1.6",
@@ -30,6 +31,7 @@
     "@nestjs/passport": "^8.1.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
+    "@types/hapi__joi": "^17.1.8",
     "amqp-connection-manager": "^4.0.0",
     "amqplib": "^0.8.0",
     "bcrypt": "^5.0.1",

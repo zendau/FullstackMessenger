@@ -11,7 +11,7 @@
                 <router-link :to="item.link">{{item.name}}</router-link>
               </li>
             </ul>
-            <navbar-conf-admin/>
+            <navbar-conf-admin v-if="authStatus"/>
             <a v-if="authStatus" href="#">Exit</a>
         </nav>
         <div class="nav__btn">

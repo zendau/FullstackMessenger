@@ -41,7 +41,7 @@ export class UserController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/register', authBody),
     );
-
+    console.log(resData);
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
     }

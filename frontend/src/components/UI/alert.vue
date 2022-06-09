@@ -1,6 +1,6 @@
 <template>
-  <div v-if="message.text" class="alert" :class="'alert__'+message.type">
-    <p class="alert__text" v-html="message.text"/>
+  <div v-if="message.text" class="alert" :class="'alert__' + message.type">
+    <p class="alert__text" v-html="message.text" />
   </div>
 </template>
 
@@ -10,44 +10,45 @@ import { useStore } from 'vuex'
 import { computed } from '@vue/runtime-core'
 
 export default {
-    setup() {
+  setup() {
 
-      const store = useStore()
+    const store = useStore()
 
-      const message = computed(() => store.getters['auth/getAlertMessage'])
+    const message = computed(() => store.getters['auth/getAlertMessage'])
 
-      return {
-          message
-      }
-
+    return {
+      message
     }
+
+  }
 }
 </script>
 
 <style lang='scss'>
-    .alert {
+.alert {
 
-      width: 250px;
-      height: auto;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 5px;
-    
-    &__danger {
-      background-color: $dangerColor;
-    }
+  width: 250px;
+  height: auto;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  min-height: 50px;
 
-    &__success {
-      background-color: $successColor;
-    }
+  &__danger {
+    background-color: $dangerColor;
+  }
 
-    &__text {
-      color: $textColor;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  &__success {
+    background-color: $successColor;
+  }
+
+  &__text {
+    color: $textColor;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>

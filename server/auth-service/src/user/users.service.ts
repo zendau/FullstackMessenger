@@ -30,9 +30,6 @@ export class UsersService {
 
   async register(userData: IUser): Promise<any> {
 
-    const resCheckEmail = await this.checkEmail(userData.email);
-    if (!resCheckEmail.status) return resCheckEmail;
-
     const resCheckPasswords = await equalPasswords(
       userData.password,
       userData.confirmPassword,
@@ -68,7 +65,7 @@ export class UsersService {
       await this.queryRunner.rollbackTransaction();
       return {
         status: false,
-        message: e.message,
+        message: 'Wrong credentials provided',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     } finally {
@@ -231,25 +228,6 @@ export class UsersService {
     );
 
     return tokens;
-  }
-
-  private async checkEmail(email: string) {
-    const user = await this.usersRepository.find({
-      where: {
-        email,
-      },
-    });
-
-    if (user.length === 0) {
-      return {
-        status: true,
-      };
-    }
-    return {
-      status: false,
-      message: `Email - ${email} is already registered`,
-      httpCode: HttpStatus.BAD_REQUEST,
-    };
   }
 
   private async findByEmail(email: string) {

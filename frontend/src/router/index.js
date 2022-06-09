@@ -252,7 +252,12 @@ router.beforeEach((to, from, next) => {
       next(startAuthPage)
     }
     else {
-      next()
+      if (to.fullPath  === '/') {
+        next(noAuthRedicect)
+      } else {
+        next()
+      }
+      
     }
   }
 })

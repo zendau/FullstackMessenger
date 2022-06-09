@@ -7,7 +7,7 @@
 
 import { provide, ref } from "vue";
 import { useStore } from "vuex";
-import navbar from "../components/conterence/navbar.vue";
+import navbar from "../components/navbar/navbar.vue";
 import { io } from "socket.io-client"
 import { useRouter } from "vue-router";
 
