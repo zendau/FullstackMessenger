@@ -1,10 +1,11 @@
 <template>
   <h1 class="user__title">Register</h1>
   <alert />
-  <confirm-code v-if="isConfirmCode" @confirmCode="confirmRegister" />
-  <form v-else class="user__form" @submit="onSubmitForm">
+  <confirm-code v-if="isConfirmCode" @confirmCode="confirmRegister" :email="registerData.email" />
+  <form v-else class="user__form" @submit.prevent="onSubmitForm">
 
     <form-input id="email" title="Email" type="email" v-model="email" />
+    <form-input id="login" title="Login" type="text" v-model="login" />
     <form-input id="password" title="Password" type="password" v-model="password" />
     <form-input id="ConfirmPassword" title="Confirm password" type="password" v-model="confirmPassword" />
 
@@ -31,13 +32,14 @@ export default {
 
     const store = useStore()
 
-    let registerData = null
+    const registerData = ref(null)
 
     const isConfirmCode = ref(false)
 
     const schema = yup.object({
       email: yup.string().required().email(),
-      password: yup.string().required().min(8),
+      login: yup.string().required().min(6),
+      password: yup.string().required().min(6),
       confirmPassword: yup.string().required().oneOf([yup.ref('password'), null], 'Passwords must match'),
     });
 
@@ -47,43 +49,41 @@ export default {
 
 
     const { value: email } = useField('email');
+    const { value: login } = useField('login');
     const { value: password } = useField('password');
     const { value: confirmPassword } = useField('confirmPassword');
 
 
     function onInvalidSubmit({ errors }) {
-
-      console.log('errors', errors)
-
-      let message = ''
-
-      if (errors.email) message += `${errors.email}\n`
-      if (errors.password) message += `${errors.password}\n`
-      if (errors.confirmPassword) message += errors.confirmPassword
-
-      store.commit('auth/setErrorMessage', message)
+      const errorMessage = Object.keys(errors).map(error => `<span>${errors[error]}</span>`).join('')
+      store.commit('auth/setErrorMessage', errorMessage)
     }
 
     const onSubmitForm = handleSubmit(value => {
 
-      registerData = value
+      registerData.value = value
       isConfirmCode.value = true
       store.commit('auth/clearMessage')
       //store.dispatch('auth/register', )
     }, onInvalidSubmit)
 
 
-    function confirmRegister(code) {
-      console.log('confirm register ', code, registerData)
+    function confirmRegister(confirmCode) {
+      store.dispatch('auth/register', {
+        ...registerData.value,
+        confirmCode
+      })
     }
 
     return {
       onSubmitForm,
       email,
+      login,
       password,
       confirmPassword,
       isConfirmCode,
-      confirmRegister
+      confirmRegister,
+      registerData
     }
   }
 }

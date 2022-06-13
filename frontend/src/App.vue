@@ -41,6 +41,7 @@ export default {
 
     const route = useRoute()
     const authLayout = computed(() => {
+      console.log('authStatus', authStatus.value, layouts.get(route.meta.layout))
       if (authStatus) {
         return layouts.get(route.meta.layout)
       }
@@ -131,6 +132,10 @@ body {
     background-color: $btnChat;
     transition: .3s ease;
     cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
 
     &:hover {
       background-color: $btnHover;

@@ -129,7 +129,7 @@ export default {
     display: grid;
     grid-template-columns: 80% 20%;
     margin: 0 7px 7px;
-    background-color: $messageColor;
+    background-color: $bgcColor;
     padding: 6px;
     border-radius: 5px;
 

@@ -14,6 +14,10 @@ import convertUserDTO from './assets/createUserDTO';
 import { comparePassword, equalPasswords, hashPassword } from './assets/passwordWorker';
 import { Cache } from 'cache-manager';
 
+import convertEditUserDTO from './assets/createEditUserDTO';
+import { sqlErrorCodes } from './assets/sqlErrorCodes';
+import IEditUser from './interfaces/IEditUserData';
+
 @Injectable()
 export class UsersService {
   private queryRunner: QueryRunner;
@@ -71,6 +75,7 @@ export class UsersService {
       return tokens;
     } catch (e) {
       await this.queryRunner.rollbackTransaction();
+      console.log('e', e)
       return {
         status: false,
         message: 'Wrong credentials provided',
@@ -96,7 +101,7 @@ export class UsersService {
     }
 
     const bannedStatus = await this.confirmCodeService.getBannedStatus(resUserData.userData.id);
-    
+
     const tokens = this.insertTokens(
       {
         ...convertUserDTO(resUserData.userData),
@@ -109,73 +114,70 @@ export class UsersService {
     return tokens;
   }
 
-  async editUserData(userData: IUser) {
-    const checkCode = await this.confirmCodeService.checkConfirmCode(userData.confirmCode, userData.email);
+  async editUserData(userData: IEditUser) {
+    debugger
+    try {
+      const checkCode = await this.confirmCodeService.checkConfirmCode(userData.confirmCode, userData.email);
+      if (!checkCode.status) {
+        return checkCode
+      }
 
-    if (!checkCode.status) {
-      return checkCode
-    }
+      const oldUserData = await this.getUserById(userData.id);
 
-    const updatedUserData = {
-      email: null,
-      password: null
-    };
-
-    const statusUpdated = await this.usersRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        email: userData.email,
-        login: userData.login
-      })
-      .where('id = :id', { id: userData.id })
-      .execute();
+      if (oldUserData.email !== userData.email) {
+        throw new Error()
+      }
 
 
-    if (!statusUpdated.affected) {
-      return {
-        status: false,
-        message: 'Not valid updated data',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    }
+      if (userData.password !== undefined) {
 
-    if (userData.password !== undefined) {
+        const resCheckPasswords = await equalPasswords(
+          userData.password,
+          userData.confirmPassword,
+        );
+        if (!resCheckPasswords.status) return resCheckPasswords;
 
-      const resCheckPasswords = await equalPasswords(
-        userData.password,
-        userData.confirmPassword,
-      );
-      if (!resCheckPasswords.status) return resCheckPasswords;
+        const hashedPassword = await hashPassword(userData.password);
 
-      const hashedPassword = await hashPassword(userData.password);
+        userData.password = hashedPassword
+
+      }
+
+
+      const updatedUserData = convertEditUserDTO(userData);
+
 
       const statusUpdated = await this.usersRepository
         .createQueryBuilder()
         .update()
-        .set({
-          password: hashedPassword
-        })
+        .set(updatedUserData)
         .where('id = :id', { id: userData.id })
         .execute();
 
-      updatedUserData.email = userData.email;
-      updatedUserData.password = userData.password;
 
       if (!statusUpdated.affected) {
+        throw new Error()
+      }
+
+      return true
+      
+    } catch (e) {
+
+      if (e.errno === sqlErrorCodes.DuplicateEmail) {
         return {
           status: false,
-          message: 'Not valid updated data',
+          message: `email - ${userData.email} is already registered`,
           httpCode: HttpStatus.BAD_REQUEST,
         };
       }
-    } else {
-      const tempUserData = await this.getUserById(userData.id);
-      updatedUserData.email = tempUserData.email;
-      updatedUserData.password = tempUserData.password;
+
+      return {
+        status: false,
+        message: 'Wrong credentials provided',
+        httpCode: HttpStatus.BAD_REQUEST,
+      }
     }
 
-    return this.login(updatedUserData);
   }
 
 
@@ -197,7 +199,7 @@ export class UsersService {
       .set({
         password: hashedPassword
       })
-      .where('id = :id', { id: userData.id })
+      .where('email = :email', { email: userData.email })
       .execute();
 
     if (!statusUpdated.affected) {
@@ -214,6 +216,7 @@ export class UsersService {
   }
 
   async refreshToken(refreshToken: string) {
+    debugger
     const userTokenData = await this.tokenService.findTokenAndGet(refreshToken);
     if (!userTokenData.status) {
       return userTokenData;
@@ -225,7 +228,7 @@ export class UsersService {
       return userCheck;
     }
 
-    const { bannedStatus, role } = await this.getAdditionalUserData(userCheck.userData.id, userCheck.userData.roleId)
+    const { bannedStatus, role } = await this.getAdditionalUserData(userCheck.userData.id, userCheck.userData.role.id);
 
     const tokens = this.insertTokens(
       {

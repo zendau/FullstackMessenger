@@ -30,6 +30,9 @@ import conference from '../layout/auth.conferecnce.vue'
 import audioConference from '../views/conference/audioConference.vue'
 import videoConference from '../views/conference/videoConference.vue'
 
+import adminLayout from '../layout/admin.layout.vue'
+import adminUsers from '../views/Admin/users.vue'
+
 const routes = [
   // {
   //   path: '/room',
@@ -142,6 +145,23 @@ const routes = [
     // ]
   },
   {
+    path: '/admin',
+    component: adminLayout,
+    name: 'adminLayout',
+    meta: {
+      requiresAuth: true,
+      role: Role.Admin
+    },
+    children: [
+      {
+        path: '/users',
+        component: adminUsers,
+        name: 'adminUsers',
+
+      },
+    ]
+  },
+  {
     path: '/register',
     component: register,
     name: 'register',
@@ -155,6 +175,16 @@ const routes = [
     path: '/login',
     component: login,
     name: 'login',
+    meta: {
+      requiresAuth: false,
+      role: Role.noAuth,
+      layout: Layout.NoAuth
+    }
+  },
+  {
+    path: '/forgot',
+    component: forgot,
+    name: 'forgot',
     meta: {
       requiresAuth: false,
       role: Role.noAuth,
@@ -192,16 +222,6 @@ const routes = [
     }
   },
   {
-    path: '/forgot',
-    component: forgot,
-    name: 'forgot',
-    meta: {
-      requiresAuth: false,
-      role: Role.noAuth,
-      layout: Layout.noAuth
-    }
-  },
-  {
     path: '/404',
     component: pageNotFound,
     meta: {
@@ -218,7 +238,7 @@ const routes = [
       role: Role.noAuth,
       layout: Layout.noAuth
     }
-  }
+  },
 ]
 
 const router = createRouter({
@@ -252,12 +272,12 @@ router.beforeEach((to, from, next) => {
       next(startAuthPage)
     }
     else {
-      if (to.fullPath  === '/') {
+      if (to.fullPath === '/') {
         next(noAuthRedicect)
       } else {
         next()
       }
-      
+
     }
   }
 })

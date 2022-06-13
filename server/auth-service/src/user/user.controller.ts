@@ -5,6 +5,7 @@ import { Controller, HttpStatus } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import IUser from './interfaces/IUserData';
 import IConfirmData from './interfaces/IConfirmData';
+import IEditUser from './interfaces/IEditUserData';
 
 @Controller()
 export class UsersController {
@@ -63,10 +64,11 @@ export class UsersController {
   }
 
   @MessagePattern('user/editData')
-  async changeUserData(@Payload() editData:IUser) {
-
+  async changeUserData(@Payload() editData: IEditUser) {
+    console.log('edit data', editData);
     const res = await this.UsersService.editUserData(editData).catch(
       (err) => {
+        console.log('err', err);
         return {
           status: false,
           message: err.sqlMessage,
@@ -81,6 +83,7 @@ export class UsersController {
   async resetUserPassword(@Payload() resetData: IUser) {
     const res = await this.UsersService.resetUserPassword(resetData).catch(
       (err) => {
+        console.log(err);
         return {
           status: false,
           message: err.sqlMessage,

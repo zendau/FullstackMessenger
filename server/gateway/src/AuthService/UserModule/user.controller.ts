@@ -24,6 +24,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpErrorDTO } from '../dto/httpError.dto';
 
 import IConfirmData from './interfaces/IConfirmData'
+import { EditData } from './dto/edit.dto';
 
 @ApiTags('Auth microservice - User controller')
 @Controller('user')
@@ -163,16 +164,10 @@ export class UserController {
     return resData;
   }
 
-  // TODO: пофиксить тип userData
   @Patch('editData')
   async editUserData(
     @Res({ passthrough: true }) res: Response,
-    @Body() editData:
-      {
-        userData: any,
-        confirmCode: string,
-        confirmId: string
-      }) {
+    @Body() editData: EditData) {
     console.log(editData);
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/editData', editData),
@@ -180,8 +175,6 @@ export class UserController {
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
     }
-
-    res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true });
     return resData;
   }
 

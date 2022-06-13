@@ -22,9 +22,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   }
 
   async validate(payload: any) {
-    console.log(payload);
     if (payload) return payload;
-
     return false;
   }
 }

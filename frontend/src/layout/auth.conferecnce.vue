@@ -106,7 +106,7 @@ export default {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 10px;
-    overflow-y: scroll;
+    overflow-y: auto;
     justify-items: center;
     margin: 3px;
 
@@ -143,6 +143,7 @@ export default {
     display: flex;
     flex-direction: column;
     width: 350px;
+    background-color: $messageColor;
 
 
     &--active {

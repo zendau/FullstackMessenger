@@ -3,7 +3,6 @@
     <form-input id="code" title="Confirm code" type="text" v-model="confirmCode" />
     <input type="submit" value="Confirm" />
   </form>
-
 </template>
 
 <script>
@@ -11,8 +10,10 @@ import formInput from './UI/input.vue'
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { useStore } from 'vuex';
+import { onMounted } from 'vue';
 
 export default {
+  props: ['email'],
   components: { formInput },
   setup(props, ctx) {
 
@@ -26,6 +27,9 @@ export default {
       validationSchema: schema,
     });
 
+    onMounted(() => {
+      store.dispatch('auth/confirmCode', props.email)
+    })
 
     const { value: confirmCode } = useField('confirmCode');
 
