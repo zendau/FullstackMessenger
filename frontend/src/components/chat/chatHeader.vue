@@ -11,11 +11,11 @@
 
     <div class="chat__topbar" v-if="showTollbar">
       <div class="chat__user-group">
-        <button class="btn--chat" @click="showAddUsers = !showAddUsers">Add to group</button>
+        <button class="btn" @click="showAddUsers = !showAddUsers">Add to group</button>
         <NavbarUserList :users='invaitedUsers' :show='showAddUsers' @selectUser="addUserToChat" />
       </div>
       <div class="chat__user-group">
-        <button class="chat__add-group btn--chat" @click="showRemoveUsers = !showRemoveUsers">Remove from group</button>
+        <button class="chat__add-group btn" @click="showRemoveUsers = !showRemoveUsers">Remove from group</button>
         <NavbarUserList :users='removeUsersList' :show='showRemoveUsers'  @selectUser="removeUserFromChat" />
       </div>
 

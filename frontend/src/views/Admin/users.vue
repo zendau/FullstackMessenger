@@ -8,8 +8,8 @@
         <th>Login</th>
         <th>Role</th>
         <th>Status</th>
-        <th>Ban user</th>
-        <th>UnBan user</th>
+        <th>Block user</th>
+        <th>UnBlock user</th>
       </tr>
     </thead>
     <tbody>
@@ -19,8 +19,8 @@
         <td>{{ user.login }}</td>
         <td>{{ user.role }}</td>
         <td>{{ getStatus(user.isBanned) }}</td>
-        <td><button @click="banUser(user.id)">Ban</button></td>
-        <td><button @click="unBanUser(user.id)">UnBan</button></td>
+        <td><button class="btn" @click="banUser(user.id)">Block</button></td>
+        <td><button class="btn" @click="unBanUser(user.id)">UnBlock</button></td>
       </tr>
       ...
     </tbody>
@@ -96,19 +96,21 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .table {
-  width: 100%;
+  width: 90%;
+  margin: 10px auto;
   border: none;
   margin-bottom: 20px;
 }
 
 .table thead th {
   font-weight: bold;
-  text-align: left;
+  text-align: center;
   border: none;
   padding: 10px 15px;
-  background: #d8d8d8;
+  background: $activeBgcColor;
+  color: $activeColor;
   font-size: 14px;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
@@ -135,6 +137,10 @@ export default {
 }
 
 .table tbody tr:nth-child(even) {
-  background: black;
+  background: $itemColor;
+}
+
+.table tbody tr:nth-child(odd) {
+  background: $bgcColor;
 }
 </style>

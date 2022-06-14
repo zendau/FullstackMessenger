@@ -68,6 +68,20 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+.btn {
+  background-color: $btnChat;
+  border: none;
+  color: $textColor;
+  border-radius: 2px;
+  padding: 5px 9px;
+  cursor: pointer;
+  transition: .3s ease;
+
+  &:hover {
+    background-color: $btnHover;
+  }
+}
+
 .user {
   &__container {
     width: 600px;
@@ -79,7 +93,6 @@ body {
     border-radius: 3px;
     padding: 30px 0;
     height: fit-content;
-  width: 80%;
   }
 
   &__title {
