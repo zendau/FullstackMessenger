@@ -17,6 +17,8 @@ export default {
     const store = useStore()
     const router = useRouter()
 
+    console.log('auth main layout')
+
     const socket = io('http://localhost:81');
     provide('socket', socket)
 

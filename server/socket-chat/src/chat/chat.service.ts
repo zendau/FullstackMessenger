@@ -210,6 +210,20 @@ export class ChatService {
   async invaiteUsersToChat(invateData: UpdateChatDto) {
     const chat = await this.getChatById(invateData.roomId);
 
+    const temp = await this.chatUserRepository
+      .createQueryBuilder('chatUsers')
+      .where('chatUsers.userId = :userId', { userId: invateData.userId })
+      .andWhere('chatUsers.chatId = :chatId', { chatId: chat.id })
+      .getOne();
+
+
+    if (temp) {
+      return {
+        status: 'true',
+        message: 'already added',
+      };
+    }
+
     if (chat instanceof Chat) {
       const inseredUser = this.createEntity(invateData.userId, chat);
 

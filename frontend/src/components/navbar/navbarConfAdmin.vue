@@ -20,7 +20,8 @@ import FreeUsers from '../conterence/freeUsers.vue'
 
 export default {
   setup() {
-    const isConferenceAdmin = inject("isConferenceAdmin");
+    console.log('navbar admin conf')
+    const isConferenceAdmin = inject("isConferenceAdmin", null);
     const showInvaitedUsers = ref(false);
 
     const route = useRoute()
@@ -28,7 +29,7 @@ export default {
 
     const store = useStore()
     const conferenceId = computed(() => store.state.conference.id)
-    const socket = inject('socket')
+    const socket = inject('socket', null)
 
     async function deleteConference() {
       console.log('delete ', roomId, socket)

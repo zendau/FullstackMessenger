@@ -46,6 +46,13 @@ export default {
 
     onMounted(async () => {
       store.dispatch('conference/getConferenceData', roomId)
+      document.querySelector("#app")
+       document.querySelector("#app").classList.add('conference-grid')
+    })
+
+    onUnmounted(() => {
+      isConferenceAdmin.value = false
+      document.querySelector("#app").classList.remove('conference-grid')
     })
 
 
@@ -53,12 +60,19 @@ export default {
       if (adminId === store.state.auth.user.id) {
         isConferenceAdmin.value = true
       }
+      const userId = store.state.auth.user.id
+
+      const chatId = store.state.conference.chatId
+
+      if (chatId) {
+        store.dispatch('chat/invaiteUserToChat', {
+          userId,
+          chatId
+        })
+      }
+
     }, {
       immediate: true
-    })
-
-    onUnmounted(() => {
-      isConferenceAdmin.value = false
     })
 
     socket.on('redirectUsers', () => {
@@ -77,7 +91,7 @@ export default {
 </script>
 
 <style>
-#app {
+.conference-grid {
   display: grid;
   grid-template-rows: 50px 1fr 60px;
   height: 100vh;
@@ -86,7 +100,7 @@ export default {
 
 @media (max-width: 960px) {
 
-  #app {
+  .conference-grid {
     grid-template-rows: 1fr 60px;
   }
 }

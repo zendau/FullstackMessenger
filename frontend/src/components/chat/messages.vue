@@ -22,8 +22,8 @@ export default {
     const files = ref([])
     provide('files', files)
 
-    const chatData = computed(() => store.getters['chat/getChatData'])
-    console.log('CHATDATA', chatData)
+    const chatData = computed(() => store.state.chat.chatData)
+    console.log('CHATDATA', chatData.value)
     return {
       chatData
     }

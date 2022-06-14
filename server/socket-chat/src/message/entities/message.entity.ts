@@ -22,7 +22,9 @@ export class Message {
   @Column()
   authorLogin: string;
 
-  @Column()
+  @Column({
+    type: 'text',
+  })
   text: string;
 
   @OneToMany(() => Media, (media) => media.message)

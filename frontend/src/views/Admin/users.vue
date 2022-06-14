@@ -67,7 +67,7 @@ export default {
 
     async function unBanUser(userId) {
       try {
-        await $api.patch('user/blockUser', {
+        await $api.patch('user/unBlockUser', {
           userId
         })
         users.value.forEach(user => {

@@ -51,7 +51,7 @@ export default {
       });
     });
 
-
+    store.commit('chat/cleanChatData')
 
     function enterToChat(roomId) {
       store.commit('chat/cleanMessages')

@@ -1,15 +1,12 @@
 <template>
-    <navbar />
     <section class="user__container">
         <slot />
     </section>
 </template>
 
 <script>
-import Navbar from "../components/navbar/navbar";
 
 export default {
-    components: { Navbar }
 }
 </script>
 

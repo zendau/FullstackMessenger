@@ -66,13 +66,16 @@ export const chat = {
       }
     },
     async invaiteUserToChat({commit}, invaitedData) {
-      await $api.patch('/chat/invaiteToChat', {
+      
+      const res = await $api.patch('/chat/invaiteToChat', {
         userId: invaitedData.userId,
         roomId: invaitedData.chatId
       })
 
-      const res = await $api.get(`/user/getById/${invaitedData.userId}`)
-      commit('addUserToGroup', res.data)
+      if (!res.data.status) {
+        const res = await $api.get(`/user/getById/${invaitedData.userId}`)
+        commit('addUserToGroup', res.data)
+      }
     },
     async removeUserFromChat({commit}, removeData) {
       const res = await $api.delete("/chat/exitUser", {
