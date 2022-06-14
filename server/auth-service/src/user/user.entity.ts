@@ -1,5 +1,6 @@
+import { UserAccess } from './../access/access.entity';
 import { UserRole } from '../role/userRole.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity()
 export class User {
@@ -19,4 +20,7 @@ export class User {
 
   @OneToMany(() => UserRole, (userRole) => userRole.user)
   role: UserRole[];
+
+  @OneToOne(() => UserAccess, (UserAccess) => UserAccess.user)
+  access: UserAccess;
 }

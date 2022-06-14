@@ -11,7 +11,7 @@ export class UserAccess {
   })
   isBanned: boolean;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (User) => User.access)
   @JoinColumn()
   user: User
 

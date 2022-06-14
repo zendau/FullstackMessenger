@@ -65,6 +65,7 @@ export class UserController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/login', authBody),
     );
+    console.log(resData);
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
     }
@@ -89,6 +90,25 @@ export class UserController {
     }
 
     res.cookie('auth-cookie', resData.refreshToken, { httpOnly: false });
+    return resData;
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Get('logout')
+  async logout(
+    @Req() request: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const authCookie = request.cookies['auth-cookie'];
+
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/logout', authCookie),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    res.clearCookie('auth-cookie');
     return resData;
   }
 
@@ -120,15 +140,12 @@ export class UserController {
     return resData;
   }
 
-  @Patch('activate')
-  async activateAccount(@Body() activateData:
-    {
-      confirmCode: string,
-      userId: number
-    }) {
-    console.log('activate data', activateData);
+  @Patch('blockUser')
+  async blockUser(@Body() userData: {
+    userId: number
+  }) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('user/activate', activateData),
+      this.authServiceClient.send('user/blockUser', userData.userId),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -137,13 +154,12 @@ export class UserController {
     return resData;
   }
 
-  @Patch('activateByAdmin')
-  async activateAccountByAdmin(@Body() activateData:
-    {
-      userId: number
-    }) {
+  @Patch('unBlockUser')
+  async unBlockUser(@Body() userData: {
+    userId: number
+  } ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('user/activateByAdmin', activateData.userId),
+      this.authServiceClient.send('user/unBlockUser', userData.userId),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);

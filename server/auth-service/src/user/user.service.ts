@@ -19,7 +19,7 @@ import { sqlErrorCodes } from './assets/sqlErrorCodes';
 import IEditUser from './interfaces/IEditUserData';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   private queryRunner: QueryRunner;
 
   constructor(
@@ -88,30 +88,41 @@ export class UsersService {
   }
 
   async login(userData: IUser) {
-    const resUserData = await this.findByEmail(userData.email);
-    if (!resUserData.status) return resUserData;
+    try {
+      const resUserData = await this.findByEmail(userData.email);
+      if (!resUserData.status) return resUserData;
 
-    const resComparePasswords = await comparePassword(
-      userData.password,
-      resUserData.userData.password,
-    );
+      const resComparePasswords = await comparePassword(
+        userData.password,
+        resUserData.userData.password,
+      );
 
-    if (!resComparePasswords.status) {
-      return resComparePasswords;
-    }
+      if (!resComparePasswords.status) {
+        return resComparePasswords;
+      }
 
-    const bannedStatus = await this.confirmCodeService.getBannedStatus(resUserData.userData.id);
+      const bannedStatus = await this.confirmCodeService.getBannedStatus(resUserData.userData.id);
 
-    const tokens = this.insertTokens(
-      {
-        ...convertUserDTO(resUserData.userData),
-        isBanned: bannedStatus.isBanned
-      },
-      null,
-    );
+      const tokens = this.insertTokens(
+        {
+          ...convertUserDTO(resUserData.userData),
+          isBanned: bannedStatus.isBanned
+        },
+        null,
+      );
 
-    await this.confirmCodeService.deleteConfirmCode(userData.email);
-    return tokens;
+      await this.confirmCodeService.deleteConfirmCode(userData.email);
+      return tokens;
+    } catch (e) {
+      console.log(e);
+      return {
+        status: false,
+        message: e.message,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    } 
+
+
   }
 
   async editUserData(userData: IEditUser) {
@@ -160,7 +171,7 @@ export class UsersService {
       }
 
       return true
-      
+
     } catch (e) {
 
       if (e.errno === sqlErrorCodes.DuplicateEmail) {
@@ -325,9 +336,16 @@ export class UsersService {
   async getAllUsers() {
     const users = await this.usersRepository
       .createQueryBuilder('user')
-      .select(['user.id', 'user.email', 'user.login'])
-      .getMany();
-
+      .innerJoinAndSelect('user.role', 'userRole')
+      .innerJoinAndSelect('userRole.role', 'role')
+      .innerJoinAndSelect('user.access', 'access')
+      .select('user.id', 'id')
+      .addSelect('user.email', 'email')
+      .addSelect('user.login', 'login')
+      .addSelect('role.value', 'role')
+      .addSelect('access.isBanned', 'isBanned')
+      .orderBy('id')
+      .getRawMany();
     return users;
   }
 

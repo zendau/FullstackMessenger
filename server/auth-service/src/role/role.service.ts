@@ -30,7 +30,7 @@ export class RoleService {
         desc: roleData.desc,
         accessLevel: roleData.accessLevel,
       })
-      .where(`id = ${roleData.id}`)
+      .where('id = :roleId', { roleId: roleData.id})
       .execute();
     return !!resUpdate.affected;
   }
@@ -53,7 +53,7 @@ export class RoleService {
     const resDeleted = await this.rolesRepository
       .createQueryBuilder()
       .delete()
-      .where(`id = ${roleId}`)
+      .where('id = :roleId', { roleId})
       .execute();
     return !!resDeleted.affected;
   }
@@ -73,7 +73,7 @@ export class RoleService {
       .set({
         roleId: userRoleData.roleId,
       })
-      .where(`userId = ${userRoleData.userId}`)
+      .where('userId = :userId', { userId: userRoleData.userId })
       .execute();
     return resUpdate;
   }
@@ -83,7 +83,7 @@ export class RoleService {
       .select(['ur.id', 'ur.role', 'ur.user'])
       .innerJoinAndSelect('ur.role', 'role')
       .innerJoinAndSelect('ur.user', 'user')
-      .where(`role.id = ${roleId}`)
+      .where('role.id = :roleId', { roleId })
       .getMany();
     console.log(res);
     return res;

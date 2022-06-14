@@ -10,7 +10,7 @@ export class TokenService {
     @InjectRepository(Token)
     private tokenRepository: Repository<Token>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   generateTokens(payload) {
     const accessToken = this.jwtService.sign(payload, {
@@ -77,13 +77,24 @@ export class TokenService {
   }
 
   async removeToken(refreshToken) {
-    const tokenData = await this.tokenRepository
-      .createQueryBuilder()
-      .delete()
-      .where(`refreshToken = ${refreshToken}`)
-      .execute();
+    console.log('token', refreshToken);
+    try {
+      const tokenData = await this.tokenRepository
+        .createQueryBuilder()
+        .delete()
+        .where('refreshToken = :refreshToken', { refreshToken })
+        .execute();
+      return tokenData;
+    } catch (e) {
+      console.log('data e', e);
+      return {
+        status: false,
+        message: 'Token not found',
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
 
-    return tokenData;
+
   }
 
   // async refreshToken(refreshToken) {

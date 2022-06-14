@@ -34,13 +34,9 @@ export const auth = {
                 localStorage.setItem('token', accessToken)
                 router.push('/users')
             } catch (e) {
+                debugger
                 const message = e.response.data
-
-                if (typeof message === 'string') {
-                    commit('setErrorMessage', message)
-                } else {
-                    commit('setErrorMessage', message[0])
-                }
+                commit('setErrorMessage', message)
             }
         },
         async resetPassword({ commit }, resetData) {
@@ -69,7 +65,7 @@ export const auth = {
                     confirmCode: userData.confirmCode,
                 })
 
-                
+
 
                 commit('setSuccessMessage', 'Your data was updated')
                 commit('updateData', userData)
@@ -79,8 +75,10 @@ export const auth = {
 
             }
         },
-        logout({ commit }) {
+        async logout({ commit }) {
             localStorage.removeItem('token');
+            const resData = await $api.get('/user/logout')
+            console.log(resData)
             commit('logout')
             router.push('/')
 
@@ -102,12 +100,7 @@ export const auth = {
                 router.push('/users')
             } catch (e) {
                 const message = e.response.data
-
-                if (typeof message === 'string') {
-                    commit('setErrorMessage', message)
-                } else {
-                    commit('setErrorMessage', message[0])
-                }
+                commit('setErrorMessage', message)
             }
         },
         async confirmCode({ commit }, email) {
@@ -117,12 +110,7 @@ export const auth = {
                 })
             } catch (e) {
                 const message = e.response.data
-
-                if (typeof message === 'string') {
-                    commit('setErrorMessage', message)
-                } else {
-                    commit('setErrorMessage', message[0])
-                }
+                commit('setErrorMessage', message)
             }
         },
         async checkAuth({ commit }) {
@@ -156,8 +144,8 @@ export const auth = {
         updateData(state, newData) {
 
             const updateData = {
-                ...(newData.newEmail ? { email: newData.newEmail } : { email: state.user.email}),
-                ...(newData.login ? { login: newData.login } : { login: state.user.login}),
+                ...(newData.newEmail ? { email: newData.newEmail } : { email: state.user.email }),
+                ...(newData.login ? { login: newData.login } : { login: state.user.login }),
             }
 
             state.user.email = updateData.email
@@ -176,8 +164,17 @@ export const auth = {
             state.message.type = null
         },
         setErrorMessage(state, text) {
-            console.log(text)
-            state.message.text = text
+            let message = null
+            if (typeof text === 'string') {
+                message = text
+            }
+            else if (text.message) {
+                message = text.message
+            } else {
+                message = text[0]
+            }
+ 
+            state.message.text = message
             state.message.type = alert.danger
         },
         setSuccessMessage(state, text) {

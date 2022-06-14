@@ -41,6 +41,7 @@ export default {
 
     const route = useRoute()
     const authLayout = computed(() => {
+      console.log('meta', route.meta)
       console.log('authStatus', authStatus.value, layouts.get(route.meta.layout))
       if (authStatus) {
         return layouts.get(route.meta.layout)

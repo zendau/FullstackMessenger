@@ -4,7 +4,7 @@ import { TokenModule } from '../token/token.module';
 import { User } from './user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule, forwardRef, Module } from '@nestjs/common';
-import { UsersService } from './user.service';
+import { UserService } from './user.service';
 import { UsersController } from './user.controller';
 import { ClientOpts } from '@nestjs/microservices/external/redis.interface';
 import * as redisStore from 'cache-manager-redis-store';
@@ -24,7 +24,7 @@ import * as redisStore from 'cache-manager-redis-store';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
-  exports: [UsersService, TypeOrmModule],
+  providers: [UserService],
+  exports: [UserService, TypeOrmModule],
 })
 export class UsersModule {}

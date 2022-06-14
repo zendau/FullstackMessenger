@@ -55,14 +55,14 @@ export class ConfirmCodeService {
   }
 
   async checkConfirmCode(userConfrimCode: string, confirmId: string) {
-    const confirmCode  = await  this.cacheManager.get(confirmId);
+    const confirmCode = await this.cacheManager.get(confirmId);
 
     if (confirmCode === userConfrimCode) {
       return {
         status: true,
       }
     }
-      
+
     return {
       status: false,
       message: `Confirm code is not valid`,
@@ -74,7 +74,7 @@ export class ConfirmCodeService {
     await this.cacheManager.del(confirmId)
   }
 
-  async activateAccount(userId: number) {
+  async setUnBlock(userId: number) {
     const res = await this.accessRepository
       .createQueryBuilder()
       .update()
@@ -86,7 +86,8 @@ export class ConfirmCodeService {
     return !!res.affected;
   }
 
-  async setBan(userId: number) {
+  async setBlock(userId: number) {
+    console.log(userId);
     const res = await this.accessRepository
       .createQueryBuilder()
       .update()

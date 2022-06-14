@@ -5,14 +5,16 @@
               <li v-for='(item, index) in navbarAuthList.items' :key="index">
                 <router-link :to="item.link" replace>{{item.name}}</router-link>
               </li>
+              <admin-menu v-if='isAdmin'/>
             </ul>
              <ul v-else>
                <li v-for='(item, index) in navbarNoAuthList.items' :key="index">
                 <router-link :to="item.link">{{item.name}}</router-link>
               </li>
             </ul>
+
             <navbar-conf-admin v-if="authStatus"/>
-            <a v-if="authStatus" href="#">Exit</a>
+            <a v-if="authStatus" @click="logout" href="#">Exit</a>
         </nav>
         <div class="nav__btn">
             <input type="checkbox" name="" id="" />
@@ -31,8 +33,11 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import NavbarConfAdmin from './navbarConfAdmin.vue'
 
+import { Role } from '../../router/roles'
+import AdminMenu from './adminMenu.vue'
+
 export default {
-    components: { NavbarConfAdmin },
+    components: { NavbarConfAdmin, AdminMenu },
     setup() {
         const store = useStore();
         const navbarAuthList = {
@@ -67,9 +72,18 @@ export default {
                 }
             ]
         };
-        const authStatus = computed(() => store.getters["auth/getAuthStatus"]);
+        const authStatus = computed(() => store.state.auth.authStatus);
         console.log("auth", authStatus.value);
+
+        const isAdmin = computed(() => store.state.auth.user.role.accessLevel === Role.Admin)
+        console.log('isAdmin', isAdmin.value)
+
+        function logout() {
+            store.dispatch('auth/logout')
+        }
         return {
+            logout,
+            isAdmin,
             authStatus,
             navbarAuthList,
             navbarNoAuthList,

@@ -30,7 +30,7 @@ import conference from '../layout/auth.conferecnce.vue'
 import audioConference from '../views/conference/audioConference.vue'
 import videoConference from '../views/conference/videoConference.vue'
 
-import adminLayout from '../layout/admin.layout.vue'
+import adminView from '../views/Admin/admin.vue'
 import adminUsers from '../views/Admin/users.vue'
 
 const routes = [
@@ -146,7 +146,7 @@ const routes = [
   },
   {
     path: '/admin',
-    component: adminLayout,
+    component: adminView,
     name: 'adminLayout',
     meta: {
       requiresAuth: true,
@@ -154,9 +154,14 @@ const routes = [
     },
     children: [
       {
-        path: '/users',
+        path: 'users',
         component: adminUsers,
         name: 'adminUsers',
+        meta: {
+          requiresAuth: true,
+          role: Role.Admin,
+          layout: Layout.Main
+        }
 
       },
     ]
