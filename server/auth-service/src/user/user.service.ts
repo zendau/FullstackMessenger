@@ -120,7 +120,7 @@ export class UserService {
         message: e.message,
         httpCode: HttpStatus.BAD_REQUEST,
       };
-    } 
+    }
 
 
   }
@@ -133,7 +133,7 @@ export class UserService {
         return checkCode
       }
 
-      const oldUserData = await this.getUserById(userData.id);
+      const oldUserData :any = await this.getUserById(userData.id);
 
       if (oldUserData.email !== userData.email) {
         throw new Error()
@@ -355,8 +355,15 @@ export class UserService {
       .select(['user.id', 'user.email', 'user.login'])
       .where('user.id = :id', { id })
       .getOne();
-    console.log(user);
-    // await this.confirmCodeService.activateAccount(user.id);
+
+    if (user === undefined) {
+      return {
+        status: false,
+        message: `User id - ${id} is not found`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+
     return user;
   }
 

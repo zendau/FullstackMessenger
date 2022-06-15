@@ -2,6 +2,8 @@
 import { RegisterData } from './dto/register.dto';
 import {
   Body,
+  CacheInterceptor,
+  CacheKey,
   Controller,
   Get,
   HttpException,
@@ -12,6 +14,7 @@ import {
   Req,
   Res,
   UseGuards,
+  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -25,6 +28,9 @@ import { HttpErrorDTO } from '../dto/httpError.dto';
 
 import IConfirmData from './interfaces/IConfirmData'
 import { EditData } from './dto/edit.dto';
+
+import HttpCacheInterceptor from '../../Cache/HttpCacheInterceptor'
+import HttpClearCacheInterceptor from '../../Cache/clearCache'
 
 @ApiTags('Auth microservice - User controller')
 @Controller('user')
@@ -128,8 +134,9 @@ export class UserController {
 
   //@UseGuards(JwtRefreshGuard)
   @Get('getById/:id')
+  @UseInterceptors(HttpCacheInterceptor)
   async getUserById(@Param('id') id: number) {
-
+    console.log('test')
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/id', id),
     );
@@ -140,6 +147,7 @@ export class UserController {
     return resData;
   }
 
+  @UseInterceptors(HttpClearCacheInterceptor)
   @Patch('blockUser')
   async blockUser(@Body() userData: {
     userId: number

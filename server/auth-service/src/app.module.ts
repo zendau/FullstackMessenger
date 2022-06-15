@@ -52,6 +52,6 @@ import * as Joi from '@hapi/joi';
     RoleModule,
     ConfirmModule,
   ],
-  controllers: [UsersController, RoleController],
+  controllers: [UsersController, RoleController]
 })
 export class AppModule {}

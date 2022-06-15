@@ -136,18 +136,27 @@ export class UsersController {
   }
 
 
+
   @MessagePattern('user/all')
   async getAllUsers() {
     const res = await this.userService.getAllUsers();
     return res;
   }
 
+
   @MessagePattern('user/id')
   async getUserById(@Payload() id: number) {
-    debugger;
-    console.log(id);
-    const res = await this.userService.getUserById(id);
-    console.log(id, res);
+    console.log('1')
+    const res = await this.userService.getUserById(id)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      },
+      );
+    console.log('res', res)
     return res;
   }
 

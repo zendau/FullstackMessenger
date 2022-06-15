@@ -4,16 +4,26 @@ import { RoomController } from './PeerService/room/room.controller';
 import { FoulderController } from './FileCloudService/foulder/foulder.controller';
 import { MessageController } from './ChatService/message/message.controller';
 import { ChatController } from './ChatService/chat/chat.controller';
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { FileController } from './FileCloudService/file/file.controller';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './AuthService/strategies/jwt.strategy';
 import { RefreshStrategy } from './AuthService/strategies/refresh.strategy';
+import { ClientOpts } from '@nestjs/microservices/external/redis.interface';
+
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    CacheModule.register<ClientOpts>({
+      store: redisStore,
+
+      host: 'localhost',
+      port: 6379,
+      ttl: 480
+    }),
     ClientsModule.register([
       {
         name: 'PEER_SERVICE',
