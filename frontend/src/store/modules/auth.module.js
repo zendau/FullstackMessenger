@@ -12,7 +12,8 @@ export const auth = {
             id: null,
             email: null,
             login: null,
-            role: []
+            role: [],
+            isBanned: null
         },
         authStatus: false,
         message: {
@@ -137,7 +138,8 @@ export const auth = {
                 id: userData.id,
                 email: userData.email,
                 login: userData.login,
-                role: userData.role
+                role: userData.role,
+                isBanned: userData.isBanned
             }
             state.authStatus = true
         },
@@ -183,18 +185,11 @@ export const auth = {
         }
     },
     getters: {
-        getAuthStatus(state) {
-            console.log('state', state)
-            return state.authStatus
-        },
         getUserData(state) {
             return state.user
         },
         getAlertMessage(state) {
             return state.message
-        },
-        getRoleAcessLevel(state) {
-            return state.user.role.accessLevel
         }
     }
 };

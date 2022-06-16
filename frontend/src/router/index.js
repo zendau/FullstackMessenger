@@ -258,15 +258,24 @@ router.beforeEach((to, from, next) => {
   const wrongRoleRedicect = process.env.VUE_APP_ROUTER_REDIRECT_WRONG_ROLE_PATH
   const startAuthPage = process.env.VUE_APP_ROUTER_START_AUTH_PAGE_PATH
 
-  const authStatus = store.getters['auth/getAuthStatus']
-  const userRole = store.getters['auth/getRoleAcessLevel']
+  const authStatus = store.state.auth.authStatus
+  const userRole = store.state.auth.user.role.accessLevel
+  const isBanned = store.state.auth.user.isBanned
 
+  console.log(isBanned)
+
+
+  debugger
   if (to.meta.requiresAuth) {
     if (authStatus) {
-      if (to.meta.role <= userRole) {
-        next()
+      if (isBanned) {
+        store.dispatch('auth/logout')
       } else {
-        next(wrongRoleRedicect)
+        if (to.meta.role <= userRole) {
+          next()
+        } else {
+          next(wrongRoleRedicect)
+        }
       }
     }
     else {

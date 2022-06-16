@@ -132,6 +132,7 @@ export class UserController {
     return resData;
   }
 
+  @UseGuards(JwtAuthGuard)
   //@UseGuards(JwtRefreshGuard)
   @Get('getById/:id')
   @UseInterceptors(HttpCacheInterceptor)
@@ -147,6 +148,7 @@ export class UserController {
     return resData;
   }
 
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(HttpClearCacheInterceptor)
   @Patch('blockUser')
   async blockUser(@Body() userData: {
