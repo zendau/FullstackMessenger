@@ -1,14 +1,20 @@
 <template>
   <audio-container-vue v-for='user in roomUsers' :key='user.userId' :peerId="user.peerId" :isMuted="user.mute"
     :userName='user.userLogin' :ref="setItemRef" />
+  <button @click="test">TEST</button>
 </template>
 
 
 <script>
+
+
 import { useRoute } from 'vue-router'
 import { onUnmounted, ref, inject, watch, onBeforeUpdate } from 'vue'
 
 import audioContainerVue from '../../components/conterence/audioContainer.vue'
+
+import { saveAs } from 'file-saver';
+//import { MultiStreamRecorder } from 'recordrtc'
 
 import Peer from 'peerjs';
 export default {
@@ -125,9 +131,9 @@ export default {
 
     watch(isMuted, () => {
       socket.emit('userMute', {
-          userId: userId.value,
-          roomId
-        })
+        userId: userId.value,
+        roomId
+      })
     })
 
     // ==== peers ==== //
@@ -138,6 +144,9 @@ export default {
       port: '9000'
     })
 
+    // let recordedData = [];
+    // let recordedData2 = [];
+    // let mediaRecorder = null
 
     const getUserMedia =
       navigator.mediaDevices.getUserMedia ||
@@ -149,6 +158,33 @@ export default {
     }).then(stream => {
       //localStream.value = stream
       //console.log('localStream',localStream)
+
+      // mediaRecorder = new MediaRecorder(stream);
+      // mediaRecorder.ondataavailable = (event) => {
+      //   recordedData.push(event.data)
+      //   }
+
+      // mediaRecorder.onstop = (e) => {
+      //   console.log("record screen stopped", e);
+      // };
+
+      // mediaRecorder.start(1000);
+
+      // setTimeout(() => {
+      //   mediaRecorder.stop();
+      //   console.log('recorded data', recordedData)
+      //   const blob = new Blob(recordedData, {
+      //     type: "audio/webm",
+      //   });
+      //   console.log('blob', blob)
+      //   saveAs(blob, 'test.webm')
+      //   // console.log("stopping", recordedData)
+      //   // const file = new File([recordedData[0]], "yourfilename.webm", { type: "audio/webm" });
+      //   // console.log('file', file)
+      //   // var url = URL.createObjectURL(new Blob());
+      //   // console.log('url', url)
+      // }, 10000);
+
       mainStream = stream
       console.log('localStream', stream) // new - temp
       // socket.on('user-connected', userId => {
@@ -167,18 +203,25 @@ export default {
       getUserMedia({
         audio: true
       }).then(stream => {
-        childStream.push(stream)
+
+        // const tempMediaRecorder = new MediaRecorder(stream);
+        // console.log('tempMediaRecorder', tempMediaRecorder)
+        // tempMediaRecorder.start(1000);
+        // tempMediaRecorder.ondataavailable = (event) => {
+        //   recordedData2.push(event.data)
+        // }
+        //childStream.push(stream)
         call.answer(stream)
         console.log('remoteStream', stream)
         //audio.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
         call.on('stream', userVideoStream => {
           console.log('answer audio stream')
+          childStream.push(userVideoStream)
           containersRefs.forEach(item => {
             if (item.peerId === call.peer) {
               item.setStream(userVideoStream)
             }
           })
-
         })
       })
     }
@@ -190,6 +233,7 @@ export default {
       peerConnected.value = true
     })
 
+
     function connectToNewUser(userId, stream) {
       console.log('conntected to new user. Call to ' + userId, myPeer, stream, roomUsers.value)
       const call = myPeer.call(userId, stream)
@@ -197,6 +241,7 @@ export default {
 
       call.on('stream', userVideoStream => {
         console.log('connectToNewUser audio stream')
+        childStream.push(userVideoStream)
         containersRefs.forEach(item => {
           if (item.peerId === userId) {
             item.setStream(userVideoStream)
@@ -210,9 +255,56 @@ export default {
       })
     }
 
+    async function test() {
+
+
+      const audioContext = new AudioContext();
+      const dest = audioContext.createMediaStreamDestination();
+
+
+      audioContext.createMediaStreamSource(mainStream).connect(dest)
+
+      childStream.forEach(stream => {
+        audioContext.createMediaStreamSource(stream).connect(dest)
+      })
+
+
+
+
+      var FinalStream = dest.stream;
+
+
+
+
+   
+
+
+
+
+      var mediaRecorder = new MediaRecorder(FinalStream);
+      mediaRecorder.start();
+
+      var chunks = [];
+
+      mediaRecorder.ondataavailable = function (e) {
+        chunks.push(e.data);
+      }
+
+      setTimeout(() => {
+        mediaRecorder.stop();
+      }, 10000)
+
+      mediaRecorder.onstop = function () {
+        var blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' });
+        saveAs(blob, 'ttt.ogg')
+      }
+
+    }
+
     return {
       roomUsers,
-      setItemRef
+      setItemRef,
+      test
     }
   }
 }

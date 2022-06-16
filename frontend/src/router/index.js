@@ -264,8 +264,6 @@ router.beforeEach((to, from, next) => {
 
   console.log(isBanned)
 
-
-  debugger
   if (to.meta.requiresAuth) {
     if (authStatus) {
       if (isBanned) {
