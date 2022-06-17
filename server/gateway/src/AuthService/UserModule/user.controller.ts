@@ -55,7 +55,7 @@ export class UserController {
       throw new HttpException(resData.message, resData.httpCode);
     }
 
-    res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true });
+    res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true, maxAge: 7*24*60*60*1000 });
     return resData;
   }
 
@@ -76,7 +76,7 @@ export class UserController {
       throw new HttpException(resData.message, resData.httpCode);
     }
 
-    res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true });
+    res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true, maxAge: 7*24*60*60*1000 });
     return resData;
   }
 
@@ -95,11 +95,10 @@ export class UserController {
       throw new HttpException(resData.message, resData.httpCode);
     }
 
-    res.cookie('auth-cookie', resData.refreshToken, { httpOnly: false });
+    res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true, maxAge: 7*24*60*60*1000 });
     return resData;
   }
 
-  @UseGuards(JwtRefreshGuard)
   @Get('logout')
   async logout(
     @Req() request: Request,
@@ -107,15 +106,17 @@ export class UserController {
   ) {
     const authCookie = request.cookies['auth-cookie'];
 
-    const resData = await firstValueFrom(
-      this.authServiceClient.send('user/logout', authCookie),
-    );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
+    if (authCookie) {
+      const resData = await firstValueFrom(
+        this.authServiceClient.send('user/logout', authCookie),
+      );
+      if (resData.status === false) {
+        throw new HttpException(resData.message, resData.httpCode);
+      }
     }
 
     res.clearCookie('auth-cookie');
-    return resData;
+    return true;
   }
 
   @UseGuards(JwtRefreshGuard)
@@ -167,7 +168,7 @@ export class UserController {
   @Patch('unBlockUser')
   async unBlockUser(@Body() userData: {
     userId: number
-  } ) {
+  }) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/unBlockUser', userData.userId),
     );

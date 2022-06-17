@@ -115,19 +115,24 @@ export const auth = {
             }
         },
         async checkAuth({ commit }) {
+
+            console.log('checkAuth')
+            const accessToken = localStorage.getItem('token')
+            let tokenDecode = null
+
+
             try {
-
-                console.log('checkAuth')
-
-                //const resData = await $api.get('/auth/refresh')
-                const accessToken = localStorage.getItem('token')
-                const tokenDecode = jwt_decode(accessToken)
+                tokenDecode = jwt_decode(accessToken)
+            } catch {
+                const resRefresh = await $api.get('/user/refresh')
+                const accessToken = resRefresh.data.accessToken
+                localStorage.setItem('token', accessToken)
+                tokenDecode = jwt_decode(accessToken)
+            } finally {
                 console.log(tokenDecode)
                 commit('authSuccess', tokenDecode)
-                //router.push('/users')
-            } catch (e) {
-                console.log('e', e)
-                return
+                router.push('/users')
+
             }
         }
     },
@@ -175,7 +180,7 @@ export const auth = {
             } else {
                 message = text[0]
             }
- 
+
             state.message.text = message
             state.message.type = alert.danger
         },

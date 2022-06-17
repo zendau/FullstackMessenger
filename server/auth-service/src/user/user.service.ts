@@ -133,7 +133,7 @@ export class UserService {
         return checkCode
       }
 
-      const oldUserData :any = await this.getUserById(userData.id);
+      const oldUserData: any = await this.getUserById(userData.id);
 
       if (oldUserData.email !== userData.email) {
         throw new Error()
@@ -243,13 +243,15 @@ export class UserService {
 
     const tokens = this.insertTokens(
       {
-        ...convertUserDTO(userCheck.userData),
-        role: {
-          roleId: role.id,
-          roleName: role.value,
-          roleAccess: role.accessLevel
-        },
-        isBanned: bannedStatus
+        ...convertUserDTO({
+          ...userCheck.userData,
+          role: {
+            id: role.id,
+            value: role.value,
+            accessLevel: role.accessLevel
+          },
+        }),
+        isBanned: bannedStatus.isBanned
       },
       null,
     );

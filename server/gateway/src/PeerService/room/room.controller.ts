@@ -8,11 +8,13 @@ import {
   Delete,
   HttpException,
   Inject,
+  UseGuards,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { roomDTO } from './dto/room.dto';
 import { editRoomDTO } from './dto/editRoom.dto';
+import { JwtAuthGuard } from '../../AuthService/guards/jwt-auth.guard';
 
 @Controller('room')
 export class RoomController {
@@ -29,6 +31,7 @@ export class RoomController {
     return res;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('getAll')
   async findAll() {
     const res = await firstValueFrom(

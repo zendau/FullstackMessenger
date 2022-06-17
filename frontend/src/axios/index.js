@@ -1,22 +1,40 @@
 import axios from "axios"
+import store from '../store'
 
-
+const API_URL = "http://localhost:3000"
 const $api = axios.create({
     withCredentials: true,
-    baseURL: "http://localhost:3000"
+    baseURL: API_URL
 })
 
-// $api.interceptors.response.use((config) => {
-//     return config;
-// }, async  (error) => {
+$api.interceptors.request.use( (config) => {
+    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
+    return config;
+});
 
-//     console.log(error)
 
-//     if (error.response.status === 500 && error.config) {
-//         window.location.reload()
-//     }
-//     throw error;
-// });
+$api.interceptors.response.use((config) => {
+    return config;
+}, async  (error) => {
+
+    const originalRequest = error.config;
+
+    if (originalRequest.url === "/user/refresh")  {
+        return error.response
+    }
+
+    if (error.response.status == 401 && error.config && !error.config._isRetry) {
+        originalRequest._isRetry = true;
+        try {
+            const response = await axios.get(`${API_URL}/user/refresh`, {withCredentials: true})
+            localStorage.setItem('token', response.data.accessToken);
+            return $api.request(originalRequest);
+        } catch (e) {
+            store.dispatch('auth/logout')
+        }
+    }
+    throw error;
+});
 
 
 export default $api
