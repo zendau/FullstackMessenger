@@ -9,6 +9,10 @@
             :class="isPauseVideo ? 'bi-camera-video-off-fill' : 'bi-camera-video-fill'"></i>{{ isPauseVideo ? 'Off' :
                 'On'
             }}</button>
+        <button v-if="!type" @click="isRecord = !isRecord"><i class="bi"
+            :class="isRecord ? 'bi-stop-circle' : 'bi-record-circle'"></i>{{ isRecord ? 'Stop' :
+                'Record'
+            }}</button>
       </div>
       <div class="menu__conference-data">
         <h3 class="menu__conference-title">{{ conferenceTitle }}</h3>
@@ -29,12 +33,14 @@ export default {
     const store = useStore()
     const type = computed(() => store.state.conference.type)
 
+    const isRecord = inject('isRecord')
     const isMuted = inject('isMuted')
     const isPauseVideo = inject('isPauseVideo')
 
 
     return {
       isMuted,
+      isRecord,
       isPauseVideo,
       type
     }

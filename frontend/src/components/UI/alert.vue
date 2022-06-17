@@ -35,6 +35,7 @@ export default {
   justify-content: center;
   padding: 5px;
   min-height: 50px;
+  align-self: center;
 
   &__danger {
     background-color: $dangerColor;

@@ -10,14 +10,19 @@ import { onUnmounted, ref, inject, watch, onBeforeUpdate } from 'vue'
 import Peer from 'peerjs'
 
 import videoContainerVue from '../../components/conterence/videoContainer.vue'
+import { useStore } from 'vuex'
 
 export default {
   components: { videoContainerVue },
   setup() {
     // ==== vars ==== //
 
+    const mediaError = inject('mediaError')
+
     //const router = useRouter()
     const route = useRoute()
+
+    const store = useStore()
 
     // room data
     const roomUsers = ref([])
@@ -156,6 +161,7 @@ export default {
       audio: true,
       video: { aspectRatio: 16 / 9 }
     }).then(stream => {
+      mediaError.value = false
       //localStream.value = stream
       //console.log('localStream',localStream)
       mainStream = stream
@@ -166,6 +172,9 @@ export default {
         }
       })
 
+    }).catch(() => {
+      mediaError.value = true
+      store.commit('auth/setErrorMessage', 'Could not start video source')
     })
 
 

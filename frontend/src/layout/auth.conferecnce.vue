@@ -1,7 +1,8 @@
 
 <template>
   <section class="main-container">
-    <div class="conference-container" :class="{ 'conference-container--audio': !roomData.type }">
+    <alert v-if="mediaError"/>
+    <div v-else class="conference-container" :class="{ 'conference-container--audio': !roomData.type }">
       <router-view />
     </div>
     <div v-if="showChat" class="conference-chat">
@@ -19,14 +20,17 @@ import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "v
 
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import Alert from '../components/UI/alert.vue';
 
 export default {
-  components: { footerComponent, conferenceChat },
+  components: { footerComponent, conferenceChat, Alert },
   setup() {
 
     const showChat = ref(false)
     const store = useStore()
 
+    const mediaError = ref(false)
+    provide('mediaError', mediaError)
     const roomData = computed(() => store.state.conference)
 
     const route = useRoute()
@@ -36,6 +40,8 @@ export default {
     const isMuted = ref(false)
     provide('isMuted', isMuted)
 
+    const isRecord = ref(false)
+    provide('isRecord', isRecord)
 
     const isPauseVideo = ref(false)
     provide('isPauseVideo', isPauseVideo)
@@ -83,7 +89,8 @@ export default {
     return {
       showChat,
       roomData,
-      isMuted
+      isMuted,
+      mediaError
     }
 
   }
