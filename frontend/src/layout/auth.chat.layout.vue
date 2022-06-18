@@ -1,18 +1,9 @@
 <template>
   <div>
-    <Chat />
+    <router-view/>
   </div>
 </template>
 
-<script>
-
-import Chat from '../views/Chat/chatTest.vue'
-
-export default {
-  components: { Chat }
-}
-
-</script>
 <style scoped lang="scss">
 div {
   display: grid;

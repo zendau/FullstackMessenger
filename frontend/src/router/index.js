@@ -1,65 +1,30 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-// import createRoom from '../views/Room/createRoom.vue'
-// import AllRooms from '../views/Room/AllRooms.vue'
-// import roomGateway from '../views/Room/RoomGateway.vue'
-const conferences = () => import('../views/conference/conferences.vue')
-
-// import chatGateway from '../views/Chat/chatGateway.vue'
-// import chatRoom from '../views/Chat/chatRoom.vue'
-//import chat from '../views/Chat/chat.vue'
-import chatTest from '../views/Chat/chatTest.vue'
-
-import pageNotFound from '../views/404.vue'
-
-import register from '../views/Auth/register.vue'
-import login from '../views/Auth/login.vue'
-import forgot from '../views/Auth/forgot.vue'
-
-const user = () => import('../views/user.vue')
-
-import createConference from '../views/conference/createConference.vue'
-import editConference from '../views/conference/editConference.vue'
-
+import store from '../store/index'
 import { Role } from './roles'
 import { Layout } from './layouts'
 
-import store from '../store/index'
+const chat = () => import('../views/Chat/chat.vue')
 
-import conference from '../layout/auth.conferecnce.vue'
-import audioConference from '../views/conference/audioConference.vue'
-import videoConference from '../views/conference/videoConference.vue'
+const register = () => import('../views/Auth/register.vue')
+const login = () => import('../views/Auth/login.vue')
+const forgot = () => import('../views/Auth/forgot.vue')
 
-import adminView from '../views/Admin/admin.vue'
-import adminUsers from '../views/Admin/users.vue'
+const user = () => import('../views/user.vue')
+
+const conferences = () => import('../views/conference/conferences.vue')
+const createConference = () => import('../views/conference/createConference.vue')
+const editConference = () => import('../views/conference/editConference.vue')
+const conference = () => import('../layout/auth.conferecnce.vue')
+const audioConference = () => import('../views/conference/audioConference.vue')
+const videoConference = () => import('../views/conference/videoConference.vue')
+
+const adminView = () => import('../views/Admin/admin.vue')
+const adminUsers = () => import('../views/Admin/users.vue')
+
+const pageNotFound = () => import('../views/404.vue')
 
 const routes = [
-  // {
-  //   path: '/room',
-  //   component: roomGateway,
-  //   children: [
-  //     {
-  //       path: 'create',
-  //       name: 'createRoom',
-  //       component: createRoom,
-  //       meta: {
-  //         requiresAuth: true,
-  //         role: Role.User,
-  //         layout: Layout.Main
-  //       }
-  //     },
-  //     {
-  //       path: 'all',
-  //       name: 'AllRooms',
-  //       component: AllRooms,
-  //       meta: {
-  //         requiresAuth: true,
-  //         role: Role.User,
-  //         layout: Layout.Main
-  //       }
-  //     }
-  //   ]
-  // },
   {
     path: '/conferences',
     name: 'conferences',
@@ -97,52 +62,15 @@ const routes = [
       }
     ]
   },
-  // {
-
-  //   path: '/video/:id',
-  //   component: videoConference,
-  //   meta: {
-  //     requiresAuth: true,
-  //     role: Role.User,
-  //     layout: Layout.Main
-  //   }
-  // },
-  // {
-  //   path: '/audio/:id',
-  //   component: audioConference,
-  //   meta: {
-  //     requiresAuth: true,
-  //     role: Role.User,
-  //     layout: Layout.Main
-  //   }
-  // },
   {
     path: '/chat/:id?',
-    component: chatTest,
+    component: chat,
     name: 'chat',
     meta: {
       requiresAuth: true,
       role: Role.User,
       layout: Layout.Chat
     }
-    // children: [
-    //   {
-    //     path: '/chat/:id',
-    //     component: chat,
-    //     name: 'chat',
-
-    //   },
-    //   {
-    //     path: '/chat/all',
-    //     component: chatRoom,
-    //     name: 'chatRoom',
-    //     meta: {
-    //       requiresAuth: true,
-    //       role: Role.User
-    //     }
-    //   },
-
-    // ]
   },
   {
     path: '/admin',
@@ -262,7 +190,6 @@ router.beforeEach((to, from, next) => {
   const userRole = store.state.auth.user.role.accessLevel
   const isBanned = store.state.auth.user.isBanned
 
-  console.log(isBanned)
   if (to.meta.requiresAuth) {
     if (authStatus) {
       if (isBanned) {

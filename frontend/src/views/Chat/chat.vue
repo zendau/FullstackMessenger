@@ -25,6 +25,7 @@ import $api from "../../axios";
 export default {
   components: { chatNavbar, Contacts, Messages, Chats },
   setup() {
+    console.log('chat setup')
     const route = useRoute();
     const router = useRouter();
 
