@@ -4,7 +4,8 @@
       Admin menu
     </a>
 
-    <ul class="admin__dropdown-menu" :class="{'admin__dropdown-menu--show': isShowSunMenu}" @click="isShowSunMenu = false">
+    <ul class="admin__dropdown-menu" :class="{ 'admin__dropdown-menu--show': isShowSunMenu }"
+      @click="isShowSunMenu = false">
       <li>
         <router-link class="admin__dropdown-item" to="/admin/users">Users</router-link>
       </li>
@@ -15,15 +16,15 @@
 <script>
 import { ref } from 'vue'
 
-  export default {
-    setup() {
-      const isShowSunMenu = ref(false)
+export default {
+  setup() {
+    const isShowSunMenu = ref(false)
 
-      return {
-        isShowSunMenu
-      }
+    return {
+      isShowSunMenu
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -60,6 +61,24 @@ import { ref } from 'vue'
       text-align: center;
       display: block;
       padding: 7px !important;
+    }
+  }
+}
+
+@media (max-width: 960px) {
+  .admin {
+
+    &__menu {
+      position: relative;
+    }
+
+    &__dropdown {
+      &-menu {
+        top: 50%;
+        left: 100%;
+        transform: translateY(-50%);
+        border: 1px solid black;
+      }
     }
   }
 }

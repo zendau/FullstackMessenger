@@ -1,34 +1,34 @@
 <template>
-   <header>
-        <nav class="nav__menu">
+    <header>
+        <nav class="nav__menu" :class="{ 'nav__menu--active': isShowMobileNavbar }">
             <ul v-if="authStatus">
-              <li v-for='(item, index) in navbarAuthList.items' :key="index">
-                <router-link :to="item.link" replace>{{item.name}}</router-link>
-              </li>
-              <admin-menu v-if='isAdmin'/>
+                <li v-for='(item, index) in navbarAuthList.items' :key="index">
+                    <router-link :to="item.link" replace>{{ item.name }}</router-link>
+                </li>
+                <admin-menu v-if='isAdmin' />
             </ul>
-             <ul v-else>
-               <li v-for='(item, index) in navbarNoAuthList.items' :key="index">
-                <router-link :to="item.link">{{item.name}}</router-link>
-              </li>
+            <ul v-else>
+                <li v-for='(item, index) in navbarNoAuthList.items' :key="index">
+                    <router-link :to="item.link">{{ item.name }}</router-link>
+                </li>
             </ul>
 
-            <navbar-conf-admin v-if="authStatus"/>
+            <navbar-conf-admin v-if="authStatus" />
             <a v-if="authStatus" @click="logout" href="#">Exit</a>
         </nav>
-        <div class="nav__btn">
+        <button class="nav__btn" @click="isShowMobileNavbar = !isShowMobileNavbar">
             <input type="checkbox" name="" id="" />
             <div class="hamburger-lines">
                 <span class="line line1"></span>
                 <span class="line line2"></span>
                 <span class="line line3"></span>
             </div>
-        </div>
+        </button>
     </header>
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 import { useStore } from 'vuex'
 import NavbarConfAdmin from './navbarConfAdmin.vue'
@@ -72,6 +72,9 @@ export default {
                 }
             ]
         };
+
+        const isShowMobileNavbar = ref(false)
+
         const authStatus = computed(() => store.state.auth.authStatus);
         console.log("auth", authStatus.value);
 
@@ -87,19 +90,19 @@ export default {
             authStatus,
             navbarAuthList,
             navbarNoAuthList,
+            isShowMobileNavbar
         };
     },
-    
+
 }
 </script>
 
 <style lang='scss' scoped>
-    header {
-    height: 100%;
+header {
+    height: 50px;
     background-color: $bgcColor;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
-
 
 .nav {
     &__menu {
@@ -113,23 +116,23 @@ export default {
         ul {
             list-style: none;
             display: flex;
-    
+
             li {
                 margin-right: 15px;
             }
         }
-    
+
         :deep(a) {
-            text-decoration:  none;
+            text-decoration: none;
             color: $textColor;
             padding: 6px;
             transition: .3s ease;
-    
+
             &:hover {
                 color: $linkColor;
             }
         }
-    
+
         button {
             display: none;
         }
@@ -137,6 +140,8 @@ export default {
 
     &__btn {
         display: none;
+        background-color: transparent;
+        border: none;
 
         input[type="checkbox"] {
             display: block;
@@ -146,7 +151,7 @@ export default {
             opacity: 0;
             cursor: pointer;
         }
-        
+
         .hamburger-lines {
             display: block;
             height: 28px;
@@ -158,7 +163,7 @@ export default {
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .hamburger-lines .line {
             display: block;
             height: 4px;
@@ -166,39 +171,39 @@ export default {
             border-radius: 10px;
             background: #fff;
         }
-        
+
         .hamburger-lines .line1 {
             transform-origin: 0% 0%;
             transition: transform 0.3s ease-in-out;
         }
-        
+
         .hamburger-lines .line2 {
             transition: transform 0.1s ease-in-out;
         }
-        
+
         .hamburger-lines .line3 {
             transform-origin: 0% 100%;
             transition: transform 0.3s ease-in-out;
         }
-        
-        input[type="checkbox"]:checked ~ .menu-items {
+
+        input[type="checkbox"]:checked~.menu-items {
             transform: translateX(0);
         }
-        
-        input[type="checkbox"]:checked ~ .hamburger-lines .line1 {
+
+        input[type="checkbox"]:checked~.hamburger-lines .line1 {
             transform: rotate(45deg);
         }
-        
-        input[type="checkbox"]:checked ~ .hamburger-lines .line2 {
+
+        input[type="checkbox"]:checked~.hamburger-lines .line2 {
             transform: scaleY(0);
         }
-        
-        input[type="checkbox"]:checked ~ .hamburger-lines .line3 {
+
+        input[type="checkbox"]:checked~.hamburger-lines .line3 {
             transform: rotate(-45deg);
         }
     }
 
-    
+
 }
 
 
@@ -209,21 +214,23 @@ export default {
         &__menu {
             width: 800px;
         }
-    } 
+    }
 }
-// Убрать грид на нав, сделать флексом например
+
+
+//TODO: Убрать грид на нав, сделать флексом например
 // для футер меню сделать фикс высоту и прижать к нижу с помощью позиционировая
 
 
 @media (max-width: 960px) {
 
     header {
-        background-color: inherit;
+        height: 0px;
     }
 
-    header.active {
-        background-color: $bgcColor;
-    }
+    // header.active {
+    //     background-color: 
+    // }
 
     .nav {
 
@@ -234,22 +241,30 @@ export default {
             display: none;
             align-items: center;
             justify-content: center;
-            
+
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: $bgcColor;
+
 
             &--active {
                 display: flex;
             }
-    
+
             :deep(ul) {
                 flex-direction: column;
                 align-items: center;
                 width: 100%;
-    
-                li {
-                    margin: 0;
+
+                li, div {
+                    margin: 4px 0;
+                    font-size: 20px !important;
                 }
+
+          
             }
-    
+
             a {
                 width: 100%;
                 text-align: center;
@@ -275,16 +290,18 @@ export default {
             }
         }
     }
-   
+
 }
 
 @media (max-width: 730px) {
+
+
 
     .nav {
         &__btn {
             right: 5px;
         }
     }
-   
+
 }
 </style>

@@ -143,4 +143,10 @@ export default {
 .table tbody tr:nth-child(odd) {
   background: $bgcColor;
 }
+
+@media (max-width: 720px) {
+.table tbody td {
+  padding: 10px;
+}
+}
 </style>

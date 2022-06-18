@@ -131,8 +131,6 @@ export const auth = {
             } finally {
                 console.log(tokenDecode)
                 commit('authSuccess', tokenDecode)
-                router.push('/users')
-
             }
         }
     },

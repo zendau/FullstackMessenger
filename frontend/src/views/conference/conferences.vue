@@ -61,7 +61,7 @@ export default {
     grid-template-columns: repeat(auto-fill, 250px);
     gap: 15px;
     justify-content: center;
-    margin-top: 35px;
+    margin: 35px 0;
   }
 
   &__item {
