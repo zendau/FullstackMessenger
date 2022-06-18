@@ -1,5 +1,5 @@
 <template>
-  <div class="chat__messages">
+  <div class="chat__messages" :class="{'chat__messages--active' :isShowMobileMessages}">
     <chat-header v-if="chatData.title"/>
     <chat-body v-if="chatData.title"/>
     <chat-send v-if="chatData.title"/>
@@ -10,7 +10,7 @@
 import chatHeader from './chatHeader.vue'
 import chatBody from './chatBody.vue'
 import chatSend from './chatSend.vue'
-import { computed, provide, ref } from 'vue'
+import { computed, inject, provide, ref } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
@@ -19,12 +19,15 @@ export default {
 
     const store = useStore()
 
+    const isShowMobileMessages = inject('isShowMobileMessages')
+
     const files = ref([])
     provide('files', files)
 
     const chatData = computed(() => store.state.chat.chatData)
     console.log('CHATDATA', chatData.value)
     return {
+      isShowMobileMessages,
       chatData
     }
   }

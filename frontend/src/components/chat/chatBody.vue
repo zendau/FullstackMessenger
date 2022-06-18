@@ -141,4 +141,14 @@ export default {
     }
   }
 }
+
+@media (max-width: 720px) {
+  .chat {
+    &__body {
+      padding: 0;
+      border-left: 1px solid black;
+    }
+  }
+
+}
 </style>

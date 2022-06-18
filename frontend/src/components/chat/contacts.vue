@@ -1,6 +1,6 @@
 <template>
-  <div class="chat__contacts">
-    <button class="btn--chat" @click="groupType = !groupType">
+  <div class="chat__contacts" :class="{'chat__contacts--active': !isShowMobileMessages}">
+    <button class="btn" @click="groupType = !groupType">
       {{ groupType ? "Close" : "Create group" }}
     </button>
     <create-group v-if="groupType" :groupUsers="groupUsers" :adminId="userId" />
@@ -21,7 +21,7 @@ import $api from "../../axios";
 
 import { useRouter } from "vue-router";
 
-import { computed, ref } from "vue";
+import { computed, inject, ref } from "vue";
 import createGroup from "./createGroup.vue";
 
 import { useStore } from "vuex";
@@ -31,6 +31,8 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
+
+    const isShowMobileMessages = inject('isShowMobileMessages')
 
     const userData = computed(() => store.getters["auth/getUserData"])
     const contacts = computed(() => store.getters['chat/getContacts'])
@@ -85,12 +87,13 @@ export default {
     return {
       login,
       contacts,
-      openUserChat,
       groupType,
       groupUsers,
-      createGroupChat,
       userId,
       roomName,
+      isShowMobileMessages,
+      openUserChat,
+      createGroupChat,
     };
   },
 };

@@ -29,6 +29,9 @@ export default {
     const route = useRoute();
     const router = useRouter();
 
+    const isShowMobileMessages = ref(false)
+    provide('isShowMobileMessages', isShowMobileMessages)
+
     const chatId = computed(() => route.params.id);
 
     const showContacts = ref(true);
@@ -89,7 +92,12 @@ export default {
 
     watch(
       () => route.params.id,
-      (value) => enterToChat(value),
+      (value) => {
+        if (value) {
+          enterToChat(value)
+          isShowMobileMessages.value = true
+        }
+      },
       { immediate: true }
     );
 
@@ -126,6 +134,7 @@ export default {
 
 @media (max-width: 720px) {
   .chat {
+
     &__container {
       grid-template-columns: 1fr;
     }
@@ -134,7 +143,15 @@ export default {
       display: none;
 
       &--active {
-        display: block;
+        display: flex;
+      }
+    }
+
+    &__messages {
+      display: none;
+
+      &--active {
+        display: grid;
       }
     }
   }

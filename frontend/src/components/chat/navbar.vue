@@ -2,13 +2,13 @@
   <header>
     <nav class="chat__menu">
       <ul class="chat__list">
-        <li @click="showContacts = true">
+        <li @click="showContacts = true; isShowMobileMessages = false">
           <a class="chat__list-item" :class="{ 'chat__list-item--active': showContacts }">
             <i class="bi bi-chat-dots"></i>
             <span>Chats</span>
           </a>
         </li>
-        <li @click="showContacts = false">
+        <li @click="showContacts = false; isShowMobileMessages = false">
           <a class="chat__list-item" :class="{ 'chat__list-item--active': !showContacts }">
             <i class="bi bi-person-lines-fill"></i>
             <span>Contacts</span>
@@ -46,6 +46,8 @@ export default {
     const route = useRoute()
     const store = useStore()
 
+    const isShowMobileMessages = inject('isShowMobileMessages')
+
     const showContacts = inject('showContacts')
 
     route.query.page = 'chat'
@@ -56,8 +58,9 @@ export default {
     }
 
     return {
-      logout,
+      isShowMobileMessages,
       showContacts,
+      logout,
     }
   }
 }

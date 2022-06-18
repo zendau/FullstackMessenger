@@ -16,7 +16,7 @@
       </div>
       <div class="chat__user-group">
         <button class="chat__add-group btn" @click="showRemoveUsers = !showRemoveUsers">Remove from group</button>
-        <NavbarUserList :users='removeUsersList' :show='showRemoveUsers'  @selectUser="removeUserFromChat" />
+        <NavbarUserList :users='removeUsersList' :show='showRemoveUsers' @selectUser="removeUserFromChat" />
       </div>
 
     </div>
@@ -42,7 +42,7 @@ export default {
     const chatData = computed(() => store.getters["chat/getChatData"]);
     const userId = userData.value.id;
     const chatId = computed(() => route.params.id);
-    
+
     const showTollbar = computed(() => chatData.value.adminId === userId);
 
     const showUsers = ref(false);
@@ -63,10 +63,10 @@ export default {
     }
 
     async function removeUserFromChat(id) {
-       store.dispatch('chat/removeUserFromChat', {
+      store.dispatch('chat/removeUserFromChat', {
         userId: id,
         chatId: chatId.value
-       })
+      })
     }
 
     async function exitGroup() {
@@ -115,8 +115,10 @@ export default {
     background-color: $bgcColor;
     border-left: 1px solid black;
 
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 300px;
+    justify-items: baseline;
     align-content: center;
+    padding-left: 30px;
 
     &-data {
       height: 100%;
@@ -130,8 +132,8 @@ export default {
 
     &--private {
       grid-row: 1/3;
+      width: 100%;
       align-self: center;
-      width: 250px;
     }
   }
 
@@ -163,6 +165,7 @@ export default {
     align-items: center;
     position: relative;
     grid-column: 2/3;
+    justify-self: center;
 
     button {
       height: 40px;
@@ -181,5 +184,22 @@ export default {
     color: $dangerColor;
     grid-column: 3/4;
   }
+}
+
+@media (max-width: 720px) {
+  .chat {
+
+
+    &__header {
+
+      grid-template-columns: auto;
+
+      &-data {
+        width: auto;
+      }
+    }
+  }
+
+
 }
 </style>

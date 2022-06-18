@@ -1,5 +1,5 @@
 <template>
-  <div class="chat__contacts">
+  <div class="chat__contacts" :class="{'chat__contacts--active': !isShowMobileMessages}">
     <ul class="contacts__list">
       <li class="contact__item" v-for="chat in chatsData" :key="chat.id">
         <router-link
@@ -16,7 +16,7 @@
 
 
 <script>
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import { useStore } from "vuex";
 
 export default {
@@ -24,9 +24,12 @@ export default {
     const store = useStore();
     store.dispatch('chat/getChats')
 
+    const isShowMobileMessages = inject('isShowMobileMessages')
+
     const chatsData = computed(() => store.getters['chat/getChats']);
 
     return {
+      isShowMobileMessages,
       chatsData,
     };
   },

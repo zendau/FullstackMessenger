@@ -1,7 +1,7 @@
 <template>
   <form class="contacts__group-create" @submit.prevent="createGroupChat">
     <input type="text" placeholder="Group Name" v-model="groupName" />
-    <button class="btn--chat" :disabled="groupUsersLength">Create group</button>
+    <button class="btn" :disabled="groupUsersLength">Create group</button>
   </form>
 </template>
 
