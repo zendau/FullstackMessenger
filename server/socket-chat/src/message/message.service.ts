@@ -56,7 +56,7 @@ export class MessageService {
       .createQueryBuilder('message')
       .innerJoin('message.chat', 'chat')
       .leftJoinAndSelect('message.media', 'media')
-      .where('chat.chatId = :chatId', { chatId })
+      .where('chat.id = :chatId', { chatId })
       .skip(skip)
       .take(limit)
       .orderBy('message.id', 'DESC')

@@ -16,7 +16,7 @@ export const conference = {
   },
   actions: {
     async createConference({ commit }, conferenceData) {
-      
+      debugger
       try {
         const res = await $api.post('/room/add', {
           roomTitle: conferenceData.title,
@@ -33,12 +33,11 @@ export const conference = {
           adminId: room.adminId,
           chatId: room.chatId,
           id: room.id,
-          roomId: room.roomId,
           roomTitle: room.roomTitle,
           roomWithVideo: room.roomWithVideo,
         })
         const roomType = room.roomWithVideo ? 'video' : 'audio'
-        router.push(`/conference/${roomType}/${room.roomId}`)
+        router.push(`/conference/${roomType}/${room.id}`)
       } catch (error) {
         $api.delete(`/chat/delete/${conferenceData.chatId}`)
 
@@ -70,7 +69,7 @@ export const conference = {
           id: state.id
         })
         const roomType = conferenceData.type ? 'video' : 'audio'
-        router.push(`/conference/${roomType}/${conferenceData.roomId}`)
+        router.push(`/conference/${roomType}/${conferenceData.id}`)
       } catch (error) {
         commit('auth/setErrorMessage', error.response.data.message, { root: true })
       }

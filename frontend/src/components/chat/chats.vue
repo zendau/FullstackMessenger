@@ -3,7 +3,7 @@
     <ul class="contacts__list">
       <li class="contact__item" v-for="chat in chatsData" :key="chat.id">
         <router-link
-          :to="`/chat/${chat.chatId}`"
+          :to="`/chat/${chat.id}`"
         >
           <i class="bi bi-people" v-if="chat.adminId"></i>
           <i class="bi bi-person" v-else></i>

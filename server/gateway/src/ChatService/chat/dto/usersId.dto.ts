@@ -9,5 +9,5 @@ export class UsersIdDTO {
   })
   @IsNumber({},{each: true})
   @ArrayMinSize(1)
-  usersId: number[];
+  users: number[];
 }

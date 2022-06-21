@@ -5,7 +5,6 @@ import { ChatDTO } from './dto/chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as uuid from 'uuid';
 import { ChatUsers } from './entities/chatUsers.entity';
 import { exitChatDto } from './dto/exitChat.dto';
 import { ClientProxy } from '@nestjs/microservices';
@@ -72,18 +71,13 @@ export class ChatService {
     const res = await firstValueFrom(
       this.authServiceClient.send('user/id', id),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
     return res;
   }
 
   async checkChat(chatData: ChatDTO) {
-    console.log('chatData', chatData);
-    debugger;
     const res = await this.chatRepository
       .createQueryBuilder('chat')
-      .select('chatUsers.chatId, chat.chatId, chat.adminId')
+      .select('chatUsers.chatId, chat.id, chat.adminId')
       .addSelect('chat.groupName')
       .innerJoin('chat.chatUsers', 'chatUsers')
       .addSelect('COUNT(chatUsers.userId)', 'userCount')
@@ -95,31 +89,38 @@ export class ChatService {
       .having('userCount > 1')
       .andHaving('chat.groupName IS NULL')
       .getRawMany();
+    debugger;
     console.log('res', res);
-
-    return { status: res.length > 0, chatId: res[0]?.chatId };
+    return { status: res.length > 0, chatId: res[0]?.id };
   }
 
   async getChatById(id: string) {
     const res: any = await this.chatRepository
       .createQueryBuilder()
-      .where('chatId = :id', { id })
+      .where('id = :id', { id })
       .getOne();
     if (res === undefined)
       return {
         status: false,
-        message: `chatId ${id} is not valid`,
+        message: `chat id - ${id} is not valid`,
         httpCode: HttpStatus.BAD_REQUEST,
       };
 
-    res.users = await this.getGroupUsers(res.chatId);
-    return res;
+    try {
+      const resGetGroupUsers = await this.getGroupUsers(res.id);
+      res.users = resGetGroupUsers;
+      return res;
+    } catch (e) {
+      return {
+        status: false,
+        message: e.message,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
   }
 
   async createChat(chatData: ChatDTO) {
-    debugger;
     const chatInseted = await this.chatRepository.save({
-      chatId: uuid.v4(),
       ...(chatData?.groupName && { adminId: chatData.adminId }),
       groupName: chatData?.groupName,
     });
@@ -163,7 +164,7 @@ export class ChatService {
     const res = await this.chatRepository
       .createQueryBuilder()
       .delete()
-      .where(`chatId = :id`, { id })
+      .where(`id = :id`, { id })
       .execute();
 
     return !!res.affected;
@@ -174,13 +175,17 @@ export class ChatService {
       .createQueryBuilder('chat')
       .select('chatUsers.userId', 'userId')
       .innerJoin('chat.chatUsers', 'chatUsers')
-      .where('chat.chatId = :chatId', { chatId })
+      .where('chat.id = :chatId', { chatId })
       .getRawMany();
 
     const usersData = await Promise.all(
-      res.map(async (userData) => await this.getUserName(userData.userId)),
+      res.map(async (userData) => {
+        const res = await this.getUserName(userData.userId);
+        if (res.status === false) throw new Error(res.message);
+        return res;
+      }),
     );
-    return usersData.flat();
+    return usersData;
   }
 
   async getInvaitedUsers(usersId: string[]) {
@@ -221,13 +226,12 @@ export class ChatService {
   }
 
   async exitUserGroup(exitUserDTO: exitChatDto) {
-    const chat = await this.getChatById(exitUserDTO.chatId);
-
+    console.log(exitUserDTO);
     const res = await this.chatUserRepository
       .createQueryBuilder()
       .delete()
       .where('userId = :userId', { userId: exitUserDTO.userId })
-      .andWhere('chatId = :chatId', { chatId: chat.id })
+      .andWhere('chatId = :chatId', { chatId: exitUserDTO.chatId })
       .execute();
 
     return !!res.affected;

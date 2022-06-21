@@ -38,13 +38,14 @@ export class ChatController {
   @MessagePattern('chat/checkId')
   async checkChatId(@Payload() id: string) {
     const res = await this.chatService.getChatById(id).catch((err) => {
-      console.log(err);
+      console.log('err', err);
       return {
         status: false,
         message: err.sqlMessage,
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
+    console.log('res', res);
     return res;
   }
 
@@ -58,6 +59,7 @@ export class ChatController {
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
+    console.log('res', res);
     return res;
   }
 
@@ -75,7 +77,6 @@ export class ChatController {
 
   @MessagePattern('chat/delete')
   async remove(@Payload() chatId: string) {
-    console.log('chatId', chatId);
     const res = await this.chatService.remove(chatId).catch((err) => {
       console.log('err', err);
       return {

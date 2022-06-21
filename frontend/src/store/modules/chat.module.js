@@ -56,7 +56,7 @@ export const chat = {
       })
 
       const res = await $api.post('/chat/invaitedUsers/', {
-        usersId
+        users: usersId
       })
 
       if (res.data) {
@@ -93,7 +93,7 @@ export const chat = {
         users: chatData.users,
         groupName: chatData?.groupName
       }).then(async res => {
-        await commit('setChatId', res.data.chatId)
+        await commit('setChatId', res.data.id)
       }).catch(error => {
         commit('auth/setErrorMessage', error.response.data.message, { root: true })
       })

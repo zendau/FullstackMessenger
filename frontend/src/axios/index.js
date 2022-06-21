@@ -1,7 +1,8 @@
 import axios from "axios"
 import store from '../store'
 
-const API_URL = "http://localhost:3000"
+const API_URL = process.env.VUE_APP_API
+console.log('API_URL', API_URL)
 const $api = axios.create({
     withCredentials: true,
     baseURL: API_URL

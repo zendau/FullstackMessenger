@@ -17,10 +17,7 @@ export class RoomService {
   ) {}
 
   async create(createRoomDTO: roomDTO) {
-    const resInsered = await this.roomRepository.save({
-      ...createRoomDTO,
-      roomId: uuidv4(),
-    });
+    const resInsered = await this.roomRepository.save(createRoomDTO);
     return resInsered;
   }
 
@@ -31,7 +28,7 @@ export class RoomService {
   async getById(roomId: string) {
     const chatData = await this.roomRepository
       .createQueryBuilder()
-      .where('roomId = :roomId', { roomId })
+      .where('id = :roomId', { roomId })
       .getOne();
 
     if (chatData === undefined)
@@ -63,17 +60,17 @@ export class RoomService {
         roomTitle: updateRoomDTO.roomTitle,
         roomWithVideo: updateRoomDTO.roomWithVideo,
       })
-      .where(`id = ${updateRoomDTO.id}`)
+      .where(`id = :id`, { id: updateRoomDTO.id })
       .execute();
 
     return !!res.affected;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const res = await this.roomRepository
       .createQueryBuilder()
       .delete()
-      .where(`id = ${id}`)
+      .where('id = :id', { id })
       .execute();
 
     return !!res.affected;

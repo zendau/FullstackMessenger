@@ -5,7 +5,7 @@
       <p v-html="isLink(message.text)"></p>
       <div class="message__files">
         <a class="message__file" v-for="file in message.files" :key="file.id"
-          :href="`http://localhost:3000/file/download/${file.id}`">
+          :href="`${process.env.VUE_APP_API}/file/download/${file.id}`">
           <i class="bi bi-file-earmark-arrow-down"></i>{{ file.fileName }}
         </a>
       </div>

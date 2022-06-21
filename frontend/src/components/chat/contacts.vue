@@ -57,7 +57,7 @@ export default {
       });
 
       if (res.data.status) {
-        router.push(`/chat/${res.data.chatId}`);
+        router.push(`/chat/${res.data.id}`);
       } else {
         console.log("create");
         const chatData = await $api.post("/chat/create", {
@@ -65,7 +65,7 @@ export default {
           users: [id],
         });
 
-        const chatId = chatData.data.chatId;
+        const chatId = chatData.data.id;
 
         router.push(`/chat/${chatId}`);
       }
@@ -80,7 +80,7 @@ export default {
       });
 
       if (chatData.data) {
-        router.push(`/chat/${chatData.data.chatId}`);
+        router.push(`/chat/${chatData.data.id}`);
       }
     }
 

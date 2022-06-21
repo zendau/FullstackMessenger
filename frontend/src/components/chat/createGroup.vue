@@ -35,7 +35,7 @@ export default {
       });
 
       if (chatData.data) {
-        router.push(`/chat/${chatData.data.chatId}`);
+        router.push(`/chat/${chatData.data.id}`);
       }
     }
 

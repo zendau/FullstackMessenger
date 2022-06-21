@@ -1,3 +1,4 @@
+import { RolesGuard } from './../../AuthService/guards/roles.guard';
 import { HttpErrorDTO } from './../../AuthService/ResponseDTO/httpError.dto';
 import {
   Controller,
@@ -17,6 +18,8 @@ import { roomDTO } from './dto/room.dto';
 import { editRoomDTO } from './dto/editRoom.dto';
 import { JwtAuthGuard } from '../../AuthService/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/AuthService/decorators/roles.decorator';
+import { Role } from 'src/AuthService/enum/role.enum';
 
 @ApiBearerAuth()
 @ApiTags('Peer microservice - Room controller')
@@ -42,6 +45,8 @@ export class RoomController {
   @ApiResponse({ status: 200, type: editRoomDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @UseGuards(JwtAuthGuard)
+  @Roles(Role.User)
+  @UseGuards(RolesGuard)
   @Get('getAll')
   async findAll() {
     const res = await firstValueFrom(
@@ -85,7 +90,7 @@ export class RoomController {
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Delete('delete/:id')
-  async remove(@Param('id') roomId: number) {
+  async remove(@Param('id') roomId: string) {
     const res = await firstValueFrom(
       this.peerServiceClient.send('room/delete', roomId),
     );

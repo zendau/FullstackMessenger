@@ -72,10 +72,8 @@ export default {
     async function exitGroup() {
       console.log("exit user with id ", userId);
       const res = await $api.delete("/chat/exitUser", {
-        params: {
           chatId: chatId.value,
           userId,
-        }
       })
       store.state.chat.chats = store.state.chat.chats.filter(chat => chat.chatId !== chatId.value)
       store.commit('chat/cleanMessages')

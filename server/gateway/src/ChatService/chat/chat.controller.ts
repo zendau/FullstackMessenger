@@ -55,6 +55,7 @@ export class ChatController {
     const res = await firstValueFrom(
       this.chatServiceClient.send('chat/check', chatData),
     );
+    console.log('res', res)
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
     }
@@ -89,12 +90,14 @@ export class ChatController {
 
     const resFileInsert = await firstValueFrom(
       this.fileServiceClient.send('foulder/add', {
-        path: res.chatId,
+        path: res.id,
       }),
     );
     if (resFileInsert.status === false) {
+      console.log('resFile', resFileInsert)
       throw new HttpException(res.message, res.httpCode);
     }
+    console.log('res', res);
     return res;
   }
   
@@ -149,7 +152,7 @@ export class ChatController {
   @Post('invaitedUsers')
   async getInvaitedUsers(@Body()  userData: UsersIdDTO) {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('chat/invaitedUsers', userData.usersId),
+      this.chatServiceClient.send('chat/invaitedUsers', userData.users),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
@@ -160,7 +163,6 @@ export class ChatController {
   @ApiOperation({ summary: 'Invate to chat group' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @Post('invaitedUsers')
   @Patch('invaiteToChat')
   async invaiteUsersToChat(@Body() invateData: UserChatUpdateStatusDto) {
     const res = await firstValueFrom(

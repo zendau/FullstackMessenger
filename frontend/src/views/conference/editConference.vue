@@ -38,7 +38,6 @@ export default {
 
     const adminId = computed(() => store.state.conference.adminId)
     const userId = computed(() => store.state.auth.user.id)
-    const conferenceId = computed(() => store.state.conference.id)
 
     let confirmedAdmin = null
 
@@ -77,8 +76,7 @@ export default {
         store.dispatch('conference/editConference', {
           title: value.title,
           type: value.type,
-          id: conferenceId.value,
-          roomId: roomId.value
+          id: roomId.value
         })
       }
 

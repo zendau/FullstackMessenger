@@ -14,5 +14,5 @@ export class SuccessCheckChatDTO {
     description: 'Chat id',
     required: true,
   })
-  chatId: string;
+  id: string;
 }

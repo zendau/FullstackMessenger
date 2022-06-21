@@ -1,13 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ChatUsers } from './chatUsers.entity';
 
 @Entity()
 export class Chat {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  chatId: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({
     nullable: true,

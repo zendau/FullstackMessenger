@@ -61,7 +61,7 @@ export class RoomController {
   }
 
   @MessagePattern('room/delete')
-  async remove(@Payload() roomId: number) {
+  async remove(@Payload() roomId: string) {
     const res = await this.roomService.remove(roomId).catch((err) => {
       return {
         status: false,

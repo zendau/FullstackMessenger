@@ -9,7 +9,7 @@ export class UserChatUpdateStatusDto {
   })
   @IsNumber()
   @Min(1)
-  chatId: number;
+  id: string;
 
   @ApiProperty({
     example: 2,

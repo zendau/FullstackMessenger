@@ -2,11 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Room {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  roomId: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   chatId: string;
