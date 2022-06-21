@@ -34,8 +34,8 @@ export default {
 
     const isShowMobileMessages = inject('isShowMobileMessages')
 
-    const userData = computed(() => store.getters["auth/getUserData"])
-    const contacts = computed(() => store.getters['chat/getContacts'])
+    const userData = computed(() => store.state.auth.user)
+    const contacts = computed(() => store.state.chat.constacts)
 
     const groupUsers = ref([]);
 

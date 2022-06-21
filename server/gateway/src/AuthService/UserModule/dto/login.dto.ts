@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
 
-export class LoginData {
+export class LoginDTO {
   @ApiProperty({
-    example: 'root',
-    description: 'Email for auth',
+    example: 'root@gmail.com',
+    description: 'User email',
     required: true,
   })
   @Length(6, 20, {
@@ -14,14 +14,13 @@ export class LoginData {
   email: string;
 
   @ApiProperty({
-    example: 'rootpass',
-    description: 'Password for auth',
+    example: 'root',
+    description: 'user password',
     
   })
   @Length(6, 20, {
     message: 'password is smaller than 6 signs or bigger than 20 signs',
   })
   @IsString({ message: 'Is not currect string' })
-  @IsOptional()
   password: string;
 }

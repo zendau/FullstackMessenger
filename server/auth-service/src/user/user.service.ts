@@ -126,7 +126,6 @@ export class UserService {
   }
 
   async editUserData(userData: IEditUser) {
-    debugger
     try {
       const checkCode = await this.confirmCodeService.checkConfirmCode(userData.confirmCode, userData.email);
       if (!checkCode.status) {

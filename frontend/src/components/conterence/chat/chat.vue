@@ -27,7 +27,7 @@ export default {
     const scrollEnd = ref(null);
 
     const messages = computed(() => store.state.chat.messages);
-    const userData = computed(() => store.getters['auth/getUserData'])
+    const userData = computed(() => store.state.auth.user)
 
     const files = ref([])
     provide('files', files)
@@ -76,7 +76,7 @@ export default {
       store.commit('chat/removeUserFromGroup', userId)
     });
 
-    const message = computed(() => store.getters['chat/getMessageData']);
+    const message = computed(() => store.state.chat.message);
 
 
     const observer = new IntersectionObserver(async (entries) => {

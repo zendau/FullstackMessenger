@@ -9,6 +9,9 @@ export class Media {
   @Column()
   fileId: number;
 
-  @ManyToOne(() => Message, (message) => message.media)
+  @ManyToOne(() => Message, (message) => message.media, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   message: Message;
 }

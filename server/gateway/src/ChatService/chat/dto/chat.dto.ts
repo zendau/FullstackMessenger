@@ -1,13 +1,14 @@
-import { IsInt, Min } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString} from 'class-validator';
+import { CheckChatDTO } from './checkChat.dto';
 
-export class ChatDTO {
-  @IsInt()
-  @Min(1)
-  adminId: number;
+export class ChatDTO extends CheckChatDTO {
 
-  users: number[];
-
-  groupType: boolean;
-
-  groupName?: string;
+  @ApiProperty({
+    example: 'test title',
+    description: 'Title if chat is group',
+    required: false,
+  })
+  @IsString({always: false})
+  groupName: string | null;
 }

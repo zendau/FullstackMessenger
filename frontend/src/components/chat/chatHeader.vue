@@ -38,8 +38,8 @@ export default {
     const route = useRoute();
     const router = useRouter();
 
-    const userData = computed(() => store.getters["auth/getUserData"]);
-    const chatData = computed(() => store.getters["chat/getChatData"]);
+    const userData = computed(() => store.state.auth.user);
+    const chatData = computed(() => store.state.chat.chatData);
     const userId = userData.value.id;
     const chatId = computed(() => route.params.id);
 

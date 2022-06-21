@@ -10,16 +10,22 @@ import {
   Put,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
+import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
 import { IFoulderDTO } from './dto/foulder.dto';
 
+@ApiBearerAuth()
+@ApiTags('FileCloud microservice - Foulder controller')
 @Controller('foulder')
 export class FoulderController {
   constructor(@Inject('FILE_SERVICE') private fileServiceClient: ClientProxy) {}
 
+  @ApiOperation({ summary: 'Create new foulder' })
+  @ApiResponse({ status: 200, type: IFoulderDTO })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Post('add')
   async create(@Body() createFoulderDto: IFoulderDTO) {
-    console.log(createFoulderDto);
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/add', createFoulderDto),
     );
@@ -29,6 +35,9 @@ export class FoulderController {
     return res;
   }
 
+  @ApiOperation({ summary: 'Get all foulders' })
+  @ApiResponse({ status: 200, type: IFoulderDTO, isArray: true })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('getAll')
   async findAll() {
     const res = await firstValueFrom(
@@ -40,6 +49,9 @@ export class FoulderController {
     return res;
   }
 
+  @ApiOperation({ summary: 'Get foulder by id' })
+  @ApiResponse({ status: 200, type: IFoulderDTO })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('get/:id')
   async findOne(@Param('id') foulderId: number) {
     const res = await firstValueFrom(
@@ -51,6 +63,9 @@ export class FoulderController {
     return res;
   }
 
+  @ApiOperation({ summary: 'Edit foulder data' })
+  @ApiResponse({ status: 200, description: 'Success operation' })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Put('edit')
   async update(@Body() updateFoulderDto: IFoulderDTO) {
     const res = await firstValueFrom(
@@ -62,6 +77,9 @@ export class FoulderController {
     return res;
   }
 
+  @ApiOperation({ summary: 'Delete foulder' })
+  @ApiResponse({ status: 200, description: 'Success operation' })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Delete('delete/:id')
   async remove(@Param('id') foulderId: number) {
     const res = await firstValueFrom(

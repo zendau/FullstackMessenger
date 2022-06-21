@@ -14,7 +14,7 @@ export default {
 
     const store = useStore()
 
-    const message = computed(() => store.getters['auth/getAlertMessage'])
+    const message = computed(() => store.state.auth.message)
 
     return {
       message

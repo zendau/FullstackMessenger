@@ -84,7 +84,7 @@ export class TokenService {
         .delete()
         .where('refreshToken = :refreshToken', { refreshToken })
         .execute();
-      return tokenData;
+      return !!tokenData.affected;
     } catch (e) {
       console.log('data e', e);
       return {

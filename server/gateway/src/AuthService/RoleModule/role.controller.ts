@@ -15,8 +15,10 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { HttpErrorDTO } from 'src/AuthService/dto/httpError.dto';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
+
+@ApiBearerAuth()
 @ApiTags('Auth microservice - Role controller')
 @Controller('role')
 export class RoleController {
@@ -44,7 +46,7 @@ export class RoleController {
   // role/edit
 
   @ApiOperation({ summary: 'Edit role' })
-  @ApiResponse({ status: 200, type: Object })
+  @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   //@UsePipes(ValidationPipe)
   @Put('edit')
@@ -78,12 +80,12 @@ export class RoleController {
 
   // role/delete
 
-  @ApiOperation({ summary: 'Get all roles' })
+  @ApiOperation({ summary: 'Delete role by id' })
   @ApiParam({
     name: 'roleId',
     type: Number,
   })
-  @ApiResponse({ status: 200, type: Object })
+  @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Delete('delete/:roleId')
   async deleteRole(@Param() params) {
@@ -133,7 +135,7 @@ export class RoleController {
 
   // role/getUsersRole
 
-  @ApiOperation({ summary: 'Get all users role' })
+  @ApiOperation({ summary: 'Get all users with selected role' })
   @ApiParam({
     name: 'roleId',
     type: Number,

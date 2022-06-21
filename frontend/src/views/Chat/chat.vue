@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { computed, provide } from "vue";
+import { computed, onUnmounted, provide } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
 import { ref, watch } from "vue";
@@ -39,7 +39,7 @@ export default {
     provide("showContacts", showContacts);
 
     const store = useStore();
-    const userData = computed(() => store.getters["auth/getUserData"]);
+    const userData = computed(() => store.state.auth.user);
 
     const socket = io("http://localhost:80");
     provide("socket", socket);
@@ -89,6 +89,10 @@ export default {
         roomId,
       });
     }
+
+    onUnmounted(() => {
+      store.commit('chat/cleanAllData')
+    })
 
     watch(
       () => route.params.id,

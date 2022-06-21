@@ -29,7 +29,7 @@ import { useRoute } from "vue-router";
 export default {
   setup() {
     const store = useStore();
-    const chatData = computed(() => store.getters["chat/getChatData"]);
+    const chatData = computed(() => store.state.chat.chatData);
 
     const socket = inject("socket");
 
@@ -39,7 +39,7 @@ export default {
 
     const files = inject("files");
 
-    const userData = computed(() => store.getters["auth/getUserData"]);
+    const userData = computed(() => store.state.auth.user);
 
     const userId = userData.value.id;
     const userLogin = userData.value.login;

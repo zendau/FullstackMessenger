@@ -117,7 +117,5 @@ export const conference = {
       console.log(state)
     }
   },
-  getters: {
-
-  }
+  getters: {}
 }

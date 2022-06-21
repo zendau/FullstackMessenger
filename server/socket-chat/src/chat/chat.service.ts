@@ -34,7 +34,6 @@ export class ChatService {
   }
 
   async getChats(userId: number) {
-    debugger;
     const res = await this.chatRepository
       .createQueryBuilder('chat')
       .innerJoinAndSelect('chat.chatUsers', 'chatUsers')
@@ -60,9 +59,7 @@ export class ChatService {
           const chatUserId = item.chatUsers.filter(
             (user) => user.userId != userId,
           );
-          debugger;
           const userData = await this.getUserName(chatUserId[0].userId);
-          debugger;
           console.log('1', userData);
           item.groupName = userData.login;
         }
@@ -99,16 +96,6 @@ export class ChatService {
       .andHaving('chat.groupName IS NULL')
       .getRawMany();
     console.log('res', res);
-    // const res = await this.chatUserRepository
-    //   .createQueryBuilder('chatUsers')
-    //   .innerJoinAndSelect('chatUsers.chat', 'chat')
-    //   .getMany();
-    // if (res === undefined)
-    //   return {
-    //     status: false,
-    //     message: `userUd ${roomId} is not valid`,
-    //     httpCode: HttpStatus.BAD_REQUEST,
-    //   };
 
     return { status: res.length > 0, chatId: res[0]?.chatId };
   }
@@ -130,9 +117,10 @@ export class ChatService {
   }
 
   async createChat(chatData: ChatDTO) {
+    debugger;
     const chatInseted = await this.chatRepository.save({
       chatId: uuid.v4(),
-      adminId: chatData?.adminId,
+      ...(chatData?.groupName && { adminId: chatData.adminId }),
       groupName: chatData?.groupName,
     });
 
@@ -215,7 +203,6 @@ export class ChatService {
       .where('chatUsers.userId = :userId', { userId: invateData.userId })
       .andWhere('chatUsers.chatId = :chatId', { chatId: chat.id })
       .getOne();
-
 
     if (temp) {
       return {

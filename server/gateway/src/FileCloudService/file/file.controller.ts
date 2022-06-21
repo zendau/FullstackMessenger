@@ -25,11 +25,20 @@ import { firstValueFrom } from 'rxjs';
 import { diskStorage } from 'multer';
 
 import { Response } from 'express';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
+import { FileDTO } from './dto/file.dto';
 
+@ApiBearerAuth()
+@ApiTags('FileCloud microservice - File controller')
 @Controller('file')
 export class FileController {
   constructor(@Inject('FILE_SERVICE') private fileServiceClient: ClientProxy) {}
 
+
+  @ApiOperation({ summary: 'Files upload data with `files` interceptor' })
+  @ApiResponse({ status: 200, type: Number, isArray: true, description: 'return uploaded files id' })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Post('add')
   @UseInterceptors(
     FilesInterceptor('files', 10, {
@@ -43,7 +52,6 @@ export class FileController {
     @Body() filesUploadDTO: filesUploadDataDTO,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    debugger;
     const filesData = {
       ...filesUploadDTO,
       filesData: files.map((file) => {
@@ -65,6 +73,10 @@ export class FileController {
     return res;
   }
 
+
+  @ApiOperation({ summary: 'Get all files' })
+  @ApiResponse({ status: 200, type: FileDTO, isArray: true })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('getAll')
   async findAll() {
     const res = await firstValueFrom(
@@ -76,6 +88,9 @@ export class FileController {
     return res;
   }
 
+  @ApiOperation({ summary: 'Get file by id' })
+  @ApiResponse({ status: 200, type: FileDTO })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('get/:id')
   async findOne(@Param('id') fileId: number) {
     const res = await firstValueFrom(
@@ -120,6 +135,9 @@ export class FileController {
     // response.send(res);
   }
 
+  @ApiOperation({ summary: 'Delete file by id' })
+  @ApiResponse({ status: 200, description: 'Success operation' })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Delete('delete/:id')
   async remove(@Param('id') fileId: number) {
     const res = await firstValueFrom(
@@ -131,6 +149,9 @@ export class FileController {
     return res;
   }
 
+  @ApiOperation({ summary: 'Download file fron server by id' })
+  @ApiResponse({ status: 200, description: 'Success operation' })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('download/:id')
   async dowloadFile(@Res() response: Response, @Param('id') fileId: number) {
     const res = await firstValueFrom(

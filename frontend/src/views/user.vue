@@ -1,7 +1,8 @@
 <template>
   <section section class="user__container">
-    <h1 class="user__title">Hello {{ userData.email }}</h1>
-    <p class="user__role">Role: {{ userData.role.value }}</p>
+    <h1 class="user__title">Hello {{ userData.login }}</h1>
+    <p class="user__text">Email: {{ userData.email }}</p>
+    <p class="user__text">Role: {{ userData.role.value }}</p>
     <hr class="user__hr">
     <h2 class="user__title">Change user data</h2>
     <alert />
@@ -105,7 +106,7 @@ export default {
     })
 
     return {
-      userData: computed(() => store.getters['auth/getUserData']),
+      userData: computed(() => store.state.auth.user),
       email,
       login,
       password,

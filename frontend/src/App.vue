@@ -107,7 +107,7 @@ body {
     border-color: $secondTextColor;
   }
 
-  &__role {
+  &__text {
     text-align: center;
   }
 

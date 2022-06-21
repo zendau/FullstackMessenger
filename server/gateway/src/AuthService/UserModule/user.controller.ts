@@ -1,9 +1,9 @@
+import { UserIdDTO } from './dto/id.dto';
+import { GetUserDTO } from './../ResponseDTO/getUser.dto';
 //import { ValidationPipe } from '../../pipes/validation.pipe';
-import { RegisterData } from './dto/register.dto';
+import { RegisterDTO } from './dto/register.dto';
 import {
   Body,
-  CacheInterceptor,
-  CacheKey,
   Controller,
   Get,
   HttpException,
@@ -15,22 +15,22 @@ import {
   Res,
   UseGuards,
   UseInterceptors,
-  UsePipes,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Response, Request } from 'express';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 import { firstValueFrom } from 'rxjs';
-import { LoginData } from './dto/login.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { HttpErrorDTO } from '../dto/httpError.dto';
+import { LoginDTO } from './dto/login.dto';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiCookieAuth } from '@nestjs/swagger';
+import { HttpErrorDTO } from '../ResponseDTO/httpError.dto';
 
-import IConfirmData from './interfaces/IConfirmData'
+import { IConfirmData } from './interfaces/IConfirmData'
 import { EditData } from './dto/edit.dto';
 
 import HttpCacheInterceptor from '../../Cache/HttpCacheInterceptor'
 import HttpClearCacheInterceptor from '../../Cache/clearCache'
+import { authSuccessDTO } from '../ResponseDTO/authSuccess.dto';
 
 @ApiTags('Auth microservice - User controller')
 @Controller('user')
@@ -38,19 +38,17 @@ export class UserController {
   constructor(@Inject('AUTH_SERVICE') private authServiceClient: ClientProxy) { }
 
   @ApiOperation({ summary: 'Register new user' })
-  @ApiResponse({ status: 200, type: RegisterData })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @ApiResponse({ status: 201, type: authSuccessDTO })
+  @ApiResponse({ status: 400, description: 'Wrong register', type: HttpErrorDTO })
   //@UsePipes(ValidationPipe)
   @Post('register')
   async register(
-    @Body() authBody: RegisterData,
+    @Body() authBody: RegisterDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log(authBody);
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/register', authBody),
     );
-    console.log(resData);
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
     }
@@ -60,12 +58,12 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Login user' })
-  @ApiResponse({ status: 200, type: LoginData })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @ApiResponse({ status: 200, type: authSuccessDTO })
+  @ApiResponse({ status: 400, description: 'Wrong auth', type: HttpErrorDTO })
   //@UsePipes(ValidationPipe)
   @Post('login')
   async login(
-    @Body() authBody: LoginData,
+    @Body() authBody: LoginDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
     const resData = await firstValueFrom(
@@ -80,6 +78,10 @@ export class UserController {
     return resData;
   }
 
+  @ApiCookieAuth('auth-cookie')
+  @ApiOperation({ summary: 'Refresh JWT access' })
+  @ApiResponse({ status: 200, type: authSuccessDTO })
+  @ApiResponse({ status: 400, description: 'wrong auth-cookue', type: HttpErrorDTO })
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   async refresh(
@@ -100,6 +102,9 @@ export class UserController {
   }
 
   @Get('logout')
+  @ApiOperation({ summary: 'logout user' })
+  @ApiResponse({ status: 200, description: 'success logout' })
+  @ApiResponse({ status: 400, description: 'wrong auth-cookie', type: HttpErrorDTO })
   async logout(
     @Req() request: Request,
     @Res({ passthrough: true }) res: Response,
@@ -119,9 +124,13 @@ export class UserController {
     return true;
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtRefreshGuard)
+  @ApiOperation({ summary: 'get all users' })
+  @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('all')
-  async getAllUsers(@Req() request: Request,) {
+  async getAllUsers() {
 
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/all', ''),
@@ -133,7 +142,11 @@ export class UserController {
     return resData;
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'get user by id' })
+  @ApiResponse({ status: 200, type: GetUserDTO  })
+  @ApiResponse({ status: 400, description: 'user not found', type: HttpErrorDTO })
   //@UseGuards(JwtRefreshGuard)
   @Get('getById/:id')
   @UseInterceptors(HttpCacheInterceptor)
@@ -149,14 +162,16 @@ export class UserController {
     return resData;
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(HttpClearCacheInterceptor)
+  @ApiOperation({ summary: 'set banned status for user by id' })
+  @ApiResponse({ status: 200, description: 'Success operation'  })
+  @ApiResponse({ status: 400, description: 'user not found', type: HttpErrorDTO })
   @Patch('blockUser')
-  async blockUser(@Body() userData: {
-    userId: number
-  }) {
+  async blockUser(@Body() userData: UserIdDTO) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('user/blockUser', userData.userId),
+      this.authServiceClient.send('user/blockUser', userData.id),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -165,12 +180,14 @@ export class UserController {
     return resData;
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'set activate status for user by id' })
+  @ApiResponse({ status: 200, description: 'Success operation'  })
+  @ApiResponse({ status: 400, description: 'user not found', type: HttpErrorDTO })
   @Patch('unBlockUser')
-  async unBlockUser(@Body() userData: {
-    userId: number
-  }) {
+  async unBlockUser(@Body() userData: UserIdDTO) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('user/unBlockUser', userData.userId),
+      this.authServiceClient.send('user/unBlockUser', userData.id),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -179,6 +196,9 @@ export class UserController {
     return resData;
   }
 
+  @ApiOperation({ summary: 'register confirm code' })
+  @ApiResponse({ status: 200, description: 'true register confirm code'  })
+  @ApiResponse({ status: 400, description: 'false register confirm code', })
   @Post('setConfirmCode')
   async getCodeEditData(@Body() confirmData: IConfirmData) {
     const resData = await firstValueFrom(
@@ -191,7 +211,12 @@ export class UserController {
     return resData;
   }
 
+
+  @ApiBearerAuth()
   @Patch('editData')
+  @ApiOperation({ summary: 'edit user data' })
+  @ApiResponse({ status: 200, description: 'Success operation' })
+  @ApiResponse({ status: 400, description: 'user not found', type: HttpErrorDTO })
   async editUserData(
     @Res({ passthrough: true }) res: Response,
     @Body() editData: EditData) {
@@ -206,6 +231,9 @@ export class UserController {
   }
 
   @Patch('resetPassword')
+  @ApiOperation({ summary: 'reset user password' })
+  @ApiResponse({ status: 200, description: 'Success operation, new password send to user email' })
+  @ApiResponse({ status: 400, description: 'user not found', type: HttpErrorDTO })
   async resetUserPassword(
     @Res({ passthrough: true }) res: Response,
     @Body() resetData:
@@ -222,19 +250,6 @@ export class UserController {
     }
 
     res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true });
-    return resData;
-  }
-
-
-  @Get('test')
-  async test() {
-    const resData = await firstValueFrom(
-      this.authServiceClient.send('user/test', ''),
-    );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
-
     return resData;
   }
 }

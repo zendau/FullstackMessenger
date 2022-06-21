@@ -187,12 +187,5 @@ export const auth = {
             state.message.type = alert.success
         }
     },
-    getters: {
-        getUserData(state) {
-            return state.user
-        },
-        getAlertMessage(state) {
-            return state.message
-        }
-    }
+    getters: {}
 };

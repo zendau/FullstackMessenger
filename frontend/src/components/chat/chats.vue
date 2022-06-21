@@ -26,7 +26,7 @@ export default {
 
     const isShowMobileMessages = inject('isShowMobileMessages')
 
-    const chatsData = computed(() => store.getters['chat/getChats']);
+    const chatsData = computed(() => store.state.chat.chats);
 
     return {
       isShowMobileMessages,

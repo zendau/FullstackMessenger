@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, Min } from 'class-validator';
 
-export class IConfirmData {
+export class UserIdDTO {
   @ApiProperty({
-    example: 'root@gmail.com',
-    description: 'user email',
+    example: '1',
+    description: 'User id',
     required: true,
   })
   @Min(1)
   @IsNumber()
-  email: string;
+  id: number;
 }

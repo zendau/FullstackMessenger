@@ -26,7 +26,7 @@ export default {
     const messages = computed(() => store.state.chat.messages);
     const scrollEnd = ref(null);
 
-    const userData = computed(() => store.getters['auth/getUserData'])
+    const userData = computed(() => store.state.auth.user)
 
     const route = useRoute();
 
@@ -40,7 +40,7 @@ export default {
       store.commit('chat/removeUserFromGroup', userId)
     });
 
-    const message = computed(() => store.getters['chat/getMessageData']);
+    const message = computed(() => store.state.chat.message);
     //const isLoadedMessages = ref(false);
 
     const chatId = computed(() => route.params.id);

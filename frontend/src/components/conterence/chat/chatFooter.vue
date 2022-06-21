@@ -28,7 +28,7 @@ export default {
     const socket = inject('socket')
     const store = useStore();
 
-    const userData = computed(() => store.getters["auth/getUserData"]);
+    const userData = computed(() => store.state.auth.user);
 
 
     const userLogin = userData.value.login;
