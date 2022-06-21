@@ -1,4 +1,4 @@
-import { RolesGuard } from './../../AuthService/guards/roles.guard';
+import RoleGuard from './../../AuthService/guards/roles.guard';
 import { HttpErrorDTO } from './../../AuthService/ResponseDTO/httpError.dto';
 import {
   Controller,
@@ -18,7 +18,6 @@ import { roomDTO } from './dto/room.dto';
 import { editRoomDTO } from './dto/editRoom.dto';
 import { JwtAuthGuard } from '../../AuthService/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/AuthService/decorators/roles.decorator';
 import { Role } from 'src/AuthService/enum/role.enum';
 
 @ApiBearerAuth()
@@ -44,9 +43,10 @@ export class RoomController {
   @ApiOperation({ summary: 'Get all conference rooms' })
   @ApiResponse({ status: 200, type: editRoomDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @Roles(Role.Admin)
+  // @UseGuards(RolesGuard)
+  @UseGuards(RoleGuard(Role.Admin))
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.User)
-  @UseGuards(RolesGuard)
   @Get('getAll')
   async findAll() {
     const res = await firstValueFrom(
