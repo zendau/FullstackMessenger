@@ -3,7 +3,6 @@ import * as fs from 'fs';
 
 export default (req, file, cb) => {
   let path = req.body.path;
-  debugger;
   if (path.charAt(0) !== '/') {
     path = '/' + path;
   }

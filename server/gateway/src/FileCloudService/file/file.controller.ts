@@ -28,6 +28,7 @@ import { Response } from 'express';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
 import { FileDTO } from './dto/file.dto';
+import { fileEditDataDTO } from './dto/filesEditData.dto';
 
 @ApiBearerAuth()
 @ApiTags('FileCloud microservice - File controller')
@@ -102,9 +103,12 @@ export class FileController {
     return res;
   }
 
+  @ApiOperation({ summary: 'Edit files by id' })
+  @ApiResponse({ status: 200, description: 'Success operation' })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Put('edit')
   @UseInterceptors(
-    FileInterceptor('file', {
+    FilesInterceptor('files', 10, {
       storage: diskStorage({
         destination: destinationStorage,
         filename: filenameStorage,
@@ -112,27 +116,29 @@ export class FileController {
     }),
   )
   async update(
-    @Body() updateFileDto: filesUploadDataDTO,
-    @UploadedFile() file: Express.Multer.File,
+    @Body() updateFileDto: fileEditDataDTO,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    // const fileData = {
-    //   ...updateFileDto,
-    //   fileName: file.originalname,
-    //   fileTempName: file.filename,
-    //   size: file.size,
-    //   mimetype: file.mimetype,
-    // };
-    // const res = await this.fileService.update(fileData).catch((err) => {
-    //   console.log(err);
-    //   const errorMessage =
-    //     err.errno === 1452 ? 'foulderId is not found' : err.sqlMessage;
-    //   response.status(HttpStatus.BAD_REQUEST).send({
-    //     status: false,
-    //     message: errorMessage,
-    //     httpCode: HttpStatus.BAD_REQUEST,
-    //   });
-    // });
-    // response.send(res);
+   
+    const filesData = {
+      ...updateFileDto,
+      filesData: files.map((file) => {
+        return {
+          fileName: file.originalname,
+          fileTempName: file.filename,
+          size: file.size,
+          mimetype: file.mimetype,
+        };
+      }),
+    };
+    console.log('files', filesData)
+    const res = await firstValueFrom(
+      this.fileServiceClient.send('file/edit', filesData),
+    );
+    if (res.status === false) {
+      throw new HttpException(res.message, res.httpCode);
+    }
+    return res;
   }
 
   @ApiOperation({ summary: 'Delete file by id' })

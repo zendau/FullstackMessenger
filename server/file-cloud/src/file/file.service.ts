@@ -35,7 +35,6 @@ export class FileService {
   }
 
   async getAll() {
-    debugger;
     return await this.fileRepository
       .createQueryBuilder('file')
       .innerJoinAndSelect('file.foulder', 'foulder')
@@ -59,8 +58,51 @@ export class FileService {
     return res;
   }
 
-  async update(updateFileDTO: IFiles) {
-    debugger;
+  async update(updateFileDTO: any) {
+    try {
+      const filesId = JSON.parse(updateFileDTO.filesId);
+      const fileData = updateFileDTO.filesData;
+
+      if (filesId.length !== fileData.length) {
+        throw new Error();
+      }
+
+      await Promise.all(
+        filesId.map(async (fileId, index) => {
+          const res = await this.fileRepository
+            .createQueryBuilder()
+            .update()
+            .set({
+              fileName: fileData[index].fileName,
+              fileTempName: fileData[index].fileTempName,
+              mimetype: fileData[index].mimetype,
+              size: fileData[index].size,
+            })
+            .where('id = :fileId', { fileId })
+            .execute();
+          if (!!res.affected === false) throw new Error();
+          return true;
+        }),
+      );
+      return true;
+    } catch (e) {
+      updateFileDTO.filesData.forEach((file) => {
+        this.removeFromStorage({
+          fileTempName: file.fileTempName,
+          foulder: {
+            path: updateFileDTO.path,
+          },
+        });
+      });
+
+      return {
+        status: false,
+        message: 'Invalid creditans',
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    return true;
     // const file = await this.getById(updateFileDTO.id);
     // if (file instanceof File) {
     //   const error = this.removeFromStorage(file);
