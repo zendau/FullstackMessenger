@@ -2,7 +2,7 @@
   <div class="video__container" :class="{
     'video__container--active': isActive,
     'video__container--admin': isAdmin
-  }">
+  }" @click="toFullScreen">
     <div class="video__info">
       <span class="mute">
         <i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'" />
@@ -25,16 +25,29 @@ export default {
   setup(props) {
 
     const media = ref(null)
-
     const placeholder = ref(false)
+    const isMainFrame = ref(false)
 
     onUpdated(() => {
       mutedAudio()
     })
 
     function mutedAudio() {
-      media.value.muted = props.isMuted
+      console.log('updated')
+      debugger
+      if (isMainFrame.value) {
+        media.value.muted = true
+      } else {
+        media.value.muted = props.isMuted
+      }
     }
+
+    function muteYourSelf() {
+      isMainFrame.value = true
+      media.value.muted = true
+    }
+
+
 
     watch(() => props.isPauseVideo, (newStatus) => {
       console.log(props.isPauseVideo)
@@ -55,11 +68,26 @@ export default {
       })
     }
 
+    function toFullScreen() {
+      if (media.value.requestFullscreen) {
+        media.value.requestFullscreen();
+      } else if (media.value.mozRequestFullScreen) {
+        media.value.mozRequestFullScreen();
+      } else if (media.value.webkitRequestFullscreen) {
+        media.value.webkitRequestFullscreen();
+      } else if (media.value.msRequestFullscreen) {
+        media.value.msRequestFullscreen();
+      }
+    }
+
     return {
-      media,
+      toFullScreen,
+      muteYourSelf,
+      isMainFrame,
       mutedAudio,
+      setStream,
       placeholder,
-      setStream
+      media,
     }
 
   }

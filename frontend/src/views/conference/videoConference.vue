@@ -1,6 +1,6 @@
 <template>
   <video-container-vue v-for='user in roomUsers' :key='user.userId' :peerId="user.peerId" :isMuted="user.mute"
-    :userName='user.userLogin' :isPauseVideo="user.pause" :ref="setItemRef" />
+    :userName='user.userLogin' :isPauseVideo="user.pause" :ref="setItemRef"  />
 </template>
 
 <script>
@@ -169,6 +169,7 @@ export default {
       containersRefs.forEach(item => {
         if (item.peerId === peerId.value) {
           item.setStream(stream)
+          item.muteYourSelf()
         }
       })
 

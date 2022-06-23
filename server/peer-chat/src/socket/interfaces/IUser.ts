@@ -5,4 +5,5 @@ export default interface IUser {
   userId: string;
   mute?: boolean;
   pause?: boolean;
+  isMainFrame?: boolean;
 }

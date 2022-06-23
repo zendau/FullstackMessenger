@@ -11,6 +11,8 @@ import {
   HttpException,
   Inject,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
@@ -29,6 +31,7 @@ export class RoomController {
   @ApiOperation({ summary: 'Register new conference room' })
   @ApiResponse({ status: 200, type: editRoomDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Post('add')
   async create(@Body() createRoomDto: roomDTO) {
     const res = await firstValueFrom(

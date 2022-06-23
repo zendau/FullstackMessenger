@@ -1,7 +1,7 @@
 
 <template>
   <section class="main-container">
-    <alert v-if="mediaError"/>
+    <alert v-if="mediaError" />
     <div v-else class="conference-container" :class="{ 'conference-container--audio': !roomData.type }">
       <router-view />
     </div>
@@ -52,8 +52,7 @@ export default {
 
     onMounted(async () => {
       store.dispatch('conference/getConferenceData', roomId)
-      document.querySelector("#app")
-       document.querySelector("#app").classList.add('conference-grid')
+      document.querySelector("#app").classList.add('conference-grid')
     })
 
     onUnmounted(() => {
