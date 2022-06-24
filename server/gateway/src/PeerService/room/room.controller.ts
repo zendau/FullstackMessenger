@@ -48,7 +48,7 @@ export class RoomController {
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   // @Roles(Role.Admin)
   // @UseGuards(RolesGuard)
-  @UseGuards(RoleGuard(Role.Admin))
+  //@UseGuards(RoleGuard(Role.Admin))
   @UseGuards(JwtAuthGuard)
   @Get('getAll')
   async findAll() {

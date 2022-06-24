@@ -7,7 +7,6 @@ export class SocketService {
 
   addUser(user: IUser) {
     this.users.push(user);
-    console.log('pushed user', this.users);
   }
 
   getRoomUsers(room) {

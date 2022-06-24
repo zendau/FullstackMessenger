@@ -1,6 +1,8 @@
 <template>
   <video-container-vue v-for='user in roomUsers' :key='user.userId' :peerId="user.peerId" :isMuted="user.mute"
-    :userName='user.userLogin' :isPauseVideo="user.pause" :ref="setItemRef"  />
+    :userName='user.userLogin' :isPauseVideo="user.pause" :ref="setItemRef" />
+  <button @click="test">test</button>
+  <button @click="test2">test2</button>
 </template>
 
 <script>
@@ -15,6 +17,9 @@ import { useStore } from 'vuex'
 export default {
   components: { videoContainerVue },
   setup() {
+
+    const testRef = ref(null)
+
     // ==== vars ==== //
 
     const mediaError = inject('mediaError')
@@ -26,7 +31,6 @@ export default {
 
     // room data
     const roomUsers = ref([])
-
 
     // user data
     const roomId = route.params.id
@@ -40,8 +44,10 @@ export default {
     const isMuted = inject('isMuted')
     const isPauseVideo = inject('isPauseVideo')
 
+    const testARr = []
 
     let mainStream = null
+    let screenStream = null
     const childStream = []
 
 
@@ -173,6 +179,10 @@ export default {
         }
       })
 
+      stream.addEventListener('addtrack', (event) => {
+        console.log(`New ${event.track.kind} track added`);
+      });
+
     }).catch(() => {
       mediaError.value = true
       store.commit('auth/setErrorMessage', 'Could not start video source')
@@ -181,7 +191,7 @@ export default {
 
     myPeer.on('call', call => {
       console.log("answer")
-
+      testARr.push(call)
       getUserMedia({
         audio: true,
         video: { aspectRatio: 16 / 9 }
@@ -212,7 +222,7 @@ export default {
     function connectToNewUser(userId, stream) {
       console.log('conntected to new user. Call to ' + userId, myPeer, stream, roomUsers.value)
       const call = myPeer.call(userId, stream)
-
+      testARr.push(call);
 
       call.on('stream', userVideoStream => {
         console.log('connectToNewUser audio stream')
@@ -229,9 +239,58 @@ export default {
       })
     }
 
+    function test() {
+
+      navigator.mediaDevices.getDisplayMedia()
+        .then((stream) => {
+
+          screenStream = stream
+          let videoTrack = screenStream.getVideoTracks()[0];
+          console.log('testsetst', testARr, peerId.value, mainStream)
+          testARr.forEach(asd => {
+            let sender = asd.peerConnection.getSenders().find(function (s) {
+              return s.track.kind == 'video';
+            })
+            sender.replaceTrack(videoTrack)
+
+            containersRefs.forEach(item => {
+              if (item.peerId === peerId.value) {
+                item.setStream(screenStream)
+              }
+            })
+          })
+
+
+        })
+        .catch((e) => {
+          console.log("stream error", e)
+        })
+    }
+
+    function test2() {
+      let videoTrack = mainStream.getVideoTracks()[0];
+      let sender = testARr[0].peerConnection.getSenders().find(function (s) {
+        return s.track.kind == 'video';
+      })
+      sender.replaceTrack(videoTrack)
+
+      containersRefs.forEach(item => {
+        if (item.peerId === peerId.value) {
+          item.setStream(mainStream)
+        }
+      })
+
+      screenStream.getTracks().forEach(function (track) {
+        track.stop();
+      });
+    }
+
     return {
       roomUsers,
-      setItemRef
+      setItemRef,
+      test,
+      test2,
+      testRef
     }
   }
 }
