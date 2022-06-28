@@ -1,33 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  HttpStatus,
-  Res,
-  UseInterceptors,
-  UploadedFile,
-  Put,
-  UploadedFiles,
-} from '@nestjs/common';
+import { Controller, HttpStatus } from '@nestjs/common';
 import { FileService } from './file.service';
-import { filesUploadDataDTO } from './dto/filesUploadData.dto';
-import { Response } from 'express';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 
-import filenameStorage from 'src/multer/filename.storage';
-import destinationStorage from 'src/multer/destination.storage';
-import { File } from './entities/file.entity';
-
-import * as fs from 'fs';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('file')
 export class FileController {
-  constructor(private readonly fileService: FileService) { }
+  constructor(private readonly fileService: FileService) {}
 
   @MessagePattern('file/add')
   async create(@Payload() filesData) {

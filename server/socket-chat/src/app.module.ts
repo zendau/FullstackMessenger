@@ -7,7 +7,10 @@ import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,

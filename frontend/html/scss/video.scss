@@ -1,0 +1,70 @@
+$menuColor: #0e1621;
+$textColor: rgba(255, 255, 255, 0.84);
+$secondTextColor: #aaaaaa;
+$itemColor: #202b36;
+$btnChat: #3a3a3d;
+$btnHover: #464649;
+$bgcColor: #17212b;
+$dangerColor: #e33741;
+$messageColor: #182533;
+$activeColor: #5eb5f7;
+$linkColor: #59b7ff;
+
+
+.video {
+    &__container {
+        display: block;
+        position: relative;
+        aspect-ratio: 16/9;
+        background-color: $messageColor;
+        border-radius: 3px;
+        max-width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &__info {
+        position: absolute;
+        display: flex;
+        bottom: 10px;
+        left: 5px;
+        color: $textColor;
+    }
+
+    &__placeholder {
+        position: absolute;
+        font-size: 70px;
+        color: $textColor;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+video {
+    width: 100%;
+    height: 100%;
+}
+
+/* video::before {
+    float: left;
+    padding-top: 56.25%;
+    content: '';
+}
+
+video::after {
+    display: block;
+    content: '';
+    clear: both;
+} */
+
+@media (max-width: 730px) {
+
+    .video {
+        &__container {
+          margin-bottom: 5px;
+          top: 0;
+          transform: none;
+        }
+    }
+}

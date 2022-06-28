@@ -16,12 +16,14 @@ import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env']
+    }),
     CacheModule.register<ClientOpts>({
       store: redisStore,
 
-      host: 'localhost',
-      port: 6379,
+      host: process.env.REDIS_HOST,
+      port: parseInt(process.env.REDIS_PORT),
       ttl: 480
     }),
     ClientsModule.register([
@@ -29,7 +31,9 @@ import * as redisStore from 'cache-manager-redis-store';
         name: 'PEER_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://user:root@localhost:5672'],
+          urls: [
+            `amqp://${process.env.RABBITMQ_LOGIN}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`,
+          ],
           queue: 'peer_queue',
           queueOptions: {
             durable: false,
@@ -40,7 +44,9 @@ import * as redisStore from 'cache-manager-redis-store';
         name: 'CHAT_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://user:root@localhost:5672'],
+          urls: [
+            `amqp://${process.env.RABBITMQ_LOGIN}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`,
+          ],
           queue: 'chat_queue',
           queueOptions: {
             durable: false,
@@ -51,19 +57,10 @@ import * as redisStore from 'cache-manager-redis-store';
         name: 'FILE_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://user:root@localhost:5672'],
+          urls: [
+            `amqp://${process.env.RABBITMQ_LOGIN}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`,
+          ],
           queue: 'file_queue',
-          queueOptions: {
-            durable: false,
-          },
-        },
-      },
-      {
-        name: 'PEER_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://user:root@localhost:5672'],
-          queue: 'peer_queue',
           queueOptions: {
             durable: false,
           },
@@ -73,7 +70,9 @@ import * as redisStore from 'cache-manager-redis-store';
         name: 'AUTH_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://user:root@localhost:5672'],
+          urls: [
+            `amqp://${process.env.RABBITMQ_LOGIN}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`,
+          ],
           queue: 'auth_queue',
           queueOptions: {
             durable: false,

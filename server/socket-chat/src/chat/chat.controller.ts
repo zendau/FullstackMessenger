@@ -68,7 +68,7 @@ export class ChatController {
     const res = await this.chatService.getContacts().catch((err) => {
       return {
         status: false,
-        message: err.sqlMessage,
+        message: err,
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });

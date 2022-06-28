@@ -7,6 +7,7 @@ import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
 
 @WebSocketGateway(81, {
+  path: '/peerChat',
   cors: {
     origin: '*',
   },

@@ -154,7 +154,7 @@ export default {
     const myPeer = new Peer({
       path: '/peer',
       host: '/',
-      port: '9000'
+      port: process.env.VUE_APP_PEER_PORT
     })
 
 

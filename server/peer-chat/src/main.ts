@@ -4,6 +4,8 @@ import { AppModule } from './app.module';
 import { PeerServer } from 'peer';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
+import * as fs from 'fs';
+
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
@@ -22,6 +24,10 @@ async function bootstrap() {
   );
   await app.listen();
 
-  PeerServer({ port: 9000, path: '/peer' });
+  PeerServer({
+    port: 9000,
+    path: '/peer',
+    proxied: true,
+  });
 }
 bootstrap();

@@ -49,7 +49,6 @@ export class MessageService {
   }
 
   async getAllByChat(chatId: string, page: number, limit: number) {
-    // TODO: Пагинация
     const skip = page * limit;
 
     const messages = await this.messageRepository

@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { FoulderModule } from './foulder/foulder.module';
 import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,
@@ -22,7 +22,5 @@ import { FileModule } from './file/file.module';
     FoulderModule,
     FileModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

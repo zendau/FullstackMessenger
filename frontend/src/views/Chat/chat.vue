@@ -41,7 +41,7 @@ export default {
     const store = useStore();
     const userData = computed(() => store.state.auth.user);
 
-    const socket = io("http://localhost:80");
+    const socket = io(process.env.VUE_APP_SOCKET_HOST, { path: '/socketChat'});
     provide("socket", socket);
 
     const socketConnected = ref(false);

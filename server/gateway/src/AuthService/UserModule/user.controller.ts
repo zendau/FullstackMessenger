@@ -125,7 +125,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtRefreshGuard)
+  //@UseGuards(JwtRefreshGuard)
   @ApiOperation({ summary: 'get all users' })
   @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })

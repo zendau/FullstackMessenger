@@ -19,7 +19,7 @@ export default {
 
     console.log('auth main layout')
 
-    const socket = io('http://localhost:81');
+    const socket = io(process.env.VUE_APP_SOCKET_HOST, { path: '/peerChat'});
     provide('socket', socket)
 
     const isConferenceAdmin = ref(false)

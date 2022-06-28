@@ -15,6 +15,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
 @WebSocketGateway(80, {
+  path: '/socketChat',
   cors: {
     origin: '*',
   },
@@ -106,8 +107,6 @@ export class SocketGateway {
       },
       payload.files,
     );
-    // TODO : Удалить запрос на получение данныъ о файле и добавить в микросервисе запрос на получение данных о файлах из другого микросервиса
-    // TEMP AREA
 
     if (res?.media) {
       res.files = await Promise.all(
@@ -124,7 +123,6 @@ export class SocketGateway {
       );
       console.log('MESSAGE', res.files);
     }
-    // TEMP AREA
     if ('chat' in res) {
       console.log('SEND', payload.chatId);
       this.server.to(payload.chatId).emit('newMessage', {

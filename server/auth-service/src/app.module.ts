@@ -4,18 +4,17 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from './token/token.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RoleModule } from './role/role.module';
 import { ConfirmModule } from './access/access.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
   imports: [
-    UsersModule,
-    TokenModule,
-    ConfirmModule,
     ConfigModule.forRoot(
       {
+        isGlobal: true,
+        envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
         validationSchema: Joi.object({
           DATABASE_HOST: Joi.string().required(),
           DATABASE_PORT: Joi.number().required(),
@@ -30,10 +29,10 @@ import * as Joi from '@hapi/joi';
           RABBITMQ_PORT: Joi.number().required(),
           BCRYPT_SALT: Joi.number().required(),
           BASE_USER_ROLE_ID: Joi.number().required(),
-          NODEMAILER_HOST: Joi.string().required(),
-          NODEMAILER_PORT: Joi.number().required(),
-          NODEMAILER_EMAIL: Joi.string().required(),
-          NODEMAILER_PASSWORD: Joi.string().required(),
+          MAILER_HOST: Joi.string().required(),
+          MAILER_PORT: Joi.number().required(),
+          MAILER_EMAIL: Joi.string().required(),
+          MAILER_PASSWORD: Joi.string().required(),
           REDIS_HOST: Joi.string().required(),
           REDIS_PORT: Joi.number().required(),
         })
@@ -47,11 +46,20 @@ import * as Joi from '@hapi/joi';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
+      dropSchema: false,
       synchronize: true,
+      migrationsRun: true,
+      migrations: ['dist/**/db/migrations/*{.ts,.js}'],
+      cli: {
+        migrationsDir: 'db/migrations'
+      }
     }),
+    UsersModule,
+    TokenModule,
+    ConfirmModule,
     RoleModule,
     ConfirmModule,
   ],
-  controllers: [UsersController, RoleController]
+  controllers: [UsersController, RoleController],
 })
 export class AppModule {}
