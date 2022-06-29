@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RoleModule } from './role/role.module';
 import { ConfirmModule } from './access/access.module';
 import * as Joi from '@hapi/joi';
+import config from './ormconfig';
 
 @Module({
   imports: [
@@ -38,22 +39,7 @@ import * as Joi from '@hapi/joi';
         })
       }
     ),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT),
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
-      autoLoadEntities: true,
-      dropSchema: false,
-      synchronize: true,
-      migrationsRun: true,
-      migrations: ['dist/**/db/migrations/*{.ts,.js}'],
-      cli: {
-        migrationsDir: 'db/migrations'
-      }
-    }),
+    TypeOrmModule.forRoot(config),
     UsersModule,
     TokenModule,
     ConfirmModule,
