@@ -1,9 +1,11 @@
 <template>
   <div class="chat__contacts" :class="{'chat__contacts--active': !isShowMobileMessages}">
+    <p class="empty_message" v-if="chatsData.length === 0">No chats</p>
     <ul class="contacts__list">
       <li class="contact__item" v-for="chat in chatsData" :key="chat.id">
         <router-link
           :to="`/chat/${chat.id}`"
+          @click="isShowMobileMessages = true"
         >
           <i class="bi bi-people" v-if="chat.adminId"></i>
           <i class="bi bi-person" v-else></i>

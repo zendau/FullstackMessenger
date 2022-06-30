@@ -1,5 +1,5 @@
 <template>
-    <header>
+    <header class="conference__navbar">
         <nav class="nav__menu" :class="{ 'nav__menu--active': isShowMobileNavbar }">
             <ul v-if="authStatus">
                 <li v-for='(item, index) in navbarAuthList.items' :key="index">
@@ -17,7 +17,7 @@
             <a v-if="authStatus" @click="logout" href="#">Exit</a>
         </nav>
         <button class="nav__btn" @click="isShowMobileNavbar = !isShowMobileNavbar">
-            <input type="checkbox" name="" id="" />
+            <input type="checkbox" name="" id="" :checked="isShowMobileNavbar" />
             <div class="hamburger-lines">
                 <span class="line line1"></span>
                 <span class="line line2"></span>
@@ -28,18 +28,21 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { useStore } from 'vuex'
 import NavbarConfAdmin from './navbarConfAdmin.vue'
 
 import { Role } from '../../router/roles'
 import AdminMenu from './adminMenu.vue'
+import { useRoute } from 'vue-router'
 
 export default {
     components: { NavbarConfAdmin, AdminMenu },
     setup() {
         const store = useStore();
+        const route = useRoute()
+
         const navbarAuthList = {
             items: [
                 {
@@ -80,6 +83,15 @@ export default {
 
         const isAdmin = computed(() => store.state.auth.user.role.accessLevel === Role.Admin)
         console.log('isAdmin', isAdmin.value)
+
+        
+
+
+        watch(() => route.path, () => {
+            console.log('isShow', isShowMobileNavbar.value)
+            isShowMobileNavbar.value = false
+            console.log('isShow', isShowMobileNavbar.value)
+        })
 
         function logout() {
             store.dispatch('auth/logout')
@@ -257,12 +269,13 @@ header {
                 align-items: center;
                 width: 100%;
 
-                li, div {
+                li,
+                div {
                     margin: 4px 0;
                     font-size: 20px !important;
                 }
 
-          
+
             }
 
             a {

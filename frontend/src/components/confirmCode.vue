@@ -1,6 +1,6 @@
 <template>
   <form class="user__form" @submit.prevent="onSubmitForm">
-    <form-input id="code" title="Confirm code" type="text" v-model.trim="confirmCode" />
+    <form-input id="code" title="Confirm code" type="text" v-model="confirmCode" />
     <input type="submit" value="Confirm" />
   </form>
 </template>

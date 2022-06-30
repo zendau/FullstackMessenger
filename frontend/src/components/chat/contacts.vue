@@ -3,6 +3,7 @@
     <button class="btn" @click="groupType = !groupType">
       {{ groupType ? "Close" : "Create group" }}
     </button>
+    <p class="empty_message" v-if="contacts.length === 0">No contacts</p>
     <create-group v-if="groupType" :groupUsers="groupUsers" :adminId="userId" />
     <ul class="contacts__list">
       <li class="contact__item" v-for="user in contacts" :key="user.id" @click="openUserChat(user.id)">

@@ -46,6 +46,12 @@ export default {
     const isPauseVideo = ref(false)
     provide('isPauseVideo', isPauseVideo)
 
+    const isShareScreen = ref(false)
+    provide('isShareScreen', isShareScreen)
+
+
+    const isRecordScreen = ref(false)
+    provide('isRecordScreen', isRecordScreen)
 
     const isConferenceAdmin = inject('isConferenceAdmin')
     const socket = inject('socket')
@@ -210,12 +216,7 @@ export default {
 
 @media (max-width: 960px) {
 
-  header {
-    z-index: 2;
-    height: auto !important;
-    width: 100%;
-    position: absolute;
-  }
+
 
   .main-container {
     max-height: 100vh;
@@ -227,6 +228,13 @@ export default {
       width: 600px;
       margin: 0 auto;
     }
+
+    &__navbar {
+      z-index: 2;
+      height: auto !important;
+      width: 100%;
+      position: absolute;
+    }
   }
 }
 
@@ -234,12 +242,8 @@ export default {
 
   .conference {
 
-    &-container {
-      display: block;
-    }
-
     &__menu {
-      width: 275px;
+      width: 380px;
       margin: 0 auto;
     }
   }

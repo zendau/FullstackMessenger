@@ -120,17 +120,21 @@ export const auth = {
             const accessToken = localStorage.getItem('token')
             let tokenDecode = null
 
-
             try {
                 tokenDecode = jwt_decode(accessToken)
             } catch {
                 const resRefresh = await $api.get('/user/refresh')
+            
+                if (resRefresh.data.statusCode === 401) return
+
                 const accessToken = resRefresh.data.accessToken
                 localStorage.setItem('token', accessToken)
                 tokenDecode = jwt_decode(accessToken)
             } finally {
-                console.log(tokenDecode)
-                commit('authSuccess', tokenDecode)
+                if (tokenDecode !== null) {
+                    commit('authSuccess', tokenDecode)
+                }
+                
             }
         }
     },

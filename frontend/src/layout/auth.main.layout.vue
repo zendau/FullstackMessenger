@@ -17,9 +17,7 @@ export default {
     const store = useStore()
     const router = useRouter()
 
-    console.log('auth main layout')
-
-    const socket = io(process.env.VUE_APP_SOCKET_HOST, { path: '/peerChat'});
+    const socket = io(process.env.VUE_APP_SOCKET_PEER_HOST, { path: '/peerChat'});
     provide('socket', socket)
 
     const isConferenceAdmin = ref(false)

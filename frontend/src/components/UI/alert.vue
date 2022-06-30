@@ -7,12 +7,18 @@
 <script>
 
 import { useStore } from 'vuex'
-import { computed } from '@vue/runtime-core'
+import { computed } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 
 export default {
   setup() {
 
     const store = useStore()
+
+
+    onBeforeRouteLeave(() => {
+      store.commit('auth/clearMessage')
+    })
 
     const message = computed(() => store.state.auth.message)
 

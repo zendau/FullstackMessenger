@@ -161,6 +161,7 @@ video::after {
     &__container {
       margin-bottom: 5px;
       top: 0;
+      z-index: 1;
       transform: none;
     }
   }

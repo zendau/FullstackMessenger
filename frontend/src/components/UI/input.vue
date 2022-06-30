@@ -33,7 +33,7 @@ export default {
   setup(props, context) {
 
     function updateValue(event) {
-      context.emit('update:modelValue', event.target.value);
+      context.emit('update:modelValue', event.target.value.trim());
     }
 
     return {

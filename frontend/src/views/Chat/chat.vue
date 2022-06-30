@@ -99,7 +99,6 @@ export default {
       (value) => {
         if (value) {
           enterToChat(value)
-          isShowMobileMessages.value = true
         }
       },
       { immediate: true }

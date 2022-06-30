@@ -68,6 +68,12 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+.empty_message {
+  text-align: center;
+  color: $textColor;
+  margin-top: 15px;
+}
+
 .btn {
   background-color: $btnChat;
   border: none;
@@ -76,6 +82,10 @@ body {
   padding: 5px 9px;
   cursor: pointer;
   transition: .3s ease;
+
+  i {
+    font-size: 22px;
+  }
 
   &:hover {
     background-color: $btnHover;
@@ -177,6 +187,9 @@ body {
 
 @media (max-width: 720px) {
 
+  .chat__header {
+    font-size: 10px;
+  }
 
   .user {
     &__container {

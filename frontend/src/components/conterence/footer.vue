@@ -13,12 +13,24 @@
             :class="isRecord ? 'bi-stop-circle' : 'bi-record-circle'"></i>{{ isRecord ? 'Stop' :
                 'Record'
             }}</button>
+        <button v-if="type" class="mobile" @click="isRecordScreen = !isRecordScreen"><i class="bi"
+            :class="isRecordScreen ? 'bi-stop-circle' : 'bi-record-circle'"></i>{{ isRecordScreen ? 'Stop' :
+                'Record'
+            }}</button>
+        <button v-if="type" class="mobile" @click="isShareScreen = !isShareScreen"><i class="bi"
+            :class="isShareScreen ? 'bi-tv-fill' : 'bi-tv'"></i>{{ isShareScreen ? 'Stop' :
+                'Show'
+            }}</button>
       </div>
       <div class="menu__conference-data">
         <h3 class="menu__conference-title">{{ conferenceTitle }}</h3>
         <p class="menu__conference-admin">{{ conferenceAdmin }}</p>
       </div>
-      <button class="menu__chat" @click="$emit('showChat')"><i class="bi bi-chat-dots"></i> Chat</button>
+      <div>
+        <button class="menu__chat" @click="$router.push('/conferences')"><i class="bi bi-x-circle-fill"></i>
+          Interrupt</button>
+        <button class="menu__chat" @click="$emit('showChat')"><i class="bi bi-chat-dots"></i> Chat</button>
+      </div>
     </div>
   </footer>
 </template>
@@ -36,12 +48,16 @@ export default {
     const isRecord = inject('isRecord')
     const isMuted = inject('isMuted')
     const isPauseVideo = inject('isPauseVideo')
+    const isShareScreen = inject('isShareScreen')
+    const isRecordScreen = inject('isRecordScreen')
 
 
     return {
       isMuted,
       isRecord,
       isPauseVideo,
+      isShareScreen,
+      isRecordScreen,
       type
     }
 
@@ -107,6 +123,13 @@ footer {
     }
 
     font-size: 14px;
+  }
+}
+
+@media (max-width: 1140px) {
+
+  .mobile {
+    display: none !important;
   }
 }
 </style>

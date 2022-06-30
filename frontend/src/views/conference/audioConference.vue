@@ -222,12 +222,12 @@ export default {
         call.answer(stream)
         console.log('remoteStream', stream)
         //audio.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
-        call.on('stream', userVideoStream => {
+        call.on('stream', userAudiotream => {
           console.log('answer audio stream')
-          tempStreams.push(userVideoStream)
+          tempStreams.push(userAudiotream)
           containersRefs.forEach(item => {
             if (item.peerId === call.peer) {
-              item.setStream(userVideoStream)
+              item.setStream(userAudiotream)
             }
           })
         })
@@ -248,15 +248,14 @@ export default {
       const call = myPeer.call(userId, stream)
 
 
-      call.on('stream', userVideoStream => {
+      call.on('stream', userAudiotream => {
         console.log('connectToNewUser audio stream')
-        tempStreams.push(userVideoStream)
+        tempStreams.push(userAudiotream)
         containersRefs.forEach(item => {
           if (item.peerId === userId) {
-            item.setStream(userVideoStream)
+            item.setStream(userAudiotream)
           }
         })
-        //addAudioStream(audio, userVideoStream)
       })
       call.on('close', () => {
         console.log('CLOSE CONNECT')

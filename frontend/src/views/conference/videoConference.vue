@@ -1,24 +1,23 @@
 <template>
   <video-container-vue v-for='user in roomUsers' :key='user.userId' :peerId="user.peerId" :isMuted="user.mute"
     :userName='user.userLogin' :isPauseVideo="user.pause" :ref="setItemRef" />
-  <button @click="test">test</button>
-  <button @click="test2">test2</button>
 </template>
 
 <script>
 
 import { useRoute } from 'vue-router'
-import { onUnmounted, ref, inject, watch, onBeforeUpdate } from 'vue'
+import { onUnmounted, ref, inject, watch, onBeforeUpdate, reactive } from 'vue'
 import Peer from 'peerjs'
 
 import videoContainerVue from '../../components/conterence/videoContainer.vue'
 import { useStore } from 'vuex'
 
+import { startScreenRecorder, stopScreenRecorder } from './screenRecorder'
+import ScreenShare from './screenShare'
+
 export default {
   components: { videoContainerVue },
   setup() {
-
-    const testRef = ref(null)
 
     // ==== vars ==== //
 
@@ -43,21 +42,23 @@ export default {
 
     const isMuted = inject('isMuted')
     const isPauseVideo = inject('isPauseVideo')
+    const isShareScreen = inject('isShareScreen')
+    const isRecordScreen = inject('isRecordScreen')
 
-    const testARr = []
+    const streams = reactive([])
 
-    let mainStream = null
-    let screenStream = null
+    const mainStream = ref(null)
     const childStream = []
 
 
-    let containersRefs = []
+    let containersRefs = reactive([])
     const setItemRef = el => {
       if (el) {
         containersRefs.push(el)
       }
     }
 
+    const screenShare = new ScreenShare(streams, containersRefs, peerId, mainStream, isShareScreen, store)
     // ==== hooks ==== //
 
     watch([socketConnected, peerConnected], ([socketStatus, peerStatus]) => {
@@ -84,7 +85,7 @@ export default {
       })
       window.removeEventListener('keypress', muteEvent)
       socket.removeAllListeners('getUsers')
-      mainStream?.getTracks().forEach(t => {
+      mainStream?.value.getTracks().forEach(t => {
         t.stop()
       })
       childStream?.forEach(stream => {
@@ -96,7 +97,7 @@ export default {
 
 
     onBeforeUpdate(() => {
-      containersRefs = []
+      containersRefs.length = 0
     })
 
 
@@ -111,8 +112,8 @@ export default {
 
     socket.on('userJoinedRoom', (userId) => {
       console.log('containersRefs', containersRefs)
-      console.log('Connected user with id', userId, mainStream)
-      connectToNewUser(userId, mainStream)
+      console.log('Connected user with id', userId, mainStream.value)
+      connectToNewUser(userId, mainStream.value)
     })
 
     // socket.on('UserLeave', (userId) => {
@@ -148,6 +149,21 @@ export default {
       })
     })
 
+    watch(isShareScreen, (status) => {
+      if (status) {
+        screenShare.startShareScreen()
+      } else {
+        screenShare.stopShareScreen()
+      }
+    })
+
+    watch(isRecordScreen, (status) => {
+      if (status) {
+        startScreenRecorder(isRecordScreen)
+      } else {
+        stopScreenRecorder()
+      }
+    })
 
     // ==== peers ==== //
 
@@ -170,7 +186,7 @@ export default {
       mediaError.value = false
       //localStream.value = stream
       //console.log('localStream',localStream)
-      mainStream = stream
+      mainStream.value = stream
       console.log('localStream', stream) // new - temp    
       containersRefs.forEach(item => {
         if (item.peerId === peerId.value) {
@@ -183,15 +199,16 @@ export default {
         console.log(`New ${event.track.kind} track added`);
       });
 
-    }).catch(() => {
+    }).catch((e) => {
       mediaError.value = true
+      console.log('e',e)
       store.commit('auth/setErrorMessage', 'Could not start video source')
     })
 
 
     myPeer.on('call', call => {
       console.log("answer")
-      testARr.push(call)
+      streams.push(call)
       getUserMedia({
         audio: true,
         video: { aspectRatio: 16 / 9 }
@@ -222,7 +239,7 @@ export default {
     function connectToNewUser(userId, stream) {
       console.log('conntected to new user. Call to ' + userId, myPeer, stream, roomUsers.value)
       const call = myPeer.call(userId, stream)
-      testARr.push(call);
+      streams.push(call);
 
       call.on('stream', userVideoStream => {
         console.log('connectToNewUser audio stream')
@@ -231,66 +248,15 @@ export default {
             item.setStream(userVideoStream)
           }
         })
-        //addAudioStream(audio, userVideoStream)
       })
       call.on('close', () => {
         console.log('CLOSE CONNECT')
-        //audio.remove()
       })
-    }
-
-    function test() {
-
-      navigator.mediaDevices.getDisplayMedia()
-        .then((stream) => {
-
-          screenStream = stream
-          let videoTrack = screenStream.getVideoTracks()[0];
-          console.log('testsetst', testARr, peerId.value, mainStream)
-          testARr.forEach(asd => {
-            let sender = asd.peerConnection.getSenders().find(function (s) {
-              return s.track.kind == 'video';
-            })
-            sender.replaceTrack(videoTrack)
-
-            containersRefs.forEach(item => {
-              if (item.peerId === peerId.value) {
-                item.setStream(screenStream)
-              }
-            })
-          })
-
-
-        })
-        .catch((e) => {
-          console.log("stream error", e)
-        })
-    }
-
-    function test2() {
-      let videoTrack = mainStream.getVideoTracks()[0];
-      let sender = testARr[0].peerConnection.getSenders().find(function (s) {
-        return s.track.kind == 'video';
-      })
-      sender.replaceTrack(videoTrack)
-
-      containersRefs.forEach(item => {
-        if (item.peerId === peerId.value) {
-          item.setStream(mainStream)
-        }
-      })
-
-      screenStream.getTracks().forEach(function (track) {
-        track.stop();
-      });
     }
 
     return {
       roomUsers,
-      setItemRef,
-      test,
-      test2,
-      testRef
+      setItemRef
     }
   }
 }
