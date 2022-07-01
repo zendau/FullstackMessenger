@@ -34,7 +34,6 @@ export default {
 
     function mutedAudio() {
       console.log('updated')
-      debugger
       if (isMainFrame.value) {
         media.value.muted = true
       } else {
@@ -50,12 +49,11 @@ export default {
 
 
     watch(() => props.isPauseVideo, (newStatus) => {
-      console.log(props.isPauseVideo)
       if (newStatus) {
-        media.value.pause()
+        media.value.srcObject.getVideoTracks()[0].enabled = false
         placeholder.value = true
       } else {
-        media.value.play()
+        media.value.srcObject.getVideoTracks()[0].enabled = true
         placeholder.value = false
       }
     })

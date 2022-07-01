@@ -6,14 +6,11 @@
 
 <script>
 
-
 import { useRoute } from 'vue-router'
-import { onUnmounted, ref, inject, watch, onBeforeUpdate, computed } from 'vue'
+import { onUnmounted, ref, inject, watch, onBeforeUpdate, computed, reactive } from 'vue'
 
 import audioContainerVue from '../../components/conterence/audioContainer.vue'
-
-import { saveAs } from 'file-saver';
-//import { MultiStreamRecorder } from 'recordrtc'
+import { startRecordAudio } from './audioRecorder'
 
 import Peer from 'peerjs';
 import { useStore } from 'vuex';
@@ -21,33 +18,28 @@ export default {
   components: { audioContainerVue },
   setup() {
 
-    // ==== vars ==== //
+    // ==== state ==== //
 
-    //const router = useRouter()
     const route = useRoute()
     const store = useStore()
 
-    // room data
     const roomUsers = ref([])
-
-
-    // user data
     const roomId = route.params.id
+    const roomTitle = computed(() => store.state.conference.title)
+
     const userId = ref(null)
     const peerId = ref(null)
+    const peerConnected = ref(false)
 
     const socket = inject('socket', undefined)
     const socketConnected = inject('peerSocketConnected', false)
-    const isRecord = inject('isRecord')
-    const peerConnected = ref(false)
 
-    const roomTitle = computed(() => store.state.conference.title)
+    const isRecord = inject('isRecord')
     const isMuted = inject('isMuted')
 
-
-    let mainStream = null
+    const mainStream = ref(null)
     const childStream = []
-
+    const streams = reactive([])
 
     let containersRefs = []
     const setItemRef = el => {
@@ -56,12 +48,13 @@ export default {
       }
     }
 
+    let mediaRecorder = null
+
     // ==== hooks ==== //
 
     watch([socketConnected, peerConnected], ([socketStatus, peerStatus]) => {
       if (socketStatus && peerStatus) {
         userId.value = socket.id
-        console.log('join to the room')
         socket.emit('join-room', {
           userId: userId.value,
           peerId: peerId.value,
@@ -72,52 +65,20 @@ export default {
       immediate: true
     })
 
-
-    let mediaRecorder = null
-
     watch(isRecord, (newStatus) => {
-      console.log('newStatus', newStatus)
       if (newStatus) {
-        const audioContext = new AudioContext();
-        const dest = audioContext.createMediaStreamDestination();
-
-        audioContext.createMediaStreamSource(mainStream).connect(dest)
-
-        tempStreams.forEach(stream => {
-          audioContext.createMediaStreamSource(stream).connect(dest)
-        })
-
-        const finalStream = dest.stream;
-        mediaRecorder = new MediaRecorder(finalStream);
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' });
-          const date = new Date();
-
-          const dataOptions = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            timezone: 'UTC',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
-          };
-          saveAs(blob, `${roomTitle.value}-${date.toLocaleString("en", dataOptions)}.ogg`)
-        }
-
-        mediaRecorder.ondataavailable = function (e) {
-          chunks.push(e.data);
-        }
-
-        const chunks = [];
-        mediaRecorder.start();
+        mediaRecorder = startRecordAudio(mainStream.value, streams, roomTitle.value)
       } else {
         mediaRecorder.stop();
       }
     })
 
-
-
+    watch(isMuted, () => {
+      socket.emit('userMute', {
+        userId: userId.value,
+        roomId
+      })
+    })
 
     onUnmounted(() => {
       socket.emit('exit-room', {
@@ -126,7 +87,7 @@ export default {
       })
       window.removeEventListener('keypress', muteEvent)
       socket.removeAllListeners('getUsers')
-      mainStream?.getTracks().forEach(t => {
+      mainStream.value.getTracks().forEach(t => {
         t.stop()
       })
       childStream?.forEach(stream => {
@@ -145,25 +106,14 @@ export default {
     // ==== socket ==== //
 
     socket.on('getUsers', (users) => {
-      console.log('users', users);
       roomUsers.value = users
     });
 
 
 
     socket.on('userJoinedRoom', (userId) => {
-      console.log('containersRefs', containersRefs)
-      console.log('Connected user with id', userId, mainStream)
-      connectToNewUser(userId, mainStream)
+      connectToNewUser(userId, mainStream.value)
     })
-
-    // socket.on('UserLeave', (userId) => {
-    //     console.log('disconnect', userId);
-    //     const element = document.getElementById(userId)
-    //     console.log(element)
-    // })
-
-
 
 
     // ==== events ==== //
@@ -171,21 +121,14 @@ export default {
 
     function muteEvent(event) {
       if (event.code === 'KeyM') {
-        console.log('click M', userId.value)
         isMuted.value = !isMuted.value
       }
     }
 
-    watch(isMuted, () => {
-      socket.emit('userMute', {
-        userId: userId.value,
-        roomId
-      })
-    })
 
-    // ==== peers ==== //
+    // ==== peer ==== //
 
-    const myPeer = new Peer({
+    const peerConnect = new Peer({
       path: '/peer',
       host: '/',
       port: process.env.VUE_APP_PEER_PORT
@@ -199,32 +142,19 @@ export default {
     getUserMedia({
       audio: true
     }).then(stream => {
-
-      mainStream = stream
-      console.log('localStream', stream) // new - temp
-      // socket.on('user-connected', userId => {
-      //     // const audio = document.createElement('audio')
-      //     // audio.id = userId;
-      //     // document.body.append(audio)
-      //     console.log('userConnetSOcker', userId)
-      //     //connectToNewUser(userId, stream)
-      // })          
+      mainStream.value = stream
     })
 
 
-    myPeer.on('call', call => {
-      console.log("answer")
+    peerConnect.on('call', call => {
 
       getUserMedia({
         audio: true
       }).then(stream => {
         childStream.push(stream)
         call.answer(stream)
-        console.log('remoteStream', stream)
-        //audio.muted = store.state.users.filter(item => item.id === call.peer)[0].mute
         call.on('stream', userAudiotream => {
-          console.log('answer audio stream')
-          tempStreams.push(userAudiotream)
+          streams.push(userAudiotream)
           containersRefs.forEach(item => {
             if (item.peerId === call.peer) {
               item.setStream(userAudiotream)
@@ -235,31 +165,22 @@ export default {
     }
     )
 
-    myPeer.on('open', id => {
-      console.log('join peer server', id)
+    peerConnect.on('open', id => {
       peerId.value = id
       peerConnected.value = true
     })
 
-    const tempStreams = []
 
     function connectToNewUser(userId, stream) {
-      console.log('conntected to new user. Call to ' + userId, myPeer, stream, roomUsers.value)
-      const call = myPeer.call(userId, stream)
-
+     const call = peerConnect.call(userId, stream)
 
       call.on('stream', userAudiotream => {
-        console.log('connectToNewUser audio stream')
-        tempStreams.push(userAudiotream)
+        streams.push(userAudiotream)
         containersRefs.forEach(item => {
           if (item.peerId === userId) {
             item.setStream(userAudiotream)
           }
         })
-      })
-      call.on('close', () => {
-        console.log('CLOSE CONNECT')
-        //audio.remove()
       })
     }
 

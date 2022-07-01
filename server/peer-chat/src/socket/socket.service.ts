@@ -45,6 +45,8 @@ export class SocketService {
       if (user.userId === id) {
         user.roomId = roomId;
         user.peerId = peerId;
+        user.mute = false;
+        user.pause = false;
       }
     });
   }

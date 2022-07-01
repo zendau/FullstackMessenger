@@ -61,7 +61,6 @@ export default {
         files.value.forEach((file) => {
           formData.append("files", file);
         });
-        // TODO: исправить axios на $api при переносе на микросервисы
 
         const resUpload = await $api.post("file/add", formData);
         filesUpload = resUpload.data;
