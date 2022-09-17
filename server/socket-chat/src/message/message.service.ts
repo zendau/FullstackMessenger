@@ -1,13 +1,14 @@
 import { Media } from './entities/media.entity';
 import { Chat } from './../chat/entities/chat.entity';
 import { ChatService } from './../chat/chat.service';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IMessageDTO } from './dto/message.dto';
 import { IUpdateMessageDTO } from './dto/update-message.dto';
 import { Message } from './entities/message.entity';
-import axios from 'axios';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class MessageService {
@@ -17,14 +18,13 @@ export class MessageService {
     @InjectRepository(Media)
     private mediaRepository: Repository<Media>,
     private chatService: ChatService,
+    @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
   ) {}
   async create(createMessageDTO: IMessageDTO, files?: number[]) {
-    // TODO : Проверка пользователя на принадлежность к чату
     const chatData = await this.chatService.getChatById(
       createMessageDTO.chatId,
     );
     if (chatData instanceof Chat) {
-      // TODO : подумать про то, стоит ли тут быть типу any
       const messageInsered: any = await this.messageRepository.save({
         chat: chatData,
         authorLogin: createMessageDTO.authorLogin,
@@ -60,7 +60,6 @@ export class MessageService {
       .take(limit)
       .orderBy('message.id', 'DESC')
       .getMany();
-
     return messages;
   }
 
@@ -101,5 +100,19 @@ export class MessageService {
       .execute();
 
     return !!res.affected;
+  }
+
+  async setFilesDataToMessage(media) {
+    return await Promise.all(
+      media.map(async (file) => {
+        const res = await firstValueFrom(
+          this.fileServiceClient.send('file/get', file),
+        );
+        if (res.status === false) {
+          throw new HttpException(res.message, res.httpCode);
+        }
+        return res;
+      }),
+    );
   }
 }

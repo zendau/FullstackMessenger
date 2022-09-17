@@ -1,9 +1,15 @@
 import {
+  MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import INewRoomData from './interfaces/INewRoomData';
+import IUserConnect from './interfaces/IUserConnect';
+import IUserInvite from './interfaces/IUserInvite';
+import IUserJoin from './interfaces/IUserJoin';
+import IUserMediaStatus from './interfaces/IUserMediaStatus';
 import { SocketService } from './socket.service';
 
 @WebSocketGateway(81, {
@@ -18,15 +24,8 @@ export class SocketGateway {
   @WebSocketServer()
   server: Server;
 
-  handleConnection(socket: Socket) {
-    console.log('user connected');
-  }
-
   handleDisconnect(socket: Socket) {
-    console.log('user disconnected');
-
     const userData = this.socketService.getUserById(socket.id);
-    console.log('userData', userData, socket.id);
 
     if (userData !== undefined) {
       this.socketService.clientDisconnect(socket.id);
@@ -38,72 +37,60 @@ export class SocketGateway {
   }
 
   @SubscribeMessage('connect-user')
-  connectEvent(socket: Socket, payload: any) {
-    console.log('test', payload);
+  connectEvent(@MessageBody() payload: IUserConnect) {
+    console.log('payload', payload);
     this.socketService.addUser(payload);
     this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 
   @SubscribeMessage('invite-user')
-  inviteUserToRoom(socket: Socket, payload: any) {
-    console.log('test', payload);
+  inviteUserToRoom(@MessageBody() payload: IUserInvite) {
     this.server.emit('userInviteRoom', payload);
   }
 
   @SubscribeMessage('insertNewRoom')
-  insertNewRoom(socket: Socket, payload: any) {
+  insertNewRoom(socket: Socket, payload: INewRoomData) {
     socket.broadcast.emit('updateListOfRooms', payload);
   }
 
   @SubscribeMessage('deleteRoom')
-  deleteConferenceRoom(socket: Socket, payload: any) {
-    console.log('test', payload, socket.rooms);
-    this.server.to(payload.roomId).emit('redirectUsers');
+  deleteConferenceRoom(@MessageBody() roomId: string) {
+    this.server.to(roomId).emit('redirectUsers');
   }
 
   @SubscribeMessage('join-room')
-  handleMessage(socket: Socket, payload: any) {
-    console.log('start test section', payload, this.socketService.users);
-
+  handleMessage(socket: Socket, payload: IUserJoin) {
     this.socketService.clientJoinRoom(
       payload.userId,
       payload.roomId,
       payload.peerId,
     );
-    console.log('end test section');
 
-    console.log('user-connected', payload);
     socket.join(payload.roomId);
-    //this.socketService.addUser(payload);
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
-    console.log('join', roomUser, payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
     socket.broadcast.to(payload.roomId).emit('userJoinedRoom', payload.peerId);
     this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 
   @SubscribeMessage('exit-room')
-  roomEvent(socket: Socket, payload: any) {
-    console.log('exit-room', payload);
+  roomEvent(socket: Socket, payload: IUserMediaStatus) {
     this.socketService.clientLeaveRoom(payload.userId);
     socket.leave(payload.roomId);
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
-    console.log('exit', roomUser, this.socketService.users);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
     this.server.emit('getFreeUsers', this.socketService.getFreeUsers());
   }
 
   @SubscribeMessage('userMute')
-  userMute(socket: Socket, payload: any) {
-    console.log('mute', payload);
+  userMute(@MessageBody() payload: IUserMediaStatus) {
     this.socketService.changeMuteStatus(payload.userId);
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
   }
 
   @SubscribeMessage('videoPause')
-  videoPause(socket: Socket, payload: any) {
-    console.log('videoPause', payload);
+  videoPause(@MessageBody() payload: IUserMediaStatus) {
     this.socketService.changeVideoPause(payload.userId);
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);

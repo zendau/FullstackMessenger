@@ -1,6 +1,7 @@
 import { Message } from './../message/entities/message.entity';
 import { MessageService } from './../message/message.service';
 import {
+  MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -8,11 +9,11 @@ import {
 import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
 
-import * as uuid from 'uuid';
-import axios from 'axios';
-import { HttpException, Inject } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { HttpException } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
+import IUserConnect from './interfaces/IUserConnect';
+import IUserJoin from './interfaces/IUserJoin';
+import IMessageData from './interfaces/IMessageData';
 
 @WebSocketGateway(80, {
   path: '/socketChat',
@@ -24,21 +25,13 @@ export class SocketGateway {
   constructor(
     private readonly socketService: SocketService,
     private readonly messageService: MessageService,
-    @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
   ) {}
 
   @WebSocketServer()
   server: Server;
 
-  handleConnection(socket: Socket) {
-    console.log('user connected');
-  }
-
   handleDisconnect(socket: Socket) {
-    console.log('user disconnected');
-
     const userData = this.socketService.getUserById(socket.id);
-    console.log('userData', userData, socket.id);
 
     if (userData !== undefined) {
       this.socketService.clientDisconnect(socket.id);
@@ -50,55 +43,42 @@ export class SocketGateway {
   }
 
   @SubscribeMessage('connect-user')
-  connectEvent(socket: Socket, payload: any) {
-    console.log('test', payload);
+  connectEvent(@MessageBody() payload: IUserConnect) {
     this.socketService.addUser(payload);
     this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 
-  @SubscribeMessage('invite-user')
-  inviteUserToRoom(socket: Socket, payload: any) {
-    console.log('test', payload);
-    this.server.emit('userInviteRoom', payload);
-  }
+  // @SubscribeMessage('invite-user')
+  // inviteUserToRoom(@MessageBody() payload: any) {
+  //   this.server.emit('userInviteRoom', payload);
+  // }
 
   @SubscribeMessage('join-room')
-  handleMessage(socket: Socket, payload: any) {
-    console.log('start test section', payload, this.socketService.users);
-
+  handleMessage(socket: Socket, payload: IUserJoin) {
     this.socketService.clientJoinRoom(payload.userId, payload.roomId);
-    console.log('end test section');
 
-    console.log('user-connected', payload);
-    console.log('before', socket.rooms);
     socket.join(payload.roomId);
-    console.log('after', socket.rooms);
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
-    console.log('join', roomUser, payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
     this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 
   @SubscribeMessage('userLeave')
-  userLeaveChatGroup(socket: Socket, payload: any) {
+  userLeaveChatGroup(socket: Socket, payload: IUserJoin) {
     socket.broadcast.to(payload.roomId).emit('updateUserCount', payload.userId);
   }
 
   @SubscribeMessage('exit-room')
-  roomEvent(socket: Socket, payload: any) {
-    console.log('exit-room', payload);
+  roomEvent(socket: Socket, payload: IUserJoin) {
     this.socketService.clientLeaveRoom(payload.userId);
     socket.leave(payload.roomId);
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
-    console.log('exit', roomUser, this.socketService.users);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
     this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 
   @SubscribeMessage('sendMessage')
-  async sendMessage(socket: Socket, payload: any) {
-    console.log('sendMessage', payload);
-    console.log('send rooms', socket.rooms);
+  async sendMessage(@MessageBody() payload: IMessageData) {
     const res = await this.messageService.create(
       {
         authorLogin: payload.authorLogin,
@@ -109,22 +89,9 @@ export class SocketGateway {
     );
 
     if (res?.media) {
-      res.files = await Promise.all(
-        res.media.map(async (file) => {
-          const res = await firstValueFrom(
-            this.fileServiceClient.send('file/get', file),
-          );
-          console.log('RES', res);
-          if (res.status === false) {
-            throw new HttpException(res.message, res.httpCode);
-          }
-          return res;
-        }),
-      );
-      console.log('MESSAGE', res.files);
+      res.files = await this.messageService.setFilesDataToMessage(res.media);
     }
     if ('chat' in res) {
-      console.log('SEND', payload.chatId);
       this.server.to(payload.chatId).emit('newMessage', {
         authorLogin: res.authorLogin,
         text: res.text,
@@ -132,8 +99,6 @@ export class SocketGateway {
         id: res.id,
         files: res.files,
       });
-    } else {
-      console.log('NOT INSTANCEOF');
     }
   }
 }

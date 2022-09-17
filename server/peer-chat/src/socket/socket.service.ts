@@ -6,6 +6,7 @@ export class SocketService {
   public users: IUser[] = [];
 
   addUser(user: IUser) {
+    console.log('user', user);
     this.users.push(user);
   }
 

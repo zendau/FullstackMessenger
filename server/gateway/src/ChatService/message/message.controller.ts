@@ -56,9 +56,14 @@ export class MessageController {
         limit,
       }),
     );
+    
+    
+
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
     }
+
+    if (res.length === 0) return res;
 
     const resWithFileData = await firstValueFrom(
       this.fileServiceClient.send('file/messagesFileData', res),

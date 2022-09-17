@@ -34,9 +34,7 @@ export default {
     async function deleteConference() {
       console.log('delete ', roomId, socket)
       store.dispatch('conference/deleteConference', conferenceId.value).then(() => {
-        socket.emit('deleteRoom', {
-          roomId: roomId.value
-        })
+        socket.emit('deleteRoom', roomId.value)
       })
     }
 
