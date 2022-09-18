@@ -1,24 +1,24 @@
 import { Ionicons } from '@expo/vector-icons';
 import styled from 'styled-components/native'
 import { View, Text, TouchableOpacity, TextInput, Button } from 'react-native';
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import Message from '../components/Message';
 import MessageInput from '../components/MessageInput';
-import ChatToolbart from '../components/chatToolbart';
+import ChatToolbar from '../components/ChatToolbar';
 
 
 
 function ChatScreen({ navigation, route }) {
 
   const { id } = route.params;
-
+  const scrollViewRef = useRef()
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: `User ${id}`,
       headerRight: () => (
-        <ChatToolbart/>
+        <ChatToolbar />
       ),
       headerLeft: () => (
         <TouchableOpacity style={{ flex: 1, borderRadius: 12 }} onPress={() => navigation.goBack()}>
@@ -27,21 +27,22 @@ function ChatScreen({ navigation, route }) {
       ),
     })
 
-    return () => {
-      setMessage('')
-    }
   }, [id])
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{flexDirection: 'column', paddingLeft: 10, paddingRight: 10 }}>
+      <ScrollView
+        style={{ flexDirection: 'column', paddingLeft: 10, paddingRight: 10 }}
+        ref={scrollViewRef}
+        onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+      >
         {
-          [1,2,3,4,5,6,7,8,9, 10, 11].map(item => (
-            <Message message={item} time='21:57' author='admin' key={item}/>
+          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(item => (
+            <Message message={item} time='21:57' author='admin' key={item} />
           ))
         }
       </ScrollView>
-      <MessageInput/>
+      <MessageInput />
     </View>
   );
 }
