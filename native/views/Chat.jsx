@@ -7,7 +7,9 @@ import Message from '../components/Message';
 import MessageInput from '../components/MessageInput';
 import ChatToolbar from '../components/ChatToolbar';
 
-
+function isOdd(number) {
+  return !!(number % 2)
+}
 
 function ChatScreen({ navigation, route }) {
 
@@ -38,7 +40,7 @@ function ChatScreen({ navigation, route }) {
       >
         {
           [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(item => (
-            <Message message={item} time='21:57' author='admin' key={item} />
+            <Message type={isOdd(item)} message={item} time='21:57' author='admin' key={item} />
           ))
         }
       </ScrollView>

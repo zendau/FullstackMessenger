@@ -14,12 +14,15 @@ function MessageInput() {
   const [message, setMessage] = useState('')
   const focus = useIsFocused()
 
-  useEffect(() => {  
-    if (focus == false) { 
+  useEffect(() => {
+    if (focus == false) {
       setMessage('');
     }
   }, [focus]);
 
+  const SendMessage = () => {
+    setMessage('')
+  }
 
   return (
     <ChatMessageContainer>
@@ -31,7 +34,10 @@ function MessageInput() {
         onChangeText={setMessage}
         value={message}
       />
-      <TouchableOpacity style={{ backgroundColor: '#5EB5F7', height: 60, justifyContent: 'center', padding: 10 }}>
+      <TouchableOpacity
+        onPress={SendMessage}
+        style={{ backgroundColor: '#5EB5F7', height: 60, justifyContent: 'center', padding: 10 }}
+      >
         <Ionicons name="send" size={38} color="white" />
       </TouchableOpacity>
     </ChatMessageContainer>
