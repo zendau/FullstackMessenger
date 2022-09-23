@@ -1,9 +1,9 @@
-import RegisterForm from '../components/RegisterForm';
 import { memo, useState } from 'react'
+import RegisterForm from '../components/RegisterForm';
 import ConfirmCodeForm from '../components/ConfirmCodeForm';
 
 
-function LoginScreen() {
+function RegisterScreen() {
 
   const [isShowConfirmCode, setIsShowConfirmCode] = useState(false)
   const [userData, setUserData] = useState({})
@@ -32,4 +32,4 @@ function LoginScreen() {
 
 }
 
-export default memo(LoginScreen)
+export default memo(RegisterScreen)

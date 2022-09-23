@@ -1,4 +1,4 @@
-import { Button, TextInput, View, Text } from 'react-native';
+import { Button } from 'react-native';
 import styled from 'styled-components/native'
 import FormInput from './FormInput';
 import { memo } from 'react'
@@ -64,41 +64,6 @@ function RegisterForm({onSubmit}) {
           </FormContainer>
           <Button color={'#464649'} onPress={handleSubmit} title="Submit" />
         </Container>
-
-        // <Container>
-        //   <FormContainer>
-        //     <FormInput
-        //       placeholder='Email'
-        //       onChange={handleChange('email')}
-        //       value={values.email}
-        //       error={errors.email}
-        //       touched={touched.email}
-        //       setFieldValue={setFieldValue}
-        //       name='email'
-        //       submitCount={submitCount}
-        //     />
-        //     <FormInput
-        //       placeholder='Password'
-        //       onChange={handleChange('password')}
-        //       value={values.password}
-        //       error={errors.password}
-        //       secure={true}
-        //       touched={touched.password}
-        //       setFieldValue={setFieldValue}
-        //       name='password'
-        //       submitCount={submitCount}
-        //     />
-        //     {/* <FormInput
-        //     placeholder='Confirm password'
-        //     onChange={handleChange('confirmPassword')}
-        //     value={values.confirmPassword}
-        //     error={errors.confirmPassword}
-        //     secure={true}
-        //   /> */}
-
-        //   </FormContainer>
-        //   <Button color={'#464649'} onPress={handleSubmit} title="Submit" />
-        // </Container>
       )
       }
     </Formik>

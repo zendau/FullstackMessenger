@@ -1,9 +1,36 @@
-import { View } from 'react-native'
+import { memo, useState } from 'react'
+import ForgotForm from '../components/ForgotForm';
+import ConfirmCodeForm from '../components/ConfirmCodeForm';
+import { Alert } from 'react-native'
 
-function ForgotScreen({handleChange, handleBlur, handleSubmit, values, errors}) {
-  return (
-    <View></View>
-  )
+function ForgotScreen() {
+
+  const [isShowConfirmCode, setIsShowConfirmCode] = useState(false)
+  const [userData, setUserData] = useState({})
+
+  const onSumbitConfirmCode = (values) => {
+    console.log('t',values)
+    Alert.alert('Success', 'Your new password was send')
+  }
+
+  const onSubmitForgot = (values) => {
+    console.log(values)
+    setUserData(values)
+    setIsShowConfirmCode(true)
+  }
+
+  if (isShowConfirmCode) {
+    return (
+      <ConfirmCodeForm onSubmit={onSumbitConfirmCode} setConfirmStatus={setIsShowConfirmCode} />
+    )
+  }
+  else {
+    return (
+      <ForgotForm onSubmit={onSubmitForgot} />
+    )
+  }
+
+
 }
 
-export default ForgotScreen
+export default memo(ForgotScreen)

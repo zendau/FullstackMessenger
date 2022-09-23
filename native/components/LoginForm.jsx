@@ -5,10 +5,11 @@ import { memo } from 'react'
 import { Formik } from 'formik';
 import * as yup from 'yup'
 
-function RegisterForm({setConfirmStatus, onSubmit}) {
+function LoginForm({onSubmit}) {
 
   const schema = yup.object({
-    confirmCode: yup.string().required('Confirm code is a required field').min(6),
+    email: yup.string().required().email(),
+    password: yup.string().required().min(6)
   })
 
   const Container = styled.View`
@@ -22,7 +23,7 @@ function RegisterForm({setConfirmStatus, onSubmit}) {
 
   return (
     <Formik
-      initialValues={{ confirmCode: '' }}
+      initialValues={{ email: '', password: '' }}
       onSubmit={onSubmit}
       validationSchema={schema}
 
@@ -31,16 +32,25 @@ function RegisterForm({setConfirmStatus, onSubmit}) {
         <Container>
           <FormContainer>
             <FormInput
-              placeholder='Confirm code'
-              value={values.confirmCode}
-              error={errors.confirmCode}
-              touched={touched.confirmCode}
+              placeholder='Email'
+              value={values.email}
+              error={errors.email}
+              touched={touched.email}
               submitCount={submitCount}
-              handleChange={handleChange('confirmCode')}
+              handleChange={handleChange('email')}
+            />
+            <FormInput
+              placeholder='Password'
+              value={values.password}
+              error={errors.password}
+              secure={true}
+              touched={touched.password}
+              name='password'
+              submitCount={submitCount}
+              handleChange={handleChange('password')}
             />
           </FormContainer>
           <Button color={'#464649'} onPress={handleSubmit} title="Submit" />
-          <Button color={'red'} onPress={() => setConfirmStatus(false)} title="Reset" />
         </Container>
       )
       }
@@ -48,4 +58,4 @@ function RegisterForm({setConfirmStatus, onSubmit}) {
   )
 }
 
-export default memo(RegisterForm)
+export default memo(LoginForm)
