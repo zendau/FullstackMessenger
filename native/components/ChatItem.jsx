@@ -11,10 +11,11 @@ const ItemContainer = styled.TouchableOpacity`
     align-items: center;
   `
 
-function ChatItem({ navigation, id }) {
+function ChatItem({ navigation, id, isGroup }) {
   return (
     <ItemContainer onPress={() => navigation.navigate('Chat', { id })}>
-      <Ionicons name="person" size={48} color="gray" />
+      
+      {isGroup ? <Ionicons name="people" size={48} color="white" /> : <Ionicons name="person" size={48} color="white" />}
       <Text style={{ color: 'white', fontSize: 18, marginLeft: 20, flex: 1 }}>Login of user - {id}</Text>
     </ItemContainer>
   )
