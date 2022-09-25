@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components/native'
 import { View, TouchableOpacity, TextInput } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, AntDesign } from '@expo/vector-icons'
 import { useIsFocused } from "@react-navigation/native";
+
+import * as DocumentPicker from 'expo-document-picker';
+//import * as FileSystem from 'expo-file-system';
 
 const ChatMessageContainer = styled.View`
   flex-direction: row;
@@ -10,6 +13,19 @@ const ChatMessageContainer = styled.View`
 `
 
 function MessageInput() {
+
+  const [doc, setDoc] = useState();
+
+  const pickDocument = async () => {
+    const response = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true, type: '*/*' })
+    console.log(response)
+    setDoc(response.uri)
+  }
+
+  const clearDocument = () => {
+    setDoc(null)
+    console.log('clear', doc)
+  }
 
   const [message, setMessage] = useState('')
   const focus = useIsFocused()
@@ -34,6 +50,23 @@ function MessageInput() {
         onChangeText={setMessage}
         value={message}
       />
+      {
+        doc
+          ?
+          <TouchableOpacity
+            onPress={clearDocument}
+            style={{ backgroundColor: '#bc210d', height: 60, justifyContent: 'center', padding: 10 }}
+          >
+            <AntDesign name="closecircle" size={38} color="white" />
+          </TouchableOpacity>
+          :
+          <TouchableOpacity
+            onPress={pickDocument}
+            style={{ backgroundColor: '#0d70bc', height: 60, justifyContent: 'center', padding: 10 }}
+          >
+            <AntDesign name="addfile" size={38} color="white" />
+          </TouchableOpacity>
+      }
       <TouchableOpacity
         onPress={SendMessage}
         style={{ backgroundColor: '#5EB5F7', height: 60, justifyContent: 'center', padding: 10 }}

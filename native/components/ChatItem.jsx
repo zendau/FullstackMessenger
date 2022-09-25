@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import styled from 'styled-components/native'
-import { Text, TouchableOpacity } from 'react-native';
+import { Text } from 'react-native';
 
 const ItemContainer = styled.TouchableOpacity`
     flex-direction: row;

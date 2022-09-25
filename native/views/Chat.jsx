@@ -1,6 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import styled from 'styled-components/native'
-import { View, Text, TouchableOpacity, TextInput, Button } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { useLayoutEffect, useRef } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import Message from '../components/Message';

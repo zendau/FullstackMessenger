@@ -1,14 +1,14 @@
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import styled from 'styled-components/native'
+import FileContainer from './FileContainer';
 
 const MessageContainer = styled.View`
-  padding: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
   width: 80%;
   border-radius: 4px; 
-  background-color: ${props => props.type ? '#182533': '#376EAF'}; 
-  align-self: ${props => props.type ? 'flex-start': 'flex-end'};
+  background-color: ${props => props.type ? '#182533' : '#376EAF'}; 
+  align-self: ${props => props.type ? 'flex-start' : 'flex-end'};
 `
 
 const MessageHeader = styled.View`
@@ -16,18 +16,28 @@ const MessageHeader = styled.View`
   flex-direction: row;
 `
 
-function Message({author, time, message, type}) {
+const MessageImage = styled.Image`
+  margin: 0 auto;
+  height: 80px;
+  width: 80px;
+`
+
+function Message({ author, time, message, type }) {
 
   const firstColor = type ? '#35A7F7' : '#182533'
   const secondColor = type ? '#AA9D80' : '#000'
-  
+
   return (
     <MessageContainer type={type}>
-      <MessageHeader>
-        <Text style={{ color: firstColor }}>{author}</Text>
-        <Text style={{ color: secondColor }}>{time}</Text>
-      </MessageHeader>
-      <Text style={{ color: '#fff' }}>{message}</Text>
+      <View style={{ padding: 10 }}>
+        <MessageHeader>
+          <Text style={{ color: firstColor }}>{author}</Text>
+          <Text style={{ color: secondColor }}>{time}</Text>
+        </MessageHeader>
+        <Text style={{ color: '#fff', fontSize: 18 }}>{message}</Text>
+        <MessageImage source={require('../assets/favicon.png')} />
+      </View>
+      <FileContainer name={`image${message}.png`} size={'308228'} />
     </MessageContainer>
   )
 }
