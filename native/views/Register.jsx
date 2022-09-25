@@ -1,6 +1,6 @@
 import { memo, useState } from 'react'
-import RegisterForm from '../components/RegisterForm';
-import ConfirmCodeForm from '../components/ConfirmCodeForm';
+import RegisterForm from '../components/Form/RegisterForm';
+import ConfirmCodeForm from '../components/Form/ConfirmCodeForm';
 import axios from 'axios';
 import * as Device from 'expo-device';
 

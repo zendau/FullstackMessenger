@@ -1,6 +1,7 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text } from 'react-native';
 import styled from 'styled-components/native'
 import FileContainer from './FileContainer';
+import MessageStatus from './MessageStatus';
 
 const MessageContainer = styled.View`
   margin-top: 5px;
@@ -22,7 +23,7 @@ const MessageImage = styled.Image`
   width: 80px;
 `
 
-function Message({ author, time, message, type }) {
+function Message({ author, time, message, type, isRead }) {
 
   const firstColor = type ? '#35A7F7' : '#182533'
   const secondColor = type ? '#AA9D80' : '#000'
@@ -35,7 +36,8 @@ function Message({ author, time, message, type }) {
           <Text style={{ color: secondColor }}>{time}</Text>
         </MessageHeader>
         <Text style={{ color: '#fff', fontSize: 18 }}>{message}</Text>
-        <MessageImage source={require('../assets/favicon.png')} />
+        <MessageImage source={require('../../../assets/favicon.png')} />
+        <MessageStatus isRead={true}/>
       </View>
       <FileContainer name={`image${message}.png`} size={'308228'} />
     </MessageContainer>

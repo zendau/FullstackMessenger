@@ -1,4 +1,4 @@
-import ChatItem from "../components/ChatItem";
+import ChatItem from "../components/Chat/ChatItem";
 import { ScrollView } from 'react-native';
 
 function isOdd(number) {

@@ -1,5 +1,4 @@
 import styled from 'styled-components/native'
-import { View, Text, TouchableOpacity } from 'react-native';
 
 function ModalItem({title}) {
 
@@ -21,7 +20,7 @@ function ModalItem({title}) {
 
   return (
     <ItemContainer>
-      <ItemText>Test</ItemText>
+      <ItemText>{title}</ItemText>
     </ItemContainer>
   )
 }

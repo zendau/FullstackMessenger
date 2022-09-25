@@ -1,13 +1,23 @@
 import { Ionicons } from '@expo/vector-icons';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { useLayoutEffect, useRef } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
-import Message from '../components/Message';
-import MessageInput from '../components/MessageInput';
-import ChatToolbar from '../components/ChatToolbar';
+import Message from '../components/Chat/message/Message';
+import MessageInput from '../components/Chat/MessageInput';
+import ChatToolbar from '../components/Chat/Toolbar/ChatToolbar';
 
 function isOdd(number) {
   return !!(number % 2)
+}
+
+function Test({title, status}) {
+  return (
+    <View style={{justifyContent: 'center', alignItems: 'center'}} >
+      <Text style={{ fontSize: 20, color: 'white'}}>{title}</Text>
+      {/* <Text style={{color: 'gray'}}>Online</Text> */}
+      <Text style={{color: 'gray'}}>Was 5 min ago</Text>
+    </View>
+  )
 }
 
 function ChatScreen({ navigation, route }) {
@@ -17,7 +27,7 @@ function ChatScreen({ navigation, route }) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: `User ${id}`,
+      headerTitle: () => <Test title={`User ${id}`} status={true} />,
       headerRight: () => (
         <ChatToolbar />
       ),

@@ -1,6 +1,6 @@
 import { memo, useState } from 'react'
-import ForgotForm from '../components/ForgotForm';
-import ConfirmCodeForm from '../components/ConfirmCodeForm';
+import ForgotForm from '../components/Form/ForgotForm';
+import ConfirmCodeForm from '../components/Form/ConfirmCodeForm';
 import { Alert } from 'react-native'
 
 function ForgotScreen() {

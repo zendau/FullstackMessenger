@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components/native'
-import { View, TouchableOpacity, TextInput } from 'react-native'
+import { TouchableOpacity, TextInput } from 'react-native'
 import { Ionicons, AntDesign } from '@expo/vector-icons'
 import { useIsFocused } from "@react-navigation/native";
 

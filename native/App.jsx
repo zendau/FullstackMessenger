@@ -10,7 +10,7 @@ import LoginScreen from './views/Login';
 import RegisterScreen from './views/Register';
 import ForgotScreen from './views/Forgot';
 
-import { SafeAreaView, StatusBar } from 'react-native'
+import { SafeAreaView, StatusBar, Text } from 'react-native'
 
 const Drawer = createDrawerNavigator();
 

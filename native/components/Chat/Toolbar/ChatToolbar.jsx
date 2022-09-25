@@ -1,5 +1,5 @@
 import { AntDesign } from '@expo/vector-icons';
-import { View } from 'react-native';
+import { View,Text } from 'react-native';
 import styled from 'styled-components/native'
 import ToolbarModel from './ToolbarModal';
 import { useState } from 'react'
@@ -17,7 +17,7 @@ function ChatToolbar() {
   const [modalStatus, setModalStatus] = useState('');
 
   return (
-    <View>
+    <View style={{flexDirection: 'row', alignItems: 'center'}}>
       <ChatToolbarContainer>
         <ChatToolbarIcon onPress={() => setModalStatus('Add user')}>
           <AntDesign name="adduser" size={30} color="white" />

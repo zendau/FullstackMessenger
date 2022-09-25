@@ -1,4 +1,4 @@
-import { View, Text, Modal, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Modal, ScrollView } from 'react-native';
 import styled from 'styled-components/native'
 import { AntDesign } from '@expo/vector-icons';
 import ModalItem from './ModalItem';
@@ -26,6 +26,12 @@ function ToolbarModel({ modal, setModal }) {
     shadow-radius: 4px;
     elevation: 5;
   `
+
+  const Container = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+`
 
   const ModalText = styled.Text`
     color: black;
@@ -56,20 +62,16 @@ function ToolbarModel({ modal, setModal }) {
     >
       <ModalCenter>
         <ModalContainer>
-          <View style={{
-             flexDirection: 'row',
-             justifyContent: 'space-between',
-             alignItems: 'center'
-          }}>
+          <Container>
             <HeaderText>{modal}</HeaderText>
             <Button
               onPress={() => setModal('')}
             >
               <AntDesign name="close" size={40} color="white" />
             </Button>
-          </View>
+          </Container>
           <ScrollView style={{ alignSelf: 'stretch' }}>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((id) => <ModalItem key={id} id={id} />)}
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((id) => <ModalItem key={id} title={id} />)}
           </ScrollView>
         </ModalContainer>
       </ModalCenter>

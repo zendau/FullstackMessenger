@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import LoginForm from '../components/LoginForm'
+import LoginForm from '../components/Form/LoginForm'
 
 function LoginScreen() {
 

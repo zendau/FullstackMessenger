@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { Text } from 'react-native';
 import styled from 'styled-components/native'
 import { AntDesign } from '@expo/vector-icons';
 
@@ -7,6 +7,12 @@ const Container = styled.TouchableOpacity`
   background-color: #2B5278;
   width: 100%;
   padding: 5px;
+`
+
+const FileData = styled.View`
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 `
 
 function formatSizeUnits(bytes) {
@@ -19,23 +25,19 @@ function formatSizeUnits(bytes) {
   return bytes;
 }
 
-function FileContainer({name, size}) {
+function FileContainer({ name, size }) {
 
   return (
     <Container>
       <AntDesign style={{
         borderRadius: 50,
-        backgroundColor:  '#4C9CE2',
+        backgroundColor: '#4C9CE2',
         padding: 10
       }} name="file1" size={30} color="white" />
-      <View style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        flex: 1
-      }}>
-        <Text style={{color: 'white'}}>{name}</Text>
-        <Text style={{color: 'gray'}} >{formatSizeUnits(size)}</Text>
-      </View>
+      <FileData>
+        <Text style={{ color: 'white' }}>{name}</Text>
+        <Text style={{ color: 'gray' }} >{formatSizeUnits(size)}</Text>
+      </FileData>
     </Container>
   )
 }
