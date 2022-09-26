@@ -3,7 +3,7 @@ import styled from 'styled-components/native'
 import { AntDesign } from '@expo/vector-icons';
 import ModalItem from './ModalItem';
 
-function ToolbarModel({ modal, setModal }) {
+function ToolbarModel({ title, setTitle, onClick }) {
 
 
   const ModalCenter = styled.View`
@@ -55,7 +55,7 @@ function ToolbarModel({ modal, setModal }) {
     <Modal
       animationType="slide"
       transparent={true}
-      visible={!!modal}
+      visible={!!title}
       onRequestClose={() => {
         setModal('');
       }}
@@ -63,15 +63,15 @@ function ToolbarModel({ modal, setModal }) {
       <ModalCenter>
         <ModalContainer>
           <Container>
-            <HeaderText>{modal}</HeaderText>
+            <HeaderText>{title}</HeaderText>
             <Button
-              onPress={() => setModal('')}
+              onPress={() => setTitle('')}
             >
               <AntDesign name="close" size={40} color="white" />
             </Button>
           </Container>
           <ScrollView style={{ alignSelf: 'stretch' }}>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((id) => <ModalItem key={id} title={id} />)}
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((id) => <ModalItem key={id} title={id} onClick={onClick} />)}
           </ScrollView>
         </ModalContainer>
       </ModalCenter>

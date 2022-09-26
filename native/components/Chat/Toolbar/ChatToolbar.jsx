@@ -14,19 +14,28 @@ const ChatToolbarIcon = styled.TouchableOpacity`
 
 function ChatToolbar() {
 
-  const [modalStatus, setModalStatus] = useState('');
+  const [modalTitle, setModalTitle] = useState('');
+
+  const addUserToGroup = (id) => {
+    console.log('ADD', id)
+  }
+
+  const removeUserToGroup = (id) => {
+    console.log('REMOVE', id)
+  }
+  
 
   return (
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
       <ChatToolbarContainer>
-        <ChatToolbarIcon onPress={() => setModalStatus('Add user')}>
+        <ChatToolbarIcon onPress={() => setModalTitle('Add user')}>
           <AntDesign name="adduser" size={30} color="white" />
         </ChatToolbarIcon>
-        <ChatToolbarIcon onPress={() => setModalStatus('Remove user')}>
+        <ChatToolbarIcon onPress={() => setModalTitle('Remove user')}>
           <AntDesign name="deleteuser" size={30} color="white" />
         </ChatToolbarIcon>
       </ChatToolbarContainer>
-      <ToolbarModel modal={modalStatus} setModal={setModalStatus}/>
+      <ToolbarModel title={modalTitle} setTitle={setModalTitle}/>
     </View>
 
   )

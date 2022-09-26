@@ -1,33 +1,46 @@
 import { Ionicons } from '@expo/vector-icons';
-import { View, TouchableOpacity, Text } from 'react-native';
-import { useLayoutEffect, useRef } from 'react';
+import { View, TouchableOpacity, Text, FlatList } from 'react-native';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import Message from '../components/Chat/message/Message';
 import MessageInput from '../components/Chat/MessageInput';
 import ChatToolbar from '../components/Chat/Toolbar/ChatToolbar';
+import ChatTitle from '../components/Chat/ChatTitle';
+import GroupTitle from '../components/Chat/GroupTitle';
+import { useSelector, useDispatch } from 'react-redux'
 
 function isOdd(number) {
   return !!(number % 2)
 }
 
-function Test({title, status}) {
-  return (
-    <View style={{justifyContent: 'center', alignItems: 'center'}} >
-      <Text style={{ fontSize: 20, color: 'white'}}>{title}</Text>
-      {/* <Text style={{color: 'gray'}}>Online</Text> */}
-      <Text style={{color: 'gray'}}>Was 5 min ago</Text>
-    </View>
-  )
-}
 
 function ChatScreen({ navigation, route }) {
 
-  const { id } = route.params;
-  const scrollViewRef = useRef()
+  const { id, isGroup } = route.params;
+
+  const [itemSelected, setItemSelected] = useState([]);
+  console.log('render chat body', itemSelected)
+
 
   useLayoutEffect(() => {
+    console.log('USE')
     navigation.setOptions({
-      headerTitle: () => <Test title={`User ${id}`} status={true} />,
+      headerTitle: () => {
+
+        if (itemSelected.length > 0) {
+          return (
+            <Text>Selected - {itemSelected.length}</Text>
+          )
+        } else if (isGroup) {
+          return (
+            <GroupTitle title={`Group ${id}`} />
+          )
+        } else {
+          return (
+            <ChatTitle title={`User ${id}`} status={true} id={id} navigation={navigation} />
+          )
+        }
+      },
       headerRight: () => (
         <ChatToolbar />
       ),
@@ -38,23 +51,40 @@ function ChatScreen({ navigation, route }) {
       ),
     })
 
-  }, [id])
+  }, [id, itemSelected])
+
+
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView
-        style={{ flexDirection: 'column', paddingLeft: 10, paddingRight: 10 }}
-        ref={scrollViewRef}
-        onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
-      >
-        {
-          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(item => (
-            <Message type={isOdd(item)} message={item} time='21:57' author='admin' key={item} />
-          ))
+      {/* <ScrollView
+      style={{ flexDirection: 'column', paddingLeft: 10, paddingRight: 10 }}
+      ref={scrollViewRef}
+      onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+    > */}
+      <FlatList
+        style={{ paddingLeft: 10, paddingRight: 10 }}
+        data={[
+          { id: 1, message: 1 },
+          { id: 2, message: 2 },
+          { id: 3, message: 3 },
+          { id: 4, message: 4 },
+          { id: 5, message: 5 },
+          { id: 6, message: 6 },
+          { id: 7, message: 7 },
+          { id: 8, message: 8 },
+          { id: 9, message: 9 },
+          { id: 10, message: 10 },
+          { id: 11, message: 11 },
+        ]}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) =>
+          <Message type={isOdd(item.message)} message={item.message} time='21:57' author='admin' isRead={true} setSelectedMessages={setItemSelected} />
         }
-      </ScrollView>
+      />
       <MessageInput />
     </View>
+
   );
 }
 

@@ -9,8 +9,13 @@ import ChatScreen from './views/Chat';
 import LoginScreen from './views/Login';
 import RegisterScreen from './views/Register';
 import ForgotScreen from './views/Forgot';
+import UserScreen from './views/User'
 
-import { SafeAreaView, StatusBar, Text } from 'react-native'
+import { SafeAreaView, StatusBar } from 'react-native'
+
+import { store } from './redux'
+import { Provider } from 'react-redux'
+
 
 const Drawer = createDrawerNavigator();
 
@@ -33,21 +38,27 @@ const drawerScreenOptions = {
 
 export default function App() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar backgroundColor="#17212B" />
-      <NavigationContainer>
-        <Drawer.Navigator screenOptions={drawerScreenOptions} useLegacyImplementation initialRouteName="Chats">
-          <Drawer.Screen name="Chats" component={ChatsScreen} />
-          <Drawer.Screen name="Contacts" component={ContactsScreen} />
-          <Drawer.Screen name="Chat" options={{
-            drawerItemStyle: { display: 'none' }
-          }} component={ChatScreen} />
-          <Drawer.Screen name="Login" component={LoginScreen} />
-          <Drawer.Screen name="Register" component={RegisterScreen} />
-          <Drawer.Screen name="Forgot password" component={ForgotScreen} />
-        </Drawer.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar backgroundColor="#17212B" />
+        <NavigationContainer>
+          <Drawer.Navigator screenOptions={drawerScreenOptions} useLegacyImplementation initialRouteName="Chats">
+            <Drawer.Screen name="Chats" component={ChatsScreen} />
+            <Drawer.Screen name="Contacts" component={ContactsScreen} />
+            <Drawer.Screen name="Chat" options={{
+              drawerItemStyle: { display: 'none' }
+            }} component={ChatScreen} />
+            <Drawer.Screen name="User" options={{
+              drawerItemStyle: { display: 'none' }
+            }} component={UserScreen} />
+            <Drawer.Screen name="Login" component={LoginScreen} />
+            <Drawer.Screen name="Register" component={RegisterScreen} />
+            <Drawer.Screen name="Forgot password" component={ForgotScreen} />
+          </Drawer.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </Provider>
+
 
   );
 }

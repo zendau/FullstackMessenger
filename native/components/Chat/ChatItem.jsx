@@ -13,7 +13,7 @@ const ItemContainer = styled.TouchableOpacity`
 
 function ChatItem({ navigation, id, isGroup }) {
   return (
-    <ItemContainer onPress={() => navigation.navigate('Chat', { id })}>
+    <ItemContainer onPress={() => navigation.navigate('Chat', { id, isGroup })}>
       {
         isGroup
           ?
