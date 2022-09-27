@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-na
 import styled from 'styled-components/native'
 import FileContainer from './FileContainer';
 import MessageStatus from './MessageStatus';
-import { memo, useState, useRef } from 'react'
+import { memo, useState, useEffect } from 'react'
 import { AntDesign } from '@expo/vector-icons';
 
 const MessageContainer = styled.View`
@@ -51,16 +51,22 @@ function Message({ author, time, message, type, isRead, setSelectedMessages, isS
 
   console.log('render', message)
   const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+
+    if (!isSelected) {
+      setChecked(false)
+    }
+
+
+    
+  }, [isSelected])
+
   return (
     <TouchableWithoutFeedback onLongPress={() => {
       setIsSelected(true)
-      // console.log('ref', bouncyCheckboxRef.current.state)
       setChecked(true)
       setSelectedMessages(value => [...value, message])
-      // bouncyCheckboxRef.current.props.onPress((e) => {
-      //   console.log('e', e)
-      //   return true
-      // })
     }
     } >
 
@@ -70,7 +76,6 @@ function Message({ author, time, message, type, isRead, setSelectedMessages, isS
           <CheckBox
             status={checked}
             onPress={() => {
-             console.log('test')
               setChecked(!checked)
               if (!checked) {
                 setSelectedMessages(value => [...value, message])

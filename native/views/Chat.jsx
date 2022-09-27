@@ -1,31 +1,33 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather, AntDesign } from '@expo/vector-icons';
 import { View, TouchableOpacity, Text, FlatList } from 'react-native';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
 import Message from '../components/Chat/message/Message';
 import MessageInput from '../components/Chat/MessageInput';
 import ChatToolbar from '../components/Chat/Toolbar/ChatToolbar';
 import ChatTitle from '../components/Chat/ChatTitle';
 import GroupTitle from '../components/Chat/GroupTitle';
-import { useSelector, useDispatch } from 'react-redux'
+import ChatSelectedToolbar from '../components/Chat/Toolbar/ChatSelectedToolbar';
 
 function isOdd(number) {
   return !!(number % 2)
 }
 
 
+
 function ChatScreen({ navigation, route }) {
 
   const { id, isGroup } = route.params;
 
-  const [itemSelected, setItemSelected] = useState([]);
+  const [itemsSelected, setItemsSelected] = useState([]);
   const [isSelected, setIsSelected] = useState(false)
-  console.log('render chat body', itemSelected)
+  console.log('render chat body', itemsSelected)
+
+
 
 
   useLayoutEffect(() => {
 
-    if (itemSelected.length === 0) {
+    if (itemsSelected.length === 0) {
       setIsSelected(false)
     }
 
@@ -33,9 +35,9 @@ function ChatScreen({ navigation, route }) {
     navigation.setOptions({
       headerTitle: () => {
 
-        if (itemSelected.length > 0) {
+        if (itemsSelected.length > 0) {
           return (
-            <Text>Selected - {itemSelected.length}</Text>
+            <Text style={{ fontSize: 20, color: 'white' }}>Selected - {itemsSelected.length}</Text>
           )
         } else if (isGroup) {
           return (
@@ -47,9 +49,20 @@ function ChatScreen({ navigation, route }) {
           )
         }
       },
-      headerRight: () => (
-        <ChatToolbar />
-      ),
+      headerRight: () => {
+
+        if (itemsSelected.length > 0) {
+          return (
+            <ChatSelectedToolbar itemsSelected={itemsSelected} setItemsSelected={setItemsSelected} />
+          )
+        }
+        else {
+          return (
+            <ChatToolbar />
+          )
+        }
+
+      },
       headerLeft: () => (
         <TouchableOpacity style={{ flex: 1, borderRadius: 12 }} onPress={() => navigation.goBack()}>
           <Ionicons style={{ top: 18, marginLeft: 15, marginRight: 10, color: 'white', flex: 1 }} name="arrow-back" size={24} color="black" />
@@ -57,7 +70,7 @@ function ChatScreen({ navigation, route }) {
       ),
     })
 
-  }, [id, itemSelected])
+  }, [id, itemsSelected])
 
 
 
@@ -85,15 +98,15 @@ function ChatScreen({ navigation, route }) {
         ]}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) =>
-          <Message 
-          type={isOdd(item.message)} 
-          message={item.message} 
-          time='21:57' 
-          author='admin' 
-          isRead={true} 
-          setSelectedMessages={setItemSelected}
-          isSelected={isSelected} 
-          setIsSelected={setIsSelected}
+          <Message
+            type={isOdd(item.message)}
+            message={item.message}
+            time='21:57'
+            author='admin'
+            isRead={true}
+            setSelectedMessages={setItemsSelected}
+            isSelected={isSelected}
+            setIsSelected={setIsSelected}
           />
         }
       />
