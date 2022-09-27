@@ -19,10 +19,16 @@ function ChatScreen({ navigation, route }) {
   const { id, isGroup } = route.params;
 
   const [itemSelected, setItemSelected] = useState([]);
+  const [isSelected, setIsSelected] = useState(false)
   console.log('render chat body', itemSelected)
 
 
   useLayoutEffect(() => {
+
+    if (itemSelected.length === 0) {
+      setIsSelected(false)
+    }
+
     console.log('USE')
     navigation.setOptions({
       headerTitle: () => {
@@ -79,7 +85,16 @@ function ChatScreen({ navigation, route }) {
         ]}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) =>
-          <Message type={isOdd(item.message)} message={item.message} time='21:57' author='admin' isRead={true} setSelectedMessages={setItemSelected} />
+          <Message 
+          type={isOdd(item.message)} 
+          message={item.message} 
+          time='21:57' 
+          author='admin' 
+          isRead={true} 
+          setSelectedMessages={setItemSelected}
+          isSelected={isSelected} 
+          setIsSelected={setIsSelected}
+          />
         }
       />
       <MessageInput />

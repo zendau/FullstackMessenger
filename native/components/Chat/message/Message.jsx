@@ -2,8 +2,8 @@ import { View, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-na
 import styled from 'styled-components/native'
 import FileContainer from './FileContainer';
 import MessageStatus from './MessageStatus';
-import BouncyCheckbox from "react-native-bouncy-checkbox";
-import { memo } from 'react'
+import { memo, useState, useRef } from 'react'
+import { AntDesign } from '@expo/vector-icons';
 
 const MessageContainer = styled.View`
   margin-top: 5px;
@@ -25,25 +25,61 @@ const MessageImage = styled.Image`
   width: 80px;
 `
 
-function Message({ author, time, message, type, isRead, setSelectedMessages }) {
+function CheckBox({ status, onPress }) {
+
+  return (
+    <TouchableOpacity onPress={onPress} style={{
+      height: 35, width: 35, backgroundColor: 'blue', borderWidth: 1,
+      borderColor: "thistle",
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
+      {
+        status &&
+        <AntDesign name="check" size={24} color="white" />
+      }
+
+    </TouchableOpacity>
+  )
+
+}
+
+function Message({ author, time, message, type, isRead, setSelectedMessages, isSelected, setIsSelected }) {
 
   const firstColor = type ? '#35A7F7' : '#182533'
   const secondColor = type ? '#AA9D80' : '#000'
 
   console.log('render', message)
-
-
+  const [checked, setChecked] = useState(false);
   return (
-    <TouchableWithoutFeedback onLongPress={() => console.log('long press id - ', message)} >
+    <TouchableWithoutFeedback onLongPress={() => {
+      setIsSelected(true)
+      // console.log('ref', bouncyCheckboxRef.current.state)
+      setChecked(true)
+      setSelectedMessages(value => [...value, message])
+      // bouncyCheckboxRef.current.props.onPress((e) => {
+      //   console.log('e', e)
+      //   return true
+      // })
+    }
+    } >
 
       <MessageContainer type={type}>
-        <BouncyCheckbox onPress={(isChecked) => {
-          if (isChecked) {
-            setSelectedMessages(value => [...value, message])
-          } else {
-            setSelectedMessages(value => value.filter((item) => item !== message))
-          }
-        }} />
+        {
+          isSelected &&
+          <CheckBox
+            status={checked}
+            onPress={() => {
+             console.log('test')
+              setChecked(!checked)
+              if (!checked) {
+                setSelectedMessages(value => [...value, message])
+              } else {
+                setSelectedMessages(value => value.filter((item) => item !== message))
+              }
+            }}
+          />
+        }
         <View style={{ padding: 10 }}>
           <MessageHeader>
             <Text style={{ color: firstColor }}>{author}</Text>
@@ -55,7 +91,7 @@ function Message({ author, time, message, type, isRead, setSelectedMessages }) {
         </View>
         <FileContainer name={`image${message}.png`} size={'308228'} />
       </MessageContainer>
-    </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback >
 
   )
 }
