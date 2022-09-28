@@ -41,7 +41,7 @@ function ChatScreen({ navigation, route }) {
           )
         } else if (isGroup) {
           return (
-            <GroupTitle title={`Group ${id}`} />
+            <GroupTitle title={`Group ${id}`} navigation={navigation} />
           )
         } else {
           return (
@@ -109,6 +109,7 @@ function ChatScreen({ navigation, route }) {
             setIsSelected={setIsSelected}
           />
         }
+        inverted
       />
       <MessageInput />
     </View>

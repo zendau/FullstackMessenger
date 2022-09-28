@@ -8,16 +8,20 @@ const Title = styled.Text`
   color: white;
 `
 
-function GroupTitle({ title }) {
+function GroupTitle({ title, navigation }) {
 
   const [modalTitle, setModalTitle] = useState('');
 
   const onClick = (id) => {
     console.log('GROUP', id)
+    navigation.navigate('User', { id })
   }
 
   return (
-    <TouchableOpacity onPress={() => setModalTitle('Members')}>
+    <TouchableOpacity onPress={() => {
+      console.log('click')
+      setModalTitle('Members')
+    }}>
       <Title>{title}</Title>
       <ToolbarModel title={modalTitle} setTitle={setModalTitle} onClick={onClick} />
     </TouchableOpacity>

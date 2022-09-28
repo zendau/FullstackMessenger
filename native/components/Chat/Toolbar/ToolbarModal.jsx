@@ -1,4 +1,4 @@
-import { Modal, ScrollView } from 'react-native';
+import { Modal, FlatList } from 'react-native';
 import styled from 'styled-components/native'
 import { AntDesign } from '@expo/vector-icons';
 import ModalItem from './ModalItem';
@@ -57,7 +57,8 @@ function ToolbarModel({ title, setTitle, onClick }) {
       transparent={true}
       visible={!!title}
       onRequestClose={() => {
-        setModal('');
+        console.log('CLOSE MODAL')
+        setTitle('');
       }}
     >
       <ModalCenter>
@@ -70,9 +71,31 @@ function ToolbarModel({ title, setTitle, onClick }) {
               <AntDesign name="close" size={40} color="white" />
             </Button>
           </Container>
-          <ScrollView style={{ alignSelf: 'stretch' }}>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((id) => <ModalItem key={id} title={id} onClick={onClick} />)}
-          </ScrollView>
+          <FlatList
+            style={{ alignSelf: 'stretch' }}
+            data={[
+              { id: 1, message: 1 },
+              { id: 2, message: 2 },
+              { id: 3, message: 3 },
+              { id: 4, message: 4 },
+              { id: 5, message: 5 },
+              { id: 6, message: 6 },
+              { id: 7, message: 7 },
+              { id: 8, message: 8 },
+              { id: 9, message: 9 },
+              { id: 10, message: 10 },
+              { id: 11, message: 11 },
+            ]}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) =>
+              <ModalItem title={item.id} onClick={(id) => {
+                setTitle('')
+                onClick(id)
+              }
+              } />
+            }
+          />
+
         </ModalContainer>
       </ModalCenter>
     </Modal>

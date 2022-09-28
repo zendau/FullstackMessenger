@@ -41,8 +41,8 @@ export default function App() {
     <Provider store={store}>
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar backgroundColor="#17212B" />
-        <NavigationContainer>
-          <Drawer.Navigator screenOptions={drawerScreenOptions} useLegacyImplementation initialRouteName="Chats">
+        <NavigationContainer >
+          <Drawer.Navigator screenOptions={drawerScreenOptions} useLegacyImplementation initialRouteName="Chats" >
             <Drawer.Screen name="Chats" component={ChatsScreen} />
             <Drawer.Screen name="Contacts" component={ContactsScreen} />
             <Drawer.Screen name="Chat" options={{
