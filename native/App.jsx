@@ -10,6 +10,8 @@ import LoginScreen from './views/Login';
 import RegisterScreen from './views/Register';
 import ForgotScreen from './views/Forgot';
 import UserScreen from './views/User'
+import PeopleScreen from './views/People';
+import CreateGroupScreen from './views/CreateGroup';
 
 import { SafeAreaView, StatusBar } from 'react-native'
 
@@ -43,8 +45,10 @@ export default function App() {
         <StatusBar backgroundColor="#17212B" />
         <NavigationContainer >
           <Drawer.Navigator screenOptions={drawerScreenOptions} useLegacyImplementation initialRouteName="Chats" >
-            <Drawer.Screen name="Chats" component={ChatsScreen} />
+            <Drawer.Screen name="Chats" component={ChatsScreen}  />
+            <Drawer.Screen name="Create group" component={CreateGroupScreen}  />
             <Drawer.Screen name="Contacts" component={ContactsScreen} />
+            <Drawer.Screen name="People " component={PeopleScreen} />
             <Drawer.Screen name="Chat" options={{
               drawerItemStyle: { display: 'none' }
             }} component={ChatScreen} />

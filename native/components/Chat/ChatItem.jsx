@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import styled from 'styled-components/native'
 import { Text } from 'react-native';
+import CheckBox from '../UI/CheckBox';
+import { useEffect, useState } from 'react'
 
 const ItemContainer = styled.TouchableOpacity`
     flex-direction: row;
@@ -11,9 +13,37 @@ const ItemContainer = styled.TouchableOpacity`
     align-items: center;
   `
 
-function ChatItem({ navigation, id, isGroup }) {
+function ChatItem({ navigation, id, isGroup, isCreateGroup, itemsSelected,  setItemsSelected }) {
+
+  const [checked, setChecked] = useState(false)
+
+  useEffect(() => {
+    if (isCreateGroup && itemsSelected?.includes(id)) {
+      setChecked(true)
+    }
+  }, [])
+
+  const onCheckBoxHandler = () => {
+    setChecked(!checked)
+    if (!checked) {
+      setItemsSelected(value => [...value, id])
+    } else {
+      setItemsSelected(value => value.filter((item) => item !== id))
+    }
+  }
+
+  const onNavigateItemHandeler = () => {
+    if (isCreateGroup) {
+      onCheckBoxHandler()
+    } else {
+      navigation.navigate('Chat', { id, isGroup })
+    }
+  }
+
+
+
   return (
-    <ItemContainer onPress={() => navigation.navigate('Chat', { id, isGroup })}>
+    <ItemContainer onPress={onNavigateItemHandeler}>
       {
         isGroup
           ?
@@ -22,6 +52,7 @@ function ChatItem({ navigation, id, isGroup }) {
           <Ionicons name="person" size={48} color="white" />
       }
       <Text style={{ color: 'white', fontSize: 18, marginLeft: 20, flex: 1 }}>Login of user - {id}</Text>
+      {isCreateGroup && <CheckBox status={checked} onPress={onCheckBoxHandler} />}
     </ItemContainer>
   )
 }

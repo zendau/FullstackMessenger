@@ -3,7 +3,7 @@ import styled from 'styled-components/native'
 import FileContainer from './FileContainer';
 import MessageStatus from './MessageStatus';
 import { memo, useState, useEffect } from 'react'
-import { AntDesign } from '@expo/vector-icons';
+import CheckBox from '../../UI/CheckBox';
 
 const MessageContainer = styled.View`
   margin-top: 5px;
@@ -25,32 +25,35 @@ const MessageImage = styled.Image`
   width: 80px;
 `
 
-function CheckBox({ status, onPress }) {
-
-  return (
-    <TouchableOpacity onPress={onPress} style={{
-      height: 35, width: 35, backgroundColor: 'blue', borderWidth: 1,
-      borderColor: "thistle",
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      {
-        status &&
-        <AntDesign name="check" size={24} color="white" />
-      }
-
-    </TouchableOpacity>
-  )
-
-}
 
 function Message({ author, time, message, type, isRead, setSelectedMessages, isSelected, setIsSelected }) {
 
   const firstColor = type ? '#35A7F7' : '#182533'
   const secondColor = type ? '#AA9D80' : '#000'
 
-  console.log('render', message)
   const [checked, setChecked] = useState(false);
+
+  const onLongPressHandler = () => {
+    setIsSelected(true)
+    setChecked(true)
+    setSelectedMessages(value => {
+      if (value.includes(message)) {
+        return value
+      } else {
+        return [...value, message]
+      }
+
+    })
+  }
+
+  const onCheckBoxHandler = () => {
+    setChecked(!checked)
+    if (!checked) {
+      setSelectedMessages(value => [...value, message])
+    } else {
+      setSelectedMessages(value => value.filter((item) => item !== message))
+    }
+  }
 
   useEffect(() => {
 
@@ -59,30 +62,18 @@ function Message({ author, time, message, type, isRead, setSelectedMessages, isS
     }
 
 
-    
+
   }, [isSelected])
 
   return (
-    <TouchableWithoutFeedback onLongPress={() => {
-      setIsSelected(true)
-      setChecked(true)
-      setSelectedMessages(value => [...value, message])
-    }
-    } >
+    <TouchableWithoutFeedback onLongPress={onLongPressHandler}>
 
       <MessageContainer type={type}>
         {
           isSelected &&
           <CheckBox
             status={checked}
-            onPress={() => {
-              setChecked(!checked)
-              if (!checked) {
-                setSelectedMessages(value => [...value, message])
-              } else {
-                setSelectedMessages(value => value.filter((item) => item !== message))
-              }
-            }}
+            onPress={onCheckBoxHandler}
           />
         }
         <View style={{ padding: 10 }}>

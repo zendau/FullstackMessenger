@@ -8,7 +8,7 @@ function isOdd(number) {
   return !!(number % 2)
 }
 
-const ListEmptyContainer = styled.View`
+const Test = styled.View`
   height: 100%;
   align-items: center;
   justify-content: center;
@@ -22,7 +22,7 @@ const TextMessage = styled.Text`
 
 
 
-function ContactsScreen({ navigation }) {
+function PeopleScreen({ navigation }) {
 
   const [contactsData, serContactsData] = useState([
     { id: 1, message: 'a' },
@@ -59,9 +59,9 @@ function ContactsScreen({ navigation }) {
           <ChatItem isGroup={isOdd(item.id)} navigation={navigation} id={item.id} />
         }
         ListEmptyComponent={
-          <ListEmptyContainer>
+          <Test>
             <TextMessage>No contacts</TextMessage>
-          </ListEmptyContainer>
+          </Test>
         }
       />
     </View>
@@ -69,4 +69,4 @@ function ContactsScreen({ navigation }) {
   );
 }
 
-export default ContactsScreen
+export default PeopleScreen
