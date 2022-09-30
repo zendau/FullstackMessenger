@@ -56,7 +56,7 @@ function PeopleScreen({ navigation }) {
         data={filteredData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) =>
-          <ChatItem isGroup={isOdd(item.id)} navigation={navigation} id={item.id} />
+          <ChatItem navigation={navigation} id={item.id} isPeopleNavigate />
         }
         ListEmptyComponent={
           <Test>

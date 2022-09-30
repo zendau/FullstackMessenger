@@ -13,7 +13,7 @@ const ItemContainer = styled.TouchableOpacity`
     align-items: center;
   `
 
-function ChatItem({ navigation, id, isGroup, isCreateGroup, itemsSelected,  setItemsSelected }) {
+function ChatItem({ navigation, id, isGroup, isPeopleNavigate,  isCreateGroup, itemsSelected,  setItemsSelected }) {
 
   const [checked, setChecked] = useState(false)
 
@@ -33,7 +33,10 @@ function ChatItem({ navigation, id, isGroup, isCreateGroup, itemsSelected,  setI
   }
 
   const onNavigateItemHandeler = () => {
-    if (isCreateGroup) {
+
+    if (isPeopleNavigate) {
+      navigation.navigate('User', { id })
+    } else if (isCreateGroup) {
       onCheckBoxHandler()
     } else {
       navigation.navigate('Chat', { id, isGroup })
