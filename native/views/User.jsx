@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Button, Text, View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import styled from 'styled-components';
 
 const BtnAction = styled.TouchableOpacity`
@@ -28,7 +27,9 @@ function UserScreen({ route }) {
     isBaned: false
   })
 
-  const onFriendHandler = () => {
+  const [isConfirmRequest, setIsConfirmRequest] = useState(true)
+
+  const onContactHandler = () => {
     setUserInfo(value => {
       value.isFriend = !value.isFriend
       console.log(value)
@@ -36,7 +37,7 @@ function UserScreen({ route }) {
     })
   }
 
-  const onBanHandler = () => {
+  const onBlockHandler = () => {
     setUserInfo(value => {
       value.isBaned = !value.isBaned
       console.log(value)
@@ -44,16 +45,43 @@ function UserScreen({ route }) {
     })
   }
 
+  const onAcceptHandler = () => {
+    console.log('accept')
+    setIsConfirmRequest(false)
+  }
+
+  const onRejectHandler = () => {
+    console.log('reject')
+    setIsConfirmRequest(false)
+  }
+
   return (
     <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50%' }}>
       <Text style={{ color: 'white', fontSize: 30 }}>{userInfo.emaiL}</Text>
       <Text style={{ color: 'white', fontSize: 30 }}>{userInfo.details}</Text>
-      <BtnAction style={{ backgroundColor: userInfo.isFriend ? '#1F4690' : '#4D96FF' }} onPress={onFriendHandler}>
-        <TextInfo>{userInfo.isFriend ? 'UnFriend' : 'Add to Friend'}</TextInfo>
-      </BtnAction>
-      <BtnAction style={{ backgroundColor: userInfo.isBaned ? '#146356' : '#2C3639' }} onPress={onBanHandler}>
-        <TextInfo>{userInfo.isBaned ? 'UnBanned' : 'Block user'}</TextInfo>
-      </BtnAction>
+      {
+        isConfirmRequest
+          ?
+          <View>
+            <BtnAction style={{ backgroundColor: '#1f9030' }} onPress={onAcceptHandler}>
+              <TextInfo>Accept request</TextInfo>
+            </BtnAction>
+            <BtnAction style={{ backgroundColor: '#ff4d4d' }} onPress={onRejectHandler}>
+              <TextInfo>Reject request</TextInfo>
+            </BtnAction>
+          </View>
+          :
+          <View>
+            <BtnAction style={{ backgroundColor: userInfo.isBaned ? 'black' : userInfo.isFriend ? '#1F4690' : '#4D96FF' }} onPress={onContactHandler} disabled={userInfo.isBaned}>
+              <TextInfo>{userInfo.isFriend ? 'Remove from contact' : 'Add to contact'}</TextInfo>
+            </BtnAction>
+            <BtnAction style={{ backgroundColor: userInfo.isBaned ? '#146356' : '#2C3639' }} onPress={onBlockHandler}>
+              <TextInfo>{userInfo.isBaned ? 'Unblock user' : 'Block user'}</TextInfo>
+            </BtnAction>
+          </View>
+      }
+
+
     </View>
   )
 

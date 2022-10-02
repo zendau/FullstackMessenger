@@ -15,10 +15,11 @@ const ErrorMessage = styled.Text`
   color: red;
 `
 
-function FormInput({ placeholder, value, error, secure, touched, submitCount, handleChange }) {
+function FormInput({ placeholder, value, error, secure, touched, submitCount, handleChange, multiline }) {
   return (
     <>
       <Input
+        multiline={multiline}
         placeholder={placeholder}
         placeholderTextColor="#fff"
         secureTextEntry={secure}
@@ -26,8 +27,8 @@ function FormInput({ placeholder, value, error, secure, touched, submitCount, ha
         defaultValue={value}
       />
       {
-        ((touched || submitCount > 0) && error) &&  <ErrorMessage>{error}</ErrorMessage>
-       
+        ((touched || submitCount > 0) && error) && <ErrorMessage>{error}</ErrorMessage>
+
       }
     </>
   )

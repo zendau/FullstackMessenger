@@ -1,17 +1,19 @@
 import styled from 'styled-components';
 
 const SettingContainer = styled.TouchableOpacity`
+  padding: 0 15px;
   width: 80%;
   flex-direction: row;
   margin: 10px auto;
   align-items: center;
   justify-content: center;
-  border-bottom-width: 1px;
-  border-bottom-color: white;
+  background-color: #6AB3F3;
+  border-radius: 10px;
 `
 
 const TextTitle = styled.Text`
   flex: 1;
+  text-align: center;
   margin: 10px;
   font-size: 20px;
 `

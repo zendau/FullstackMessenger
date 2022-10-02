@@ -14,6 +14,8 @@ import PeopleScreen from './views/People';
 import CreateGroupScreen from './views/CreateGroup';
 import SettingsScreen from './views/Settings';
 import DevicesScreen from './views/Devices';
+import ContactRequestsScreen from './views/ContactRequests';
+import AccountScreen from './views/Account';
 
 import { SafeAreaView, StatusBar } from 'react-native'
 
@@ -52,6 +54,7 @@ export default function App() {
             <Drawer.Screen name="Chats" component={ChatsScreen} options={{ drawerIcon: ({ color }) => <AntDesign name="wechat" size={24} color={color} /> }} />
             <Drawer.Screen name="Create group" component={CreateGroupScreen} options={{ drawerIcon: ({ color }) => <AntDesign name="addusergroup" size={24} color={color} /> }} />
             <Drawer.Screen name="Contacts" component={ContactsScreen} options={{ drawerIcon: ({ color }) => <AntDesign name="contacts" size={24} color={color} /> }} />
+            <Drawer.Screen name="Contact requests " component={ContactRequestsScreen} options={{ drawerIcon: ({ color }) => <AntDesign name="adduser" size={24} color={color} /> }} />
             <Drawer.Screen name="People" component={PeopleScreen} options={{ drawerIcon: ({ color }) => <Ionicons name="people" size={24} color={color} /> }} />
             <Drawer.Screen name="Settings " component={SettingsScreen} options={{ drawerIcon: ({ color }) => <AntDesign name="setting" size={24} color={color} /> }} />
 
@@ -64,6 +67,9 @@ export default function App() {
             <Drawer.Screen name="Devices" options={{
               drawerItemStyle: { display: 'none' }
             }} component={DevicesScreen} />
+            <Drawer.Screen name="Account" options={{
+              drawerItemStyle: { display: 'none' }
+            }} component={AccountScreen} />
             <Drawer.Screen name="Login" component={LoginScreen} />
             <Drawer.Screen name="Register" component={RegisterScreen} />
             <Drawer.Screen name="Forgot password" component={ForgotScreen} />
