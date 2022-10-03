@@ -4,6 +4,8 @@ import FileContainer from './FileContainer';
 import MessageStatus from './MessageStatus';
 import { memo, useState, useEffect } from 'react'
 import CheckBox from '../../UI/CheckBox';
+import MessageContent from './MessageContent';
+import isLink from '../isLink'
 
 const MessageContainer = styled.View`
   margin-top: 5px;
@@ -32,6 +34,7 @@ function Message({ author, time, message, type, isRead, setSelectedMessages, isS
   const secondColor = type ? '#AA9D80' : '#000'
 
   const [checked, setChecked] = useState(false);
+  const [messageData, setMessageData] = useState(null);
 
   const onLongPressHandler = () => {
     setIsSelected(true)
@@ -57,6 +60,8 @@ function Message({ author, time, message, type, isRead, setSelectedMessages, isS
 
   useEffect(() => {
 
+    const res = isLink(message.toString())
+    setMessageData(res)
     if (!isSelected) {
       setChecked(false)
     }
@@ -64,6 +69,8 @@ function Message({ author, time, message, type, isRead, setSelectedMessages, isS
 
 
   }, [isSelected])
+
+  const renderPartMessage = (item, index) => <MessageContent url={item.url} text={item.text} key={index} />
 
   return (
     <TouchableWithoutFeedback onLongPress={onLongPressHandler}>
@@ -81,7 +88,10 @@ function Message({ author, time, message, type, isRead, setSelectedMessages, isS
             <Text style={{ color: firstColor }}>{author}</Text>
             <Text style={{ color: secondColor }}>{time}</Text>
           </MessageHeader>
-          <Text style={{ color: '#fff', fontSize: 18 }}>{message}</Text>
+          <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+            {messageData?.map(renderPartMessage)}
+          </View>
+
           <MessageImage source={require('../../../assets/favicon.png')} />
           <MessageStatus isRead={isRead} />
         </View>

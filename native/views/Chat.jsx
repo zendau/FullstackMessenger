@@ -95,6 +95,7 @@ function ChatScreen({ navigation, route }) {
           { id: 9, message: 9 },
           { id: 10, message: 10 },
           { id: 11, message: 11 },
+          { id: 12, message: 'test http://ya.ru sss http://google.com yo.test www.test.com' },
         ]}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) =>
