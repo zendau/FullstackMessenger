@@ -1,6 +1,7 @@
 import { Text } from 'react-native';
 import styled from 'styled-components/native'
 import { AntDesign } from '@expo/vector-icons';
+import formatSizeUnits from '../../../utils/formatSizeUnits';
 
 const Container = styled.TouchableOpacity`
   flex-direction: row;
@@ -14,26 +15,19 @@ const FileData = styled.View`
   align-items: center;
   flex: 1;
 `
+const FileIcon = styled(AntDesign)`
+  border-radius: 50px;
+  background-color: #4C9CE2;
+  padding: 10px;
+`
 
-function formatSizeUnits(bytes) {
-  if (bytes >= 1073741824) { bytes = (bytes / 1073741824).toFixed(2) + " GB"; }
-  else if (bytes >= 1048576) { bytes = (bytes / 1048576).toFixed(2) + " MB"; }
-  else if (bytes >= 1024) { bytes = (bytes / 1024).toFixed(2) + " KB"; }
-  else if (bytes > 1) { bytes = bytes + " bytes"; }
-  else if (bytes == 1) { bytes = bytes + " byte"; }
-  else { bytes = "0 bytes"; }
-  return bytes;
-}
+
 
 function FileContainer({ name, size }) {
 
   return (
     <Container>
-      <AntDesign style={{
-        borderRadius: 50,
-        backgroundColor: '#4C9CE2',
-        padding: 10
-      }} name="file1" size={30} color="white" />
+      <FileIcon name="file1" size={30} color="white" />
       <FileData>
         <Text style={{ color: 'white' }}>{name}</Text>
         <Text style={{ color: 'gray' }} >{formatSizeUnits(size)}</Text>

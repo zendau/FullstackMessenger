@@ -1,27 +1,8 @@
-import ChatItem from "../components/Chat/ChatItem";
 import { useState } from "react";
-import { FlatList } from 'react-native';
-import useSearchData from "../hooks/useSearchData";
-import styled from 'styled-components/native'
-
-function isOdd(number) {
-  return !!(number % 2)
-}
-
-function ChatsScreen({ navigation }) {
+import FlatContainer from "../components/FlatContainer";
 
 
-  const ListEmptyContainer = styled.View`
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-  `
-  const TextMessage = styled.Text`
-    color: white;
-    font-size: 30px;
-    margin-top: 55%;
-  `
-
+function ChatsScreen() {
 
   const [chatsData, serChatsData] = useState([
     { id: 1, message: 'a' },
@@ -37,30 +18,8 @@ function ChatsScreen({ navigation }) {
     { id: 11, message: 'jo' },
   ])
 
-
-  const [filteredData, setFilteredData] = useState(chatsData)
-
-
-  useSearchData({
-    navigation,
-    data: chatsData,
-    setFilteredData
-  })
-
   return (
-    <FlatList
-      style={{ padding: 10 }}
-      data={filteredData}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) =>
-        <ChatItem isGroup={isOdd(item.id)} navigation={navigation} id={item.id} />
-      }
-      ListEmptyComponent={
-        <ListEmptyContainer>
-          <TextMessage>No chats</TextMessage>
-        </ListEmptyContainer>
-      }
-    />
+   <FlatContainer listData={chatsData} noItemMessage='No chats' />
   );
 }
 

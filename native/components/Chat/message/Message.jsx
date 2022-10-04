@@ -1,11 +1,10 @@
-import { View, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native'
 import FileContainer from './FileContainer';
 import MessageStatus from './MessageStatus';
 import { memo, useState, useEffect } from 'react'
 import CheckBox from '../../UI/CheckBox';
 import MessageContent from './MessageContent';
-import isLink from '../isLink'
 
 const MessageContainer = styled.View`
   margin-top: 5px;
@@ -21,20 +20,31 @@ const MessageHeader = styled.View`
   flex-direction: row;
 `
 
+const MessageAuthor = styled.Text`
+  color: ${props => props.primary ? '#35A7F7' : '#182533'};
+`
+
+const MessageTime = styled.Text`
+color: ${props => props.primary ? '#AA9D80' : '#000'};
+`
+
 const MessageImage = styled.Image`
   margin: 0 auto;
   height: 80px;
   width: 80px;
 `
 
+const FlexWrapContainer = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+`
 
-function Message({ author, time, message, type, isRead, setSelectedMessages, isSelected, setIsSelected }) {
 
-  const firstColor = type ? '#35A7F7' : '#182533'
-  const secondColor = type ? '#AA9D80' : '#000'
+function Message({ author, time, message, type, isRead, setSelectedMessages, isSelected, setIsSelected, id }) {
+
+  console.log('render', id)
 
   const [checked, setChecked] = useState(false);
-  const [messageData, setMessageData] = useState(null);
 
   const onLongPressHandler = () => {
     setIsSelected(true)
@@ -58,10 +68,9 @@ function Message({ author, time, message, type, isRead, setSelectedMessages, isS
     }
   }
 
+
   useEffect(() => {
 
-    const res = isLink(message.toString())
-    setMessageData(res)
     if (!isSelected) {
       setChecked(false)
     }
@@ -74,28 +83,24 @@ function Message({ author, time, message, type, isRead, setSelectedMessages, isS
 
   return (
     <TouchableWithoutFeedback onLongPress={onLongPressHandler}>
-
       <MessageContainer type={type}>
-        {
-          isSelected &&
-          <CheckBox
-            status={checked}
-            onPress={onCheckBoxHandler}
-          />
-        }
+        <CheckBox
+          isSelected={isSelected}
+          status={checked}
+          onPress={onCheckBoxHandler}
+        />
         <View style={{ padding: 10 }}>
           <MessageHeader>
-            <Text style={{ color: firstColor }}>{author}</Text>
-            <Text style={{ color: secondColor }}>{time}</Text>
+            <MessageAuthor primary={type}>{author}</MessageAuthor>
+            <MessageTime primary={type}>{time}</MessageTime>
           </MessageHeader>
-          <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-            {messageData?.map(renderPartMessage)}
-          </View>
-
+          <FlexWrapContainer>
+            {message?.map(renderPartMessage)}
+          </FlexWrapContainer>
           <MessageImage source={require('../../../assets/favicon.png')} />
           <MessageStatus isRead={isRead} />
         </View>
-        <FileContainer name={`image${message}.png`} size={'308228'} />
+        <FileContainer name={`image${message[0].text}.png`} size={'308228'} />
       </MessageContainer>
     </TouchableWithoutFeedback >
 

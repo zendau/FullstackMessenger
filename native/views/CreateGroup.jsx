@@ -1,30 +1,9 @@
-import ChatItem from "../components/Chat/ChatItem";
-import { useState, useLayoutEffect} from "react";
-import { FlatList, } from 'react-native';
-import styled from 'styled-components/native'
-import { TextInput } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
+import { useState, useLayoutEffect } from "react";
 import CreateGroupNavTitle from "../components/CreateGroup/CreateGroupNavTitle";
+import FlatContainer from "../components/FlatContainer";
 
-function isOdd(number) {
-  return !!(number % 2)
-}
-
-
-
-const TextMessage = styled.Text`
-  color: white;
-  font-size: 30px;
-  margin-top: 55%;
-`
-
-
-const ListEmptyContainer = styled.View`
-  height: 95%;
-  align-items: center;
-  justify-content: center;
-`
-
-function CreateGroupScreen({ navigation }) {
+function CreateGroupScreen() {
 
   const [itemsSelected, setItemsSelected] = useState([]);
 
@@ -43,38 +22,26 @@ function CreateGroupScreen({ navigation }) {
   ])
 
 
-  const [filteredData, setFilteredData] = useState(chatsData)
-
-  const onInputSearch = (e) => {
-    const text = e.toLowerCase()
-    setFilteredData(chatsData.filter(item => item.message.toLocaleLowerCase().includes(text)))
-  }
+  const navigation = useNavigation()
 
   useLayoutEffect(() => {
     console.log('render')
     navigation.setOptions({
       headerTitle: () => {
         return (
-          <CreateGroupNavTitle itemsSelected={itemsSelected}/>
+          <CreateGroupNavTitle itemsSelected={itemsSelected} />
         )
       }
     })
   }, [itemsSelected])
 
   return (
-    <FlatList
-      ListHeaderComponent={<TextInput onChangeText={onInputSearch} placeholder="Who would you like to add ?" placeholderTextColor={'gray'} style={{ fontSize: 18, textAlign: 'center', color: 'white' }} />}
-      style={{ padding: 10 }}
-      data={filteredData}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) =>
-        <ChatItem isGroup={isOdd(item.id)} navigation={navigation} id={item.id} isCreateGroup setItemsSelected={setItemsSelected} itemsSelected={itemsSelected} />
-      }
-      ListEmptyComponent={
-        <ListEmptyContainer>
-          <TextMessage>No users</TextMessage>
-        </ListEmptyContainer>
-      }
+    <FlatContainer
+      listData={chatsData}
+      noItemMessage='No users'
+      isCreateGroup
+      setItemsSelected={setItemsSelected}
+      itemsSelected={itemsSelected}
     />
   );
 }

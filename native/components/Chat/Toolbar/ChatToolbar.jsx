@@ -1,8 +1,8 @@
 import { AntDesign } from '@expo/vector-icons';
-import { View,Text } from 'react-native';
+import { View } from 'react-native';
 import styled from 'styled-components/native'
 import ToolbarModel from './ToolbarModal';
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 const ChatToolbarContainer = styled.View`
   flex-direction: row;
@@ -15,27 +15,36 @@ const ChatToolbarIcon = styled.TouchableOpacity`
 function ChatToolbar() {
 
   const [modalTitle, setModalTitle] = useState('');
+  const modalHandler = useRef(null)
 
-  const addUserToGroup = (id) => {
-    console.log('ADD', id)
+  const addUserToGroup = () => {
+
+    modalHandler.current = (id) => {
+      console.log('ADD', id)
+    }
+
+    setModalTitle('Add user')
   }
 
-  const removeUserToGroup = (id) => {
-    console.log('REMOVE', id)
+  const removeUserToGroupHandler = () => {
+    modalHandler.current = (id) => {
+      console.log('REMOVE', id)
+    }
+
+    setModalTitle('Add user')
   }
-  
 
   return (
-    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <ChatToolbarContainer>
-        <ChatToolbarIcon onPress={() => setModalTitle('Add user')}>
+        <ChatToolbarIcon onPress={addUserToGroup}>
           <AntDesign name="adduser" size={30} color="white" />
         </ChatToolbarIcon>
-        <ChatToolbarIcon onPress={() => setModalTitle('Remove user')}>
+        <ChatToolbarIcon onPress={removeUserToGroupHandler}>
           <AntDesign name="deleteuser" size={30} color="white" />
         </ChatToolbarIcon>
       </ChatToolbarContainer>
-      <ToolbarModel title={modalTitle} setTitle={setModalTitle}/>
+      <ToolbarModel title={modalTitle} setTitle={setModalTitle} onClick={modalHandler.current} />
     </View>
 
   )

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert } from 'react-native'
+import { Text, TouchableOpacity, Alert } from 'react-native'
 import styled from "styled-components";
 import { FontAwesome, FontAwesome5, Entypo, AntDesign } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';

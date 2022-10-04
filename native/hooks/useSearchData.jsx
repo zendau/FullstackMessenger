@@ -20,7 +20,6 @@ const Title = styled.Text`
 
 function useSearchData({ navigation, data, setFilteredData }) {
 
-
   const onInputSearch = (e) => {
     const text = e.toLowerCase()
     setFilteredData(data.filter(item => item.message.toLocaleLowerCase().includes(text)))
@@ -59,6 +58,8 @@ function useSearchData({ navigation, data, setFilteredData }) {
     })
 
   }, [isSeach])
+
+
 }
 
 export default useSearchData

@@ -3,6 +3,7 @@ import styled from 'styled-components/native'
 import { Text } from 'react-native';
 import CheckBox from '../UI/CheckBox';
 import { useEffect, useState } from 'react'
+import { useNavigation } from '@react-navigation/native';
 
 const ItemContainer = styled.TouchableOpacity`
     flex-direction: row;
@@ -13,9 +14,9 @@ const ItemContainer = styled.TouchableOpacity`
     align-items: center;
   `
 
-function ChatItem({ navigation, id, isGroup, isPeopleNavigate,  isCreateGroup, itemsSelected,  setItemsSelected }) {
-
+function ChatItem({ id, isGroup, isPeopleNavigate,  isCreateGroup, itemsSelected,  setItemsSelected }) {
   const [checked, setChecked] = useState(false)
+  const navigation = useNavigation()
 
   useEffect(() => {
     if (isCreateGroup && itemsSelected?.includes(id)) {
@@ -55,7 +56,7 @@ function ChatItem({ navigation, id, isGroup, isPeopleNavigate,  isCreateGroup, i
           <Ionicons name="person" size={48} color="white" />
       }
       <Text style={{ color: 'white', fontSize: 18, marginLeft: 20, flex: 1 }}>Login of user - {id}</Text>
-      {isCreateGroup && <CheckBox status={checked} onPress={onCheckBoxHandler} />}
+      <CheckBox status={checked} isSelected={isCreateGroup} onPress={onCheckBoxHandler} />
     </ItemContainer>
   )
 }

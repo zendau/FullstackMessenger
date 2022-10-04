@@ -2,54 +2,55 @@ import { Modal, FlatList } from 'react-native';
 import styled from 'styled-components/native'
 import { AntDesign } from '@expo/vector-icons';
 import ModalItem from './ModalItem';
+import { memo } from 'react';
 
-function ToolbarModel({ title, setTitle, onClick }) {
-
-
-  const ModalCenter = styled.View`
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    margin-top: 22px;
-  `
-
-  const ModalContainer = styled.View`
-    margin: 20px;
-    background-color: #3A3A3D;
-    border-radius: 10px;
-    width: 70%;
-    height: 60%;
-    align-items: stretch;
-    shadow-color: #000;
-    shadow-offset: 0px 2px;
-    shadow-opacity: 0.25;
-    shadow-radius: 4px;
-    elevation: 5;
-  `
-
-  const Container = styled.View`
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+const ModalCenter = styled.View`
+flex: 1;
+justify-content: center;
+align-items: center;
+margin-top: 22px;
 `
 
-  const ModalText = styled.Text`
-    color: black;
-    font-weight: bold;
-    text-align: center;
-  `
+const ModalContainer = styled.View`
+margin: 20px;
+background-color: #3A3A3D;
+border-radius: 10px;
+width: 70%;
+height: 60%;
+align-items: stretch;
+shadow-color: #000;
+shadow-offset: 0px 2px;
+shadow-opacity: 0.25;
+shadow-radius: 4px;
+elevation: 5;
+`
 
-  const Button = styled.TouchableOpacity`
-    padding: 10px;
-  `
+const Container = styled.View`
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+`
 
-  const HeaderText = styled.Text`
-   color: white;
-   flex: 1;
-   text-align: center;
-   margin-left: 25%;
-   font-size: 20px;
-  `
+const ModalText = styled.Text`
+color: black;
+font-weight: bold;
+text-align: center;
+`
+
+const Button = styled.TouchableOpacity`
+padding: 10px;
+`
+
+const HeaderText = styled.Text`
+color: white;
+flex: 1;
+text-align: center;
+margin-left: 25%;
+font-size: 20px;
+`
+
+
+function ToolbarModel({ title, setTitle, onClick }) {
 
   return (
     <Modal
@@ -102,4 +103,4 @@ function ToolbarModel({ title, setTitle, onClick }) {
   )
 }
 
-export default ToolbarModel
+export default memo(ToolbarModel)

@@ -1,28 +1,8 @@
-import ChatItem from "../components/Chat/ChatItem";
-import { FlatList, View } from 'react-native';
 import { useState } from "react";
-import styled from 'styled-components/native'
-import useSearchData from "../hooks/useSearchData";
-
-function isOdd(number) {
-  return !!(number % 2)
-}
-
-const ListEmptyContainer = styled.View`
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-`
-
-const TextMessage = styled.Text`
-  color: white;
-  font-size: 30px;
-   margin-top: 55%;
-`
+import FlatContainer from "../components/FlatContainer";
 
 
-
-function ContactsScreen({ navigation }) {
+function ContactsScreen() {
 
   const [contactsData, serContactsData] = useState([
     { id: 1, message: 'a' },
@@ -38,34 +18,8 @@ function ContactsScreen({ navigation }) {
     { id: 11, message: 'jo' },
   ])
 
-
-
-  const [filteredData, setFilteredData] = useState(contactsData)
-
-
-  useSearchData({
-    navigation,
-    data: contactsData,
-    setFilteredData
-  })
-
   return (
-    <View>
-      <FlatList
-        style={{ padding: 10, height: '100%' }}
-        data={filteredData}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) =>
-          <ChatItem isGroup={isOdd(item.id)} navigation={navigation} id={item.id} />
-        }
-        ListEmptyComponent={
-          <ListEmptyContainer>
-            <TextMessage>No contacts</TextMessage>
-          </ListEmptyContainer>
-        }
-      />
-    </View>
-
+    <FlatContainer listData={contactsData} noItemMessage='No contacts' />
   );
 }
 

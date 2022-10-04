@@ -1,17 +1,20 @@
 import { Ionicons } from '@expo/vector-icons'; 
+import styled from 'styled-components';
+
+const StatusIcon = styled(Ionicons)`
+  align-self: flex-end;
+`
 
 function MessageStatus({isRead}) {
   
-  const IconStyle = {
-    alignSelf: 'flex-end'
-  }
+
 
   if (isRead === true) {
-    return(<Ionicons style={IconStyle} name="checkmark-done-sharp" size={24} color="white" />)
+    return(<StatusIcon name="checkmark-done-sharp" size={24} color="white" />)
   } else if (isRead === false) {
-    return(<Ionicons style={IconStyle} name="checkmark-sharp" size={24} color="white" />)
+    return(<StatusIcon name="checkmark-sharp" size={24} color="white" />)
   } else {
-    return(<Ionicons style={IconStyle} name="md-time-outline" size={24} color="white" />)
+    return(<StatusIcon name="md-time-outline" size={24} color="white" />)
   }
 }
 

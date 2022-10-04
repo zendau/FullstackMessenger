@@ -1,12 +1,15 @@
 import { Feather, AntDesign } from '@expo/vector-icons';
-import { View, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import styled from 'styled-components/native'
+
+
+const ChatToolbarIcon = styled.TouchableOpacity`
+padding: 10px;
+`
 
 function ChatSelectedToolbar({ itemsSelected, setItemsSelected }) {
 
-  const ChatToolbarIcon = styled.TouchableOpacity`
-  padding: 10px;
-`
+
 
   const editMessage = () => {
     console.log('edit ', itemsSelected)
