@@ -1,10 +1,11 @@
 import ChatItem from "../components/Chat/ChatItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList } from 'react-native';
 import useSearchData from "../hooks/useSearchData";
 import styled from 'styled-components/native'
 import { useNavigation } from "@react-navigation/native";
 import GroupFlatListHeader from "./CreateGroup/GroupFlatlistHeader";
+import RequestsFlatListHeader from "./Requests/RequestsFlatListHeader";
 
 const ListEmptyContainer = styled.View`
   height: 100%;
@@ -21,10 +22,15 @@ function isOdd(number) {
   return !!(number % 2)
 }
 
-export function FlatContainer({ listData, noItemMessage, isPeopleNavigate, isCreateGroup, itemsSelected, setItemsSelected }) {
+export function FlatContainer({ listData, noItemMessage, isPeopleNavigate, isRequestHeader, isCreateGroup, itemsSelected, setItemsSelected, setContactsData }) {
+
+
 
   const [filteredData, setFilteredData] = useState(listData)
   const navigation = useNavigation()
+
+
+  console.log(filteredData)
 
   if (!isCreateGroup) {
     useSearchData({
@@ -42,7 +48,11 @@ export function FlatContainer({ listData, noItemMessage, isPeopleNavigate, isCre
 
   return (
     <FlatList
-      ListHeaderComponent={isCreateGroup && <GroupFlatListHeader listData={listData} setFilteredData={setFilteredData} />}
+      ListHeaderComponent={
+        isCreateGroup ? <GroupFlatListHeader listData={listData} setFilteredData={setFilteredData} />
+          : isRequestHeader &&
+         <RequestsFlatListHeader setContactsData={setContactsData} setFilteredData={setFilteredData} />
+      }
       style={{ padding: 10 }}
       data={filteredData}
       keyExtractor={(item) => item.id}

@@ -4,22 +4,18 @@ import FlatContainer from "../components/FlatContainer";
 
 function ContactRequestsScreen() {
 
-  const [contactsData, serContactsData] = useState([
+  const [contactsData, setContactsData] = useState([
     { id: 1, message: 'a' },
     { id: 2, message: 'ab' },
     { id: 3, message: 'abc' },
     { id: 4, message: 'd' },
-    { id: 5, message: 'de' },
-    { id: 6, message: 'def' },
-    { id: 7, message: 'g' },
-    { id: 8, message: 'gh' },
-    { id: 9, message: 'ghi' },
-    { id: 10, message: 'j' },
-    { id: 11, message: 'jo' },
+    { id: 5, message: 'de' }
   ])
 
+  console.log('render')
+
   return (
-    <FlatContainer listData={contactsData} noItemMessage='No Requests' isPeopleNavigate />
+    <FlatContainer listData={contactsData} noItemMessage='No Requests' isPeopleNavigate isRequestHeader setContactsData={setContactsData} />
   );
 }
 

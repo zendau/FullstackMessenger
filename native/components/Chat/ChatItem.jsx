@@ -49,7 +49,7 @@ function ChatItem({ id, isGroup, isPeopleNavigate,  isCreateGroup, itemsSelected
   return (
     <ItemContainer onPress={onNavigateItemHandeler}>
       {
-        isGroup
+        isGroup && !isPeopleNavigate
           ?
           <Ionicons name="people" size={48} color="white" />
           :
