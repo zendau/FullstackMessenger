@@ -8,9 +8,9 @@ export class LoginDTO {
     required: true,
   })
   @Length(6, 20, {
-    message: 'email is smaller than 6 signs or bigger than 20 signs',
+    message: 'Email is smaller than 6 signs or bigger than 20 signs',
   })
-  @IsEmail({ message: 'Is not email' })
+  @IsEmail({ message: 'Email must be a string' })
   email: string;
 
   @ApiProperty({
@@ -19,8 +19,8 @@ export class LoginDTO {
     
   })
   @Length(6, 20, {
-    message: 'password is smaller than 6 signs or bigger than 20 signs',
+    message: 'Password is smaller than 6 signs or bigger than 20 signs',
   })
-  @IsString({ message: 'Is not currect string' })
+  @IsString({ message: 'Password must be a string' })
   password: string;
 }

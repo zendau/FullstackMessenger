@@ -55,7 +55,8 @@ export class ConfirmCodeService {
   }
 
   async checkConfirmCode(userConfrimCode: string, confirmId: string) {
-    const confirmCode = await this.cacheManager.get(confirmId);
+    
+    const confirmCode = await this.cacheManager?.get(confirmId);
 
     if (confirmCode === userConfrimCode) {
       return {

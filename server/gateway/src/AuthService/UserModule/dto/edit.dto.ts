@@ -29,7 +29,7 @@ export class EditData {
   @ApiProperty({
     example: 'root',
     description: 'user password',
-    
+
   })
   @Length(6, 20, {
     message: 'password is smaller than 6 signs or bigger than 20 signs',
@@ -37,18 +37,6 @@ export class EditData {
   @IsString({ message: 'Is not currect string' })
   @IsOptional()
   password: string;
-
-  @ApiProperty({
-    example: 'root',
-    description: 'Confirm password',
-    required: true,
-  })
-  @IsOptional()
-  @IsString({ message: 'Is not currect string' })
-  @Length(6, 20, {
-    message: 'password is smaller than 6 signs or bigger than 20 signs',
-  })
-  confirmPassword: string;
 
   @ApiProperty({
     example: 'b75740fc-9859-45fa-9211-f68d2b20c902',
@@ -79,5 +67,5 @@ export class EditData {
   })
   @IsEmail({ message: 'Is not email' })
   newEmail: string;
-  
+
 }

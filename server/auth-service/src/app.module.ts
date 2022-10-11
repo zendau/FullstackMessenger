@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from './token/token.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { RoleModule } from './role/role.module';
 import { ConfirmModule } from './access/access.module';
 import * as Joi from '@hapi/joi';

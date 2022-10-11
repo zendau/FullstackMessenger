@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import styled from 'styled-components/native'
+import styled from 'styled-components';
 import { Text } from 'react-native';
 import CheckBox from '../UI/CheckBox';
 import { useEffect, useState } from 'react'

@@ -5,15 +5,5 @@ export default function convertUserDTO(userData: User) {
     id: userData.id,
     email: userData.email,
     login: userData.login,
-    role: convertRoleDTO(userData.role)
   };
-}
-
-function convertRoleDTO(role: any) {
-  return {
-    id: role.id,
-    value: role.value,
-    accessLevel: role.accessLevel
-  }
-
 }
