@@ -44,6 +44,7 @@ import { authSuccessDTO } from '../ResponseDTO/authSuccess.dto';
 
 import BodyWithDevice from '../decorators/BodyWithDevice.decorator';
 import RefreshData from '../decorators/RefreshData.decorator';
+import { UserRole } from './interfaces/IUserRole';
 
 @ApiTags('Auth microservice - User controller')
 @Controller('user')
@@ -305,6 +306,34 @@ export class UserController {
     }
 
     res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true });
+    return resData;
+  }
+
+  @Patch('setRole')
+  // @ApiOperation({ summary: 'reset user password' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Success operation, new password send to user email',
+  // })
+  // @ApiResponse({
+  //   status: 400,
+  //   description: 'user not found',
+  //   type: HttpErrorDTO,
+  // })
+  async setUserRole(
+    @Body()
+    roleData: {
+      userId: number;
+      role: UserRole;
+    },
+  ) {
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/setRole', roleData),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
     return resData;
   }
 }

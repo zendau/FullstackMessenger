@@ -1,6 +1,5 @@
 import { ConfirmCodeService } from '../access/access-confirm/access-confirm';
 import { NodeMailerService } from '../access/nodemailer/nodemailer.service';
-import { RoleService } from '../role/role.service';
 import { TokenService } from '../token/token.service';
 import { CACHE_MANAGER, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,16 +7,12 @@ import { Connection, Repository, QueryRunner } from 'typeorm';
 import { User } from './user.entity';
 
 import IUser from './interfaces/IUserData';
-import IRoleData from './interfaces/IRoleData';
-import {
-  comparePassword,
-  hashPassword,
-} from './assets/passwordFactory';
+import { comparePassword, hashPassword } from './utils/passwordFactory';
 import { Cache } from 'cache-manager';
 import { UserService } from './user.service';
 import { UserInfoService } from './userInfo.service';
 import { UserOnlineService } from './UserOnline.service';
-import convertUserDTO from './assets/createUserDTO';
+import convertUserDTO from './dto/createUserDTO';
 import { DeviceService } from 'src/token/device.service';
 import { IDevice } from 'src/token/interfaces/ITokenDevice';
 import IRefreshData from './interfaces/IRefreshData';
@@ -30,7 +25,6 @@ export class AuthService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private tokenService: TokenService,
-    private roleService: RoleService,
     private userService: UserService,
     private nodeMailerService: NodeMailerService,
     private confirmCodeService: ConfirmCodeService,
@@ -38,8 +32,6 @@ export class AuthService {
     private userOnlineService: UserOnlineService,
     private deviceService: DeviceService,
     private connection: Connection,
-    @Inject(CACHE_MANAGER)
-    private cacheManager: Cache,
   ) {}
 
   async register(userData: IUser): Promise<any> {
@@ -65,17 +57,9 @@ export class AuthService {
         User,
         userEntity,
       );
-      const role = await this.roleService.getRoleById(
-        parseInt(process.env.BASE_USER_ROLE_ID),
-      );
 
       const tokens = await this.registerTransaction(
         resUserInsered,
-        {
-          id: role.id,
-          value: role.value,
-          accessLevel: role.accessLevel,
-        },
         userData.system,
       );
 
@@ -84,7 +68,6 @@ export class AuthService {
       return tokens;
     } catch (e) {
       await this.queryRunner.rollbackTransaction();
-      console.log('e', e);
       return {
         status: false,
         message: 'Wrong credentials provided',
@@ -98,7 +81,6 @@ export class AuthService {
 
   async login(userData: IUser) {
     try {
-      debugger
       const resUserData = await this.userService.findByEmail(userData.email);
       if (!resUserData.status) return resUserData;
 
@@ -111,21 +93,13 @@ export class AuthService {
         return resComparePasswords;
       }
 
-      const { bannedStatus, role, userInfo } =
-        await this.userService.getAdditionalUserData(
-          resUserData.userData.id,
-          resUserData.userData.role.id,
-        );
+      const { bannedStatus, userInfo } =
+        await this.userService.getAdditionalUserData(resUserData.userData.id,);
 
       const tokens = this.tokenService.insertTokens(
         {
           ...convertUserDTO(resUserData.userData),
           isBanned: bannedStatus.isBanned,
-          role: {
-            id: role.id,
-            value: role.value,
-            accessLevel: role.accessLevel,
-          },
           info: userInfo,
         },
         userData.system,
@@ -144,18 +118,7 @@ export class AuthService {
     }
   }
 
-  private async registerTransaction(
-    userData: User,
-    roleData: IRoleData,
-    deviceData: IDevice,
-  ) {
-    await this.roleService.addUserRole(
-      {
-        roleId: roleData.id,
-        userId: userData.id,
-      },
-      this.queryRunner.manager,
-    );
+  private async registerTransaction(userData: User, deviceData: IDevice) {
 
     const accessData = await this.confirmCodeService.initAcceesNote(
       userData,
@@ -178,11 +141,6 @@ export class AuthService {
     const tokens = await this.tokenService.insertTokens(
       {
         ...convertUserDTO(userData),
-        role: {
-          id: roleData.id,
-          value: roleData.value,
-          accessLevel: roleData.accessLevel,
-        },
         info: userInfo,
         isBanned: accessData.isBanned,
       },
@@ -194,7 +152,6 @@ export class AuthService {
   }
 
   async resetUserPassword(userData: IUser) {
-    debugger;
     const checkCode = await this.confirmCodeService.checkConfirmCode(
       userData.confirmCode,
       userData.email,

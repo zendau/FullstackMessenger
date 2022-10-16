@@ -8,6 +8,7 @@ import IUser from './interfaces/IUserData';
 import IConfirmData from './interfaces/IConfirmData';
 import IEditUser from './interfaces/IEditUserData';
 import IRefreshData from './interfaces/IRefreshData';
+import { UserRole } from './user.entity';
 
 @Controller()
 export class UsersController {
@@ -48,7 +49,7 @@ export class UsersController {
     const res = await this.authService
       .refreshToken(refreshData)
       .catch((err) => {
-        console.log(err)
+        console.log(err);
         return {
           status: false,
           message: err.sqlMessage,
@@ -152,6 +153,22 @@ export class UsersController {
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
+    console.log('res', res);
+    return res;
+  }
+
+  @MessagePattern('user/setRole')
+  async setUserRole(@Payload() roleData: { userId: number; role: UserRole }) {
+
+    const res = await this.userService
+      .setUserRole(roleData.userId, roleData.role)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
     console.log('res', res);
     return res;
   }

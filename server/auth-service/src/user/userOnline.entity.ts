@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
+} from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
@@ -7,7 +13,7 @@ export class UserOnline {
   id: number;
 
   @OneToOne(() => User)
-  @JoinColumn({name: 'userId'})
+  @JoinColumn({ name: 'userId' })
   userId: number;
 
   @CreateDateColumn()

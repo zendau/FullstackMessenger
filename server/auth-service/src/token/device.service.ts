@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Device } from './device.entity';
 import { IDevice, ITokenDevice } from './interfaces/ITokenDevice';

@@ -1,4 +1,3 @@
-import { RoleController } from './AuthService/RoleModule/role.controller';
 import { UserController } from './AuthService/UserModule/user.controller';
 import { RoomController } from './PeerService/room/room.controller';
 import { FoulderController } from './FileCloudService/foulder/foulder.controller';
@@ -13,6 +12,7 @@ import { RefreshStrategy } from './AuthService/strategies/refresh.strategy';
 import { ClientOpts } from '@nestjs/microservices/external/redis.interface';
 
 import * as redisStore from 'cache-manager-redis-store';
+import { ContactController } from './AuthService/UserModule/contact.controller';
 
 @Module({
   imports: [
@@ -88,7 +88,7 @@ import * as redisStore from 'cache-manager-redis-store';
     FileController,
     RoomController,
     UserController,
-    RoleController,
+    ContactController
   ],
   providers: [JwtStrategy, RefreshStrategy],
 })

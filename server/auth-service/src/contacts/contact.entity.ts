@@ -3,6 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 import { User } from 'src/user/user.entity';
@@ -13,19 +14,20 @@ export class Contact {
   id: number;
 
   @ManyToOne(() => User, (User) => User.id)
-  userId: User[];
+  @JoinColumn({ name: 'userId' })
+  userId: number;
 
   @ManyToOne(() => User, (User) => User.id)
-  contactId:  User[];
+  @JoinColumn({ name: 'contactId' })
+  contactId: number;
 
   @Column({
-    default: true
+    default: false,
   })
   isContact: boolean;
 
   @Column({
-    default: false
+    default: false,
   })
   isBanned: boolean;
-
 }

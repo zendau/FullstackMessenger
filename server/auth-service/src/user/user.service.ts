@@ -1,28 +1,25 @@
 import { ConfirmCodeService } from '../access/access-confirm/access-confirm';
 import { NodeMailerService } from '../access/nodemailer/nodemailer.service';
-import { RoleService } from '../role/role.service';
+
 import { TokenService } from '../token/token.service';
 import { CACHE_MANAGER, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository, QueryRunner } from 'typeorm';
+import { Connection, Repository, QueryRunner, SelectQueryBuilder } from 'typeorm';
 import { User } from './user.entity';
 
 import IUser from './interfaces/IUserData';
 import IRoleData from './interfaces/IRoleData';
-
-import convertUserDTO from './assets/createUserDTO';
-import {
-  comparePassword,
-  hashPassword,
-} from './assets/passwordFactory';
+import { hashPassword } from './utils/passwordFactory';
 import { Cache } from 'cache-manager';
 
-import convertEditUserDTO from './assets/createEditUserDTO';
-import { sqlErrorCodes } from './assets/sqlErrorCodes';
+import convertEditUserDTO from './dto/createEditUserDTO';
+import { sqlErrorCodes } from './utils/sqlErrorCodes';
 import IEditUser from './interfaces/IEditUserData';
 import { UserInfoService } from './userInfo.service';
 import { UserOnlineService } from './UserOnline.service';
 import { DeviceService } from 'src/token/device.service';
+import { UserRole } from './user.entity';
+import { Contact } from 'src/contacts/contact.entity';
 
 @Injectable()
 export class UserService {
@@ -31,14 +28,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private tokenService: TokenService,
-    private roleService: RoleService,
-    private nodeMailerService: NodeMailerService,
     private confirmCodeService: ConfirmCodeService,
     private userInfoService: UserInfoService,
-    private userOnlineService: UserOnlineService,
-    private deviceService: DeviceService,
-    private connection: Connection,
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
   ) {}
@@ -60,7 +51,6 @@ export class UserService {
       }
 
       if (userData.password !== undefined) {
-
         const hashedPassword = await hashPassword(userData.password);
 
         userData.password = hashedPassword;
@@ -100,22 +90,11 @@ export class UserService {
   async findByEmail(email: string) {
     const user: any = await this.usersRepository
       .createQueryBuilder('u')
-      .select([
-        'u.id',
-        'u.email',
-        'u.login',
-        'u.password',
-        'r.id',
-        'r.value',
-        'r.desc',
-      ])
-      .innerJoinAndSelect('u.role', 'ur')
-      .innerJoinAndSelect('ur.role', 'r')
+      .select(['u.id', 'u.email', 'u.login', 'u.password, u.role'])
       .where('u.email = :email', { email })
       .getOne();
 
     if (user !== undefined) {
-      user.role = user.role[0].role;
       return {
         status: true,
         userData: user,
@@ -129,13 +108,11 @@ export class UserService {
     };
   }
 
-  async getAdditionalUserData(userId: number, roleId: number) {
-    const role = await this.roleService.getRoleById(roleId);
+  async getAdditionalUserData(userId: number) {
     const bannedStatus = await this.confirmCodeService.getBannedStatus(userId);
     const userInfo = await this.userInfoService.findByUserId(userId);
 
     return {
-      role,
       bannedStatus,
       userInfo,
     };
@@ -144,17 +121,24 @@ export class UserService {
   async getAllUsers() {
     const users = await this.usersRepository
       .createQueryBuilder('user')
-      .innerJoinAndSelect('user.role', 'userRole')
-      .innerJoinAndSelect('userRole.role', 'role')
       .innerJoinAndSelect('user.access', 'access')
       .select('user.id', 'id')
       .addSelect('user.email', 'email')
       .addSelect('user.login', 'login')
-      .addSelect('role.value', 'role')
       .addSelect('access.isBanned', 'isBanned')
       .orderBy('id')
       .getRawMany();
     return users;
+  }
+
+  async getOtherUsersList(subQuery: SelectQueryBuilder<Contact>, userId: number) {
+    const resList = await this.usersRepository
+      .createQueryBuilder()
+      .select('id, email, login')
+      .where(`id IN (${subQuery.getQuery()})`)
+      .andWhere('id != :userId', { userId })
+      .getRawMany();
+    return resList;
   }
 
   async getUserById(id: number) {
@@ -180,5 +164,35 @@ export class UserService {
     this.cacheManager.set('test', 'tet');
 
     return this.cacheManager.get('test');
+  }
+
+  async setUserRole(userId: number, role: UserRole) {
+    const roleObject = Object.values(UserRole);
+    if (!roleObject.includes(role)) {
+      return {
+        status: false,
+        message: `Undefined role - ${role}`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    const resSetRole = await this.usersRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        role,
+      })
+      .where('id = :userId', { userId: userId })
+      .execute();
+
+    if (resSetRole.affected) {
+      return true;
+    } else {
+      return {
+        status: false,
+        message: `Undefined user with id - ${userId}`,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
   }
 }

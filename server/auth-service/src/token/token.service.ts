@@ -17,11 +17,11 @@ export class TokenService {
 
   generateTokens(payload) {
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '5m',
+      expiresIn:  process.env.JWT_ACCESS_EXPIRE,
       secret: process.env.JWT_ACCESS_SECRET,
     });
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: '7d',
+      expiresIn:  process.env.JWT_REFRESH_EXPIRE,
       secret: process.env.JWT_REFRESH_SECRET,
     });
 

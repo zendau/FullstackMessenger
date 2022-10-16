@@ -1,11 +1,9 @@
-import { RoleController } from './role/role.controller';
 import { UsersController } from './user/user.controller';
 import { Module } from '@nestjs/common';
 import { UsersModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from './token/token.module';
 import { ConfigModule } from '@nestjs/config';
-import { RoleModule } from './role/role.module';
 import { ConfirmModule } from './access/access.module';
 import * as Joi from '@hapi/joi';
 import config from './ormconfig';
@@ -29,7 +27,6 @@ import config from './ormconfig';
           RABBITMQ_HOST: Joi.string().required(),
           RABBITMQ_PORT: Joi.number().required(),
           BCRYPT_SALT: Joi.number().required(),
-          BASE_USER_ROLE_ID: Joi.number().required(),
           MAILER_HOST: Joi.string().required(),
           MAILER_PORT: Joi.number().required(),
           MAILER_EMAIL: Joi.string().required(),
@@ -43,9 +40,8 @@ import config from './ormconfig';
     UsersModule,
     TokenModule,
     ConfirmModule,
-    RoleModule,
     ConfirmModule,
   ],
-  controllers: [UsersController, RoleController],
+  controllers: [UsersController],
 })
 export class AppModule {}

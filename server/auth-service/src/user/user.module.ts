@@ -1,5 +1,4 @@
 import { ConfirmModule } from '../access/access.module';
-import { RoleModule } from '../role/role.module';
 import { TokenModule } from '../token/token.module';
 import { User } from './user.entity';
 import { UserOnline } from './userOnline.entity';
@@ -13,12 +12,14 @@ import * as redisStore from 'cache-manager-redis-store';
 import { ConfigService } from '@nestjs/config';
 import { UserInfoService } from './userInfo.service';
 import { UserOnlineService } from './UserOnline.service';
+import { ContactController } from 'src/contacts/contact.controller';
+import { Contact } from 'src/contacts/contact.entity';
+import { ContactService } from 'src/contacts/contact.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserInfo, UserOnline]),
+    TypeOrmModule.forFeature([User, UserInfo, UserOnline, Contact]),
     forwardRef(() => TokenModule),
-    forwardRef(() => RoleModule),
     forwardRef(() => ConfirmModule),
     CacheModule.registerAsync({
       inject: [ConfigService],
@@ -30,13 +31,14 @@ import { UserOnlineService } from './UserOnline.service';
       }),
     }),
   ],
-  controllers: [UsersController],
+  controllers: [UsersController, ContactController],
   providers: [
     UserService,
     ConfigService,
     AuthService,
     UserInfoService,
     UserOnlineService,
+    ContactService
   ],
   exports: [UserService, TypeOrmModule, AuthService],
 })

@@ -1,17 +1,10 @@
 import { UserAccess } from './../access/access.entity';
-import { UserRole } from '../role/userRole.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 
-export enum UserRoleTest {
-  ADMIN = 2,
-  EDITOR = 1,
-  GHOST = 0,
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER',
 }
 
 @Entity()
@@ -30,16 +23,13 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany(() => UserRole, (userRole) => userRole.user)
-  role: UserRole[];
-
   @OneToOne(() => UserAccess, (UserAccess) => UserAccess.user)
   access: UserAccess;
 
   @Column({
     type: 'enum',
-    enum: UserRoleTest,
-    default: UserRoleTest.GHOST,
+    enum: UserRole,
+    default: UserRole.USER,
   })
-  test: UserRoleTest;
+  role: UserRole;
 }

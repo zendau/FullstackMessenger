@@ -1,7 +1,6 @@
 import { EntityManager, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import IUserInfo from './interfaces/IUserInfo';
 import IUserOnline from './interfaces/IUserOnline';
 import { UserOnline } from './userOnline.entity';
 
