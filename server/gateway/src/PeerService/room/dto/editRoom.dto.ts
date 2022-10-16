@@ -1,8 +1,8 @@
-import { roomDTO } from './room.dto';
+import { RoomDTO } from './room.dto';
 import { IsInt, IsString, Length, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class editRoomDTO extends roomDTO {
+export class EditRoomDTO extends RoomDTO {
 
   @IsString()
   @Length(2, 20, {
@@ -14,7 +14,7 @@ export class editRoomDTO extends roomDTO {
     required: true,
   })
   roomId: string
-  
+
   @IsInt()
   @Min(1)
   @ApiProperty({

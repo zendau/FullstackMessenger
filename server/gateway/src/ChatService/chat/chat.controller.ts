@@ -11,20 +11,31 @@ import {
   Inject,
   HttpException,
   Query,
+  ParseIntPipe,
+  UsePipes,
+  ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
 import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
 import { ChatDTO } from './dto/chat.dto';
-import { UserChatUpdateStatusDto } from './dto/UserChatUpdateStatus.dto';
+import { UserChatUpdateStatusDTO } from './dto/UserChatUpdateStatus.dto';
 import { UpdateChatDTO } from './dto/update-chat.dto';
 import { CheckChatIdDTO } from './dto/checkChatId.dto';
 import { GetUserDTO } from 'src/AuthService/ResponseDTO/getUser.dto';
 import { UsersIdDTO } from './dto/usersId.dto';
+import { JwtAuthGuard } from 'src/AuthService/guards/jwt-auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('Chat microservice - chat controller')
+//@UseGuards(JwtAuthGuard)
 @Controller('chat')
 export class ChatController {
   constructor(
@@ -32,12 +43,11 @@ export class ChatController {
     @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
   ) {}
 
-  
   @ApiOperation({ summary: 'Get all user chats' })
   @ApiResponse({ status: 200, type: UpdateChatDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('getByUser/:id')
-  async getChats(@Param('id') id: number) {
+  async getChats(@Param('id', ParseIntPipe) id: number) {
     const res = await firstValueFrom(
       this.chatServiceClient.send('chat/getByUser', id),
     );
@@ -50,12 +60,13 @@ export class ChatController {
   @ApiOperation({ summary: 'Check chat with selected user was created' })
   @ApiResponse({ status: 200, type: SuccessCheckChatDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Post('check')
   async checkChat(@Body() chatData: CheckChatDTO) {
     const res = await firstValueFrom(
       this.chatServiceClient.send('chat/check', chatData),
     );
-    console.log('res', res)
+    console.log('res', res);
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
     }
@@ -79,6 +90,7 @@ export class ChatController {
   @ApiOperation({ summary: 'Create new chat' })
   @ApiResponse({ status: 200, type: CheckChatIdDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Post('create')
   async createChat(@Body() chatData: ChatDTO) {
     const res = await firstValueFrom(
@@ -94,13 +106,13 @@ export class ChatController {
       }),
     );
     if (resFileInsert.status === false) {
-      console.log('resFile', resFileInsert)
+      console.log('resFile', resFileInsert);
       throw new HttpException(res.message, res.httpCode);
     }
     console.log('res', res);
     return res;
   }
-  
+
   @ApiOperation({ summary: 'Get all contacts' })
   @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
@@ -115,7 +127,6 @@ export class ChatController {
     return res;
   }
 
-  
   @ApiOperation({ summary: 'Delete chat by id' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
@@ -145,12 +156,12 @@ export class ChatController {
     return res;
   }
 
-  
   @ApiOperation({ summary: 'Get all invaited users to chat group' })
   @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Post('invaitedUsers')
-  async getInvaitedUsers(@Body()  userData: UsersIdDTO) {
+  async getInvaitedUsers(@Body() userData: UsersIdDTO) {
     const res = await firstValueFrom(
       this.chatServiceClient.send('chat/invaitedUsers', userData.users),
     );
@@ -163,8 +174,9 @@ export class ChatController {
   @ApiOperation({ summary: 'Invate to chat group' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Patch('invaiteToChat')
-  async invaiteUsersToChat(@Body() invateData: UserChatUpdateStatusDto) {
+  async invaiteUsersToChat(@Body() invateData: UserChatUpdateStatusDTO) {
     const res = await firstValueFrom(
       this.chatServiceClient.send('chat/invaiteToChat', invateData),
     );
@@ -177,8 +189,9 @@ export class ChatController {
   @ApiOperation({ summary: 'Exit user from chat' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Delete('exitUser')
-  async exitUserGroup(@Query() exitUserDTO: UserChatUpdateStatusDto) {
+  async exitUserGroup(@Query() exitUserDTO: UserChatUpdateStatusDTO) {
     const res = await firstValueFrom(
       this.chatServiceClient.send('chat/exitUser', exitUserDTO),
     );

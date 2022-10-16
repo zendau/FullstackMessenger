@@ -13,8 +13,12 @@ import {
   HttpException,
   UploadedFile,
   HttpStatus,
+  ParseIntPipe,
+  UseGuards,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
-import { filesUploadDataDTO } from './dto/filesUploadData.dto';
+import { FilesUploadDataDTO } from './dto/filesUploadData.dto';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import destinationStorage from '../multer/destination.storage';
 import filenameStorage from '../multer/filename.storage';
@@ -25,21 +29,33 @@ import { firstValueFrom } from 'rxjs';
 import { diskStorage } from 'multer';
 
 import { Response } from 'express';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
 import { FileDTO } from './dto/file.dto';
-import { fileEditDataDTO } from './dto/filesEditData.dto';
+import { FileEditDataDTO } from './dto/filesEditData.dto';
+import { JwtAuthGuard } from 'src/AuthService/guards/jwt-auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('FileCloud microservice - File controller')
+//@UseGuards(JwtAuthGuard)
 @Controller('file')
 export class FileController {
   constructor(@Inject('FILE_SERVICE') private fileServiceClient: ClientProxy) {}
 
-
   @ApiOperation({ summary: 'Files upload data with `files` interceptor' })
-  @ApiResponse({ status: 200, type: Number, isArray: true, description: 'return uploaded files id' })
+  @ApiResponse({
+    status: 200,
+    type: Number,
+    isArray: true,
+    description: 'return uploaded files id',
+  })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Post('add')
   @UseInterceptors(
     FilesInterceptor('files', 10, {
@@ -50,7 +66,7 @@ export class FileController {
     }),
   )
   async create(
-    @Body() filesUploadDTO: filesUploadDataDTO,
+    @Body() filesUploadDTO: FilesUploadDataDTO,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const filesData = {
@@ -74,7 +90,6 @@ export class FileController {
     return res;
   }
 
-
   @ApiOperation({ summary: 'Get all files' })
   @ApiResponse({ status: 200, type: FileDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
@@ -93,7 +108,7 @@ export class FileController {
   @ApiResponse({ status: 200, type: FileDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('get/:id')
-  async findOne(@Param('id') fileId: number) {
+  async findOne(@Param('id', ParseIntPipe) fileId: number) {
     const res = await firstValueFrom(
       this.fileServiceClient.send('file/get', fileId),
     );
@@ -106,6 +121,7 @@ export class FileController {
   @ApiOperation({ summary: 'Edit files by id' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Put('edit')
   @UseInterceptors(
     FilesInterceptor('files', 10, {
@@ -116,10 +132,9 @@ export class FileController {
     }),
   )
   async update(
-    @Body() updateFileDto: fileEditDataDTO,
+    @Body() updateFileDto: FileEditDataDTO,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-   
     const filesData = {
       ...updateFileDto,
       filesData: files.map((file) => {
@@ -131,7 +146,7 @@ export class FileController {
         };
       }),
     };
-    console.log('files', filesData)
+    console.log('files', filesData);
     const res = await firstValueFrom(
       this.fileServiceClient.send('file/edit', filesData),
     );
@@ -145,7 +160,7 @@ export class FileController {
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Delete('delete/:id')
-  async remove(@Param('id') fileId: number) {
+  async remove(@Param('id', ParseIntPipe) fileId: number) {
     const res = await firstValueFrom(
       this.fileServiceClient.send('file/delete', fileId),
     );
@@ -159,7 +174,10 @@ export class FileController {
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('download/:id')
-  async dowloadFile(@Res() response: Response, @Param('id') fileId: number) {
+  async dowloadFile(
+    @Res() response: Response,
+    @Param('id', ParseIntPipe) fileId: number,
+  ) {
     const res = await firstValueFrom(
       this.fileServiceClient.send('file/get', fileId),
     );

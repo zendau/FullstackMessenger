@@ -3,7 +3,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, Length, MinLength } from "class-validator";
 
-export class IMessageDTO {
+export class MessageDTO {
   @ApiProperty({
     example: '86efdadb-22a8-42ff-aef3-c9235c07962d',
     description: "chatId in which the message was sent",

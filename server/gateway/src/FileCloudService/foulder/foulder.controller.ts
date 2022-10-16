@@ -8,24 +8,31 @@ import {
   Inject,
   HttpException,
   Put,
+  UseGuards,
+  ValidationPipe,
+  UsePipes,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
+import { JwtAuthGuard } from 'src/AuthService/guards/jwt-auth.guard';
 import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
-import { IFoulderDTO } from './dto/foulder.dto';
+import { FoulderDTO } from './dto/foulder.dto';
 
 @ApiBearerAuth()
 @ApiTags('FileCloud microservice - Foulder controller')
+//@UseGuards(JwtAuthGuard)
 @Controller('foulder')
 export class FoulderController {
   constructor(@Inject('FILE_SERVICE') private fileServiceClient: ClientProxy) {}
 
   @ApiOperation({ summary: 'Create new foulder' })
-  @ApiResponse({ status: 200, type: IFoulderDTO })
+  @ApiResponse({ status: 200, type: FoulderDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Post('add')
-  async create(@Body() createFoulderDto: IFoulderDTO) {
+  async create(@Body() createFoulderDto: FoulderDTO) {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/add', createFoulderDto),
     );
@@ -36,7 +43,7 @@ export class FoulderController {
   }
 
   @ApiOperation({ summary: 'Get all foulders' })
-  @ApiResponse({ status: 200, type: IFoulderDTO, isArray: true })
+  @ApiResponse({ status: 200, type: FoulderDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('getAll')
   async findAll() {
@@ -50,10 +57,10 @@ export class FoulderController {
   }
 
   @ApiOperation({ summary: 'Get foulder by id' })
-  @ApiResponse({ status: 200, type: IFoulderDTO })
+  @ApiResponse({ status: 200, type: FoulderDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('get/:id')
-  async findOne(@Param('id') foulderId: number) {
+  async findOne(@Param('id', ParseIntPipe) foulderId: number) {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/get', foulderId),
     );
@@ -66,8 +73,9 @@ export class FoulderController {
   @ApiOperation({ summary: 'Edit foulder data' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Put('edit')
-  async update(@Body() updateFoulderDto: IFoulderDTO) {
+  async update(@Body() updateFoulderDto: FoulderDTO) {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/edit', updateFoulderDto),
     );
@@ -81,7 +89,7 @@ export class FoulderController {
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Delete('delete/:id')
-  async remove(@Param('id') foulderId: number) {
+  async remove(@Param('id', ParseIntPipe) foulderId: number) {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/delete', foulderId),
     );

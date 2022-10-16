@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString, Length, Min } from 'class-validator';
 
-export class IFoulderDTO {
+export class FoulderDTO {
   @ApiProperty({
     example: 1,
     description: "folderId",

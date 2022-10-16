@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayMinSize, IsNumber, IsString, Length } from 'class-validator';
 
-export class fileEditDataDTO {
+export class FileEditDataDTO {
   @ApiProperty({
     example: '86efdadb-22a8-42ff-aef3-c9235c07962d',
     description: "file's path",

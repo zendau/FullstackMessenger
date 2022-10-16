@@ -16,24 +16,25 @@ import {
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
-import { roomDTO } from './dto/room.dto';
-import { editRoomDTO } from './dto/editRoom.dto';
+import { RoomDTO } from './dto/room.dto';
+import { EditRoomDTO } from './dto/editRoom.dto';
 import { JwtAuthGuard } from '../../AuthService/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserRole } from 'src/AuthService/enum/userRole.enum';
 
 @ApiBearerAuth()
 @ApiTags('Peer microservice - Room controller')
+//@UseGuards(JwtAuthGuard)
 @Controller('room')
 export class RoomController {
   constructor(@Inject('PEER_SERVICE') private peerServiceClient: ClientProxy) {}
 
   @ApiOperation({ summary: 'Register new conference room' })
-  @ApiResponse({ status: 200, type: editRoomDTO })
+  @ApiResponse({ status: 200, type: EditRoomDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   //@UsePipes(ValidationPipe)
   @Post('add')
-  async create(@Body() createRoomDto: roomDTO) {
+  async create(@Body() createRoomDto: RoomDTO) {
     const res = await firstValueFrom(
       this.peerServiceClient.send('room/add', createRoomDto),
     );
@@ -44,7 +45,7 @@ export class RoomController {
   }
 
   @ApiOperation({ summary: 'Get all conference rooms' })
-  @ApiResponse({ status: 200, type: editRoomDTO, isArray: true })
+  @ApiResponse({ status: 200, type: EditRoomDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   // @Roles(UserRole.Admin)
   // @UseGuards(RolesGuard)
@@ -62,7 +63,7 @@ export class RoomController {
   }
 
   @ApiOperation({ summary: 'Get conference room by roomId' })
-  @ApiResponse({ status: 200, type: editRoomDTO })
+  @ApiResponse({ status: 200, type: EditRoomDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('get/:id')
   async findOne(@Param('id') roomId: string) {
@@ -78,8 +79,9 @@ export class RoomController {
   @ApiOperation({ summary: 'Edit conference room data' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  @UsePipes(ValidationPipe)
   @Patch('edit')
-  async update(@Body() updateRoomDto: editRoomDTO) {
+  async update(@Body() updateRoomDto: EditRoomDTO) {
     const res = await firstValueFrom(
       this.peerServiceClient.send('room/edit', updateRoomDto),
     );
