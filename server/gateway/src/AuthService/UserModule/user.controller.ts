@@ -1,7 +1,5 @@
-import { UserIdDTO } from './dto/id.dto';
 import { GetUserDTO } from './../ResponseDTO/getUser.dto';
-//import { ValidationPipe } from '../../pipes/validation.pipe';
-import { RegisterDTO } from './dto/register.dto';
+import { UserRegisterDTO } from './dto/userRegister.dto';
 import {
   Body,
   Controller,
@@ -17,15 +15,14 @@ import {
   UseInterceptors,
   UsePipes,
   ValidationPipe,
-  Headers,
-  createParamDecorator,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Response, Request } from 'express';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 import { firstValueFrom } from 'rxjs';
-import { LoginDTO } from './dto/login.dto';
+import { UserLoginDTO } from './dto/userLogin.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -35,8 +32,8 @@ import {
 } from '@nestjs/swagger';
 import { HttpErrorDTO } from '../ResponseDTO/httpError.dto';
 
-import { IConfirmData } from './interfaces/IConfirmData';
-import { EditData } from './dto/edit.dto';
+import { ConfirmDataDTO } from './dto/confirmData.dto';
+import { EditDataDTO } from './dto/userEdit.dto';
 
 import HttpCacheInterceptor from '../../Cache/HttpCacheInterceptor';
 import HttpClearCacheInterceptor from '../../Cache/clearCache';
@@ -44,14 +41,20 @@ import { authSuccessDTO } from '../ResponseDTO/authSuccess.dto';
 
 import BodyWithDevice from '../decorators/BodyWithDevice.decorator';
 import RefreshData from '../decorators/RefreshData.decorator';
-import { UserRole } from './interfaces/IUserRole';
+import { RoleDTO } from './dto/role.dto';
+import { UserResetPasswordDTO } from './dto/userResetPassword.dto';
 
 @ApiTags('Auth microservice - User controller')
 @Controller('user')
 export class UserController {
+  private cookieOptions = {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  };
+
   constructor(@Inject('AUTH_SERVICE') private authServiceClient: ClientProxy) {}
 
-  @ApiOperation({ summary: 'Register new user' })
+  @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, type: authSuccessDTO })
   @ApiResponse({
     status: 400,
@@ -61,7 +64,7 @@ export class UserController {
   @UsePipes(ValidationPipe)
   @Post('register')
   async register(
-    @BodyWithDevice() authBody: RegisterDTO,
+    @BodyWithDevice() authBody: UserRegisterDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
     const resData = await firstValueFrom(
@@ -71,20 +74,17 @@ export class UserController {
       throw new HttpException(resData.message, resData.httpCode);
     }
 
-    res.cookie('auth-cookie', resData.refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('auth-cookie', resData.refreshToken, this.cookieOptions);
     return resData;
   }
 
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, type: authSuccessDTO })
   @ApiResponse({ status: 400, description: 'Wrong auth', type: HttpErrorDTO })
-  //@UsePipes(ValidationPipe)
+  @UsePipes(ValidationPipe)
   @Post('login')
   async login(
-    @BodyWithDevice() authBody: LoginDTO,
+    @BodyWithDevice() authBody: UserLoginDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
     const resData = await firstValueFrom(
@@ -95,10 +95,7 @@ export class UserController {
       throw new HttpException(resData.message, resData.httpCode);
     }
 
-    res.cookie('auth-cookie', resData.refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('auth-cookie', resData.refreshToken, this.cookieOptions);
     return resData;
   }
 
@@ -123,10 +120,7 @@ export class UserController {
       throw new HttpException(resData.message, resData.httpCode);
     }
 
-    res.cookie('auth-cookie', resData.refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('auth-cookie', resData.refreshToken, this.cookieOptions);
     return resData;
   }
 
@@ -158,10 +152,10 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  //@UseGuards(JwtRefreshGuard)
   @ApiOperation({ summary: 'get all users' })
   @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
+  //@UseGuards(JwtRefreshGuard)
   @Get('all')
   async getAllUsers() {
     const resData = await firstValueFrom(
@@ -186,8 +180,7 @@ export class UserController {
   //@UseGuards(JwtRefreshGuard)
   @Get('getById/:id')
   @UseInterceptors(HttpCacheInterceptor)
-  async getUserById(@Param('id') id: number) {
-    console.log('test');
+  async getUserById(@Param('id', ParseIntPipe) id: number) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/id', id),
     );
@@ -208,10 +201,12 @@ export class UserController {
     description: 'user not found',
     type: HttpErrorDTO,
   })
-  @Patch('blockUser')
-  async blockUser(@Body() userData: UserIdDTO) {
+  //@UseGuards(RoleGuard(UserRole.Admin))
+  //@UseGuards(JwtRefreshGuard)
+  @Patch('blockUser/:id')
+  async blockUser(@Param('id', ParseIntPipe) userId: number) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('user/blockUser', userData.id),
+      this.authServiceClient.send('user/blockUser', userId),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -228,10 +223,12 @@ export class UserController {
     description: 'user not found',
     type: HttpErrorDTO,
   })
-  @Patch('unBlockUser')
-  async unBlockUser(@Body() userData: UserIdDTO) {
+  //@UseGuards(RoleGuard(UserRole.Admin))
+  //@UseGuards(JwtRefreshGuard)
+  @Patch('unblockUser')
+  async unBlockUser(@Param('id', ParseIntPipe) userId: number) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('user/unBlockUser', userData.id),
+      this.authServiceClient.send('user/unblockUser', userId),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -243,8 +240,9 @@ export class UserController {
   @ApiOperation({ summary: 'register confirm code' })
   @ApiResponse({ status: 200, description: 'true register confirm code' })
   @ApiResponse({ status: 400, description: 'false register confirm code' })
+  @UsePipes(ValidationPipe)
   @Post('setConfirmCode')
-  async getCodeEditData(@Body() confirmData: IConfirmData) {
+  async getCodeEditData(@Body() confirmData: ConfirmDataDTO) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/setConfirmCode', confirmData),
     );
@@ -256,7 +254,6 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Patch('editData')
   @ApiOperation({ summary: 'edit user data' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({
@@ -264,11 +261,10 @@ export class UserController {
     description: 'user not found',
     type: HttpErrorDTO,
   })
-  async editUserData(
-    @Res({ passthrough: true }) res: Response,
-    @Body() editData: EditData,
-  ) {
-    console.log(editData);
+  @UsePipes(ValidationPipe)
+  //@UseGuards(JwtRefreshGuard)
+  @Patch('editData')
+  async editUserData(@Body() editData: EditDataDTO) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/editData', editData),
     );
@@ -278,7 +274,6 @@ export class UserController {
     return resData;
   }
 
-  @Patch('resetPassword')
   @ApiOperation({ summary: 'reset user password' })
   @ApiResponse({
     status: 200,
@@ -289,15 +284,14 @@ export class UserController {
     description: 'user not found',
     type: HttpErrorDTO,
   })
+  @UsePipes(ValidationPipe)
+  //@UseGuards(JwtRefreshGuard)
+  @Patch('resetPassword')
   async resetUserPassword(
     @Res({ passthrough: true }) res: Response,
     @Body()
-    resetData: {
-      email: string;
-      confirmCode: string;
-    },
+    resetData: UserResetPasswordDTO,
   ) {
-    console.log(resetData);
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/resetPassword', resetData),
     );
@@ -309,23 +303,22 @@ export class UserController {
     return resData;
   }
 
+  @ApiOperation({ summary: 'Set user role' })
+  @ApiResponse({
+    status: 200,
+    description: 'success setting user role',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'user not found',
+    type: HttpErrorDTO,
+  })
+  //@UseGuards(JwtRefreshGuard)
+  @UsePipes(ValidationPipe)
   @Patch('setRole')
-  // @ApiOperation({ summary: 'reset user password' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Success operation, new password send to user email',
-  // })
-  // @ApiResponse({
-  //   status: 400,
-  //   description: 'user not found',
-  //   type: HttpErrorDTO,
-  // })
   async setUserRole(
     @Body()
-    roleData: {
-      userId: number;
-      role: UserRole;
-    },
+    roleData: RoleDTO,
   ) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/setRole', roleData),

@@ -38,7 +38,7 @@ export class ContactController {
   @MessagePattern('contact/sendRequest')
   async sendContactRequest(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .unBlockUser(
+      .sendContactRequest(
         parseInt(requestData.userId),
         parseInt(requestData.contactId),
       )
@@ -148,10 +148,10 @@ export class ContactController {
     return res;
   }
 
-  @MessagePattern('contact/unBlock')
-  async unBlockUserContact(@Payload() requestData: IContact) {
+  @MessagePattern('contact/unblock')
+  async unblockUserContact(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .unBlockUser(
+      .unblockUser(
         parseInt(requestData.userId),
         parseInt(requestData.contactId),
       )

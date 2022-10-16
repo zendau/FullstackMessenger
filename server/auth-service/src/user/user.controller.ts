@@ -74,10 +74,10 @@ export class UsersController {
     return res;
   }
 
-  @MessagePattern('user/unBlockUser')
-  async unBlockUser(@Payload() userId: number) {
+  @MessagePattern('user/unblockUser')
+  async unblockUser(@Payload() userId: number) {
     const res = await this.confirmCodeService
-      .setUnBlock(userId)
+      .setUnblock(userId)
       .catch((err) => {
         return {
           status: false,

@@ -20,7 +20,7 @@ import { roomDTO } from './dto/room.dto';
 import { editRoomDTO } from './dto/editRoom.dto';
 import { JwtAuthGuard } from '../../AuthService/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/AuthService/enum/role.enum';
+import { UserRole } from 'src/AuthService/enum/userRole.enum';
 
 @ApiBearerAuth()
 @ApiTags('Peer microservice - Room controller')
@@ -46,9 +46,9 @@ export class RoomController {
   @ApiOperation({ summary: 'Get all conference rooms' })
   @ApiResponse({ status: 200, type: editRoomDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
-  // @Roles(Role.Admin)
+  // @Roles(UserRole.Admin)
   // @UseGuards(RolesGuard)
-  //@UseGuards(RoleGuard(Role.Admin))
+  //@UseGuards(RoleGuard(UserRole.Admin))
   @UseGuards(JwtAuthGuard)
   @Get('getAll')
   async findAll() {

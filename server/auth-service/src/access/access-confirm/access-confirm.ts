@@ -55,7 +55,7 @@ export class ConfirmCodeService {
   }
 
   async checkConfirmCode(userConfrimCode: string, confirmId: string) {
-    
+
     const confirmCode = await this.cacheManager?.get(confirmId);
 
     if (confirmCode === userConfrimCode) {
@@ -75,7 +75,7 @@ export class ConfirmCodeService {
     await this.cacheManager.del(confirmId)
   }
 
-  async setUnBlock(userId: number) {
+  async setUnblock(userId: number) {
     const res = await this.accessRepository
       .createQueryBuilder()
       .update()

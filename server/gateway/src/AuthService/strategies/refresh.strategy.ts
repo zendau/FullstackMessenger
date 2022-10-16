@@ -10,7 +10,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
       secretOrKey: process.env.JWT_REFRESH_SECRET,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          debugger;
           const token = request?.cookies['auth-cookie'];
           if (!token) {
             return null;

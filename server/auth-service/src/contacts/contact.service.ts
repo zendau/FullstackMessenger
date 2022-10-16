@@ -199,7 +199,7 @@ export class ContactService {
     return resDeleteContact;
   }
 
-  async unBlockUser(userId: number, contactId: number) {
+  async unblockUser(userId: number, contactId: number) {
     const resUpdate = await this.contactRepository
       .createQueryBuilder()
       .update()
