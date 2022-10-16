@@ -47,6 +47,7 @@ import BodyWithDevice from '../decorators/BodyWithDevice.decorator';
 import RefreshData from '../decorators/RefreshData.decorator';
 import { UserRole } from './interfaces/IUserRole';
 import IContact from './interfaces/IContact';
+import { ContactDTO } from '../ResponseDTO/contact.dto';
 
 @ApiTags('Auth microservice - Contact controller')
 @Controller('contact')
@@ -54,16 +55,16 @@ export class ContactController {
   constructor(@Inject('AUTH_SERVICE') private authServiceClient: ClientProxy) {}
 
   @Get('list/:userId')
-  // @ApiOperation({ summary: 'reset user password' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Success operation, new password send to user email',
-  // })
-  // @ApiResponse({
-  //   status: 400,
-  //   description: 'user not found',
-  //   type: HttpErrorDTO,
-  // })
+  @ApiOperation({ summary: 'Get contact list' })
+  @ApiResponse({
+    status: 200,
+    type: GetUserDTO,
+    isArray: true
+  })
+  @ApiResponse({
+    status: 400,
+    type: HttpErrorDTO,
+  })
   async getUserContactList(@Param('userId') userId: number) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/list', userId),
@@ -76,16 +77,16 @@ export class ContactController {
   }
 
   @Get('freeList/:userId')
-  // @ApiOperation({ summary: 'reset user password' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Success operation, new password send to user email',
-  // })
-  // @ApiResponse({
-  //   status: 400,
-  //   description: 'user not found',
-  //   type: HttpErrorDTO,
-  // })
+  @ApiOperation({ summary: 'Get users list who are not added to contacts' })
+  @ApiResponse({
+    status: 200,
+    type: GetUserDTO,
+    isArray: true
+  })
+  @ApiResponse({
+    status: 400,
+    type: HttpErrorDTO,
+  })
   async getFreeUserList(@Param('userId') userId: number) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/freeList', userId),
@@ -98,7 +99,17 @@ export class ContactController {
   }
 
   @Post('sendRequest')
-  async sendContactRequest(@Body() requestData: IContact) {
+  @ApiOperation({ summary: 'Send contact request to user' })
+  @ApiResponse({
+    status: 200,
+    description: 'success sended requests'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'error when adding to contacts',
+    type: HttpErrorDTO,
+  })
+  async sendContactRequest(@Body() requestData: ContactDTO) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/sendRequest', requestData),
     );
@@ -110,6 +121,16 @@ export class ContactController {
   }
 
   @Get('pending/:userId')
+  @ApiOperation({ summary: 'Get users pending requests' })
+  @ApiResponse({
+    status: 200,
+    type: GetUserDTO,
+    isArray: true
+  })
+  @ApiResponse({
+    status: 400,
+    type: HttpErrorDTO,
+  })
   async getContactsRequestPending(@Param('userId') userId: number) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/pending', userId),
@@ -122,6 +143,16 @@ export class ContactController {
   }
 
   @Get('outgoing/:userId')
+  @ApiOperation({ summary: 'Get users outgoing requests' })
+  @ApiResponse({
+    status: 200,
+    type: GetUserDTO,
+    isArray: true
+  })
+  @ApiResponse({
+    status: 400,
+    type: HttpErrorDTO,
+  })
   async getContactsRequestOutgoing(@Param('userId') userId: number) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/outgoing', userId),
@@ -134,7 +165,17 @@ export class ContactController {
   }
 
   @Post('confirm')
-  async confirmUserRequest(@Body() requestData: IContact) {
+  @ApiOperation({ summary: 'Confirm contact request' })
+  @ApiResponse({
+    status: 200,
+    description: 'success confirm request'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'error when confirming request',
+    type: HttpErrorDTO,
+  })
+  async confirmUserRequest(@Body() requestData: ContactDTO) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/confirm', requestData),
     );
@@ -146,7 +187,17 @@ export class ContactController {
   }
 
   @Post('reject')
-  async rejectUserRequest(@Body() requestData: IContact) {
+  @ApiOperation({ summary: 'Reject contact request' })
+  @ApiResponse({
+    status: 200,
+    description: 'success reject request'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'error when rejecting request',
+    type: HttpErrorDTO,
+  })
+  async rejectUserRequest(@Body() requestData: ContactDTO) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/reject', requestData),
     );
@@ -158,7 +209,17 @@ export class ContactController {
   }
 
   @Delete('delete')
-  async deleteUserFromContact(@Body() requestData: IContact) {
+  @ApiOperation({ summary: 'Delete user from contact' })
+  @ApiResponse({
+    status: 200,
+    description: 'success deleted user operation'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'error when deleting user',
+    type: HttpErrorDTO,
+  })
+  async deleteUserFromContact(@Body() requestData: ContactDTO) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/delete', requestData),
     );
@@ -170,7 +231,17 @@ export class ContactController {
   }
 
   @Patch('block')
-  async blockUserContact(@Body() requestData: IContact) {
+  @ApiOperation({ summary: 'Block selected user' })
+  @ApiResponse({
+    status: 200,
+    description: 'success blocking user'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'error when blocking user',
+    type: HttpErrorDTO,
+  })
+  async blockUserContact(@Body() requestData: ContactDTO) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/block', requestData),
     );
@@ -182,7 +253,17 @@ export class ContactController {
   }
 
   @Patch('unBlock')
-  async unBlockUserContact(@Body() requestData: IContact) {
+  @ApiOperation({ summary: 'unblock selected user' })
+  @ApiResponse({
+    status: 200,
+    description: 'success unblock user'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'error when unblocing user',
+    type: HttpErrorDTO,
+  })
+  async unBlockUserContact(@Body() requestData: ContactDTO) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/unBlock', requestData),
     );
