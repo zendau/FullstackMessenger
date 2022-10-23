@@ -31,6 +31,7 @@ export class SocketGateway {
   server: Server;
 
   handleDisconnect(socket: Socket) {
+    console.log('client disconected');
     const userData = this.socketService.getUserById(socket.id);
 
     if (userData !== undefined) {
@@ -38,14 +39,15 @@ export class SocketGateway {
       const roomUsers = this.socketService.getRoomUsers(userData.roomId);
       console.log('romUsers', roomUsers);
       this.server.to(userData.roomId).emit('getUsers', roomUsers);
-      this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
+      //this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
     }
   }
 
   @SubscribeMessage('connect-user')
-  connectEvent(@MessageBody() payload: IUserConnect) {
+  connectEvent(@MessageBody() payload) {
+    console.log('conntect', payload);
     this.socketService.addUser(payload);
-    this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
+    //this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 
   // @SubscribeMessage('invite-user')
@@ -55,12 +57,14 @@ export class SocketGateway {
 
   @SubscribeMessage('join-room')
   handleMessage(socket: Socket, payload: IUserJoin) {
+    console.log('join', payload);
     this.socketService.clientJoinRoom(payload.userId, payload.roomId);
 
     socket.join(payload.roomId);
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
+    console.log('SSSSSSSSS', roomUser);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
-    this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
+    //this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 
   @SubscribeMessage('userLeave')
@@ -70,11 +74,13 @@ export class SocketGateway {
 
   @SubscribeMessage('exit-room')
   roomEvent(socket: Socket, payload: IUserJoin) {
-    this.socketService.clientLeaveRoom(payload.userId);
+    this.socketService.clientLeaveRoom(payload);
+    console.log('leave before');
     socket.leave(payload.roomId);
+    console.log('leave after');
     const roomUser = this.socketService.getRoomUsers(payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);
-    this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
+    //this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
   }
 
   @SubscribeMessage('sendMessage')

@@ -4,12 +4,18 @@ import { ChatModule } from './chat/chat.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessageModule } from './message/message.module';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
+    }),
+    RedisModule.forRoot({
+      config: {
+        url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

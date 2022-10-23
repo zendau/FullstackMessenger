@@ -4,10 +4,12 @@ import { SocketService } from './socket.service';
 import { SocketGateway } from './socket.gateway';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { ChatModule } from 'src/chat/chat.module';
 
 @Module({
   imports: [
     MessageModule,
+    ChatModule,
     ClientsModule.registerAsync([
       {
         name: 'FILE_SERVICE',

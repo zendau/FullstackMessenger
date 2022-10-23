@@ -1,5 +1,6 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { ParseIntPipe } from 'src/pipes/parse-int.pipe';
 import { ContactService } from './contact.service';
 import IContact from './interfaces/IContact';
 
@@ -8,9 +9,9 @@ export class ContactController {
   constructor(private contactService: ContactService) {}
 
   @MessagePattern('contact/list')
-  async getUserContactList(@Payload() userId: string) {
+  async getUserContactList(@Payload(new ParseIntPipe()) userId: number) {
     const res = await this.contactService
-      .getContactList(parseInt(userId))
+      .getContactList(userId)
       .catch((err) => {
         return {
           status: false,
@@ -22,9 +23,9 @@ export class ContactController {
   }
 
   @MessagePattern('contact/freeList')
-  async getFreeUserList(@Payload() userId: string) {
+  async getFreeUserList(@Payload(new ParseIntPipe()) userId: number) {
     const res = await this.contactService
-      .getFreeUsers(parseInt(userId))
+      .getFreeUsers(userId)
       .catch((err) => {
         return {
           status: false,
@@ -53,9 +54,9 @@ export class ContactController {
   }
 
   @MessagePattern('contact/pending')
-  async getContactsRequestPending(@Payload() userId: string) {
+  async getContactsRequestPending(@Payload(new ParseIntPipe()) userId: number) {
     const res = await this.contactService
-      .getContactsPending(parseInt(userId))
+      .getContactsPending(userId)
       .catch((err) => {
         return {
           status: false,
@@ -67,9 +68,9 @@ export class ContactController {
   }
 
   @MessagePattern('contact/outgoing')
-  async getContactsRequestOutgoing(@Payload() userId: string) {
+  async getContactsRequestOutgoing(@Payload(new ParseIntPipe()) userId: number) {
     const res = await this.contactService
-      .getContactsOutgoing(parseInt(userId))
+      .getContactsOutgoing(userId)
       .catch((err) => {
         return {
           status: false,

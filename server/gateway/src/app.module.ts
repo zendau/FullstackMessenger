@@ -21,7 +21,6 @@ import { ContactController } from './AuthService/UserModule/contact.controller';
     }),
     CacheModule.register<ClientOpts>({
       store: redisStore,
-
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT),
       ttl: 480
