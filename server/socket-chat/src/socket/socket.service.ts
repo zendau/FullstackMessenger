@@ -14,88 +14,100 @@ export class SocketService {
   }
 
   // TODO: аменить на папрос к chat.service
-  //public users: IUser[] = [];
-  public users = new Map();
-  public onlineUsers = new Map([
-    [
-      '1',
-      {
-        login: 'one',
-        room: 'test',
-      },
-    ],
-  ]);
+  //public rooms: IUser[] = [];
+  public rooms = {};
+  public onlineUsers = {
+    '1': {
+      login: 'one',
+      room: 'test',
+    },
+  };
 
   getUsers() {
-    const values = new Map([
-      ['1', { login: 'one', lastOnline: '5 min ago' }],
-      [
-        '2',
-        {
-          login: 'two',
-          lastOnline: '10 min ago',
-        },
-      ],
-      [
-        '3',
-        {
-          login: 'three',
-          lastOnline: '15 min ago',
-        },
-      ],
-    ]);
+    const values = {
+      '1': { login: 'one', lastOnline: '5 min ago' },
+      '2': {
+        login: 'two',
+        lastOnline: '10 min ago',
+      },
+      '3': {
+        login: 'three',
+        lastOnline: '15 min ago',
+      },
+    };
 
-    this.users.set('test', values);
+    this.rooms['test'] = values;
   }
 
   addUser(user) {
-    this.onlineUsers.set(user.userId, user.userData);
+    this.onlineUsers[user.userId] = user.userData;
     console.log('pushed user', this.onlineUsers, user);
   }
 
-  getRoomUsers(room) {
-    //return this.users.filter((item) => item.roomId === room);
-    const roomUsers = this.users.get(room);
-    console.log('room', roomUsers, room, this.users);
-    return Object.fromEntries(this.getOnlineUsers(roomUsers).entries());
-  }
+  // getRoomUsers(room) {
+  //   //return this.rooms.filter((item) => item.roomId === room);
+  //   const roomUsers = this.rooms[room];
+  //   console.log('room', roomUsers, room, this.rooms);
+  //   return this.getOnlineUsers(roomUsers);
+  // }
 
-  getOnlineUsers(users) {
-    for (const userId of users.keys()) {
-      debugger;
-      if (this.onlineUsers.has(userId)) {
-        const updatedData = users.get(userId);
-        updatedData.lastOnline = 'online';
-        console.log('updatedData', updatedData);
-        users.set(userId, updatedData);
+  updateUserRoomsOnline(userId) {
+    //return this.rooms.filter((item) => item.roomId === room);
+    debugger;
+    for (const room in this.rooms) {
+      if (this.rooms[room].hasOwnProperty(userId)) {
+        this.getOnlineUsers(this.rooms[room]);
       }
     }
 
-    console.log('test', users);
-    return users;
+    return this.rooms;
   }
 
-  getUserById(id) {
-    return this.onlineUsers[id];
+  getUserRooms(userId) {
+    // Запрос в редис, если нет запрос к бд
+    return ['test', 'one', 'two'];
   }
 
-  clientLeaveRoom(userData: IUserJoin) {
-    this.onlineUsers.delete(userData.userId);
+  getOnlineUsers(rooms) {
+    for (const room in rooms) {
+      if (this.onlineUsers.hasOwnProperty(room)) {
+        rooms[room].lastOnline = 'online';
+      }
+    }
 
-    const data = this.users.get(userData.roomId);
-    const updatedData = data.get(userData.userId);
-    updatedData.lastOnline = 'offline ' + new Date();
-    data.set(userData.userId, updatedData);
-    this.users.set(userData.roomId, data);
+    console.log('test', rooms);
+    return rooms;
+  }
+
+  // getUserById(id) {
+  //   return this.onlineUsers[id];
+  // }
+
+  clientLeaveRoom(userId) {
+    const lastOnline = 'offline ' + new Date();
+
+    for (const room in this.rooms) {
+      if (this.rooms[room].hasOwnProperty(userId)) {
+        this.rooms[room][userId].lastOnline = lastOnline;
+      }
+    }
   }
 
   clientDisconnect(id) {
-    //this.users = this.users.filter((user) => user.userId !== id);
+    for (const userId in this.onlineUsers) {
+      if (this.onlineUsers[userId].socketId === id) {
+        delete this.onlineUsers[userId];
+        this.clientLeaveRoom(userId);
+        return userId;
+      }
+    }
+
+    //this.rooms = this.rooms.filter((user) => user.userId !== id);
   }
 
-  clientJoinRoom(id, roomId) {
-    const userData = this.onlineUsers.get(id);
-    this.users.get(roomId).set(id, userData);
-    console.log('join room', this.users, userData);
-  }
+  // clientJoinRoom(id, roomId) {
+  //   const userData = this.onlineUsers[id];
+  //   this.rooms[roomId][id] = userData;
+  //   console.log('join room', this.rooms, userData);
+  // }
 }
