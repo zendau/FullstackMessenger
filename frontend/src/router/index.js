@@ -4,7 +4,7 @@ import store from '../store/index'
 import { Role } from './roles'
 import { Layout } from './layouts'
 
-const chat = () => import('../views/Chat/chat.vue')
+const chatPage = () => import('../views/Chat/ChatPage.vue')
 
 const register = () => import('../views/Auth/register.vue')
 const login = () => import('../views/Auth/login.vue')
@@ -64,7 +64,7 @@ const routes = [
   },
   {
     path: '/chat/:id?',
-    component: chat,
+    component: chatPage,
     name: 'chat',
     meta: {
       requiresAuth: true,

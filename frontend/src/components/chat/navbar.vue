@@ -2,14 +2,14 @@
   <header>
     <nav class="chat__menu">
       <ul class="chat__list">
-        <li @click="showContacts = true; isShowMobileMessages = false">
-          <a class="chat__list-item" :class="{ 'chat__list-item--active': showContacts }">
+        <li @click="showChats = true; isShowMobileMessages = false">
+          <a class="chat__list-item" :class="{ 'chat__list-item--active': showChats }">
             <i class="bi bi-chat-dots"></i>
             <span>Chats</span>
           </a>
         </li>
-        <li @click="showContacts = false; isShowMobileMessages = false">
-          <a class="chat__list-item" :class="{ 'chat__list-item--active': !showContacts }">
+        <li @click="showChats = false; isShowMobileMessages = false">
+          <a class="chat__list-item" :class="{ 'chat__list-item--active': !showChats }">
             <i class="bi bi-person-lines-fill"></i>
             <span>Contacts</span>
           </a>
@@ -48,7 +48,7 @@ export default {
 
     const isShowMobileMessages = inject('isShowMobileMessages')
 
-    const showContacts = inject('showContacts')
+    const showChats = inject('showChats')
 
     route.query.page = 'chat'
     console.log('NAVBAR', route)
@@ -59,7 +59,7 @@ export default {
 
     return {
       isShowMobileMessages,
-      showContacts,
+      showChats,
       logout,
     }
   }

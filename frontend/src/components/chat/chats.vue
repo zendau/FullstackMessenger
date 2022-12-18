@@ -5,19 +5,25 @@
   >
     <p class="empty_message" v-if="chatsData.length === 0">No chats</p>
     <ul class="chats__list">
-      <li class="chats__item" v-for="chat in chatsData" :key="chat.id">
-        <router-link
+      <li
+        class="chats__item"
+        v-for="chat in chatsData"
+        :key="chat.id"
+        @click="openChat(chat.id)"
+      >
+        <!-- <router-link
           :to="`/chat/${chat.id}`"
           @click="isShowMobileMessages = true"
-        >
-          <i class="bi bi-people" v-if="chat.adminId" />
-          <i class="bi bi-person" v-else />
-          <div class="chats__info">
-            <p>{{ chat.title }}</p>
-            <p>{{ chat.lastMessage?.authorLogin }}</p>
-            <p>{{ chat.lastMessage?.text }}</p>
-          </div>
-        </router-link>
+        > -->
+
+        <i class="bi bi-people" v-if="chat.adminId" />
+        <i class="bi bi-person" v-else />
+        <div class="chats__info">
+          <p>{{ chat.title }}</p>
+          <p>{{ chat.lastMessage?.authorLogin }}</p>
+          <p>{{ chat.lastMessage?.text }}</p>
+        </div>
+        <!-- </router-link> -->
       </li>
     </ul>
   </div>
@@ -29,7 +35,7 @@ import { useStore } from "vuex";
 // import { io } from "socket.io-client";
 
 export default {
-  setup() {
+  setup(_, { emit }) {
     const store = useStore();
     // store.dispatch('chat/getChats')
 
@@ -48,10 +54,15 @@ export default {
     const isShowMobileMessages = inject("isShowMobileMessages");
 
     const chatsData = computed(() => store.state.chat.chats);
-    console.log("chats!!!!!!!!!1", chatsData);
+
+    function openChat(chatId) {
+      emit("openChat", chatId);
+    }
+
     return {
       isShowMobileMessages,
       chatsData,
+      openChat,
     };
   },
 };

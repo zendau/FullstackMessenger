@@ -29,13 +29,13 @@ import { useRoute } from "vue-router";
 export default {
   setup() {
     const store = useStore();
-    const chatData = computed(() => store.state.chat.chatData);
+    const chatId = computed(() => route.params.id);
+    const chatData = computed(() => store.state.chat.chats[chatId.value]);
 
-    const socket = inject("socket");
+    const chatSocket = inject("chatSocket");
 
     const route = useRoute();
     const message = ref(null);
-    const roomId = computed(() => route.params.id);
 
     const files = inject("files");
 
@@ -45,18 +45,20 @@ export default {
     const userLogin = userData.value.login;
 
     function removeFile(id) {
-      files.value.push(...Array.from(files.value).filter((_, index) => index !== id))
+      files.value.push(
+        ...Array.from(files.value).filter((_, index) => index !== id)
+      );
     }
 
     async function sendMessage() {
-      console.log(roomId);
+      console.log(chatId);
       let filesUpload = null;
-      console.log('1', typeof files.value, files, files.value)
+      console.log("1", typeof files.value, files, files.value);
       // eslint-disable-next-line no-constant-condition
       if (files.value.length > 0) {
         const formData = new FormData();
 
-        formData.append("path", roomId.value);
+        formData.append("path", chatId.value);
         formData.append("userId", userId);
         files.value.forEach((file) => {
           formData.append("files", file);
@@ -66,10 +68,10 @@ export default {
         filesUpload = resUpload.data;
       }
 
-      socket.emit("sendMessage", {
+      chatSocket.emit("sendMessage", {
         authorLogin: userLogin,
         text: message.value.textContent,
-        chatId: roomId.value,
+        chatId: chatId.value,
         files: filesUpload,
       });
       message.value.textContent = "";

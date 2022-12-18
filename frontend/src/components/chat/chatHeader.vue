@@ -1,36 +1,57 @@
 <template>
   <div class="chat__header">
     <div class="chat__header-data">
-      <h1 class="chat__title" :class="{ 'chat__title--private': !groupUsers }">{{ chatData.title }}</h1>
+      <h1 class="chat__title" :class="{ 'chat__title--private': !groupUsers }">
+        {{ chatData.title }}
+      </h1>
       <p class="chat__count" v-if="groupUsers" @click="showUsers = !showUsers">
         {{ groupUsers.length }} peoples
       </p>
-      <NavbarUserList :users='groupUsers' :show='showUsers' />
-
+      <NavbarUserList :users="groupUsers" :show="showUsers" />
     </div>
 
     <div class="chat__topbar" v-if="showTollbar">
       <div class="chat__user-group">
-        <button class="btn" @click="showAddUsers = !showAddUsers"><i class="bi bi-person-plus-fill"></i></button>
-        <NavbarUserList :users='invaitedUsers' :show='showAddUsers' @selectUser="addUserToChat" />
+        <button class="btn" @click="showAddUsers = !showAddUsers">
+          <i class="bi bi-person-plus-fill"></i>
+        </button>
+        <NavbarUserList
+          :users="invaitedUsers"
+          :show="showAddUsers"
+          @selectUser="addUserToChat"
+        />
       </div>
       <div class="chat__user-group">
-        <button class="chat__add-group btn" @click="showRemoveUsers = !showRemoveUsers"><i class="bi bi-person-dash-fill"></i></button>
-        <NavbarUserList :users='removeUsersList' :show='showRemoveUsers' @selectUser="removeUserFromChat" />
+        <button
+          class="chat__add-group btn"
+          @click="showRemoveUsers = !showRemoveUsers"
+        >
+          <i class="bi bi-person-dash-fill"></i>
+        </button>
+        <NavbarUserList
+          :users="removeUsersList"
+          :show="showRemoveUsers"
+          @selectUser="removeUserFromChat"
+        />
       </div>
-
     </div>
-    <a class="chat__exit" href="#" @click="exitGroup" v-if="groupUsers && !showTollbar">Exit chat</a>
+    <a
+      class="chat__exit"
+      href="#"
+      @click="exitGroup"
+      v-if="groupUsers && !showTollbar"
+      >Exit chat</a
+    >
   </div>
 </template>
 
 <script>
-import { computed, inject, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router';
-import { useStore } from 'vuex'
+import { computed, inject, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 
-import $api from '../../axios';
-import NavbarUserList from './navbarUserList.vue';
+import $api from "../../axios";
+import NavbarUserList from "./navbarUserList.vue";
 
 export default {
   setup() {
@@ -38,10 +59,10 @@ export default {
     const route = useRoute();
     const router = useRouter();
 
-    const userData = computed(() => store.state.auth.user);
-    const chatData = computed(() => store.state.chat.chatData);
-    const userId = userData.value.id;
     const chatId = computed(() => route.params.id);
+    const chatData = computed(() => store.state.chat.chats[chatId.value]);
+    const userData = computed(() => store.state.auth.user);
+    const userId = userData.value.id;
 
     const showTollbar = computed(() => chatData.value.adminId === userId);
 
@@ -49,39 +70,44 @@ export default {
     const showAddUsers = ref(false);
     const showRemoveUsers = ref(false);
 
-    const groupUsers = computed(() => store.state.chat.chatData.group)
-    const removeUsersList = computed(() => store.getters['chat/getRemoveUserList'])
-    const invaitedUsers = computed(() => store.state.chat.invaitedUsers)
+    // const groupUsers = computed(() => store.state.chat.chatData.group);
+    const groupUsers = null;
+    const removeUsersList = computed(
+      () => store.getters["chat/getRemoveUserList"]
+    );
+    const invaitedUsers = computed(() => store.state.chat.invaitedUsers);
 
-    const socket = inject('socket')
+    const chatSocket = inject("chatSocket");
 
     async function addUserToChat(id) {
-      store.dispatch('chat/invaiteUserToChat', {
+      store.dispatch("chat/invaiteUserToChat", {
         userId: id,
-        chatId: chatId.value
-      })
+        chatId: chatId.value,
+      });
     }
 
     async function removeUserFromChat(id) {
-      store.dispatch('chat/removeUserFromChat', {
+      store.dispatch("chat/removeUserFromChat", {
         userId: id,
-        chatId: chatId.value
-      })
+        chatId: chatId.value,
+      });
     }
 
     async function exitGroup() {
       console.log("exit user with id ", userId);
       const res = await $api.delete("/chat/exitUser", {
-          chatId: chatId.value,
-          userId,
-      })
-      store.state.chat.chats = store.state.chat.chats.filter(chat => chat.chatId !== chatId.value)
-      store.commit('chat/cleanMessages')
-      store.commit('chat/cleanChatData')
-      socket.emit('userLeave', {
+        chatId: chatId.value,
+        userId,
+      });
+      store.state.chat.chats = store.state.chat.chats.filter(
+        (chat) => chat.chatId !== chatId.value
+      );
+      store.commit("chat/cleanMessages");
+      store.commit("chat/cleanChatData");
+      chatSocket.emit("userLeave", {
         roomId: chatId.value,
-        userId
-      })
+        userId,
+      });
       if (res.data) {
         router.push("/chat");
       }
@@ -97,16 +123,15 @@ export default {
       invaitedUsers,
       addUserToChat,
       removeUserFromChat,
-      removeUsersList
+      removeUsersList,
     };
   },
-  components: { NavbarUserList }
+  components: { NavbarUserList },
 };
 </script>
 
 <style lang="scss" scoped>
 .chat {
-
   &__header {
     display: grid;
     height: 100%;
@@ -186,10 +211,7 @@ export default {
 
 @media (max-width: 720px) {
   .chat {
-
-
     &__header {
-
       grid-template-columns: auto;
 
       &-data {
@@ -197,7 +219,5 @@ export default {
       }
     }
   }
-
-
 }
 </style>
