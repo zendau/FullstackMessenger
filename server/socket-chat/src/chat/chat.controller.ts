@@ -1,29 +1,32 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import IUserChat from 'src/socket/interfaces/user/IUserChat';
 import { ChatService } from './chat.service';
-import { ChatDTO } from './dto/chat.dto';
-import { exitChatDto } from './dto/exitChat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
+import IChatCreate from './interfaces/IChatCreate';
+import { UserService } from './user.service';
 
 @Controller('chat')
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly userService: UserService,
+  ) {}
 
-  @MessagePattern('chat/getByUser')
-  async getChats(@Payload() id: number) {
-    const res = await this.chatService.getChats(id).catch((err) => {
-      console.log(err);
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
-    return res;
-  }
+  // @MessagePattern('chat/getByUser')
+  // async getChats(@Payload() id: number) {
+  //   const res = await this.chatService.getChats(id).catch((err) => {
+  //     console.log(err);
+  //     return {
+  //       status: false,
+  //       message: err.sqlMessage,
+  //       httpCode: HttpStatus.BAD_REQUEST,
+  //     };
+  //   });
+  //   return res;
+  // }
 
   @MessagePattern('chat/check')
-  async checkChat(@Payload() chatData: ChatDTO) {
+  async checkChat(@Payload() chatData: IChatCreate) {
     const res = await this.chatService.checkChat(chatData).catch((err) => {
       console.log(err);
       return {
@@ -50,7 +53,7 @@ export class ChatController {
   }
 
   @MessagePattern('chat/create')
-  async createChat(@Payload() chatData: ChatDTO) {
+  async createChat(@Payload() chatData: IChatCreate) {
     const res = await this.chatService.createChat(chatData).catch((err) => {
       console.log(err);
       return {
@@ -65,7 +68,7 @@ export class ChatController {
 
   @MessagePattern('chat/getContacts')
   async getContacts() {
-    const res = await this.chatService.getContacts().catch((err) => {
+    const res = await this.userService.getContacts().catch((err) => {
       return {
         status: false,
         message: err,
@@ -101,9 +104,9 @@ export class ChatController {
   }
 
   @MessagePattern('chat/invaitedUsers')
-  async getInvaitedUsers(@Payload() usersId: string[]) {
-    const res = await this.chatService
-      .getInvaitedUsers(usersId)
+  async getInvaitedUsers(@Payload() usersIdList: number[]) {
+    const res = await this.userService
+      .getInvaitedUsers(usersIdList)
       .catch((err) => {
         console.log(err);
         return {
@@ -116,7 +119,7 @@ export class ChatController {
   }
 
   @MessagePattern('chat/invaiteToChat')
-  async invaiteUsersToChat(@Payload() invateData: UpdateChatDto) {
+  async invaiteUsersToChat(@Payload() invateData: IUserChat) {
     const res = await this.chatService
       .invaiteUsersToChat(invateData)
       .catch((err) => {
@@ -131,10 +134,9 @@ export class ChatController {
   }
 
   @MessagePattern('chat/exitUser')
-  async exitUserGroup(@Payload() exitUserDTO: exitChatDto) {
-    console.log(exitUserDTO);
+  async exitUserGroup(@Payload() exitUserData: IUserChat) {
     const res = await this.chatService
-      .exitUserGroup(exitUserDTO)
+      .exitUserGroup(exitUserData)
       .catch((err) => {
         console.log(err);
         return {

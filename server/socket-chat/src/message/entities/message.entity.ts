@@ -13,8 +13,8 @@ import { Media } from './media.entity';
 export class Message {
   @CreateDateColumn({ name: 'created_at' }) 'created_at': Date;
 
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => Chat, (chat) => chat.id, {
     onDelete: 'CASCADE',
@@ -25,11 +25,19 @@ export class Message {
   @Column()
   authorLogin: string;
 
+  @Column()
+  authorId: number;
+
   @Column({
     type: 'text',
   })
   text: string;
 
-  @OneToMany(() => Media, (media) => media.message)
-  media: Media[];
+  @OneToMany(() => Media, (media) => media.message, {
+    cascade: ['insert', 'update'],
+  })
+  files: Media[];
+
+  @Column()
+  isEdited: boolean;
 }

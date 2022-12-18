@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsString, Length, Min } from 'class-validator';
+import { IsInt, IsString, Length, Min, IsUUID } from 'class-validator';
 
 export class FilesUploadDataDTO {
   @ApiProperty({
@@ -7,10 +7,7 @@ export class FilesUploadDataDTO {
     description: "file's path",
     required: true,
   })
-  @IsString()
-  @Length(2, 20, {
-    message: 'Value is smaller than 2 or bigger than 20 signs',
-  })
+  @IsUUID('4', { each: true })
   path: string;
 
   @ApiProperty({
@@ -18,7 +15,6 @@ export class FilesUploadDataDTO {
     description: "file's author user id ",
     required: true,
   })
-  @IsInt()
-  @Min(1)
+  @IsUUID('4', { each: true })
   userId: number;
 }

@@ -9,11 +9,22 @@ import {
 import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
 
+import * as uuid from 'uuid';
+
 import { HttpException } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import IUserConnect from './interfaces/IUserConnect';
-import IUserJoin from './interfaces/IUserJoin';
-import IMessageData from './interfaces/IMessageData';
+import IUserConnect from './interfaces/message/IMessagePressing';
+import IUserJoin from './interfaces/user/IUserChat';
+import IMessageData from './interfaces/message/IMessageData';
+import IUserConnectData from './interfaces/user/IUserConnectData';
+import IChatPagination from './interfaces/chat/IChatPagination';
+import IChatSearch from './interfaces/chat/IChatSearch';
+import IUserChat from './interfaces/user/IUserChat';
+import IMessagePressing from './interfaces/message/IMessagePressing';
+import IChatMessages from './interfaces/chat/IChatMessages';
+import IDeleteMessage from './interfaces/message/IDeleteMessage';
+import IEditMessage from './interfaces/message/IEditMessage';
+import IReadMessage from './interfaces/message/IReadMessage';
 
 @WebSocketGateway(80, {
   path: '/socketChat',
@@ -30,71 +41,177 @@ export class SocketGateway {
   @WebSocketServer()
   server: Server;
 
-  handleDisconnect(socket: Socket) {
-    console.log('client disconected');
-    debugger;
-    const userId = this.socketService.clientDisconnect(socket.id);
-    const rooms = this.socketService.getUserRooms(userId);
-    const roomUser = this.socketService.updateUserRoomsOnline(userId);
-    this.server.to(rooms).emit('getUsers', roomUser);
+  async handleDisconnect(socket: Socket) {
+    const userStatus = await this.socketService.clientDisconnect(
+      socket.data.userId,
+    );
+
+    if (!userStatus) return;
+    const rooms = await this.socketService.getUserRoomsIds(userStatus.userId);
+    if (!rooms || rooms.length === 0) return;
+    socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
   }
 
   @SubscribeMessage('connect-user')
-  connectEvent(socket: Socket, payload) {
-    console.log('conntect', payload);
-    debugger;
-    this.socketService.addUser(payload);
-
-    const rooms = this.socketService.getUserRooms(payload.userId);
+  async connectUser(socket: Socket, payload: IUserConnectData) {
+    const userStatus = this.socketService.addUser(payload.userId);
+    const rooms = await this.socketService.getUserRoomsIds(payload.userId);
+    socket.data.userId = payload.userId;
     socket.join(rooms);
-    const roomUser = this.socketService.updateUserRoomsOnline(payload.userId);
-    this.server.to(rooms).emit('getUsers', roomUser);
-    //this.server.emit('getOnlineUsers', this.socketService.getOnlineUsers());
+    const userRoomsData = await this.socketService.getUserRoomsData(
+      payload.userId,
+      0,
+      payload.limit,
+    );
+
+    const currentTempChatData = await this.socketService.getCurrentChatRoom(
+      userRoomsData.roomsData,
+      payload.userId,
+      payload.chatId,
+    );
+
+    this.server
+      .to(socket.id)
+      .emit('getRoomsData', { ...userRoomsData, currentTempChatData });
+    socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
   }
 
-  // @SubscribeMessage('invite-user')
-  // inviteUserToRoom(@MessageBody() payload: any) {
-  //   this.server.emit('userInviteRoom', payload);
-  // }
+  @SubscribeMessage('load-chats')
+  async loadChatsPage(socket: Socket, payload: IChatPagination) {
+    //const rooms = await this.socketService.getUserRooms(payload.userId);
+    const userRoomsData = await this.socketService.getUserRoomsData(
+      payload.userId,
+      payload.page,
+      payload.limit,
+    );
+    this.server.to(socket.id).emit('appendRoomsData', userRoomsData);
+  }
+
+  @SubscribeMessage('serchChats')
+  async getChatsByPattern(socket: Socket, payload: IChatSearch) {
+    const userRoomsData = await this.socketService.getChatsByPattern(
+      payload.userId,
+      payload.pattern,
+    );
+    this.server.to(socket.id).emit('getChatsByPattern', userRoomsData);
+  }
+
+  @SubscribeMessage('load-chat-by-id')
+  async loadChatById(socket: Socket, payload: IUserChat) {
+    const currentChatData = await this.socketService.getCurrentChatById(
+      payload.userId,
+      payload.chatId,
+    );
+
+    this.server.to(socket.id).emit('appendRoomData', {
+      chatId: payload.chatId,
+      data: currentChatData,
+    });
+  }
+
+  @SubscribeMessage('invite-user')
+  async inviteUserToChat(socket: Socket, payload: IUserChat) {
+    const inseredUserData = await this.socketService.inviteUserToChat(payload);
+    this.server.emit('inviteChatUser', inseredUserData);
+
+    if (!inseredUserData) return inseredUserData;
+
+    this.sendMessage(socket, {
+      roomId: payload.chatId,
+      authorId: null,
+      authorLogin: null,
+      text: `Added ${inseredUserData.userData.login}`,
+      files: null,
+    });
+  }
+
+  @SubscribeMessage('remove-user')
+  async removeUserFromChat(socket: Socket, payload: IUserChat) {
+    const userData = await this.socketService.removeUserFromChat(payload);
+    this.server.to(payload.chatId).emit('removeChatUser', userData);
+
+    if (!userData) return;
+
+    this.sendMessage(socket, {
+      roomId: payload.chatId,
+      authorId: null,
+      authorLogin: null,
+      text: `Deleted ${userData.deletedUserInfo.login}`,
+      files: null,
+    });
+  }
 
   @SubscribeMessage('message_pressing')
-  handleMessagePressing(
-    socket: Socket,
-    payload: { userName: string; roomId: string },
-  ) {
-    socket.broadcast
-      .to(payload.roomId)
-      .emit('message_status', payload.userName);
+  handleMessagePressing(socket: Socket, payload: IMessagePressing) {
+    socket.broadcast.to(payload.roomId).emit('message_status', payload);
   }
 
-  @SubscribeMessage('userLeave')
-  userLeaveChatGroup(socket: Socket, payload: IUserJoin) {
-    console.log('PAYLOAD', payload);
-    socket.broadcast.to(payload.roomId).emit('updateUserCount', payload.userId);
+  @SubscribeMessage('getRoomMessages')
+  async getRoomMessagesHandler(socket: Socket, payload: IChatMessages) {
+    const messagesData = await this.socketService.getRoomMessages(payload);
+    this.server.to(socket.id).emit('upload_messages', messagesData);
+  }
+
+  @SubscribeMessage('delete_messages')
+  deleteMessagesHandler(socket: Socket, payload: IDeleteMessage) {
+    this.socketService.deleteMessages(payload);
+    this.server.to(payload.roomId).emit('updateDeletedMessages', payload);
+  }
+
+  @SubscribeMessage('edit_message')
+  async editMessageHandler(socket: Socket, payload: IEditMessage) {
+    debugger;
+    const editedStatus = await this.socketService.editMessage(payload);
+    this.server
+      .to(payload.roomId)
+      .emit('updateMessage', { ...payload, editedStatus });
+  }
+
+  @SubscribeMessage('readMessages')
+  async readMessagesHandler(socket: Socket, payload: IReadMessage) {
+    const unreadCount = await this.socketService.unReadMessages({
+      userId: payload.userId,
+      chatId: payload.chatId,
+      count: payload.count,
+    });
+
+    this.server.to(payload.chatId).emit('updateReadMessages', unreadCount);
   }
 
   @SubscribeMessage('sendMessage')
-  async sendMessage(@MessageBody() payload: IMessageData) {
-    const res = await this.messageService.create(
-      {
-        authorLogin: payload.authorLogin,
-        text: payload.text,
-        chatId: payload.chatId,
-      },
-      payload.files,
+  async sendMessage(socket: Socket, payload: IMessageData) {
+    // const res = await this.messageService.create(
+    //   {
+    //     authorLogin: payload.authorLogin,
+    //     text: payload.text,
+    //     chatId: payload.chatId,
+    //   },
+    //   payload.files,
+    // );
+    // if (res?.media) {
+    //   res.files = await this.messageService.setFilesDataToMessage(res.media);
+    // }
+    // if ('chat' in res) {
+    //   this.server.to(payload.chatId).emit('newMessage', {
+    //     authorLogin: res.authorLogin,
+    //     text: res.text,
+    //     created_at: res.created_at,
+    //     id: res.id,
+    //     files: res.files,
+    //   });
+    // }
+
+    const message = this.socketService.addMessage(payload);
+    this.server.to(payload.roomId).emit('newMessage', message);
+  }
+
+  @SubscribeMessage('getFreeChatUsers')
+  async getFreeChatUsers(socket: Socket, payload: IUserChat) {
+    const freeUsers = await this.socketService.getFreeChatUsers(
+      payload.chatId,
+      payload.userId,
     );
 
-    if (res?.media) {
-      res.files = await this.messageService.setFilesDataToMessage(res.media);
-    }
-    if ('chat' in res) {
-      this.server.to(payload.chatId).emit('newMessage', {
-        authorLogin: res.authorLogin,
-        text: res.text,
-        created_at: res.created_at,
-        id: res.id,
-        files: res.files,
-      });
-    }
+    this.server.to(socket.id).emit('getFreeChatContacts', freeUsers);
   }
 }

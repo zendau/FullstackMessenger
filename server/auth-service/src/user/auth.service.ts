@@ -11,7 +11,7 @@ import { comparePassword, hashPassword } from './utils/passwordFactory';
 import { Cache } from 'cache-manager';
 import { UserService } from './user.service';
 import { UserInfoService } from './userInfo.service';
-import { UserOnlineService } from './UserOnline.service';
+// import { UserOnlineService } from './UserOnline.service';
 import convertUserDTO from './dto/createUserDTO';
 import { DeviceService } from 'src/token/device.service';
 import { IDevice } from 'src/token/interfaces/ITokenDevice';
@@ -29,7 +29,7 @@ export class AuthService {
     private nodeMailerService: NodeMailerService,
     private confirmCodeService: ConfirmCodeService,
     private userInfoService: UserInfoService,
-    private userOnlineService: UserOnlineService,
+    // private userOnlineService: UserOnlineService,
     private deviceService: DeviceService,
     private connection: Connection,
   ) {}
@@ -129,12 +129,12 @@ export class AuthService {
       { userId: userData.id },
       this.queryRunner.manager,
     );
-    await this.userOnlineService.add(
-      {
-        userId: userData.id,
-      },
-      this.queryRunner.manager,
-    );
+    // await this.userOnlineService.add(
+    //   {
+    //     userId: userData.id,
+    //   },
+    //   this.queryRunner.manager,
+    // );
 
     const deviceId = await this.deviceService.add(deviceData);
 

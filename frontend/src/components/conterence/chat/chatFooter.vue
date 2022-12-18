@@ -1,49 +1,56 @@
 <template>
   <div class="chat__footer">
     <div class="chat__content">
-      <div class="chat__input" contenteditable="true" data-placeholder="Type message" ref="message"
-        @keypress.enter="sendMessage"></div>
+      <div
+        class="chat__input"
+        contenteditable="true"
+        data-placeholder="Type message"
+        ref="message"
+        @keypress.enter="sendMessage"
+      ></div>
       <ul class="chat__files" v-if="files.length > 0">
-        <li class="chat__file" v-for="(file, index) in files" :key="index" @click="removeFile(index)">
+        <li
+          class="chat__file"
+          v-for="(file, index) in files"
+          :key="index"
+          @click="removeFile(index)"
+        >
           <i class="bi bi-file-earmark-arrow-down"></i>{{ file.name }}
         </li>
       </ul>
     </div>
   </div>
-
 </template>
 
 <script>
-import { computed, inject, ref } from 'vue';
-import { useStore } from 'vuex';
-import $api from '../../../axios';
-
+import { computed, inject, ref } from "vue";
+import { useStore } from "vuex";
+import $api from "../../../axios";
 
 export default {
-  props: ['roomId'],
+  props: ["roomId"],
   setup(props) {
     const files = inject("files");
 
     const message = ref(null);
-    const socket = inject('socket')
+    const socket = inject("socket");
     const store = useStore();
 
     const userData = computed(() => store.state.auth.user);
-
 
     const userLogin = userData.value.login;
     const userId = userData.value.id;
 
     function removeFile(id) {
-      files.value = Array.from(files.value).filter((_, index) => index !== id)
+      files.value = Array.from(files.value).filter((_, index) => index !== id);
     }
 
     async function sendMessage(e) {
       if (e.which === 13 && e.shiftKey === false) {
-        e.preventDefault()
+        e.preventDefault();
 
         let filesUpload = null;
-        console.log('1', typeof files.value, files, files.value)
+        console.log("1", typeof files.value, files, files.value);
 
         if (files.value.length > 0) {
           const formData = new FormData();
@@ -72,11 +79,10 @@ export default {
       files,
       message,
       removeFile,
-      sendMessage
-    }
-  }
-}
-
+      sendMessage,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -84,9 +90,7 @@ export default {
   &__footer {
     height: auto;
     position: relative;
-
   }
-
 
   &__content {
     bottom: 0;
@@ -126,7 +130,6 @@ export default {
       box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
       border-radius: 10px;
     }
-
   }
 
   &__files {
@@ -140,17 +143,15 @@ export default {
   }
 
   &__file {
-
     text-decoration: none;
     color: $linkColor;
-    transition: .3s ease;
+    transition: 0.3s ease;
     cursor: pointer;
     margin-right: 15px;
 
     &:hover {
       color: $textColor;
     }
-
   }
 }
 </style>

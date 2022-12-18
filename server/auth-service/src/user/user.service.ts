@@ -4,7 +4,12 @@ import { NodeMailerService } from '../access/nodemailer/nodemailer.service';
 import { TokenService } from '../token/token.service';
 import { CACHE_MANAGER, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository, QueryRunner, SelectQueryBuilder } from 'typeorm';
+import {
+  Connection,
+  Repository,
+  QueryRunner,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { User } from './user.entity';
 
 import IUser from './interfaces/IUserData';
@@ -16,10 +21,11 @@ import convertEditUserDTO from './dto/createEditUserDTO';
 import { sqlErrorCodes } from './utils/sqlErrorCodes';
 import IEditUser from './interfaces/IEditUserData';
 import { UserInfoService } from './userInfo.service';
-import { UserOnlineService } from './UserOnline.service';
+// import { UserOnlineService } from './UserOnline.service';
 import { DeviceService } from 'src/token/device.service';
 import { UserRole } from './user.entity';
 import { Contact } from 'src/contacts/contact.entity';
+import { UnionParameters } from 'src/utils/typeorm/union';
 
 @Injectable()
 export class UserService {
@@ -131,20 +137,37 @@ export class UserService {
     return users;
   }
 
-  async getOtherUsersList(subQuery: SelectQueryBuilder<Contact>, userId: number) {
+  async getOtherUsersList(
+    subQuery: SelectQueryBuilder<Contact> | UnionParameters,
+    userId: number,
+    isNot: boolean,
+  ) {
+    //console.log('sub', await subQuery.getRawMany());
     const resList = await this.usersRepository
       .createQueryBuilder()
-      .select('id, email, login')
-      .where(`id IN (${subQuery.getQuery()})`)
+      .select('id, email, login, lastOnline')
+      .where(`id ${isNot ? 'NOT' : ''} IN (${subQuery.getQuery()})`)
       .andWhere('id != :userId', { userId })
       .getRawMany();
     return resList;
   }
 
+  async getManyUserById(isList: number[]) {
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .select(['user.id', 'user.email', 'user.login', 'user.lastOnline'])
+      .where('user.id IN (:isList)', { isList })
+      .getMany();
+
+    if (user === undefined) return false;
+
+    return user;
+  }
+
   async getUserById(id: number) {
     const user = await this.usersRepository
       .createQueryBuilder('user')
-      .select(['user.id', 'user.email', 'user.login'])
+      .select(['user.id', 'user.email', 'user.login', 'user.lastOnline'])
       .where('user.id = :id', { id })
       .getOne();
 
@@ -194,5 +217,17 @@ export class UserService {
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
+  }
+
+  async setLastOnline(userId: number, lastOnline: Date) {
+    const user = await this.usersRepository
+      .createQueryBuilder()
+      .update({
+        lastOnline: lastOnline,
+      })
+      .where('id = :userId', { userId })
+      .execute();
+
+    return !!user.affected;
   }
 }

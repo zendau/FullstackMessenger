@@ -6,6 +6,8 @@ import { Chat } from './entities/chat.entity';
 import { ChatUsers } from './entities/chatUsers.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
+import { UserService } from './user.service';
 
 @Module({
   imports: [
@@ -34,7 +36,7 @@ import { ConfigService } from '@nestjs/config';
     ]),
   ],
   controllers: [ChatController],
-  providers: [ChatService],
-  exports: [ChatService],
+  providers: [ChatService, UserService, SocketRedisAdapter],
+  exports: [ChatService, UserService],
 })
 export class ChatModule {}

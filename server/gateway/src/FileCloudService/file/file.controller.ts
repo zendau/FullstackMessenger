@@ -47,47 +47,57 @@ import { JwtAuthGuard } from 'src/AuthService/guards/jwt-auth.guard';
 export class FileController {
   constructor(@Inject('FILE_SERVICE') private fileServiceClient: ClientProxy) {}
 
-  @ApiOperation({ summary: 'Files upload data with `files` interceptor' })
-  @ApiResponse({
-    status: 200,
-    type: Number,
-    isArray: true,
-    description: 'return uploaded files id',
-  })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @UsePipes(ValidationPipe)
-  @Post('add')
-  @UseInterceptors(
-    FilesInterceptor('files', 10, {
-      storage: diskStorage({
-        destination: destinationStorage,
-        filename: filenameStorage,
-      }),
-    }),
-  )
-  async create(
-    @Body() filesUploadDTO: FilesUploadDataDTO,
-    @UploadedFiles() files: Array<Express.Multer.File>,
-  ) {
-    const filesData = {
-      ...filesUploadDTO,
-      filesData: files.map((file) => {
-        return {
-          fileName: file.originalname,
-          fileTempName: file.filename,
-          size: file.size,
-          mimetype: file.mimetype,
-        };
-      }),
-    };
+  // @ApiOperation({ summary: 'Files upload data with `files` interceptor' })
+  // @ApiResponse({
+  //   status: 200,
+  //   type: Number,
+  //   isArray: true,
+  //   description: 'return uploaded files id',
+  // })
+  // @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @UsePipes(ValidationPipe)
+  // @Post('add')
+  // @UseInterceptors(
+  //   FilesInterceptor('files', 10, {
+  //     storage: diskStorage({
+  //       destination: destinationStorage,
+  //       filename: filenameStorage,
+  //     }),
+  //   }),
+  // )
+  // async create(
+  //   @Body() filesUploadDTO: FilesUploadDataDTO,
+  //   @UploadedFiles() files: Array<Express.Multer.File>,
+  // ) {
+  //   const filesData = {
+  //     ...filesUploadDTO,
+  //     filesData: files.map((file) => {
+  //       return {
+  //         fileName: file.originalname,
+  //         fileTempName: file.filename,
+  //         size: file.size,
+  //         mimetype: file.mimetype,
+  //       };
+  //     }),
+  //   };
+  //   console.log('filesData', filesData);
+  //   const res = await firstValueFrom(
+  //     this.fileServiceClient.send('file/add', filesData),
+  //   );
+  //   if (res.status === false) {
+  //     console.log('error')
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   return res;
+  // }
 
-    const res = await firstValueFrom(
-      this.fileServiceClient.send('file/add', filesData),
-    );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
-    return res;
+  @Post('add')
+  async create(
+    @Body()
+    filesUploadDTO: FilesUploadDataDTO,
+    // @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    console.log('filesUploadDTO', filesUploadDTO);
   }
 
   @ApiOperation({ summary: 'Get all files' })
@@ -170,29 +180,30 @@ export class FileController {
     return res;
   }
 
-  @ApiOperation({ summary: 'Download file fron server by id' })
-  @ApiResponse({ status: 200, description: 'Success operation' })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @Get('download/:id')
-  async dowloadFile(
-    @Res() response: Response,
-    @Param('id', ParseIntPipe) fileId: number,
-  ) {
-    const res = await firstValueFrom(
-      this.fileServiceClient.send('file/get', fileId),
-    );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
-    const filePath = `${process.env.STORE_PATH}/${res.foulder.path}/${res.fileTempName}`;
-    if (fs.existsSync(filePath)) {
-      response.download(filePath, res.fileName);
-    } else {
-      response.status(HttpStatus.BAD_REQUEST).send({
-        status: false,
-        message: `no such file with id ${fileId}`,
-        httpCode: HttpStatus.BAD_REQUEST,
-      });
-    }
-  }
+  // @ApiOperation({ summary: 'Download file fron server by id' })
+  // @ApiResponse({ status: 200, description: 'Success operation' })
+  // @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @Get('download/:id')
+  // async dowloadFile(
+  //   @Res() response: Response,
+  //   @Param('id', ParseIntPipe) fileId: number,
+  // ) {
+  //   // TODO FIX
+  //   const res = await firstValueFrom(
+  //     this.fileServiceClient.send('file/get', fileId),
+  //   );
+  //   if (res.status === false) {
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   const filePath = `${process.env.STORE_PATH}/${res.foulder.path}/${res.fileTempName}`;
+  //   if (fs.existsSync(filePath)) {
+  //     response.download(filePath, res.fileName);
+  //   } else {
+  //     response.status(HttpStatus.BAD_REQUEST).send({
+  //       status: false,
+  //       message: `no such file with id ${fileId}`,
+  //       httpCode: HttpStatus.BAD_REQUEST,
+  //     });
+  //   }
+  // }
 }

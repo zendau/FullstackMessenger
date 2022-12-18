@@ -11,7 +11,6 @@ import { UsersController } from './user.controller';
 import * as redisStore from 'cache-manager-redis-store';
 import { ConfigService } from '@nestjs/config';
 import { UserInfoService } from './userInfo.service';
-import { UserOnlineService } from './UserOnline.service';
 import { ContactController } from 'src/contacts/contact.controller';
 import { Contact } from 'src/contacts/contact.entity';
 import { ContactService } from 'src/contacts/contact.service';
@@ -37,7 +36,6 @@ import { ContactService } from 'src/contacts/contact.service';
     ConfigService,
     AuthService,
     UserInfoService,
-    UserOnlineService,
     ContactService
   ],
   exports: [UserService, TypeOrmModule, AuthService],

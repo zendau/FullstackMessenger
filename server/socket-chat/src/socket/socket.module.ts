@@ -5,6 +5,8 @@ import { SocketGateway } from './socket.gateway';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { ChatModule } from 'src/chat/chat.module';
+import { TasksService } from './task.service';
+import { SocketRedisAdapter } from './socketRedisAdapter.service';
 
 @Module({
   imports: [
@@ -33,6 +35,7 @@ import { ChatModule } from 'src/chat/chat.module';
       },
     ]),
   ],
-  providers: [SocketGateway, SocketService],
+  providers: [SocketGateway, SocketService, SocketRedisAdapter],
+  exports: [SocketRedisAdapter],
 })
 export class SocketModule {}

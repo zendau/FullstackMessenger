@@ -9,7 +9,7 @@ export class Chat {
   @Column({
     nullable: true,
   })
-  groupName: string;
+  title: string;
 
   @Column({
     nullable: true,

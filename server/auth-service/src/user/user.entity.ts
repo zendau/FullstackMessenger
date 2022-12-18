@@ -1,5 +1,5 @@
 import { UserAccess } from './../access/access.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, CreateDateColumn } from 'typeorm';
 
 export enum UserRole {
   ADMIN = 'ADMIN',
@@ -25,6 +25,9 @@ export class User {
 
   @OneToOne(() => UserAccess, (UserAccess) => UserAccess.user)
   access: UserAccess;
+
+  @CreateDateColumn()
+  lastOnline: Date;
 
   @Column({
     type: 'enum',

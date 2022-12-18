@@ -1,9 +1,10 @@
-import { Repository } from 'typeorm';
+import { Connection, Repository, SelectQueryBuilder } from 'typeorm';
 import { HttpStatus, Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from './contact.entity';
 import { UserService } from 'src/user/user.service';
+import { union } from 'src/utils/typeorm/union';
 
 @Injectable()
 export class ContactService {
@@ -11,6 +12,7 @@ export class ContactService {
     @InjectRepository(Contact)
     private contactRepository: Repository<Contact>,
     private userService: UserService,
+    private connection: Connection,
   ) {}
 
   async isVerifiedConctacts(userId: number, contactId: number) {
@@ -21,8 +23,6 @@ export class ContactService {
     return res;
   }
 
-
-
   async getContactList(userId: number) {
     const subQuery = this.contactRepository
       .createQueryBuilder()
@@ -30,17 +30,33 @@ export class ContactService {
       .where('userId = :userId', { userId })
       .andWhere('isContact = 1');
 
-    const resList = await this.userService.getOtherUsersList(subQuery, userId);
+    const resList = await this.userService.getOtherUsersList(
+      subQuery,
+      userId,
+      false,
+    );
     return resList;
   }
 
   async getFreeUsers(userId: number) {
-    const subQuery = this.contactRepository
+    debugger;
+    const subContacts = this.contactRepository
       .createQueryBuilder()
       .select('contactId as id')
       .where('userId = :userId', { userId });
 
-    const freeUsersList = await this.userService.getOtherUsersList(subQuery, userId);
+    const subUsers = this.contactRepository
+      .createQueryBuilder()
+      .select('userId')
+      .where('contactId = :userId', { userId });
+
+    const freeUsersUnion = union(subContacts, subUsers);
+
+    const freeUsersList = await this.userService.getOtherUsersList(
+      freeUsersUnion,
+      userId,
+      true,
+    );
     return freeUsersList;
   }
 
@@ -67,29 +83,42 @@ export class ContactService {
     const subQuery = this.contactRepository
       .createQueryBuilder()
       .select('userId')
-      .where('contactId = :userId', { userId });
+      .where('contactId = :userId', { userId })
+      .andWhere('isContact = 0');
+    // const resList = await this.contactRepository
+    //   .createQueryBuilder()
+    //   .select('contactId as id')
+    //   .where(`contactId NOT IN (${subQuery.getQuery()})`)
+    //   .andWhere('userId = :userId', { userId });
 
-    const resList = await this.contactRepository
-      .createQueryBuilder()
-      .select('contactId as id')
-      .where(`contactId NOT IN (${subQuery.getQuery()})`)
-      .andWhere('userId = :userId', { userId })
-      .getRawMany();
+    const resList = await this.userService.getOtherUsersList(
+      subQuery,
+      userId,
+      false,
+    );
     return resList;
+
+    //return resList;
   }
 
   async getContactsOutgoing(userId: number) {
     const subQuery = this.contactRepository
       .createQueryBuilder()
       .select('contactId')
-      .where('userId = :userId', { userId });
+      .where('userId = :userId', { userId })
+      .andWhere('isContact = 0');
 
-    const resList = await this.contactRepository
-      .createQueryBuilder()
-      .select('userId as id')
-      .where(`userId NOT IN (${subQuery.getQuery()})`)
-      .andWhere('contactId = :userId', { userId })
-      .getRawMany();
+    // const resList = await this.contactRepository
+    //   .createQueryBuilder()
+    //   .select('userId as id')
+    //   .where(`userId NOT IN (${subQuery.getQuery()})`)
+    //   .andWhere('contactId = :userId', { userId });
+
+    const resList = await this.userService.getOtherUsersList(
+      subQuery,
+      userId,
+      false,
+    );
     return resList;
   }
 
@@ -121,6 +150,13 @@ export class ContactService {
     return !!resDeleted.affected;
   }
 
+  async deleteUserFromContact(userId: number, contactId: number) {
+    const resDeleted = await this.deleteFromContact(userId, contactId);
+    const resChangeIsContact = await this.changeContactStatus(contactId, false);
+
+    return resChangeIsContact;
+  }
+
   async deleteFromContact(userId: number, contactId: number) {
     const resDeleted = await this.contactRepository
       .createQueryBuilder()
@@ -132,18 +168,8 @@ export class ContactService {
       .execute();
 
     const deletedStatus = !!resDeleted.affected;
-
-    if (!deletedStatus) {
-      return {
-        status: false,
-        message: 'Wrong deleted contact data',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    }
-
-    const resChangeIsContact = await this.changeContactStatus(contactId, false);
-
-    return resChangeIsContact;
+    return deletedStatus;
+    //if (!deletedStatus) return;
   }
 
   async changeContactStatus(userId: number, status: boolean) {
@@ -171,14 +197,30 @@ export class ContactService {
     };
   }
 
+  async getBlockedUsers(userId: number) {
+    const subQuery = this.contactRepository
+      .createQueryBuilder()
+      .select('userId')
+      .where('contactId = :userId', { userId })
+      .andWhere('isBanned = 1');
+
+    const resList = await this.userService.getOtherUsersList(
+      subQuery,
+      userId,
+      false,
+    );
+    return resList;
+  }
+
   async blockUser(userId: number, contactId: number) {
+    debugger;
     const resUpdate = await this.contactRepository
       .createQueryBuilder()
       .update()
       .set({
         isBanned: true,
       })
-      .where('userId = :userId and contactId = :contactId', {
+      .where('userId = :contactId and contactId = :userId', {
         userId,
         contactId,
       })
@@ -187,32 +229,45 @@ export class ContactService {
     const upadtedStatus = !!resUpdate.affected;
 
     if (!upadtedStatus) {
-      return {
-        status: false,
-        message: 'Wrong block contact data',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      await this.contactRepository
+        .createQueryBuilder()
+        .insert()
+        .values({
+          contactId: userId,
+          userId: contactId,
+          isBanned: true,
+        })
+        .execute();
     }
 
-    const resDeleteContact = await this.deleteFromContact(contactId, userId);
+    // if (!upadtedStatus) {
+    //   return {
+    //     status: false,
+    //     message: 'Wrong block contact data',
+    //     httpCode: HttpStatus.BAD_REQUEST,
+    //   };
+    // }
 
-    return resDeleteContact;
+    await this.deleteFromContact(userId, contactId);
+
+    return true;
   }
 
   async unblockUser(userId: number, contactId: number) {
-    const resUpdate = await this.contactRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        isBanned: false,
-      })
-      .where('userId = :userId and contactId = :contactId', {
-        userId,
-        contactId,
-      })
-      .execute();
+    const res = await this.deleteFromContact(contactId, userId);
+    // const resUpdate = await this.contactRepository
+    //   .createQueryBuilder()
+    //   .update()
+    //   .set({
+    //     isBanned: false,
+    //   })
+    //   .where('userId = :contactId and contactId = :userId', {
+    //     userId,
+    //     contactId,
+    //   })
+    //   .execute();
 
-    return !!resUpdate.affected;
+    return res;
   }
 
   // async getUserRequest(userId: number) {

@@ -143,6 +143,19 @@ export class UsersController {
     return res;
   }
 
+  @MessagePattern('user/idList')
+  async getManyUserById(@Payload() idList: number[]) {
+    const res = await this.userService.getManyUserById(idList).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    console.log('res 1', res);
+    return res;
+  }
+
   @MessagePattern('user/id')
   async getUserById(@Payload() id: number) {
     console.log('1');
@@ -153,13 +166,11 @@ export class UsersController {
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
-    console.log('res', res);
     return res;
   }
 
   @MessagePattern('user/setRole')
   async setUserRole(@Payload() roleData: { userId: number; role: UserRole }) {
-
     const res = await this.userService
       .setUserRole(roleData.userId, roleData.role)
       .catch((err) => {
@@ -169,7 +180,22 @@ export class UsersController {
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
-    console.log('res', res);
+    return res;
+  }
+
+  @MessagePattern('user/updateLastOnline')
+  async updateUserLastOnline(
+    @Payload() roleData: { userId: number, lastOnline: Date },
+  ) {
+    const res = await this.userService
+      .setLastOnline(roleData.userId, roleData.lastOnline)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
     return res;
   }
 

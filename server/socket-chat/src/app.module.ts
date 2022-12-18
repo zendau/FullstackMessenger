@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessageModule } from './message/message.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from './socket/task.service';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     SocketModule,
     ChatModule,
     MessageModule,
+    ScheduleModule.forRoot(),
   ],
+  providers: [TasksService],
 })
 export class AppModule {}

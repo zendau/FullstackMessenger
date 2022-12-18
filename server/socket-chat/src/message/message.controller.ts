@@ -1,16 +1,16 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MessageService } from './message.service';
-import { IMessageDTO } from './dto/message.dto';
-import { IUpdateMessageDTO } from './dto/update-message.dto';
 
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { IMessage } from './interfaces/IMessage';
+//import IUpdateMessage from './interfaces/IUpdateMessage';
 
 @Controller('message')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
   @MessagePattern('message/add')
-  async create(@Payload() createMessageDto: IMessageDTO) {
+  async create(@Payload() createMessageDto: IMessage) {
     const res = await this.messageService
       .create(createMessageDto)
       .catch((err) => {
@@ -40,7 +40,7 @@ export class MessageController {
   }
 
   @MessagePattern('message/get')
-  async findOne(@Payload() messageId: number) {
+  async findOne(@Payload() messageId: string) {
     const res = await this.messageService.getById(messageId).catch((err) => {
       return {
         status: false,
@@ -51,19 +51,19 @@ export class MessageController {
     return res;
   }
 
-  @MessagePattern('message/edit')
-  async update(@Payload() updateMessageDto: IUpdateMessageDTO) {
-    const res = await this.messageService
-      .update(updateMessageDto)
-      .catch((err) => {
-        return {
-          status: false,
-          message: err.sqlMessage,
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      });
-    return res;
-  }
+  // @MessagePattern('message/edit')
+  // async update(@Payload() updateMessageDto: IUpdateMessage) {
+  //   const res = await this.messageService
+  //     .update(updateMessageDto)
+  //     .catch((err) => {
+  //       return {
+  //         status: false,
+  //         message: err.sqlMessage,
+  //         httpCode: HttpStatus.BAD_REQUEST,
+  //       };
+  //     });
+  //   return res;
+  // }
 
   @MessagePattern('message/delete')
   async remove(@Payload() messageId: number) {

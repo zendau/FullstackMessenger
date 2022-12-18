@@ -17,13 +17,13 @@ import { ContactController } from './AuthService/UserModule/contact.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env']
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
     }),
     CacheModule.register<ClientOpts>({
       store: redisStore,
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT),
-      ttl: 480
+      ttl: 480,
     }),
     ClientsModule.register([
       {
@@ -87,7 +87,7 @@ import { ContactController } from './AuthService/UserModule/contact.controller';
     FileController,
     RoomController,
     UserController,
-    ContactController
+    ContactController,
   ],
   providers: [JwtStrategy, RefreshStrategy],
 })

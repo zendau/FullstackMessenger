@@ -90,6 +90,7 @@ export class ContactController {
   })
   @UsePipes(ValidationPipe)
   //@UseGuards(JwtAuthGuard)
+  //TODO
   @Post('sendRequest')
   async sendContactRequest(@Body() requestData: ContactDTO) {
     const resData = await firstValueFrom(
@@ -224,6 +225,29 @@ export class ContactController {
     return resData;
   }
 
+  @ApiOperation({ summary: 'Get bloked users' })
+  @ApiResponse({
+    status: 200,
+    type: GetUserDTO,
+    isArray: true,
+  })
+  @ApiResponse({
+    status: 400,
+    type: HttpErrorDTO,
+  })
+  //@UseGuards(JwtAuthGuard)
+  @Get('blockedUsers/:userId')
+  async getBlockedUsers(@Param('userId', ParseIntPipe) userId: number) {
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('contact/blockedUsers', userId),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
+
   @ApiOperation({ summary: 'Block selected user' })
   @ApiResponse({
     status: 200,
@@ -264,7 +288,7 @@ export class ContactController {
   @Patch('unBlock')
   async unBlockUserContact(@Body() requestData: ContactDTO) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/unBlock', requestData),
+      this.authServiceClient.send('contact/unblock', requestData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);

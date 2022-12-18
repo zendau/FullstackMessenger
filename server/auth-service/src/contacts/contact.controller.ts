@@ -24,15 +24,14 @@ export class ContactController {
 
   @MessagePattern('contact/freeList')
   async getFreeUserList(@Payload(new ParseIntPipe()) userId: number) {
-    const res = await this.contactService
-      .getFreeUsers(userId)
-      .catch((err) => {
-        return {
-          status: false,
-          message: err.sqlMessage,
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      });
+    debugger;
+    const res = await this.contactService.getFreeUsers(userId).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
     return res;
   }
 
@@ -68,7 +67,9 @@ export class ContactController {
   }
 
   @MessagePattern('contact/outgoing')
-  async getContactsRequestOutgoing(@Payload(new ParseIntPipe()) userId: number) {
+  async getContactsRequestOutgoing(
+    @Payload(new ParseIntPipe()) userId: number,
+  ) {
     const res = await this.contactService
       .getContactsOutgoing(userId)
       .catch((err) => {
@@ -118,10 +119,24 @@ export class ContactController {
   @MessagePattern('contact/delete')
   async deleteUserFromContact(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .deleteFromContact(
+      .deleteUserFromContact(
         parseInt(requestData.userId),
         parseInt(requestData.contactId),
       )
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
+  }
+
+  @MessagePattern('contact/blockedUsers')
+  async getBlockedUsers(@Payload(new ParseIntPipe()) userId: number) {
+    const res = await this.contactService
+      .getBlockedUsers(userId)
       .catch((err) => {
         return {
           status: false,
