@@ -42,7 +42,7 @@ export default {
 
     const login = userData.value.login;
 
-    store.dispatch('chat/getContacts')
+    //store.dispatch('chat/getContacts')
 
     const groupType = ref(false);
     const userId = userData.value.id;

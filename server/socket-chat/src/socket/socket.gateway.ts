@@ -16,7 +16,7 @@ import { firstValueFrom } from 'rxjs';
 import IUserConnect from './interfaces/message/IMessagePressing';
 import IUserJoin from './interfaces/user/IUserChat';
 import IMessageData from './interfaces/message/IMessageData';
-import IUserConnectData from './interfaces/user/IUserConnectData';
+import IUserConnectData from './interfaces/chat/IChatLoad';
 import IChatPagination from './interfaces/chat/IChatPagination';
 import IChatSearch from './interfaces/chat/IChatSearch';
 import IUserChat from './interfaces/user/IUserChat';
@@ -26,6 +26,7 @@ import IDeleteMessage from './interfaces/message/IDeleteMessage';
 import IEditMessage from './interfaces/message/IEditMessage';
 import IReadMessage from './interfaces/message/IReadMessage';
 import IUserData from './interfaces/user/IUserData';
+import IChatLoad from './interfaces/chat/IChatLoad';
 
 @WebSocketGateway(80, {
   path: '/socketChat',
@@ -62,8 +63,8 @@ export class SocketGateway {
     socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
   }
 
-  @SubscribeMessage('getChats')
-  async getChats(socket: Socket, payload: IUserConnectData) {
+  @SubscribeMessage('get-chats')
+  async getChats(socket: Socket, payload: IChatLoad) {
     const userRoomsData = await this.socketService.getUserRoomsData(
       payload.userId,
       0,
@@ -81,7 +82,7 @@ export class SocketGateway {
       .emit('getRoomsData', { ...userRoomsData, currentTempChatData });
   }
 
-  @SubscribeMessage('load-chats')
+  @SubscribeMessage('load-chats-pagination')
   async loadChatsPage(socket: Socket, payload: IChatPagination) {
     //const rooms = await this.socketService.getUserRooms(payload.userId);
     const userRoomsData = await this.socketService.getUserRoomsData(

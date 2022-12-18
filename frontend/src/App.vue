@@ -6,7 +6,7 @@
 
 <script>
 import { useStore } from "vuex";
-import { computed } from "@vue/runtime-core";
+import { computed, provide } from "vue";
 
 import AuthMainLayout from "./layout/auth.main.layout.vue";
 import AuthChatLayout from "./layout/auth.chat.layout.vue";
@@ -54,10 +54,12 @@ export default {
       return noAuthLayoutVue;
     });
 
-    const socket = io("http://localhost:80", { path: "/socketChat" });
+    const chatSocket = io("http://localhost:80", { path: "/socketChat" });
 
-    socket.on("connect", () => {
-      socket.emit("connect-user", userId.value);
+    provide("chatSocket", chatSocket);
+
+    chatSocket.on("connect", () => {
+      chatSocket.emit("connect-user", userId.value);
     });
 
     return {

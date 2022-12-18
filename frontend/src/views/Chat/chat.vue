@@ -1,14 +1,15 @@
 <template>
   <chatNavbar />
   <section class="chat__container">
-    <chats v-if="showContacts" />
-    <contacts v-else />
+    <chats />
+    <!-- <chats v-if="showContacts" />
+    <contacts v-else /> -->
     <messages />
   </section>
 </template>
 
 <script>
-import { computed, onUnmounted, provide } from "vue";
+import { computed, onUnmounted, provide, inject } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
 import { ref, watch } from "vue";
@@ -19,27 +20,43 @@ import Contacts from "../../components/chat/contacts.vue";
 import Messages from "../../components/chat/messages.vue";
 import Chats from "../../components/chat/chats.vue";
 
-// import { io } from "socket.io-client";
 import $api from "../../axios";
 
 export default {
   components: { chatNavbar, Contacts, Messages, Chats },
   setup() {
-    console.log('chat setup')
     const route = useRoute();
     const router = useRouter();
+    const store = useStore();
 
-    const isShowMobileMessages = ref(false)
-    provide('isShowMobileMessages', isShowMobileMessages)
+    const isShowMobileMessages = ref(false);
+    provide("isShowMobileMessages", isShowMobileMessages);
+
+    const chatSocket = inject("chatSocket");
 
     const chatId = computed(() => route.params.id);
+    const userId = computed(() => store.state.auth.user.id);
 
     const showContacts = ref(true);
-
     provide("showContacts", showContacts);
 
-    const store = useStore();
     const userData = computed(() => store.state.auth.user);
+
+    const currentTempChatData = ref(null);
+
+    const loadChatsPagination = {
+      page: 0,
+      limit: 6,
+      hasMore: true,
+      inMemory: true,
+    };
+
+    const defoultLoadMessagesPagination = {
+      page: 0,
+      limit: 10,
+      hasMore: true,
+      inMemory: true,
+    };
 
     // const socket = io(import.meta.env.VITE_SOCKET_HOST, { path: '/socketChat'});
     // provide("socket", socket);
@@ -55,59 +72,105 @@ export default {
     //   });
     // });
 
-    store.commit('chat/cleanChatData')
+    chatSocket.emit("get-chats", {
+      userId: userId.value,
+      page: loadChatsPagination.page,
+      limit: loadChatsPagination.limit,
+      chatId: chatId.value,
+    });
 
-    function enterToChat(roomId) {
-      store.commit('chat/cleanMessages')
-      if (!roomId) return;
+    chatSocket.on("getRoomsData", (data) => {
+      //loadChatsPagination.limit = data.limit;
+      console.log("ROOMS DATA", data);
+      currentTempChatData.value = data.currentTempChatData;
 
-      checkRoom(roomId);
+      loadChatsPagination.page = data.page;
+      loadChatsPagination.hasMore = data.hasMore;
+      loadChatsPagination.inMemory = data.inMemory;
+
+      store.commit("chat/saveChats", data.roomsData);
+
+      if (chatId.value) {
+        console.log("open room", chatId.value);
+        openChatRoom(chatId.value);
+      }
+    });
+
+    store.commit("chat/cleanChatData");
+
+    function openChatRoom(roomId) {
+      if (chatId.value === roomId) return;
+      console.log("OPEN", roomId);
+
+      chatId.value = roomId;
+      router.push(`/chat/${roomId}`);
+      // if (
+      //   !roomMessages.hasOwnProperty(chatId.value) ||
+      //   roomMessages[chatId.value]?.length === 0
+      // ) {
+      //   const messagePagination =
+      //     roomsData.loadMessagesPagination ?? defoultLoadMessagesPagination;
+
+      //   socket.emit("getRoomMessages", {
+      //     chatId: roomId,
+      //     page: messagePagination.page,
+      //     limit: messagePagination.limit,
+      //     inMemory: messagePagination.inMemory,
+      //   });
+      // }
     }
 
-    async function checkRoom(roomId) {
-      const res = await $api.get(`/chat/checkId/${roomId}`);
-      if (res.data.status === false) {
-        router.push("/chat");
-      }
-      if (res.data.groupName === null) {
-        store.commit("chat/setChatTitle", {
-          users: res.data.users,
-          userId: userData.value.id
-        })
-      } else {
-        store.commit("chat/setGroupData", {
-          users: res.data.users,
-          title: res.data.groupName,
-          adminId: res.data.adminId
-        })
-        store.dispatch('chat/getInvaitedUsers')
-      }
+    // function enterToChat(roomId) {
+    //   store.commit("chat/cleanMessages");
+    //   if (!roomId) return;
 
-      console.log("join to the room");
-      socket.emit("join-room", {
-        userId: socket.id,
-        roomId,
-      });
-    }
+    //   checkRoom(roomId);
+    // }
 
-    onUnmounted(() => {
-      store.commit('chat/cleanAllData')
-    })
+    // async function checkRoom(roomId) {
+    //   const res = await $api.get(`/chat/checkId/${roomId}`);
+    //   if (res.data.status === false) {
+    //     router.push("/chat");
+    //   }
+    //   if (res.data.groupName === null) {
+    //     store.commit("chat/setChatTitle", {
+    //       users: res.data.users,
+    //       userId: userData.value.id,
+    //     });
+    //   } else {
+    //     store.commit("chat/setGroupData", {
+    //       users: res.data.users,
+    //       title: res.data.groupName,
+    //       adminId: res.data.adminId,
+    //     });
+    //     store.dispatch("chat/getInvaitedUsers");
+    //   }
 
-    watch(
-      () => route.params.id,
-      (value) => {
-        if (value) {
-          enterToChat(value)
-        }
-      },
-      { immediate: true }
-    );
+    //   console.log("join to the room");
+    //   chatSocket.emit("join-room", {
+    //     userId: chatSocket.id,
+    //     roomId,
+    //   });
+    // }
+
+    // onUnmounted(() => {
+    //   store.commit("chat/cleanAllData");
+    // });
+
+    // watch(
+    //   () => route.params.id,
+    //   (value) => {
+    //     if (value) {
+    //       enterToChat(value);
+    //     }
+    //   },
+    //   { immediate: true }
+    // );
 
     return {
-      chatId,
-      showContacts,
-      Chats,
+      // chatId,
+      // showContacts,
+      // Chats,
     };
   },
 };
@@ -137,7 +200,6 @@ export default {
 
 @media (max-width: 720px) {
   .chat {
-
     &__container {
       grid-template-columns: 1fr;
     }

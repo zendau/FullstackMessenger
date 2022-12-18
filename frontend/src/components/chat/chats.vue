@@ -1,18 +1,22 @@
 <template>
   <div
-    class="chat__contacts"
-    :class="{ 'chat__contacts--active': !isShowMobileMessages }"
+    class="chats__container"
+    :class="{ 'chats__container--active': !isShowMobileMessages }"
   >
     <p class="empty_message" v-if="chatsData.length === 0">No chats</p>
-    <ul class="contacts__list">
-      <li class="contact__item" v-for="chat in chatsData" :key="chat.id">
+    <ul class="chats__list">
+      <li class="chats__item" v-for="chat in chatsData" :key="chat.id">
         <router-link
           :to="`/chat/${chat.id}`"
           @click="isShowMobileMessages = true"
         >
-          <i class="bi bi-people" v-if="chat.adminId"></i>
-          <i class="bi bi-person" v-else></i>
-          {{ chat.groupName }}
+          <i class="bi bi-people" v-if="chat.adminId" />
+          <i class="bi bi-person" v-else />
+          <div class="chats__info">
+            <p>{{ chat.title }}</p>
+            <p>{{ chat.lastMessage?.authorLogin }}</p>
+            <p>{{ chat.lastMessage?.text }}</p>
+          </div>
         </router-link>
       </li>
     </ul>
@@ -44,7 +48,7 @@ export default {
     const isShowMobileMessages = inject("isShowMobileMessages");
 
     const chatsData = computed(() => store.state.chat.chats);
-
+    console.log("chats!!!!!!!!!1", chatsData);
     return {
       isShowMobileMessages,
       chatsData,
@@ -54,24 +58,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chat {
-  &__contacts {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    max-height: 100vh;
-    box-sizing: border-box;
-    background-color: var(--bgcColor);
-
-    button {
-      margin-bottom: 10px;
-      width: 100px;
-      align-self: center;
-    }
-  }
-}
-
-.contacts {
+.chats {
   &__list {
     overflow: auto;
 
@@ -90,9 +77,22 @@ export default {
       border-radius: 10px;
     }
   }
-}
 
-.contact {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-height: 100vh;
+    box-sizing: border-box;
+    background-color: var(--bgcColor);
+
+    button {
+      margin-bottom: 10px;
+      width: 100px;
+      align-self: center;
+    }
+  }
+
   &__item {
     display: flex;
     align-items: center;
@@ -105,6 +105,7 @@ export default {
       width: 100%;
       height: 100%;
       padding: 14.5px 0;
+      display: flex;
     }
 
     &:hover {
@@ -118,6 +119,14 @@ export default {
       margin: 0 10px;
       font-size: 26px;
     }
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
   }
 }
 
