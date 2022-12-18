@@ -12,7 +12,7 @@ export const auth = {
       id: null,
       email: null,
       login: null,
-      role: [],
+      role: null,
       isBanned: null,
     },
     authStatus: false,

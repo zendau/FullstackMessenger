@@ -25,6 +25,7 @@ import IChatMessages from './interfaces/chat/IChatMessages';
 import IDeleteMessage from './interfaces/message/IDeleteMessage';
 import IEditMessage from './interfaces/message/IEditMessage';
 import IReadMessage from './interfaces/message/IReadMessage';
+import IUserData from './interfaces/user/IUserData';
 
 @WebSocketGateway(80, {
   path: '/socketChat',
@@ -53,11 +54,16 @@ export class SocketGateway {
   }
 
   @SubscribeMessage('connect-user')
-  async connectUser(socket: Socket, payload: IUserConnectData) {
-    const userStatus = this.socketService.addUser(payload.userId);
-    const rooms = await this.socketService.getUserRoomsIds(payload.userId);
-    socket.data.userId = payload.userId;
+  async connectUser(socket: Socket, userId: number) {
+    const userStatus = this.socketService.addUser(userId);
+    const rooms = await this.socketService.getUserRoomsIds(userId);
+    socket.data.userId = userId;
     socket.join(rooms);
+    socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
+  }
+
+  @SubscribeMessage('getChats')
+  async getChats(socket: Socket, payload: IUserConnectData) {
     const userRoomsData = await this.socketService.getUserRoomsData(
       payload.userId,
       0,
@@ -73,7 +79,6 @@ export class SocketGateway {
     this.server
       .to(socket.id)
       .emit('getRoomsData', { ...userRoomsData, currentTempChatData });
-    socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
   }
 
   @SubscribeMessage('load-chats')

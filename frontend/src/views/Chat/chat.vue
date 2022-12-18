@@ -19,7 +19,7 @@ import Contacts from "../../components/chat/contacts.vue";
 import Messages from "../../components/chat/messages.vue";
 import Chats from "../../components/chat/chats.vue";
 
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 import $api from "../../axios";
 
 export default {
@@ -41,19 +41,19 @@ export default {
     const store = useStore();
     const userData = computed(() => store.state.auth.user);
 
-    const socket = io(import.meta.env.VUE_APP_SOCKET_HOST, { path: '/socketChat'});
-    provide("socket", socket);
+    // const socket = io(import.meta.env.VITE_SOCKET_HOST, { path: '/socketChat'});
+    // provide("socket", socket);
 
-    const socketConnected = ref(false);
-    provide("connected", socketConnected);
-    socket.on("connect", () => {
-      console.log("connected gateway");
-      socketConnected.value = true;
-      socket.emit("connect-user", {
-        userLogin: userData.value.email,
-        userId: socket.id,
-      });
-    });
+    // const socketConnected = ref(false);
+    // provide("connected", socketConnected);
+    // socket.on("connect", () => {
+    //   console.log("connected gateway");
+    //   socketConnected.value = true;
+    //   socket.emit("connect-user", {
+    //     userLogin: userData.value.email,
+    //     userId: socket.id,
+    //   });
+    // });
 
     store.commit('chat/cleanChatData')
 

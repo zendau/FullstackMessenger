@@ -15,6 +15,8 @@ import noAuthLayoutVue from "./layout/noAuth.layout.vue";
 import { Layout } from "./router/layouts";
 import { useRoute } from "vue-router";
 
+import { io } from "socket.io-client";
+
 export default {
   components: {},
   setup() {
@@ -35,6 +37,7 @@ export default {
     layouts.set(Layout.NoAuth, noAuthLayoutVue);
 
     const authStatus = computed(() => store.state.auth.authStatus);
+    const userId = computed(() => store.state.auth.user.id);
 
     const route = useRoute();
     const authLayout = computed(() => {
@@ -49,6 +52,12 @@ export default {
       }
 
       return noAuthLayoutVue;
+    });
+
+    const socket = io("http://localhost:80", { path: "/socketChat" });
+
+    socket.on("connect", () => {
+      socket.emit("connect-user", userId.value);
     });
 
     return {

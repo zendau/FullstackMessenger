@@ -22,24 +22,24 @@
 <script>
 import { computed, inject } from "vue";
 import { useStore } from "vuex";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 
 export default {
   setup() {
     const store = useStore();
     // store.dispatch('chat/getChats')
 
-    const socket = io("http://localhost:80", { path: "/socketChat" });
-    socket.on("connect", () => {
-      socket.emit("connect-user", {
-        userId: userId.value,
-        userData: {
-          login: "four",
-        },
-        limit: loadChatsPagination.limit,
-        chatId: route.params.id,
-      });
-    });
+    // const socket = io("http://localhost:80", { path: "/socketChat" });
+    // socket.on("connect", () => {
+    //   socket.emit("connect-user", {
+    //     userId: userId.value,
+    //     userData: {
+    //       login: "four",
+    //     },
+    //     limit: loadChatsPagination.limit,
+    //     chatId: route.params.id,
+    //   });
+    // });
 
     const isShowMobileMessages = inject("isShowMobileMessages");
 

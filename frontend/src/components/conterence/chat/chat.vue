@@ -17,7 +17,7 @@ import { ref, computed, onMounted, provide, onUnmounted } from "vue";
 import { useStore } from "vuex";
 import FileUpload from "../../fileUpload.vue";
 import ChatFooter from "./chatFooter.vue";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 export default {
   components: { Message, FileUpload, ChatFooter },
   props: ['roomId'],
@@ -34,24 +34,24 @@ export default {
 
     let userId = null
 
-    const socket = io(import.meta.env.VUE_APP_SOCKET_HOST, { path: '/socketChat'});
-    provide("socket", socket);
+    // const socket = io(import.meta.env.VITE_SOCKET_HOST, { path: '/socketChat'});
+    // provide("socket", socket);
 
     const socketConnected = ref(false);
     provide("connected", socketConnected);
-    socket.on("connect", () => {
-      console.log("connected gateway");
-      socketConnected.value = true;
-      userId = socket.id
-      socket.emit("connect-user", {
-        userLogin: userData.value.login,
-        userId
-      });
-      socket.emit("join-room", {
-        userId,
-        roomId: props.roomId,
-      });
-    });
+    // socket.on("connect", () => {
+    //   console.log("connected gateway");
+    //   socketConnected.value = true;
+    //   userId = socket.id
+    //   socket.emit("connect-user", {
+    //     userLogin: userData.value.login,
+    //     userId
+    //   });
+    //   socket.emit("join-room", {
+    //     userId,
+    //     roomId: props.roomId,
+    //   });
+    // });
 
     console.log("join to the room");
 
