@@ -2,10 +2,13 @@
   <file-upload>
     <div class="chat__body">
       <message
-        v-for="message in messages"
+        v-for="(message, index) in messages"
         :key="message.id"
         :message="message"
         :author="userData.login"
+        :ref="(el) => setRefMessage(el, index)"
+        :isRead="isReadMessage(index)"
+        :isFirstUnread="isFirstUnread(index)"
       />
       <div ref="scrollEnd"></div>
     </div>
@@ -25,15 +28,15 @@ export default {
   components: { Message, FileUpload },
   setup() {
     const store = useStore();
+    const route = useRoute();
 
     const chatSocket = inject("chatSocket");
     const chatId = computed(() => route.params.id);
     const messages = computed(() => store.state.chat.messages[chatId.value]);
     const scrollEnd = ref(null);
+    const chatData = store.getters["chat/selectedChat"](chatId.value);
 
     const userData = computed(() => store.state.auth.user);
-
-    const route = useRoute();
 
     chatSocket.on("newMessage", (messageData) => {
       console.log("NEEEEW", messageData);
@@ -98,7 +101,35 @@ export default {
       //observer.observe(scrollEnd.value);
     });
 
+    function setRefMessage(el, index) {
+      // //const roomData = currentTempChatData.value ?? roomsData.value[chatId.value];
+      // const isLastMessage = index === roomMessages[chatId.value]?.length - 1;
+      // if (isLastMessage) {
+      //   console.log("setLastMessage", el.$el);
+      //   console.log("last message", isLastMessage, el.$el);
+      //   messageScrollObserver.observe(el.$el);
+      // }
+      // if (roomData.value.unread === 0) return;
+      // const res = index - roomData.value.unread;
+      // // console.log("EL!!!", el, index, roomData.value, res);
+      // if (res < 0) {
+      //   console.log("SET OBSERVER", observer, observer.takeRecords());
+      //   observer.observe(el.$el);
+      // }
+    }
+
+    function isReadMessage(index) {
+      return index - chatData.isNotUnread >= 0;
+    }
+
+    function isFirstUnread(index) {
+      return index - chatData.unread === -1;
+    }
+
     return {
+      isReadMessage,
+      isFirstUnread,
+      setRefMessage,
       scrollEnd,
       messages,
       userData,

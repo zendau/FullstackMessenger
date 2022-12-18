@@ -5,13 +5,7 @@ export const chat = {
   state: {
     constacts: {},
     chats: {},
-    // chatData: {
-    //   id: null,
-    //   title: null,
-    //   group: null,
-    //   adminId: null,
-    //   invaitedUsers: null,
-    // },
+    currentTempChatData: null,
     messages: {},
   },
   actions: {
@@ -95,6 +89,10 @@ export const chat = {
     // },
     saveChats(state, chats) {
       state.chats = chats;
+    },
+
+    saveCurrentTempChat(state, chatData) {
+      state.currentTempChatData = chatData;
     },
     saveMessages(state, { chatId, uploadMessagesData }) {
       if (!state.messages[chatId]) state.messages[chatId] = [];
@@ -180,6 +178,10 @@ export const chat = {
     // },
   },
   getters: {
+    selectedChat: (state) => (chatId) => {
+      const chatData = state.currentTempChatData ?? state.chats[chatId];
+      return chatData;
+    },
     // getRemoveUserList(state, getters, rootState) {
     //   if (!state.chatData.group) return null;
     //   const userId = rootState.auth.user.id;

@@ -41,8 +41,6 @@ export default {
 
     const userData = computed(() => store.state.auth.user);
 
-    const currentTempChatData = ref(null);
-
     const loadChatsPagination = {
       page: 0,
       limit: 6,
@@ -81,24 +79,24 @@ export default {
     chatSocket.on("getRoomsData", (data) => {
       //loadChatsPagination.limit = data.limit;
       console.log("ROOMS DATA", data);
-      currentTempChatData.value = data.currentTempChatData;
 
       loadChatsPagination.page = data.page;
       loadChatsPagination.hasMore = data.hasMore;
       loadChatsPagination.inMemory = data.inMemory;
 
+      store.commit("chat/saveCurrentTempChat", data.currentTempChatData);
       store.commit("chat/saveChats", data.roomsData);
       console.log("#######3", chatId.value);
       if (chatId.value) {
         console.log("open room", chatId.value);
-        openChatRoom(chatId.value);
+        openChatRoom(chatId.value, true);
       }
     });
 
     //store.commit("chat/cleanChatData");
 
-    function openChatRoom(roomId) {
-      if (chatId.value === roomId) return;
+    function openChatRoom(roomId, isFirstLoad = false) {
+      if (chatId.value === roomId && !isFirstLoad) return;
       console.log("OPEN", roomId);
       router.push(`/chat/${roomId}`);
 
