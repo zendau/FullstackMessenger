@@ -60,8 +60,8 @@ export default {
   border: 1px dashed black;
   align-items: center;
   justify-content: center;
-  color: $activeColor;
-  background-color: $activeBgcColor;
+  color: var(--activeColor);
+  background-color: var(--activeBgcColor);
 }
 .drag__container {
   overflow: hidden;

@@ -5,7 +5,7 @@
       <p v-html="isLink(message.text)"></p>
       <div class="message__files">
         <a class="message__file" v-for="file in message.files" :key="file.id"
-          :href="`${process.env.VUE_APP_API}/file/download/${file.id}`">
+          :href="`${import.meta.env.VUE_APP_API}/file/download/${file.id}`">
           <i class="bi bi-file-earmark-arrow-down"></i>{{ file.fileName }}
         </a>
       </div>
@@ -61,14 +61,14 @@ export default {
   grid-template-columns: 1fr 30px;
   grid-template-rows: 25px 1fr;
   margin: 0 7px 7px;
-  background-color: $messageColor;
+  background-color: var(--messageColor);
   padding: 6px;
   border-radius: 5px;
 
   h4 {
     max-width: 100px;
     grid-column: 1/2;
-    color: $activeColor;
+    color: var(--activeColor);
   }
 
   span {
@@ -76,7 +76,7 @@ export default {
     max-width: 50px;
     grid-column: 2/3;
     justify-self: end;
-    color: $secondTextColor;
+    color: var(--secondTextColor);
   }
 
 
@@ -97,7 +97,7 @@ export default {
       text-align: justify;
       grid-row: 2/3;
       grid-column: 1/3;
-      color: $textColor;
+      color: var(--textColor);
       margin-right: 15px;
     }
 
@@ -107,7 +107,7 @@ export default {
 
   &__link,
   &__file {
-    color: $activeColor;
+    color: var(--activeColor);
   }
 
   &__file {

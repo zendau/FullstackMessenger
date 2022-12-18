@@ -111,7 +111,7 @@ export default {
     display: flex;
     flex-direction: column-reverse;
     overflow: auto;
-    background-color: $menuColor;
+    background-color:  var(--menuColor);
     padding: 1px 0;
 
     height: 100%;

@@ -74,7 +74,7 @@ export default {
     height: 100%;
     align-items: center;
     justify-content: space-between;
-    background-color: $menuColor;
+    background-color: var(--menuColor);
   }
 
   &__list {
@@ -92,7 +92,7 @@ export default {
 
       i,
       span {
-        color: $textColor;
+        color: var(--textColor);
       }
 
       &--exit span {
@@ -100,11 +100,11 @@ export default {
       }
 
       &--active {
-        background-color: $activeBgcColor;
+        background-color: var(--activeBgcColor);
 
         i,
         span {
-          color: $activeColor;
+          color: var(--activeColor);
         }
       }
 

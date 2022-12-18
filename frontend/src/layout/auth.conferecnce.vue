@@ -122,7 +122,7 @@ export default {
 .main-container {
   overflow: hidden;
   display: flex;
-  background-color: $menuColor;
+  background-color: var(--menuColor);
 }
 
 .conference {
@@ -169,7 +169,7 @@ export default {
     display: flex;
     flex-direction: column;
     width: 350px;
-    background-color: $messageColor;
+    background-color: var(--messageColor);
 
 
     &--active {

@@ -70,11 +70,11 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: $messageColor;
+    background-color: var(--messageColor);
   }
 
   &__message {
-    color: $textColor;
+    color: var(--textColor);
     min-height: 100%;
     font-size: 18px;
     display: flex;
@@ -87,15 +87,15 @@ export default {
 .room {
   &__title {
     margin: 10px 0;
-    color: $textColor;
+    color: var(--textColor);
   }
 
   &__author {
-    color: $secondTextColor;
+    color: var(--secondTextColor);
   }
 
   &__type {
-    color: $activeColor;
+    color: var(--activeColor);
   }
 
   &__link {
@@ -105,14 +105,14 @@ export default {
     height: 30px;
     display: block;
     text-align: center;
-    background-color: $btnChat;
+    background-color: var(--btnChat);
     line-height: 30px;
     border: 10%;
     transition: .3s ease;
-    color: $textColor;
+    color: var(--textColor);
 
     &:hover {
-      background-color: $btnHover;
+      background-color: var(--btnHover);
     }
   }
 }

@@ -40,6 +40,6 @@ export default {
     max-height: 100vh;
     overflow: hidden;
     grid-template-rows: 58px 1fr;
-    background-color: $menuColor;
+    background-color: var(--menuColor);
   }
 </style>

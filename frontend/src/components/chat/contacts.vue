@@ -109,7 +109,7 @@ export default {
     max-height: 100vh;
     box-sizing: border-box;
     padding-top: 10px;
-    background-color: $bgcColor;
+    background-color: var(--bgcColor);
 
     button {
       margin-bottom: 10px;
@@ -147,7 +147,7 @@ export default {
     align-items: center;
     transition: 0.3s ease;
     cursor: pointer;
-    color: $textColor;
+    color: var(--textColor);
     padding: 14px 0;
 
     a {
@@ -155,7 +155,7 @@ export default {
     }
 
     &:hover {
-      background-color: $itemColor;
+      background-color: var(--itemColor);
     }
 
     input {

@@ -44,15 +44,15 @@ export default {
   align-self: center;
 
   &__danger {
-    background-color: $dangerColor;
+    background-color: var(--dangerColor);
   }
 
   &__success {
-    background-color: $successColor;
+    background-color: var(--successColor);
   }
 
   &__text {
-    color: $textColor;
+    color: var(--textColor);
     display: flex;
     flex-direction: column;
     align-items: center;

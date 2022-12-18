@@ -84,7 +84,7 @@ export default {
         const isAdmin = computed(() => store.state.auth.user.role.accessLevel === Role.Admin)
         console.log('isAdmin', isAdmin.value)
 
-        
+
 
 
         watch(() => route.path, () => {
@@ -112,7 +112,7 @@ export default {
 <style lang='scss' scoped>
 header {
     height: 50px;
-    background-color: $bgcColor;
+    background-color: var(--bgcColor);
     box-sizing: border-box;
 }
 
@@ -136,12 +136,12 @@ header {
 
         :deep(a) {
             text-decoration: none;
-            color: $textColor;
+            color: var(--textColor);
             padding: 6px;
             transition: .3s ease;
 
             &:hover {
-                color: $linkColor;
+                color: var(--linkColor);
             }
         }
 
@@ -248,7 +248,7 @@ header {
             position: fixed;
             top: 0;
             width: 100%;
-            background-color: $bgcColor;
+            background-color: var(--bgcColor);
 
 
             &--active {

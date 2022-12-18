@@ -68,7 +68,7 @@ export default {
 <style lang="scss" scoped>
 footer {
   height: 60px;
-  background-color: $bgcColor;
+  background-color: var(--bgcColor);
   box-sizing: border-box;
 }
 
@@ -81,7 +81,7 @@ footer {
     height: 50px;
     border: none;
     background-color: inherit;
-    color: $textColor;
+    color: var(--textColor);
     cursor: pointer;
     transition: .3s ease;
     display: inline-flex;
@@ -90,7 +90,7 @@ footer {
     align-items: center;
 
     &:hover {
-      color: $activeColor;
+      color: var(--activeColor);
     }
 
     i {
@@ -101,11 +101,11 @@ footer {
   }
 
   &__conference-title {
-    color: $textColor;
+    color: var(--textColor);
   }
 
   &__conference-admin {
-    color: $secondTextColor;
+    color: var(--secondTextColor);
   }
 
   &__conference-title,

@@ -41,7 +41,7 @@ export default {
     const store = useStore();
     const userData = computed(() => store.state.auth.user);
 
-    const socket = io(process.env.VUE_APP_SOCKET_HOST, { path: '/socketChat'});
+    const socket = io(import.meta.env.VUE_APP_SOCKET_HOST, { path: '/socketChat'});
     provide("socket", socket);
 
     const socketConnected = ref(false);
@@ -121,16 +121,16 @@ export default {
 
 .btn {
   &--chat {
-    background-color: $btnChat;
+    background-color: var(--btnChat);
     border: none;
-    color: $textColor;
+    color: var(--textColor);
     border-radius: 2px;
     padding: 5px 9px;
     cursor: pointer;
     transition: 0.3s ease;
 
     &:hover {
-      background-color: $btnHover;
+      background-color: var(--btnHover);
     }
   }
 }

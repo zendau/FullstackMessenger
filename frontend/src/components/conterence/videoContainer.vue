@@ -99,7 +99,7 @@ export default {
     display: block;
     position: relative;
     aspect-ratio: 16/9;
-    background-color: $messageColor;
+    background-color: var(--messageColor);
     border-radius: 3px;
     max-width: 100%;
     top: 50%;
@@ -111,15 +111,15 @@ export default {
     display: flex;
     bottom: 10px;
     left: 5px;
-    color: $textColor;
+    color: var(--textColor);
     z-index: 7;
   }
 
   &__placeholder {
     position: absolute;
     font-size: 70px;
-    color: $textColor;
-    background-color: $messageColor;
+    color: var(--textColor);
+    background-color: var(--messageColor);
     width: 100%;
     height: 100%;
 

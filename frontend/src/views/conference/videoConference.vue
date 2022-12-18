@@ -152,7 +152,7 @@ export default {
     const peerConnect = new Peer({
       path: '/peer',
       host: '/',
-      port: process.env.VUE_APP_PEER_PORT
+      port: import.meta.env.VUE_APP_PEER_PORT
     })
 
 

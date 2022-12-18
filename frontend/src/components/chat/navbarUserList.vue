@@ -1,9 +1,9 @@
 <template>
   <ul v-if="users?.length > 0"  class="chat__users" :class="{ 'chat__users--active': show }">
-    <li 
-      class="chat__user" 
-      v-for="user in users" 
-      :key="user.id" 
+    <li
+      class="chat__user"
+      v-for="user in users"
+      :key="user.id"
       @click="$emit('selectUser', user.id)">
       {{ user.login }}
     </li>
@@ -30,11 +30,11 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     width: 150px;
-    background-color: $bgcColor;
+    background-color: var(--bgcColor);
     border-top: 1px solid black;
 
     &--message {
-      color: $textColor;
+      color: var(--textColor);
       padding: 10px;
       text-align: center;
     }
@@ -47,12 +47,12 @@ export default {
   &__user {
     padding: 10px;
     text-align: center;
-    color: $textColor;
+    color: var(--textColor);
     cursor: pointer;
     &:hover {
-      background-color: $btnHover;
+      background-color: var(--btnHover);
     }
-    
+
   }
 }
 </style>

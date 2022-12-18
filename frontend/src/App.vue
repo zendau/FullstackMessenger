@@ -5,101 +5,102 @@
 </template>
 
 <script>
+import { useStore } from "vuex";
+import { computed } from "@vue/runtime-core";
 
+import AuthMainLayout from "./layout/auth.main.layout.vue";
+import AuthChatLayout from "./layout/auth.chat.layout.vue";
+import noAuthLayoutVue from "./layout/noAuth.layout.vue";
 
-import { useStore } from 'vuex'
-import { computed } from '@vue/runtime-core'
-
-import AuthMainLayout from './layout/auth.main.layout.vue'
-import AuthChatLayout from './layout/auth.chat.layout.vue'
-import noAuthLayoutVue from './layout/noAuth.layout.vue'
-
-import { Layout } from './router/layouts'
-import { useRoute } from 'vue-router'
+import { Layout } from "./router/layouts";
+import { useRoute } from "vue-router";
 
 export default {
   components: {},
   setup() {
+    // TODO: TEMP
+    document.documentElement.dataset.theme = "dark";
 
-    const store = useStore()
+    const store = useStore();
 
-
-    store.dispatch('auth/checkAuth')
+    store.dispatch("auth/checkAuth");
 
     //const router = useRouter()
     //router.push('/room/all')
 
-    const layouts = new Map()
+    const layouts = new Map();
 
-    layouts.set(Layout.Chat, AuthChatLayout)
-    layouts.set(Layout.Main, AuthMainLayout)
-    layouts.set(Layout.NoAuth, noAuthLayoutVue)
-
+    layouts.set(Layout.Chat, AuthChatLayout);
+    layouts.set(Layout.Main, AuthMainLayout);
+    layouts.set(Layout.NoAuth, noAuthLayoutVue);
 
     const authStatus = computed(() => store.state.auth.authStatus);
 
-
-    const route = useRoute()
+    const route = useRoute();
     const authLayout = computed(() => {
-      console.log('meta', route.meta)
-      console.log('authStatus', authStatus.value, layouts.get(route.meta.layout))
+      console.log("meta", route.meta);
+      console.log(
+        "authStatus",
+        authStatus.value,
+        layouts.get(route.meta.layout)
+      );
       if (authStatus) {
-        return layouts.get(route.meta.layout)
+        return layouts.get(route.meta.layout);
       }
 
-      return noAuthLayoutVue
-    })
+      return noAuthLayoutVue;
+    });
 
     return {
-      authLayout
-    }
+      authLayout,
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">
 body {
-  background-color: $menuColor;
+  background-color: var(--menuColor);
 }
 
 * {
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .empty_message {
   text-align: center;
-  color: $textColor;
+  color: var(--textColor);
   margin-top: 15px;
 }
 
 .btn {
-  background-color: $btnChat;
+  background-color: var(--btnChat);
   border: none;
-  color: $textColor;
+  color: var(--textColor);
   border-radius: 2px;
   padding: 5px 9px;
   cursor: pointer;
-  transition: .3s ease;
+  transition: 0.3s ease;
 
   i {
     font-size: 22px;
   }
 
   &:hover {
-    background-color: $btnHover;
+    background-color: var(--btnHover);
   }
 }
 
 .user {
   &__container {
     width: 600px;
-    background-color: $bgcColor;
+    background-color: var(--bgcColor);
     margin: 50px auto;
     display: flex;
     flex-direction: column;
-    color: $textColor;
+    color: var(--textColor);
     border-radius: 3px;
     padding: 30px 0;
     height: fit-content;
@@ -108,13 +109,13 @@ body {
   &__title {
     text-align: center;
     margin: 25px 0;
-    color: $textColor;
+    color: var(--textColor);
   }
 
   &__hr {
     width: 80%;
     margin: 35px auto;
-    border-color: $secondTextColor;
+    border-color: var(--secondTextColor);
   }
 
   &__text {
@@ -123,7 +124,7 @@ body {
 
   &__link {
     align-self: center;
-    color: $linkColor;
+    color: var(--linkColor);
     text-decoration: none;
     margin-bottom: 15px;
   }
@@ -137,25 +138,25 @@ body {
 
     label {
       margin-bottom: 5px;
-      color: $textColor;
+      color: var(--textColor);
     }
 
     input {
       border: none;
       outline: none;
-      color: $textColor;
+      color: var(--textColor);
       padding: 5px;
       font-size: 18px;
       margin-bottom: 20px;
 
       &::placeholder {
-        color: $textColor;
+        color: var(--textColor);
       }
     }
 
-    input[type='submit'] {
-      background-color: $btnChat;
-      transition: .3s ease;
+    input[type="submit"] {
+      background-color: var(--btnChat);
+      transition: 0.3s ease;
       cursor: pointer;
 
       &:disabled {
@@ -163,7 +164,7 @@ body {
       }
 
       &:hover {
-        background-color: $btnHover;
+        background-color: var(--btnHover);
       }
     }
 
@@ -179,14 +180,13 @@ body {
 
       border: none;
       outline: none;
-      color: $textColor;
+      color: var(--textColor);
       border-radius: 0;
     }
   }
 }
 
 @media (max-width: 720px) {
-
   .chat__header {
     font-size: 10px;
   }
@@ -198,9 +198,5 @@ body {
       box-sizing: border-box;
     }
   }
-
 }
 </style>
-
-
-

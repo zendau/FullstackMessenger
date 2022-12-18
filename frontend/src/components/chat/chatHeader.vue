@@ -110,7 +110,7 @@ export default {
   &__header {
     display: grid;
     height: 100%;
-    background-color: $bgcColor;
+    background-color: var(--bgcColor);
     border-left: 1px solid black;
 
     grid-template-columns: 1fr 300px;
@@ -126,7 +126,7 @@ export default {
   }
 
   &__title {
-    color: $textColor;
+    color: var(--textColor);
 
     &--private {
       grid-row: 1/3;
@@ -151,7 +151,7 @@ export default {
 
   &__count {
     font-size: 14px;
-    color: $secondTextColor;
+    color: var(--secondTextColor);
     cursor: pointer;
     user-select: none;
   }
@@ -179,7 +179,7 @@ export default {
     height: 40px;
     line-height: 40px;
     text-align: center;
-    color: $dangerColor;
+    color: var(--dangerColor);
     grid-column: 3/4;
   }
 }

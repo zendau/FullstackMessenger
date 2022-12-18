@@ -175,16 +175,16 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 
 
 router.beforeEach((to, from, next) => {
 
-  const noAuthRedicect = process.env.VUE_APP_ROUTER_REDIRECT_NO_AUTH_PATH
-  const wrongRoleRedicect = process.env.VUE_APP_ROUTER_REDIRECT_WRONG_ROLE_PATH
-  const startAuthPage = process.env.VUE_APP_ROUTER_START_AUTH_PAGE_PATH
+  const noAuthRedicect = import.meta.env.VUE_APP_ROUTER_REDIRECT_NO_AUTH_PATH
+  const wrongRoleRedicect = import.meta.env.VUE_APP_ROUTER_REDIRECT_WRONG_ROLE_PATH
+  const startAuthPage = import.meta.env.VUE_APP_ROUTER_START_AUTH_PAGE_PATH
 
   const authStatus = store.state.auth.authStatus
   const userRole = store.state.auth.user.role.accessLevel

@@ -93,8 +93,8 @@ export default {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 60px;
-    background-color: $bgcColor;
-    color: $textColor;
+    background-color: var(--bgcColor);
+    color: var(--textColor);
 
     button {
       grid-column: 2/3;
@@ -102,7 +102,7 @@ export default {
       height: 40px;
       align-self: end;
       border: none;
-      background-color: $activeColor;
+      background-color: var(--activeColor);
 
       i {
         font-size: 28px;
@@ -147,14 +147,14 @@ export default {
     flex-wrap: wrap;
     padding: 3px;
     grid-column: 1/3;
-    background-color: $bgcColor;
+    background-color: var(--bgcColor);
     border-left: 1px solid black;
   }
 
   &__file {
     margin: 3px 8px;
     a {
-      color: $linkColor;
+      color: var(--linkColor);
       text-decoration: none;
     }
   }

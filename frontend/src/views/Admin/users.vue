@@ -109,8 +109,8 @@ export default {
   text-align: center;
   border: none;
   padding: 10px 15px;
-  background: $activeBgcColor;
-  color: $activeColor;
+  background: var(--activeBgcColor);
+  color: var(--activeColor);
   font-size: 14px;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
@@ -137,11 +137,11 @@ export default {
 }
 
 .table tbody tr:nth-child(even) {
-  background: $itemColor;
+  background: var(--itemColor);
 }
 
 .table tbody tr:nth-child(odd) {
-  background: $bgcColor;
+  background: var(--bgcColor);
 }
 
 @media (max-width: 720px) {

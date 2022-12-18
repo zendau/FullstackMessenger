@@ -34,7 +34,7 @@ export default {
 
     let userId = null
 
-    const socket = io(process.env.VUE_APP_SOCKET_HOST, { path: '/socketChat'});  
+    const socket = io(import.meta.env.VUE_APP_SOCKET_HOST, { path: '/socketChat'});
     provide("socket", socket);
 
     const socketConnected = ref(false);
@@ -110,7 +110,7 @@ export default {
   &__header {
     text-align: center;
     font-size: 20px;
-    color: $textColor;
+    color: var(--textColor);
     margin: 8px 0;
 
   }
@@ -129,21 +129,21 @@ export default {
     display: grid;
     grid-template-columns: 80% 20%;
     margin: 0 7px 7px;
-    background-color: $bgcColor;
+    background-color: var(--bgcColor);
     padding: 6px;
     border-radius: 5px;
 
     h4 {
       max-width: 100px;
       grid-column: 1/2;
-      color: $activeColor;
+      color: var(--activeColor);
     }
 
     p {
       text-align: justify;
       grid-row: 2/3;
       grid-column: 1/3;
-      color: $textColor;
+      color: var(--textColor);
     }
 
     span {
@@ -151,7 +151,7 @@ export default {
       max-width: 50px;
       grid-column: 2/3;
       justify-self: end;
-      color: $secondTextColor;
+      color: var(--secondTextColor);
     }
   }
 }

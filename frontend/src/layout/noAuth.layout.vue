@@ -17,6 +17,6 @@ export default {
 <style lang="scss" scoped>
 
 body {
-    background-color: $menuColor;
+    background-color: var(--menuColor);
 }
 </style>

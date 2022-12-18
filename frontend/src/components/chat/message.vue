@@ -11,13 +11,13 @@
         class="message__file"
         v-for="file in message.files"
         :key="file.id"
-        :href="`${process.env.VUE_APP_API}/file/download/${file.id}`"
+        :href="getDownloadLink(file.id)"
       >
         <i class="bi bi-file-earmark-arrow-down"></i>{{ file.fileName }}</a
       >
     </div>
-    <span class="message__time" :title="messageDate" >
-      {{messageTime}}
+    <span class="message__time" :title="messageDate">
+      {{ messageTime }}
     </span>
   </div>
 </template>
@@ -26,14 +26,15 @@
 import { ref } from "vue";
 import { isLink } from "./isLink";
 
-
 export default {
   props: ["message", "author"],
   setup(props) {
+    const messageDate = ref(null);
+    const messageTime = ref(null);
 
-    const messageDate = ref(null)
-    const messageTime = ref(null)
-
+    function getDownloadLink(fileId) {
+      return `${import.meta.env.VUE_APP_API}/file/download/${fileId}`;
+    }
 
     function convertDate(date) {
       const options = {
@@ -47,16 +48,17 @@ export default {
         .format(Date.parse(date))
         .split(",");
 
-      messageDate.value = tempDate[0]
-      messageTime.value = tempDate[1]
+      messageDate.value = tempDate[0];
+      messageTime.value = tempDate[1];
     }
 
-    convertDate(props.message.created_at)
+    convertDate(props.message.created_at);
 
     return {
       isLink,
       messageDate,
-      messageTime
+      messageTime,
+      getDownloadLink
     };
   },
 };
@@ -72,7 +74,7 @@ export default {
     grid-template-columns: 1fr 80px;
     align-items: end;
     padding: 7px;
-    background-color: $messageColor;
+    background-color: var(--messageColor);
     border-radius: 5px;
 
     &--author {
@@ -82,24 +84,24 @@ export default {
 
   &__link,
   &__file {
-    color: $activeColor;
+    color: var(--activeColor);
   }
 
   &__author {
     justify-self: start;
     margin-left: 10px;
-    color: $activeColor;
+    color: var(--activeColor);
     align-self: baseline;
   }
 
   &__time {
     text-align: center;
-    color: $secondTextColor;
+    color: var(--secondTextColor);
   }
 
   &__text {
     text-align: left;
-    color: $textColor;
+    color: var(--textColor);
   }
 
   &__body {

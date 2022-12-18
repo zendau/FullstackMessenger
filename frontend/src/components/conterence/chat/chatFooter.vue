@@ -107,8 +107,8 @@ export default {
     overflow-y: auto;
     border: none;
     outline: none;
-    color: $textColor;
-    background-color: $itemColor;
+    color: var(--textColor);
+    background-color: var(--itemColor);
     border-bottom: 1px solid black;
     padding: 10px;
 
@@ -136,7 +136,7 @@ export default {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    background-color: $itemColor;
+    background-color: var(--itemColor);
     padding: 5px;
     justify-content: flex-start;
     box-sizing: border-box;
@@ -144,13 +144,13 @@ export default {
 
   &__file {
     text-decoration: none;
-    color: $linkColor;
+    color: var(--linkColor);
     transition: 0.3s ease;
     cursor: pointer;
     margin-right: 15px;
 
     &:hover {
-      color: $textColor;
+      color: var(--textColor);
     }
   }
 }

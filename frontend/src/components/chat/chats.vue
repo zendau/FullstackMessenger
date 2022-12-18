@@ -1,5 +1,8 @@
 <template>
-  <div class="chat__contacts" :class="{'chat__contacts--active': !isShowMobileMessages}">
+  <div
+    class="chat__contacts"
+    :class="{ 'chat__contacts--active': !isShowMobileMessages }"
+  >
     <p class="empty_message" v-if="chatsData.length === 0">No chats</p>
     <ul class="contacts__list">
       <li class="contact__item" v-for="chat in chatsData" :key="chat.id">
@@ -16,17 +19,29 @@
   </div>
 </template>
 
-
 <script>
 import { computed, inject } from "vue";
 import { useStore } from "vuex";
+import { io } from "socket.io-client";
 
 export default {
   setup() {
     const store = useStore();
-    store.dispatch('chat/getChats')
+    // store.dispatch('chat/getChats')
 
-    const isShowMobileMessages = inject('isShowMobileMessages')
+    const socket = io("http://localhost:80", { path: "/socketChat" });
+    socket.on("connect", () => {
+      socket.emit("connect-user", {
+        userId: userId.value,
+        userData: {
+          login: "four",
+        },
+        limit: loadChatsPagination.limit,
+        chatId: route.params.id,
+      });
+    });
+
+    const isShowMobileMessages = inject("isShowMobileMessages");
 
     const chatsData = computed(() => store.state.chat.chats);
 
@@ -46,7 +61,7 @@ export default {
     overflow: hidden;
     max-height: 100vh;
     box-sizing: border-box;
-    background-color: $bgcColor;
+    background-color: var(--bgcColor);
 
     button {
       margin-bottom: 10px;
@@ -83,7 +98,7 @@ export default {
     align-items: center;
     transition: 0.3s ease;
     cursor: pointer;
-    color: $textColor;
+    color: var(--textColor);
     a {
       color: inherit;
       text-decoration: none;
@@ -93,7 +108,7 @@ export default {
     }
 
     &:hover {
-      background-color: $itemColor;
+      background-color: var(--itemColor);
     }
     input {
       margin: 0 5px;

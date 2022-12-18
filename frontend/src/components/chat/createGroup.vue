@@ -64,7 +64,7 @@ export default {
     padding: 8px;
     font-size: 14px;
     background-color: #242f3d;
-    color: $textColor;
+    color: var(--textColor);
     border: none;
     outline: none;
     border-radius: 5px;

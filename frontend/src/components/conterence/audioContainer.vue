@@ -51,7 +51,7 @@ export default {
 .audio {
 
   &__container {
-    background-color: $messageColor;
+    background-color: var(--messageColor);
     width: 250px;
     height: 40px;
     align-self: center;
@@ -61,7 +61,7 @@ export default {
     display: flex;
     height: 40px;
     align-items: center;
-    color: $textColor;
+    color: var(--textColor);
 
     .mute {
       border-right: 1px solid black;
@@ -79,18 +79,18 @@ export default {
     }
 
     &--active {
-      border: 2px solid $activeColor;
+      border: 2px solid var(--activeColor);
 
       .mute {
-        border-right: 2px solid $activeColor;
+        border-right: 2px solid var(--activeColor);
       }
     }
 
     &--admin {
-      border: 2px solid $dangerColor;
+      border: 2px solid var(--dangerColor);
 
       .mute {
-        border-right: 2px solid $dangerColor;
+        border-right: 2px solid var(--dangerColor);
       }
     }
   }

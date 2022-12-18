@@ -29,6 +29,7 @@ export const chat = {
     },
     async getChats({ commit, rootState }) {
       const userId = rootState.auth.user.id
+      console.log('TEST', rootState.auth)
       const res = await $api.get(`/chat/getByUser/${userId}`);
 
       commit('saveChats', res.data)
