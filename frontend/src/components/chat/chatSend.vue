@@ -1,5 +1,9 @@
 <template>
   <div class="chat__send" v-if="chatData.title">
+    <div v-if="editMessageData">
+      <p>{{ editMessageData.text }}</p>
+      <button @click="cancelEditMessage">Cancel</button>
+    </div>
     <div
       class="chat__input"
       contenteditable="true"
@@ -11,9 +15,10 @@
         class="chat__file"
         v-for="(file, index) in files"
         :key="index"
-        @click="removeFile(index)"
+        @click="deleteFileById(index, file)"
       >
-        <i class="bi bi-file-earmark-arrow-down"></i>{{ file.name }}
+        <i class="bi bi-file-earmark-arrow-down"></i
+        >{{ file?.name ?? file?.fileName }}
       </li>
     </ul>
     <button @click="sendMessage"><i class="bi bi-send"></i></button>
@@ -38,16 +43,27 @@ export default {
     const message = ref(null);
 
     const files = inject("files");
+    const fileUploadPercent = ref(null);
 
     const userData = computed(() => store.state.auth.user);
 
     const userId = userData.value.id;
     const userLogin = userData.value.login;
 
-    function removeFile(id) {
-      files.value.push(
-        ...Array.from(files.value).filter((_, index) => index !== id)
+    const deletedFiles = [];
+
+    function deleteFileById(fileId, file) {
+      files.value = files.value.filter((_, index) => index !== fileId);
+      console.log(
+        "DELETE FILE",
+        editMessageData.value,
+        file,
+        "fileName" in file
       );
+      if (editMessageData.value && "fileName" in file) {
+        console.log("insert delete");
+        deletedFiles.push(file.id);
+      }
     }
 
     // async function sendMessage() {
@@ -124,7 +140,7 @@ export default {
         // console.log({
         //   roomId: chatId.value,
         //   messageId: editMessageData.value.id,
-        //   updatedText: messageText.value,
+        //   updatedText: messageText,
         //   deletedFiles,
         //   files: inseredFilesData,
         // });
@@ -152,12 +168,22 @@ export default {
       message.value.textContent = "";
     }
 
+    function cancelEditMessage() {
+      editMessageData.value = null;
+      message.value.textContent = null;
+      deletedFiles.length = 0;
+      files.value = [];
+      fileUploadPercent.value = null;
+    }
+
     return {
       message,
       chatData,
       sendMessage,
       files,
-      removeFile,
+      deleteFileById,
+      editMessageData,
+      cancelEditMessage,
     };
   },
 };

@@ -4,7 +4,7 @@
     :isShowCTX="isShowCTX"
     :ctxPosition="ctxPosition"
     :isAuthor="isAuthor"
-    :messageId="message.id"
+    :message="message"
   />
   <div
     @contextmenu="openMessageCTXMenu"

@@ -43,23 +43,30 @@
 import { inject } from "vue";
 
 export default {
-  props: ["isShowCTX", "ctxPosition", "isAuthor", "messageId"],
+  props: ["isShowCTX", "ctxPosition", "isAuthor", "message"],
   setup(props, { emit }) {
     const isSelectMessagesMode = inject("isSelectMessagesMode");
     const selectedMessages = inject("selectedMessages");
     const editMessageData = inject("editMessageData");
     const isShowMessageCTX = inject("isShowMessageCTX");
-
+    const files = inject("files");
     function selectMessageHandler() {
       console.log("test click");
       isSelectMessagesMode.value = !isSelectMessagesMode.value;
-      selectedMessages.value.push(props.messageId);
+      selectedMessages.value.push(props.message.id);
       isShowMessageCTX.value = null;
     }
 
     function editMessage() {
-      console.log("edit messaget id -", props.message.id);
       editMessageData.value = props.message;
+      console.log(
+        "edit messaget id -",
+        props.message.id,
+        editMessageData.value,
+        props.message
+      );
+      isShowMessageCTX.value = null;
+      files.value = [...props.message.files];
     }
 
     function deleteMessage() {

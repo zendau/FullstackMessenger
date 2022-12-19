@@ -32,6 +32,11 @@ export const chat = {
         roomData: getters.selectedChat(messagesData.roomId),
       });
     },
+    editChatMesssage({ commit, state }, updatedMessageData) {
+      if (state.messages.hasOwnProperty(updatedMessageData.roomId)) {
+        commit("updateMessage", updatedMessageData);
+      }
+    },
     // async getContacts({ commit, rootState }) {
     //   const res = await $api.get("/chat/getContacts");
     //   const userLogin = rootState.auth.user.login;
@@ -182,6 +187,30 @@ export const chat = {
       // }
 
       messageRoom.lastMessage = messagesData;
+    },
+    updateMessage(state, updatedMessageData) {
+      state.messages[updatedMessageData.roomId] = state.messages[
+        updatedMessageData.roomId
+      ].map((message) => {
+        if (message.id === updatedMessageData.messageId) {
+          message.isEdited = true;
+
+          if (updatedMessageData.updatedText) {
+            message.text = updatedMessageData.updatedText;
+          }
+
+          if (updatedMessageData.deletedFiles) {
+            message.files = message.files.filter(
+              (file) => !updatedMessageData.deletedFiles.includes(file.id)
+            );
+          }
+
+          if (updatedMessageData.files) {
+            message.files.push(...updatedMessageData.files);
+          }
+        }
+        return message;
+      });
     },
     // addMessage(state, message) {
     //   state.messages.unshift(message);

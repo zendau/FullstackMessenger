@@ -44,7 +44,6 @@ export default {
     const scrollEnd = ref(null);
     const chatData = store.getters["chat/selectedChat"](chatId.value);
 
-
     const isShowMessageCTX = ref(null);
     provide("isShowMessageCTX", isShowMessageCTX);
 
@@ -57,6 +56,12 @@ export default {
         userId: userData.value.id,
       });
     });
+
+    chatSocket.on("updateMessage", (updatedMessageData) => {
+      console.log("updated payload", updatedMessageData);
+      store.dispatch("chat/editChatMesssage", updatedMessageData);
+    });
+
     // chatSocket.on("updateUserCount", (userId) => {
     //   console.log("user exit from chat", userId);
     //   store.commit("chat/removeUserFromGroup", userId);
