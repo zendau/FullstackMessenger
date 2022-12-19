@@ -31,7 +31,7 @@ export default {
     const store = useStore();
     const chatId = computed(() => route.params.id);
     const chatData = computed(() => store.state.chat.chats[chatId.value]);
-
+    const editMessageData = ref(null);
     const chatSocket = inject("chatSocket");
 
     const route = useRoute();
@@ -50,32 +50,106 @@ export default {
       );
     }
 
+    // async function sendMessage() {
+    //   console.log(chatId);
+    //   let filesUpload = null;
+    //   console.log("1", typeof files.value, files, files.value);
+    //   // eslint-disable-next-line no-constant-condition
+    //   if (files.value.length > 0) {
+    //     const formData = new FormData();
+
+    //     formData.append("path", chatId.value);
+    //     formData.append("userId", userId);
+    //     files.value.forEach((file) => {
+    //       formData.append("files", file);
+    //     });
+
+    //     const resUpload = await $api.post("file/add", formData);
+    //     filesUpload = resUpload.data;
+    //   }
+
+    //   chatSocket.emit("sendMessage", {
+    //     authorLogin: userLogin,
+    //     text: message.value.textContent,
+    //     chatId: chatId.value,
+    //     files: filesUpload,
+    //   });
+    //   message.value.textContent = "";
+    //   files.value.length = 0;
+    // }
+
     async function sendMessage() {
-      console.log(chatId);
+      debugger;
       let filesUpload = null;
-      console.log("1", typeof files.value, files, files.value);
-      // eslint-disable-next-line no-constant-condition
+      const inseredFilesData = [];
+      console.log("files", files.value);
       if (files.value.length > 0) {
         const formData = new FormData();
 
-        formData.append("path", chatId.value);
+        // TODO: Add room path foulder
+        formData.append("path", "5d6e4a4e-761d-4e08-93e3-0b96e49ec627");
         formData.append("userId", userId);
-        files.value.forEach((file) => {
-          formData.append("files", file);
-        });
 
-        const resUpload = await $api.post("file/add", formData);
-        filesUpload = resUpload.data;
+        for (const file of files.value) {
+          formData.append("files", file);
+        }
+
+        const config = {
+          onUploadProgress: function (progressEvent) {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            console.log("upload file - ", percentCompleted);
+            //fileUploadPercent.value = percentCompleted;
+          },
+        };
+
+        try {
+          const resUpload = await $api.post(
+            `${import.meta.env.VITE_STORAGE}/file/add`,
+            formData,
+            config
+          );
+          inseredFilesData.push(...resUpload.data);
+        } catch (e) {
+          // TODO: alert error
+          console.log("UPLOAD ERROR", e);
+          return;
+        }
       }
 
-      chatSocket.emit("sendMessage", {
-        authorLogin: userLogin,
-        text: message.value.textContent,
-        chatId: chatId.value,
-        files: filesUpload,
-      });
+      const messageText = message.value.textContent;
+
+      if (editMessageData.value) {
+        // console.log({
+        //   roomId: chatId.value,
+        //   messageId: editMessageData.value.id,
+        //   updatedText: messageText.value,
+        //   deletedFiles,
+        //   files: inseredFilesData,
+        // });
+        chatSocket.emit("edit_message", {
+          roomId: chatId.value,
+          messageId: editMessageData.value.id,
+          updatedText: messageText,
+          deletedFiles,
+          files: inseredFilesData,
+        });
+        cancelEditMessage();
+      } else {
+        if (!messageText && inseredFilesData.length === 0) return;
+
+        const messageData = {
+          roomId: chatId.value,
+          authorId: userId,
+          authorLogin: userLogin,
+          text: messageText,
+          files: inseredFilesData,
+        };
+        chatSocket.emit("sendMessage", messageData);
+      }
+
       message.value.textContent = "";
-      files.value.length = 0;
     }
 
     return {

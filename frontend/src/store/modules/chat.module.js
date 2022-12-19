@@ -9,6 +9,29 @@ export const chat = {
     messages: {},
   },
   actions: {
+    newChatMessage(
+      { commit, state, getters },
+      { messagesData, chatSocket, userId }
+    ) {
+      debugger;
+      console.log("resieve message", messagesData);
+
+      if (state.chats[messagesData.roomId]) {
+        console.log("2222");
+        commit("setLastChatMessage", messagesData);
+        commit("sortByMessageDate");
+      } else {
+        chatSocket.emit("load-chat-by-id", {
+          userId,
+          chatId: messagesData.roomId,
+        });
+      }
+      commit("setNewMessageData", {
+        messagesData,
+        userId,
+        roomData: getters.selectedChat(messagesData.roomId),
+      });
+    },
     // async getContacts({ commit, rootState }) {
     //   const res = await $api.get("/chat/getContacts");
     //   const userLogin = rootState.auth.user.login;
@@ -88,13 +111,16 @@ export const chat = {
     //   state.constacts = constacts;
     // },
     saveChats(state, chats) {
+      debugger;
       state.chats = chats;
     },
 
     saveCurrentTempChat(state, chatData) {
+      debugger;
       state.currentTempChatData = chatData;
     },
     saveMessages(state, { chatId, uploadMessagesData }) {
+      debugger;
       if (!state.messages[chatId]) state.messages[chatId] = [];
 
       state.messages[chatId].push(...uploadMessagesData.messages);
@@ -104,6 +130,58 @@ export const chat = {
         hasMore: uploadMessagesData.hasMore,
         inMemory: uploadMessagesData.inMemory,
       };
+    },
+    sortByMessageDate(state) {
+      debugger;
+      const sortedMessagesByDate = Object.keys(state.chats)
+        .sort((a, b) => {
+          const dateA = new Date(
+            state.chats[a]?.lastMessage?.created_at || null
+          ).getTime();
+          const dateB = new Date(
+            state.chats[b]?.lastMessage?.created_at || null
+          ).getTime();
+
+          return dateA < dateB ? 1 : dateA === dateB ? 0 : -1;
+        })
+        .reduce((obj, key) => {
+          obj[key] = { ...state.chats[key] };
+          return obj;
+        }, {});
+
+      state.chats = sortedMessagesByDate;
+    },
+
+    setNewMessageData(state, { messagesData, userId, roomData }) {
+      debugger;
+      if (state.messages[messagesData.roomId]) {
+        state.messages[messagesData.roomId].unshift(messagesData);
+      } else {
+        state.messages[messagesData.roomId] = [messagesData];
+      }
+
+      // if (!roomsData.value.hasOwnProperty(messagesData.roomId)) {
+      //   roomsData.value[messagesData.roomId] = {}
+      // }
+
+      if (!roomData) return;
+
+      if (messagesData.authorId !== userId) {
+        roomData.unread++;
+      }
+
+      roomData.isNotUnread++;
+    },
+
+    setLastChatMessage(state, messagesData) {
+      debugger;
+      console.log("set last message");
+      const messageRoom = state.chats[messagesData.roomId];
+      // if (!messageRoom.hasOwnProperty("lastMessage")) {
+      //   messageRoom.lastMessage = {};
+      // }
+
+      messageRoom.lastMessage = messagesData;
     },
     // addMessage(state, message) {
     //   state.messages.unshift(message);

@@ -38,15 +38,17 @@ export default {
 
     const userData = computed(() => store.state.auth.user);
 
-    chatSocket.on("newMessage", (messageData) => {
-      console.log("NEEEEW", messageData);
-      store.commit("chat/addMessage", messageData);
+    chatSocket.on("newMessage", (messagesData) => {
+      store.dispatch("chat/newChatMessage", {
+        messagesData,
+        chatSocket,
+        userId: userData.value.id,
+      });
     });
-
-    chatSocket.on("updateUserCount", (userId) => {
-      console.log("user exit from chat", userId);
-      store.commit("chat/removeUserFromGroup", userId);
-    });
+    // chatSocket.on("updateUserCount", (userId) => {
+    //   console.log("user exit from chat", userId);
+    //   store.commit("chat/removeUserFromGroup", userId);
+    // });
 
     const message = computed(() => store.state.chat.message);
     //const isLoadedMessages = ref(false);
