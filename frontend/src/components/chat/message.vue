@@ -1,9 +1,25 @@
 <template>
   <div v-if="isFirstUnread" style="color: red">New message</div>
+  <MessageContexMenu
+    :isShowCTX="isShowCTX"
+    :ctxPosition="ctxPosition"
+    :isAuthor="isAuthor"
+    :messageId="message.id"
+  />
   <div
+    @contextmenu="openMessageCTXMenu"
     class="message__container"
-    :class="author === message.authorLogin ? 'message__container--author' : ''"
+    :class="isAuthor ? 'message__container--author' : ''"
+    @click="closeMessageCTX"
   >
+    <input
+      v-model="selectedMessages"
+      :value="message.id"
+      v-if="isSelectMessagesMode"
+      type="checkbox"
+      style="width: 25px; height: 25px"
+    />
+
     <p class="message__author">{{ message.authorLogin }}</p>
     <div class="message__body">
       <p class="message__text"><span v-html="isLink(message.text)" /></p>
@@ -13,6 +29,7 @@
       <!-- <a href="#" class="message__link">localhost.com</a> -->
       <div v-for="file in message.files" :key="file.id">
         <p
+          style="display: flex; justify-content: center"
           v-if="file.mimetype.includes('image')"
           @mousedown.right.prevent="null"
         >
@@ -37,11 +54,13 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { computed, ref, inject, reactive } from "vue";
 import { isLink } from "./isLink";
+import MessageContexMenu from "./messageContextMenu.vue";
 
 export default {
-  props: ["message", "author", "isRead", 'isFirstUnread'],
+  props: ["message", "author", "isRead", "isFirstUnread", "userId"],
+  components: { MessageContexMenu },
   setup(props) {
     const messageDate = ref(null);
     const messageTime = ref(null);
@@ -68,11 +87,66 @@ export default {
 
     convertDate(props.message.created_at);
 
+    function openMessageCTXMenu(e) {
+      if (e.target.tagName === "IMG") {
+        if (isShowMessageCTX.value === props.message.id) {
+          e.preventDefault();
+          isShowMessageCTX.value = null;
+        }
+        return;
+      }
+
+      e.preventDefault();
+
+      const rect = e.target.getBoundingClientRect();
+      ctxPosition.x = e.pageX || e.clientX;
+      ctxPosition.y = e.pageY || e.clientY;
+      console.log("TARGET", ctxPosition);
+      // ctxPosition.x = Math.round(e.clientX - rect.left);
+      //  = Math.round(e.clientY - rect.top);
+
+      if (isSelectMessagesMode.value) {
+        return;
+      }
+
+      if (isShowMessageCTX.value === props.message.id) {
+        isShowMessageCTX.value = null;
+      } else {
+        isShowMessageCTX.value = props.message.id;
+      }
+    }
+
+    const isShowMessageCTX = inject("isShowMessageCTX");
+    const selectedMessages = inject("selectedMessages");
+    const isSelectMessagesMode = inject("isSelectMessagesMode");
+
+    const ctxPosition = reactive({
+      x: 0,
+      y: 0,
+    });
+
+    const isShowCTX = computed(
+      () => isShowMessageCTX.value === props.message.id
+    );
+
+    const isAuthor = computed(() => props.message.authorId === props.userId);
+
+    function closeMessageCTX() {
+      isShowMessageCTX.value = null;
+    }
+
     return {
+      isShowCTX,
+      ctxPosition,
       isLink,
       messageDate,
       messageTime,
       getDownloadLink,
+      openMessageCTXMenu,
+      selectedMessages,
+      isSelectMessagesMode,
+      isAuthor,
+      closeMessageCTX,
     };
   },
 };

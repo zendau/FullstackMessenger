@@ -3,6 +3,10 @@
     <div class="chat__header-data">
       <h1 class="chat__title" :class="{ 'chat__title--private': !groupUsers }">
         {{ chatData.title }}
+        <div v-if="selectedMessages.length">
+          <p>{{ selectedMessages.length }}</p>
+          <button @click="selectedMessages = []">Cancel</button>
+        </div>
       </h1>
       <p class="chat__count" v-if="groupUsers" @click="showUsers = !showUsers">
         {{ groupUsers.length }} peoples
@@ -64,6 +68,8 @@ export default {
     const userData = computed(() => store.state.auth.user);
     const userId = userData.value.id;
 
+    const selectedMessages = inject("selectedMessages");
+
     const showTollbar = computed(() => chatData.value.adminId === userId);
 
     const showUsers = ref(false);
@@ -124,6 +130,7 @@ export default {
       addUserToChat,
       removeUserFromChat,
       removeUsersList,
+      selectedMessages,
     };
   },
   components: { NavbarUserList },

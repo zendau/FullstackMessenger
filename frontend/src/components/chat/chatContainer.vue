@@ -13,7 +13,7 @@
 import chatHeader from "./chatHeader.vue";
 import chatBody from "./chatBody.vue";
 import chatSend from "./chatSend.vue";
-import { computed, inject, provide, ref } from "vue";
+import { computed, inject, provide, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 
@@ -29,6 +29,19 @@ export default {
 
     const files = ref([]);
     provide("files", files);
+
+    const editMessageData = ref(null);
+    provide("editMessageData", editMessageData);
+
+    const selectedMessages = ref([]);
+    provide("selectedMessages", selectedMessages);
+
+    const isSelectMessagesMode = ref(false);
+    provide("isSelectMessagesMode", isSelectMessagesMode);
+
+    watch(selectedMessages, (value) => {
+      if (value.length === 0) isSelectMessagesMode.value = false;
+    });
 
     const chatData = computed(() => store.state.chat.chats[chatId.value]);
     console.log("CHATDATA", chatData, chatId.value);

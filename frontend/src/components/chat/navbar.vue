@@ -16,7 +16,7 @@
         </li>
         <li>
           <router-link class="chat__list-item" to="/conferences">
-            <i class="bi bi-broadcast"></i>
+            <i class="bi bi-telephone"></i>
             <span>Calls</span>
           </router-link>
         </li>

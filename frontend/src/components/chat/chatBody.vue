@@ -5,10 +5,10 @@
         v-for="(message, index) in messages"
         :key="message.id"
         :message="message"
-        :author="userData.login"
+        :isFirstUnread="isFirstUnread(index)"
         :ref="(el) => setRefMessage(el, index)"
         :isRead="isReadMessage(index)"
-        :isFirstUnread="isFirstUnread(index)"
+        :userId="userData.id"
       />
       <div ref="scrollEnd"></div>
     </div>
@@ -21,7 +21,15 @@ import Message from "./message.vue";
 //import $api from '../../axios'
 
 import { useRoute } from "vue-router";
-import { inject, ref, computed, onMounted, onUpdated, watch } from "vue";
+import {
+  inject,
+  ref,
+  computed,
+  onMounted,
+  onUpdated,
+  watch,
+  provide,
+} from "vue";
 import { useStore } from "vuex";
 import FileUpload from "../fileUpload.vue";
 export default {
@@ -35,6 +43,10 @@ export default {
     const messages = computed(() => store.state.chat.messages[chatId.value]);
     const scrollEnd = ref(null);
     const chatData = store.getters["chat/selectedChat"](chatId.value);
+
+
+    const isShowMessageCTX = ref(null);
+    provide("isShowMessageCTX", isShowMessageCTX);
 
     const userData = computed(() => store.state.auth.user);
 
