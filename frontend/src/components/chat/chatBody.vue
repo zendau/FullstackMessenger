@@ -1,6 +1,7 @@
 <template>
   <file-upload>
     <div class="chat__body">
+      <MessageContexMenu :ctxMenuData="ctxMenuData" />
       <message
         v-for="(message, index) in messages"
         :key="message.id"
@@ -9,6 +10,7 @@
         :ref="(el) => setRefMessage(el, index)"
         :isRead="isReadMessage(index)"
         :userId="userData.id"
+        @openCTXMenu="openCTXMenu"
       />
       <div ref="scrollEnd"></div>
     </div>
@@ -32,8 +34,9 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import FileUpload from "../fileUpload.vue";
+import MessageContexMenu from "./messageContextMenu.vue";
 export default {
-  components: { Message, FileUpload },
+  components: { Message, FileUpload, MessageContexMenu },
   setup() {
     const store = useStore();
     const route = useRoute();
@@ -145,10 +148,21 @@ export default {
       return index - chatData.unread === -1;
     }
 
+    const ctxMenuData = ref({
+      isShow: false,
+    });
+
+    function openCTXMenu(CTXdata) {
+      console.log("openCTXMenu", CTXdata);
+      ctxMenuData.value = CTXdata;
+    }
+
     return {
       isReadMessage,
       isFirstUnread,
       setRefMessage,
+      openCTXMenu,
+      ctxMenuData,
       scrollEnd,
       messages,
       userData,

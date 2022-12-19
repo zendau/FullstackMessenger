@@ -43,6 +43,20 @@ export default {
       if (value.length === 0) isSelectMessagesMode.value = false;
     });
 
+    function deleteMessage(idList, isRead) {
+      console.log("delete messages: - ", chatId.value, idList, isRead);
+      socket.emit("delete_messages", {
+        roomId: chatId.value,
+        isRead,
+        idList,
+      });
+    }
+
+    function deleteMessagesHandler() {
+      deleteMessages(selectedMessages.value);
+      selectedMessages.value = [];
+    }
+
     const chatData = computed(() => store.state.chat.chats[chatId.value]);
     console.log("CHATDATA", chatData, chatId.value);
     return {

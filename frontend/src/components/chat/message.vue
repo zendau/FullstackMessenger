@@ -1,16 +1,10 @@
 <template>
   <div v-if="isFirstUnread" style="color: red">New message</div>
-  <MessageContexMenu
-    :isShowCTX="isShowCTX"
-    :ctxPosition="ctxPosition"
-    :isAuthor="isAuthor"
-    :message="message"
-  />
+
   <div
     @contextmenu="openMessageCTXMenu"
     class="message__container"
     :class="isAuthor ? 'message__container--author' : ''"
-    @click="closeMessageCTX"
   >
     <input
       v-model="selectedMessages"
@@ -59,9 +53,10 @@ import { isLink } from "./isLink";
 import MessageContexMenu from "./messageContextMenu.vue";
 
 export default {
+  emits: ["openCTXMenu"],
   props: ["message", "author", "isRead", "isFirstUnread", "userId"],
   components: { MessageContexMenu },
-  setup(props) {
+  setup(props, { emit }) {
     const messageDate = ref(null);
     const messageTime = ref(null);
 
@@ -114,29 +109,25 @@ export default {
       } else {
         isShowMessageCTX.value = props.message.id;
       }
+      emit("openCTXMenu", {
+        position: ctxPosition,
+        isAuthor: isAuthor.value,
+        message: props.message,
+      });
     }
 
     const isShowMessageCTX = inject("isShowMessageCTX");
     const selectedMessages = inject("selectedMessages");
     const isSelectMessagesMode = inject("isSelectMessagesMode");
 
-    const ctxPosition = reactive({
+    const ctxPosition = {
       x: 0,
       y: 0,
-    });
-
-    const isShowCTX = computed(
-      () => isShowMessageCTX.value === props.message.id
-    );
+    };
 
     const isAuthor = computed(() => props.message.authorId === props.userId);
 
-    function closeMessageCTX() {
-      isShowMessageCTX.value = null;
-    }
-
     return {
-      isShowCTX,
       ctxPosition,
       isLink,
       messageDate,
@@ -146,7 +137,6 @@ export default {
       selectedMessages,
       isSelectMessagesMode,
       isAuthor,
-      closeMessageCTX,
     };
   },
 };
