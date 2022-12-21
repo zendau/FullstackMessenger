@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Message } from 'src/message/entities/message.entity';
 import IFile from './interfaces/message/IFile';
 import IEditMessage from './interfaces/message/IEditMessage';
+import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 
 type redisValue = 'user' | '' | 'room' | 'unread' | 'userContacts';
 type redisList = '';
@@ -382,11 +383,11 @@ export class SocketRedisAdapter {
     limit: number,
   ) {
     const valueKey = `${key}:${valueId}`;
-
+    console.log('OFFSET', offset, limit);
     const messagesRange = await this.redis.lrange(
       `map-${valueKey}`,
       offset,
-      limit,
+      limit - 1,
     );
 
     if (messagesRange.length > 0) {
@@ -420,7 +421,7 @@ export class SocketRedisAdapter {
   ) {
     const valueKey = `${key}:${valueId}`;
 
-    const lastMessageKey = await this.redis.lrange(`map-${valueKey}`, -1, -1);
+    const lastMessageKey = await this.redis.lrange(`map-${valueKey}`, 0, 0);
 
     if (lastMessageKey.length > 0) {
       const lastMessage = await this.redis.hget(valueKey, lastMessageKey[0]);
@@ -472,7 +473,7 @@ export class SocketRedisAdapter {
     const multiPipe = this.redis.multi();
 
     multiPipe.hset(valueKey, field, JSON.stringify(value));
-    multiPipe.rpush(`map-${valueKey}`, field);
+    multiPipe.lpush(`map-${valueKey}`, field);
     if (withExpire) {
       multiPipe.expire(valueKey, this.EXPIRE);
       multiPipe.expire(`map-${valueKey}`, this.EXPIRE);
@@ -541,20 +542,27 @@ export class SocketRedisAdapter {
     return true;
   }
 
-  deleteHashMany(
-    key: redisHash,
+  deleteHashManyMessages(
     deleteQuery: {
       deleteValuesFromDB: () => Promise<any>;
     },
-    id: string,
-    fieldsList: string[],
+    { roomId, deletedData }: IDeleteMessage,
   ) {
-    const valueKey = `${key}:${id}`;
+    const valueKey = `message:${roomId}`;
     const multiPipe = this.redis.multi();
+    debugger;
+    deletedData.forEach(async (deletedMessage) => {
+      const fieldId = deletedMessage.id.toString();
+      multiPipe.hdel(valueKey, fieldId);
+      multiPipe.lrem(`map-${valueKey}`, 1, fieldId);
 
-    fieldsList.forEach((field) => {
-      multiPipe.hdel(valueKey, field);
-      multiPipe.lrem(`map-${valueKey}`, 1, field);
+      if (deletedMessage.isRead) {
+        const keys = await this.getBranchesMainKeys('unread', roomId);
+
+        keys.forEach((key) => {
+          this.decValue('unread', roomId, key, 1);
+        });
+      }
     });
 
     multiPipe.exec();

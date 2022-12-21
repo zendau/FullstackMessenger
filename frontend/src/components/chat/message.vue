@@ -8,12 +8,11 @@
   >
     <input
       v-model="selectedMessages"
-      :value="message.id"
+      :value="checboxData"
       v-if="isSelectMessagesMode"
       type="checkbox"
       style="width: 25px; height: 25px"
     />
-
     <p class="message__author">{{ message.authorLogin }}</p>
     <div class="message__body">
       <p class="message__text"><span v-html="isLink(message.text)" /></p>
@@ -59,6 +58,8 @@ export default {
   setup(props, { emit }) {
     const messageDate = ref(null);
     const messageTime = ref(null);
+
+    const checboxData = reactive({id: props.message.id, isRead: props.isRead});
 
     function getDownloadLink(fileId) {
       return `${import.meta.env.VITE_STORAGE}/download/${fileId}`;
@@ -113,6 +114,7 @@ export default {
         position: ctxPosition,
         isAuthor: isAuthor.value,
         message: props.message,
+        isRead: props.isRead,
       });
     }
 
@@ -128,6 +130,7 @@ export default {
     const isAuthor = computed(() => props.message.authorId === props.userId);
 
     return {
+      checboxData,
       ctxPosition,
       isLink,
       messageDate,

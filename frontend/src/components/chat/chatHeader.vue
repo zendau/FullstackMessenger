@@ -5,6 +5,7 @@
         {{ chatData.title }}
         <div v-if="selectedMessages.length">
           <p>{{ selectedMessages.length }}</p>
+          <button @click="deleteMessages">Deleted</button>
           <button @click="selectedMessages = []">Cancel</button>
         </div>
       </h1>
@@ -58,7 +59,7 @@ import $api from "../../axios";
 import NavbarUserList from "./navbarUserList.vue";
 
 export default {
-  setup() {
+  setup(_, { emit }) {
     const store = useStore();
     const route = useRoute();
     const router = useRouter();
@@ -118,19 +119,25 @@ export default {
         router.push("/chat");
       }
     }
+
+    function deleteMessages() {
+      emit("deleteMessages");
+    }
+
     return {
       chatData,
       showUsers,
       showAddUsers,
       showRemoveUsers,
       showTollbar,
-      exitGroup,
       groupUsers,
       invaitedUsers,
-      addUserToChat,
-      removeUserFromChat,
       removeUsersList,
       selectedMessages,
+      exitGroup,
+      deleteMessages,
+      addUserToChat,
+      removeUserFromChat,
     };
   },
   components: { NavbarUserList },

@@ -1,7 +1,10 @@
 <template>
   <file-upload>
     <div class="chat__body">
-      <MessageContexMenu :ctxMenuData="ctxMenuData" />
+      <MessageContexMenu
+        :ctxMenuData="ctxMenuData"
+        @deleteMessages="deleteMessages"
+      />
       <message
         v-for="(message, index) in messages"
         :key="message.id"
@@ -37,11 +40,12 @@ import FileUpload from "../fileUpload.vue";
 import MessageContexMenu from "./messageContextMenu.vue";
 export default {
   components: { Message, FileUpload, MessageContexMenu },
-  setup() {
+  setup(_, { emit }) {
     const store = useStore();
     const route = useRoute();
 
     const chatSocket = inject("chatSocket");
+    const selectedMessages = inject("selectedMessages");
     const chatId = computed(() => route.params.id);
     const messages = computed(() => store.state.chat.messages[chatId.value]);
     const scrollEnd = ref(null);
@@ -157,11 +161,22 @@ export default {
       ctxMenuData.value = CTXdata;
     }
 
+    function deleteMessages(messagesList) {
+      emit('deleteMessages', messagesList)
+    }
+
+    function deleteMessagesHandler() {
+      deleteMessages(selectedMessages.value);
+      selectedMessages.value = [];
+    }
+
     return {
       isReadMessage,
       isFirstUnread,
       setRefMessage,
       openCTXMenu,
+      deleteMessages,
+      deleteMessagesHandler,
       ctxMenuData,
       scrollEnd,
       messages,

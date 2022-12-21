@@ -1,5 +1,9 @@
-export default interface IDeleteMessage {
-  idList: string[];
+export interface IDeleteMessage {
+  deletedData: IDeletedData[];
   roomId: string;
+}
+
+export interface IDeletedData {
   isRead: boolean;
+  id: number;
 }

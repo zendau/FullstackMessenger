@@ -56,6 +56,7 @@
 import { inject, computed } from "vue";
 
 export default {
+  emits: ["deleteMessages"],
   props: ["ctxMenuData"],
   setup(props, { emit }) {
     const isSelectMessagesMode = inject("isSelectMessagesMode");
@@ -71,7 +72,11 @@ export default {
     function selectMessageHandler() {
       console.log("test click");
       isSelectMessagesMode.value = !isSelectMessagesMode.value;
-      selectedMessages.value.push(props.ctxMenuData.message.id);
+
+      selectedMessages.value.push({
+        id: props.ctxMenuData.message.id,
+        isRead: props.ctxMenuData.isRead,
+      });
       isShowMessageCTX.value = null;
     }
 
@@ -87,7 +92,11 @@ export default {
       files.value = [...props.ctxMenuData.message.files];
     }
     function deleteMessage() {
-      ctx.emit("deleteMessages", [props.messageData.id], props.isRead);
+      console.log("test", props.ctxMenuData.message);
+      emit("deleteMessages", [
+        { id: props.ctxMenuData.message.id, isRead: props.ctxMenuData.isRead },
+      ]);
+      isShowMessageCTX.value = null;
     }
 
     function closeMessageCTX() {

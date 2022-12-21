@@ -22,11 +22,11 @@ import IChatSearch from './interfaces/chat/IChatSearch';
 import IUserChat from './interfaces/user/IUserChat';
 import IMessagePressing from './interfaces/message/IMessagePressing';
 import IChatMessages from './interfaces/chat/IChatMessages';
-import IDeleteMessage from './interfaces/message/IDeleteMessage';
 import IEditMessage from './interfaces/message/IEditMessage';
 import IReadMessage from './interfaces/message/IReadMessage';
 import IUserData from './interfaces/user/IUserData';
 import IChatLoad from './interfaces/chat/IChatLoad';
+import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 
 @WebSocketGateway(80, {
   path: '/socketChat',

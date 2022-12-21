@@ -10,6 +10,7 @@ import { firstValueFrom } from 'rxjs';
 import { IMessage } from './interfaces/IMessage';
 import IEditMessage from 'src/socket/interfaces/message/IEditMessage';
 import IFile from 'src/socket/interfaces/message/IFile';
+import { IDeletedData } from 'src/socket/interfaces/message/IDeleteMessage';
 
 @Injectable()
 export class MessageService {
@@ -168,11 +169,13 @@ export class MessageService {
     return !!res.affected;
   }
 
-  async removeMany(idList: (number | string)[]) {
+  async removeMany(deletedData: IDeletedData[]) {
+    const messagesIdList = deletedData.map((item) => item.id);
+
     const res = await this.messageRepository
       .createQueryBuilder()
       .delete()
-      .where(`id in (:idList)`, { idList })
+      .where(`id in (:messagesIdList)`, { messagesIdList })
       .execute();
 
     return !!res.affected;

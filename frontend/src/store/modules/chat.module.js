@@ -13,12 +13,17 @@ export const chat = {
       { commit, state, getters },
       { messagesData, chatSocket, userId }
     ) {
-      debugger;
       console.log("resieve message", messagesData);
+
+      commit("setNewMessageData", {
+        messagesData,
+        userId,
+        roomData: getters.selectedChat(messagesData.roomId),
+      });
 
       if (state.chats[messagesData.roomId]) {
         console.log("2222");
-        commit("setLastChatMessage", messagesData);
+        commit("setLastChatMessage", messagesData.roomId);
         commit("sortByMessageDate");
       } else {
         chatSocket.emit("load-chat-by-id", {
@@ -26,15 +31,36 @@ export const chat = {
           chatId: messagesData.roomId,
         });
       }
-      commit("setNewMessageData", {
-        messagesData,
-        userId,
-        roomData: getters.selectedChat(messagesData.roomId),
-      });
     },
     editChatMesssage({ commit, state }, updatedMessageData) {
       if (state.messages.hasOwnProperty(updatedMessageData.roomId)) {
         commit("updateMessage", updatedMessageData);
+      }
+    },
+    deletedMessages({ commit, state }, deletedMessageData) {
+      console.log("updateDeletedMessages", deletedMessageData);
+      debugger;
+      if (state.messages[deletedMessageData.roomId]) {
+        commit("deletedMessages", deletedMessageData);
+
+        const isDeletedLastMessage = deletedMessageData.deletedData.find(
+          (item) => {
+            console.log(
+              "qq",
+              item.id,
+              state.chats[deletedMessageData.roomId],
+              state.chats[deletedMessageData.roomId].lastMessage.id
+            );
+            return (
+              item.id === state.chats[deletedMessageData.roomId].lastMessage.id
+            );
+          }
+        );
+        debugger;
+        if (isDeletedLastMessage) {
+          commit("setLastChatMessage", deletedMessageData.roomId);
+          commit("sortByMessageDate");
+        }
       }
     },
     // async getContacts({ commit, rootState }) {
@@ -116,16 +142,13 @@ export const chat = {
     //   state.constacts = constacts;
     // },
     saveChats(state, chats) {
-      debugger;
       state.chats = chats;
     },
 
     saveCurrentTempChat(state, chatData) {
-      debugger;
       state.currentTempChatData = chatData;
     },
     saveMessages(state, { chatId, uploadMessagesData }) {
-      debugger;
       if (!state.messages[chatId]) state.messages[chatId] = [];
 
       state.messages[chatId].push(...uploadMessagesData.messages);
@@ -137,7 +160,6 @@ export const chat = {
       };
     },
     sortByMessageDate(state) {
-      debugger;
       const sortedMessagesByDate = Object.keys(state.chats)
         .sort((a, b) => {
           const dateA = new Date(
@@ -158,7 +180,6 @@ export const chat = {
     },
 
     setNewMessageData(state, { messagesData, userId, roomData }) {
-      debugger;
       if (state.messages[messagesData.roomId]) {
         state.messages[messagesData.roomId].unshift(messagesData);
       } else {
@@ -178,15 +199,18 @@ export const chat = {
       roomData.isNotUnread++;
     },
 
-    setLastChatMessage(state, messagesData) {
+    setLastChatMessage(state, roomId) {
       debugger;
-      console.log("set last message");
-      const messageRoom = state.chats[messagesData.roomId];
+      const messages = state.messages[roomId];
+      if (!messages) return [];
+
+      const lastMessage = messages[0];
+      const messageRoom = state.chats[roomId];
       // if (!messageRoom.hasOwnProperty("lastMessage")) {
       //   messageRoom.lastMessage = {};
       // }
 
-      messageRoom.lastMessage = messagesData;
+      messageRoom.lastMessage = lastMessage;
     },
     updateMessage(state, updatedMessageData) {
       state.messages[updatedMessageData.roomId] = state.messages[
@@ -211,6 +235,16 @@ export const chat = {
         }
         return message;
       });
+    },
+    deletedMessages(state, deletedMessagesData) {
+      state.messages[deletedMessagesData.roomId] = state.messages[
+        deletedMessagesData.roomId
+      ].filter(
+        (message) =>
+          !deletedMessagesData.deletedData.find(
+            (item) => item.id === message.id
+          )
+      );
     },
     // addMessage(state, message) {
     //   state.messages.unshift(message);

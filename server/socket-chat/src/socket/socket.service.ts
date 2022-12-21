@@ -3,10 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ChatService } from 'src/chat/chat.service';
 import { MessageService } from 'src/message/message.service';
 import IChatMessages from './interfaces/chat/IChatMessages';
-import IDeleteMessage from './interfaces/message/IDeleteMessage';
 import IEditMessage from './interfaces/message/IEditMessage';
 import IMessageData from './interfaces/message/IMessageData';
-import IUserJoin from './interfaces/user/IUserChat';
 import { SocketRedisAdapter } from './socketRedisAdapter.service';
 import { UserService } from 'src/chat/user.service';
 import IChat from 'src/chat/interfaces/IChat';
@@ -17,6 +15,7 @@ import IChatPaginationData from './interfaces/chat/IChatPaginationData';
 import IUserChat from './interfaces/user/IUserChat';
 import IReadMessage from './interfaces/message/IReadMessage';
 import IMessageCreated from './interfaces/message/IMessageCreated';
+import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 
 // interface userData {
 //   login: string;
@@ -209,7 +208,7 @@ export class SocketService {
         'message',
         null,
         scrollData.chatId,
-        scrollData.page,
+        scrollData.page * scrollData.limit,
         scrollData.limit,
       );
 
@@ -230,7 +229,7 @@ export class SocketService {
     );
 
     if (roomMessages?.length <= scrollData.limit) {
-      roomDbMessages.unshift(...roomMessages.reverse());
+      roomDbMessages.unshift(...roomMessages);
     }
 
     return {
@@ -307,24 +306,25 @@ export class SocketService {
     //return Object.keys(this.rooms[roomId].users);
   }
 
-  async deleteMessages({ roomId, idList, isRead }: IDeleteMessage) {
+  async deleteMessages({ roomId, deletedData }: IDeleteMessage) {
     // debugger;
-    this.socketRedisAdapter.deleteHashMany(
-      'message',
+    this.socketRedisAdapter.deleteHashManyMessages(
       {
-        deleteValuesFromDB: () => this.messageService.removeMany(idList),
+        deleteValuesFromDB: () => this.messageService.removeMany(deletedData),
       },
-      roomId,
-      idList,
+      {
+        roomId,
+        deletedData,
+      },
     );
 
-    if (!isRead) return;
+    // if (!isRead) return;
 
-    const keys = await this.socketRedisAdapter.getBranchesMainKeys(
-      'unread',
-      roomId,
-    );
-    this.socketRedisAdapter.deleteValues('unread', roomId, keys);
+    // const keys = await this.socketRedisAdapter.getBranchesMainKeys(
+    //   'unread',
+    //   roomId,
+    // );
+    // this.socketRedisAdapter.deleteValues('unread', roomId, keys);
 
     // this.messages[room] = this.messages[room].filter(
     //   (message) => !idList.includes(message.id),
