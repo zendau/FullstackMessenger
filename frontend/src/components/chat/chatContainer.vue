@@ -26,7 +26,7 @@ export default {
     const chatId = computed(() => route.params.id);
 
     const isShowMobileMessages = inject("isShowMobileMessages");
-    const chatSocket = inject("chatSocket")
+    const chatSocket = inject("chatSocket");
 
     const files = ref([]);
     provide("files", files);
@@ -44,6 +44,10 @@ export default {
       if (value.length === 0) isSelectMessagesMode.value = false;
     });
 
+    chatSocket.on("updateUserOnline", (userStatus) => {
+      store.commit('chat/updateUserOnline', userStatus)
+    });
+
     function deleteMessages(messagesList) {
       console.log("delete messages2: - ", messagesList);
       chatSocket.emit("delete_messages", {
@@ -58,8 +62,8 @@ export default {
     }
 
     chatSocket.on("updateDeletedMessages", (payload) => {
-      console.log('delete messages', payload)
-      store.dispatch('chat/deletedMessages', payload)
+      console.log("delete messages", payload);
+      store.dispatch("chat/deletedMessages", payload);
     });
 
     const chatData = computed(() => store.state.chat.chats[chatId.value]);

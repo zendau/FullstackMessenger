@@ -142,10 +142,12 @@ export const chat = {
     //   state.constacts = constacts;
     // },
     saveChats(state, chats) {
+      debugger;
       state.chats = chats;
     },
 
     saveCurrentTempChat(state, chatData) {
+      debugger;
       state.currentTempChatData = chatData;
     },
     saveMessages(state, { chatId, uploadMessagesData }) {
@@ -256,6 +258,15 @@ export const chat = {
       } else if (state.currentTempChatData.id === chatId) {
         state.currentTempChatData = null;
       }
+    },
+    updateUserOnline(state, userStatus) {
+      Object.keys(state.chats).forEach((chat) => {
+        state.chats[chat].users.forEach((user) => {
+          if (user.id === userStatus.userId) {
+            user.lastOnline = userStatus.status;
+          }
+        });
+      });
     },
     // addMessage(state, message) {
     //   state.messages.unshift(message);
