@@ -82,7 +82,7 @@ export class SocketGateway {
       .emit('getRoomsData', { ...userRoomsData, currentTempChatData });
   }
 
-  @SubscribeMessage('load-chats-pagination')
+  @SubscribeMessage('load-chats')
   async loadChatsPage(socket: Socket, payload: IChatPagination) {
     //const rooms = await this.socketService.getUserRooms(payload.userId);
     const userRoomsData = await this.socketService.getUserRoomsData(

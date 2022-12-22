@@ -145,7 +145,9 @@ export const chat = {
       debugger;
       state.chats = chats;
     },
-
+    appendChatsData(state, newChats) {
+      state.chats = Object.assign(state.chats, newChats)
+    },
     saveCurrentTempChat(state, chatData) {
       debugger;
       state.currentTempChatData = chatData;

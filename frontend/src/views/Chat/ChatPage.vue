@@ -1,7 +1,11 @@
 <template>
   <chatNavbar />
   <section class="chat__container">
-    <chats v-if="showChats" @openChat="openChatRoom" />
+    <chats
+      v-if="showChats"
+      @openChat="openChatRoom"
+      @setLastChatElement="setLastChatElement"
+    />
     <contacts v-else />
     <chatContainer />
   </section>
@@ -69,6 +73,31 @@ export default {
     //   });
     // });
 
+    const chatObserver = new IntersectionObserver(
+      (entries) => {
+        console.log("entity test", entries);
+        if (entries[0].isIntersecting && loadChatsPagination.hasMore) {
+          console.log(
+            "observer chat",
+            {
+              userId: userId.value,
+              page: loadChatsPagination.page,
+              limit: loadChatsPagination.limit,
+            },
+            loadChatsPagination
+          );
+          chatSocket.emit("load-chats", {
+            userId: userId.value,
+            page: loadChatsPagination.page,
+            limit: loadChatsPagination.limit,
+          });
+        }
+      },
+      {
+        rootMargin: "100px",
+      }
+    );
+
     chatSocket.emit("get-chats", {
       userId: userId.value,
       page: loadChatsPagination.page,
@@ -114,6 +143,23 @@ export default {
         });
       }
     }
+
+    function setLastChatElement(el) {
+      console.log("LAST ELEMENT", el);
+      chatObserver.observe(el);
+    }
+
+    chatSocket.on("appendRoomsData", (newRoomsData) => {
+      loadChatsPagination.hasMore = newRoomsData.hasMore;
+      loadChatsPagination.page = newRoomsData.page;
+      console.log('loadChatsPagination', loadChatsPagination)
+      store.commit("chat/appendChatsData", newRoomsData.roomsData);
+    });
+
+    chatSocket.on("appendRoomData", (newRoomData) => {
+      const chatId = newRoomData.chatId;
+      store.commit("chat/appendChatsData", { [chatId]: newRoomData.data });
+    });
 
     // if (
     //   !roomMessages.hasOwnProperty(chatId.value) ||
@@ -191,6 +237,7 @@ export default {
       // chatId,
       openChatRoom,
       showChats,
+      setLastChatElement,
       // Chats,
     };
   },

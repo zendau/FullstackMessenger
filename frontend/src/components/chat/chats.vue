@@ -4,12 +4,19 @@
     :class="{ 'chats__container--active': !isShowMobileMessages }"
   >
     <input type="text" @input="searchChats" />
-    <p class="empty_message" style="color: red;" v-if="Object.keys(chatsList).length === 0">No chats</p>
+    <p
+      class="empty_message"
+      style="color: red"
+      v-if="Object.keys(chatsList).length === 0"
+    >
+      No chats
+    </p>
     <ul class="chats__list">
       <li
         class="chats__item"
-        v-for="chat in chatsList"
+        v-for="(chat, _, index) in chatsList"
         :key="chat.id"
+        :ref="(el) => setLastChatItem(el, index)"
         @click="openChat(chat.id)"
       >
         <!-- <router-link
@@ -90,6 +97,14 @@ export default {
       });
     });
 
+    function setLastChatItem(el, index) {
+      if (searchData.value) return;
+
+      if (Object.keys(chatsData.value).length - 1 !== index) return;
+
+      emit("setLastChatElement", el);
+    }
+
     chatSocket.on("getChatsByPattern", (chatsData) => {
       console.log("chatsData", chatsData);
       searchData.value = chatsData;
@@ -101,6 +116,7 @@ export default {
       searchChats,
       chatsList,
       openChat,
+      setLastChatItem,
     };
   },
 };
