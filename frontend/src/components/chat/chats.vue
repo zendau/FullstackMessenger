@@ -3,11 +3,12 @@
     class="chats__container"
     :class="{ 'chats__container--active': !isShowMobileMessages }"
   >
-    <p class="empty_message" v-if="chatsData.length === 0">No chats</p>
+    <input type="text" @input="searchChats" />
+    <p class="empty_message" style="color: red;" v-if="Object.keys(chatsList).length === 0">No chats</p>
     <ul class="chats__list">
       <li
         class="chats__item"
-        v-for="chat in chatsData"
+        v-for="chat in chatsList"
         :key="chat.id"
         @click="openChat(chat.id)"
       >
@@ -30,8 +31,9 @@
 </template>
 
 <script>
-import { computed, inject } from "vue";
+import { computed, inject, ref } from "vue";
 import { useStore } from "vuex";
+import debounce from "../../utils/debounce";
 // import { io } from "socket.io-client";
 
 export default {
@@ -52,16 +54,52 @@ export default {
     // });
 
     const isShowMobileMessages = inject("isShowMobileMessages");
+    const chatSocket = inject("chatSocket");
 
     const chatsData = computed(() => store.state.chat.chats);
-
+    const userId = computed(() => store.state.auth.user.id);
     function openChat(chatId) {
       emit("openChat", chatId);
     }
 
+    const searchData = ref(null);
+    const chatsList = computed(() => searchData.value ?? chatsData.value);
+
+    const searchChats = debounce((el) => {
+      // socket.emit("serchChats", {
+      //   userId: "",
+      //   pattern: chatId.value,
+      // });
+      // console.log("press_end");
+
+      const pattern = el.target.value;
+      //console.log('pattern', pattern.length, pattern)
+      if (pattern.length === 0) {
+        searchData.value = null;
+        return;
+      }
+
+      console.log({
+        userId: userId.value,
+        pattern,
+      });
+
+      chatSocket.emit("serchChats", {
+        userId: userId.value,
+        pattern,
+      });
+    });
+
+    chatSocket.on("getChatsByPattern", (chatsData) => {
+      console.log("chatsData", chatsData);
+      searchData.value = chatsData;
+    });
+
     return {
       isShowMobileMessages,
       chatsData,
+      searchChats,
+      chatsList,
       openChat,
     };
   },

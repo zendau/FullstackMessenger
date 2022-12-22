@@ -4,11 +4,13 @@
       <p>{{ editMessageData.text }}</p>
       <button @click="cancelEditMessage">Cancel</button>
     </div>
+    <p v-if="userPressing">{{ userPressing }} is pressing ...</p>
     <div
       class="chat__input"
       contenteditable="true"
       data-placeholder="Type message"
       ref="message"
+      @input="inputPress"
     ></div>
     <ul class="chat__files" v-if="files.length > 0">
       <li
@@ -31,6 +33,10 @@ import $api from "../../axios";
 import { inject, ref, computed } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
+
+import debounce from "../../utils/debounce";
+import throttle from "../../utils/throttle";
+
 export default {
   setup() {
     const store = useStore();
@@ -49,6 +55,8 @@ export default {
 
     const userId = userData.value.id;
     const userLogin = userData.value.login;
+
+    const userPressing = ref(null);
 
     const deletedFiles = [];
 
@@ -176,7 +184,36 @@ export default {
       fileUploadPercent.value = null;
     }
 
+    function inputPress() {
+      inputStartPress();
+      inputEndPress();
+    }
+
+    const inputEndPress = debounce(() => {
+      // chatSocket.emit("message_pressing", {
+      //   userName: "",
+      //   roomId: chatId.value,
+      // });
+      console.log("press_end");
+    });
+
+    const inputStartPress = throttle(() => {
+      // chatSocket.emit("message_pressing", {
+      //   userName: userId.value,
+      //   roomId: chatId.value,
+      // });
+      console.log("press_start");
+    }, 5000);
+
+    chatSocket.on("message_status", (status) => {
+      console.log("status", status);
+
+      if (status.roomId !== chatId.value) return;
+      userPressing.value = status.userName;
+    });
+
     return {
+      inputPress,
       message,
       chatData,
       sendMessage,
@@ -184,6 +221,7 @@ export default {
       deleteFileById,
       editMessageData,
       cancelEditMessage,
+      userPressing,
     };
   },
 };

@@ -38,6 +38,9 @@ import {
 import { useStore } from "vuex";
 import FileUpload from "../fileUpload.vue";
 import MessageContexMenu from "./messageContextMenu.vue";
+
+import debounce from "../../utils/debounce";
+
 export default {
   components: { Message, FileUpload, MessageContexMenu },
   setup(_, { emit }) {
@@ -55,7 +58,7 @@ export default {
     provide("isShowMessageCTX", isShowMessageCTX);
 
     const userData = computed(() => store.state.auth.user);
-
+    let messageReadCount = 0;
     chatSocket.on("newMessage", (messagesData) => {
       store.dispatch("chat/newChatMessage", {
         messagesData,
@@ -73,6 +76,69 @@ export default {
     //   console.log("user exit from chat", userId);
     //   store.commit("chat/removeUserFromGroup", userId);
     // });
+
+    const readChatMessage = debounce(() => {
+      console.log("send ", messageReadCount);
+
+      chatSocket.emit("readMessages", {
+        userId: userData.value.id,
+        chatId: chatId.value,
+        count: messageReadCount,
+      });
+
+      //const roomData = currentTempChatData.value ?? roomsData.value[chatId.value];
+      const resCount = chatData.unread - messageReadCount;
+      chatData.unread = Math.max(0, resCount);
+      messageReadCount = 0;
+    }, 1000);
+
+    const readMessageObserver = new IntersectionObserver(
+      (entries) => {
+        console.log("observer . Message 1", entries);
+        if (entries[0].isIntersecting) {
+          console.log("observer . Message 2", entries);
+          entries.forEach((entrie) => {
+            messageReadCount++;
+            console.log(
+              "unobserve",
+              entrie.target,
+              messageReadCount,
+              readMessageObserver
+            );
+            readMessageObserver.unobserve(entrie.target);
+          });
+
+          readChatMessage();
+        }
+      },
+      {
+        rootMargin: "100px",
+      }
+    );
+
+    const messageScrollObserver = new IntersectionObserver(
+      (entries) => {
+        const messagePagination = chatData.loadMessagesPagination;
+        if (entries[0].isIntersecting && messagePagination?.hasMore) {
+          console.log("load message scrool observer", {
+            chatId: chatId.value,
+            page: messagePagination.page,
+            limit: messagePagination.limit,
+            inMemory: messagePagination.inMemory,
+          });
+          messageScrollObserver.unobserve(entries[0].target);
+          chatSocket.emit("getRoomMessages", {
+            chatId: chatId.value,
+            page: messagePagination.page,
+            limit: messagePagination.limit,
+            inMemory: messagePagination.inMemory,
+          });
+        }
+      },
+      {
+        rootMargin: "100px",
+      }
+    );
 
     const message = computed(() => store.state.chat.message);
     //const isLoadedMessages = ref(false);
@@ -128,20 +194,24 @@ export default {
     });
 
     function setRefMessage(el, index) {
-      // //const roomData = currentTempChatData.value ?? roomsData.value[chatId.value];
-      // const isLastMessage = index === roomMessages[chatId.value]?.length - 1;
-      // if (isLastMessage) {
-      //   console.log("setLastMessage", el.$el);
-      //   console.log("last message", isLastMessage, el.$el);
-      //   messageScrollObserver.observe(el.$el);
-      // }
-      // if (roomData.value.unread === 0) return;
-      // const res = index - roomData.value.unread;
-      // // console.log("EL!!!", el, index, roomData.value, res);
-      // if (res < 0) {
-      //   console.log("SET OBSERVER", observer, observer.takeRecords());
-      //   observer.observe(el.$el);
-      // }
+      //const roomData = currentTempChatData.value ?? roomsData.value[chatId.value];
+      const isLastMessage = index === messages.value?.length - 1;
+      debugger;
+      if (isLastMessage) {
+        console.log("last message", isLastMessage, el.$el.nextElementSibling);
+        messageScrollObserver.observe(el.$el.nextElementSibling);
+      }
+      if (chatData.unread === 0) return;
+      const isReadMessage = index - chatData.unread;
+      // console.log("EL!!!", el, index, roomData.value, res);
+      if (isReadMessage < 0) {
+        console.log(
+          "SET OBSERVER",
+          readMessageObserver,
+          readMessageObserver.takeRecords()
+        );
+        readMessageObserver.observe(el.$el.nextElementSibling);
+      }
     }
 
     function isReadMessage(index) {
@@ -162,7 +232,7 @@ export default {
     }
 
     function deleteMessages(messagesList) {
-      emit('deleteMessages', messagesList)
+      emit("deleteMessages", messagesList);
     }
 
     function deleteMessagesHandler() {

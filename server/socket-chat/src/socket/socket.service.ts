@@ -201,15 +201,18 @@ export class SocketService {
     //   'message',
     //   roomId,
     // );
+    debugger;
     let roomMessages: Message[] = [];
 
     if (scrollData.inMemory) {
+      const takeLength = scrollData.page * scrollData.limit;
+
       roomMessages = await this.socketRedisAdapter.getHashes(
         'message',
         null,
         scrollData.chatId,
-        scrollData.page * scrollData.limit,
-        scrollData.limit,
+        takeLength,
+        takeLength + scrollData.limit,
       );
 
       if (roomMessages?.length >= scrollData.limit)
@@ -220,6 +223,7 @@ export class SocketService {
           inMemory: true,
           hasMore: true,
         };
+      scrollData.page = 0;
     }
 
     const roomDbMessages = await this.messageService.getAllByChat(
@@ -237,7 +241,7 @@ export class SocketService {
       page: scrollData.page + 1,
       limit: scrollData.limit,
       inMemory: false,
-      hasMore: roomDbMessages.length > 0,
+      hasMore: roomDbMessages.length >= scrollData.limit,
     };
     //this.logger.debug(`get room messages - `, roomMessages);
 
