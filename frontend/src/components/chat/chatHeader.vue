@@ -1,18 +1,27 @@
 <template>
   <div class="chat__header">
+    <div v-if="selectedMessages.length">
+      <p>{{ selectedMessages.length }}</p>
+      <button @click="deleteMessages">Deleted</button>
+      <button @click="selectedMessages = []">Cancel</button>
+    </div>
     <div class="chat__header-data">
-      <h1 class="chat__title" :class="{ 'chat__title--private': !groupUsers }">
-        {{ chatData.title }}
-        <div v-if="selectedMessages.length">
-          <p>{{ selectedMessages.length }}</p>
-          <button @click="deleteMessages">Deleted</button>
-          <button @click="selectedMessages = []">Cancel</button>
-        </div>
-      </h1>
-      <p class="chat__count" v-if="groupUsers" @click="showUsers = !showUsers">
+      <div v-if="chatData.adminId">
+        <h1 class="chat__title chat__title--private">
+          Group - {{ chatData.title }}
+        </h1>
+        <p @click="isShowUsersList = !isShowUsersList">
+          Members - {{ chatGroupMembersCount }}
+        </p>
+      </div>
+      <div v-else>
+        <h1 class="chat__title">Chat - {{ chatData.title }}</h1>
+        <p>Status - {{ privateChatOnlineStatus }}</p>
+      </div>
+      <!-- <p class="chat__count" v-if="groupUsers" @click="showUsers = !showUsers">
         {{ groupUsers.length }} peoples
-      </p>
-      <NavbarUserList :users="groupUsers" :show="showUsers" />
+      </p> -->
+      <!-- <NavbarUserList :users="groupUsers" :show="showUsers" /> -->
     </div>
 
     <div class="chat__topbar" v-if="showTollbar">
@@ -20,10 +29,10 @@
         <button class="btn" @click="showAddUsers = !showAddUsers">
           <i class="bi bi-person-plus-fill"></i>
         </button>
-        <NavbarUserList
+        <!-- <NavbarUserList
           :users="invaitedUsers"
           :show="showAddUsers"
-          @selectUser="addUserToChat"
+          @selectUser="addUserToChat" -->
         />
       </div>
       <div class="chat__user-group">
@@ -33,10 +42,10 @@
         >
           <i class="bi bi-person-dash-fill"></i>
         </button>
-        <NavbarUserList
+        <!-- <NavbarUserList
           :users="removeUsersList"
           :show="showRemoveUsers"
-          @selectUser="removeUserFromChat"
+          @selectUser="removeUserFromChat" -->
         />
       </div>
     </div>
@@ -47,6 +56,36 @@
       v-if="groupUsers && !showTollbar"
       >Exit chat</a
     >
+  </div>
+  <div v-if="isShowUsersList" style="color: white">
+    <ul style="margin: 0">
+      <li
+        style="margin: 0"
+        v-for="userData in chatData.users"
+        :key="userData.id"
+      >
+        <div>{{ userData.id }}</div>
+        <div>{{ userData.login }}</div>
+        <div>{{ userData.lastOnline }}</div>
+        <button
+          @click="deleteChatMember(userData.id)"
+          v-if="chatData.adminId !== userData.id"
+        >
+          Delete
+        </button>
+        <div v-else>ADMIN</div>
+      </li>
+    </ul>
+    <button @click="getFreeChatUsersHandler">Load free contacts</button>
+
+    <ul>
+      <li v-for="userData in freeUsersList" :key="userData.id">
+        <div>{{ userData.id }}</div>
+        <div>{{ userData.login }}</div>
+        <div>{{ userData.lastOnline }}</div>
+        <button @click="addChatMember(userData.id)">Add</button>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -59,6 +98,8 @@ import $api from "../../axios";
 import NavbarUserList from "./navbarUserList.vue";
 
 export default {
+  emits: ["deleteMessages"],
+  components: { NavbarUserList },
   setup(_, { emit }) {
     const store = useStore();
     const route = useRoute();
@@ -67,11 +108,12 @@ export default {
     const chatId = computed(() => route.params.id);
     const chatData = computed(() => store.state.chat.chats[chatId.value]);
     const userData = computed(() => store.state.auth.user);
-    const userId = userData.value.id;
 
     const selectedMessages = inject("selectedMessages");
 
-    const showTollbar = computed(() => chatData.value.adminId === userId);
+    const showTollbar = computed(
+      () => chatData.value.adminId === userData.value.id
+    );
 
     const showUsers = ref(false);
     const showAddUsers = ref(false);
@@ -83,46 +125,149 @@ export default {
       () => store.getters["chat/getRemoveUserList"]
     );
     const invaitedUsers = computed(() => store.state.chat.invaitedUsers);
+    const freeUsersList = ref([]);
 
     const chatSocket = inject("chatSocket");
 
-    async function addUserToChat(id) {
-      store.dispatch("chat/invaiteUserToChat", {
-        userId: id,
-        chatId: chatId.value,
-      });
-    }
+    const privateChatOnlineStatus = computed(() => {
+      const userId = Object.keys(chatData.value.users)[0];
+      return chatData.value.users[userId].lastOnline;
+    });
 
-    async function removeUserFromChat(id) {
-      store.dispatch("chat/removeUserFromChat", {
-        userId: id,
-        chatId: chatId.value,
-      });
-    }
+    const chatGroupMembersCount = computed(
+      () => Object.keys(chatData.value.users).length
+    );
 
-    async function exitGroup() {
-      console.log("exit user with id ", userId);
-      const res = await $api.delete("/chat/exitUser", {
+    const isShowUsersList = ref(false);
+
+    chatSocket.on("getFreeChatContacts", (freeContacts) => {
+      console.log("freeContacts", freeContacts);
+      freeUsersList.value = freeContacts;
+    });
+
+    // async function addUserToChat(id) {
+    //   store.dispatch("chat/invaiteUserToChat", {
+    //     userId: id,
+    //     chatId: chatId.value,
+    //   });
+    // }
+
+    // async function removeUserFromChat(id) {
+    //   store.dispatch("chat/removeUserFromChat", {
+    //     userId: id,
+    //     chatId: chatId.value,
+    //   });
+    // }
+
+    // async function exitGroup() {
+    //   console.log("exit user with id ", userId);
+    //   const res = await $api.delete("/chat/exitUser", {
+    //     chatId: chatId.value,
+    //     userId,
+    //   });
+    //   store.state.chat.chats = store.state.chat.chats.filter(
+    //     (chat) => chat.chatId !== chatId.value
+    //   );
+    //   store.commit("chat/cleanMessages");
+    //   store.commit("chat/cleanChatData");
+    //   chatSocket.emit("userLeave", {
+    //     roomId: chatId.value,
+    //     userId,
+    //   });
+    //   if (res.data) {
+    //     router.push("/chat");
+    //   }
+    // }
+
+    function getFreeChatUsersHandler() {
+      chatSocket.emit("getFreeChatUsers", {
+        userId: userData.value.id,
         chatId: chatId.value,
-        userId,
       });
-      store.state.chat.chats = store.state.chat.chats.filter(
-        (chat) => chat.chatId !== chatId.value
-      );
-      store.commit("chat/cleanMessages");
-      store.commit("chat/cleanChatData");
-      chatSocket.emit("userLeave", {
-        roomId: chatId.value,
-        userId,
-      });
-      if (res.data) {
-        router.push("/chat");
-      }
     }
 
     function deleteMessages() {
       emit("deleteMessages");
     }
+
+    function deleteChatMember(memberId) {
+      console.log("delete from chat", chatId.value, "user with id ", memberId);
+      chatSocket.emit("remove-user", {
+        chatId: chatId.value,
+        userId: memberId,
+      });
+    }
+
+    function addChatMember(memberId) {
+      chatSocket.emit("invite-user", {
+        chatId: chatId.value,
+        userId: memberId,
+      });
+    }
+
+    chatSocket.on("inviteChatUser", (inseredUserData) => {
+      console.log("inseredUserData", inseredUserData);
+
+      if (!inseredUserData) {
+        console.log("ERROR");
+        return;
+      }
+
+      if (!inseredUserData) return;
+
+      const invitedUserId = inseredUserData.userData.id;
+
+      freeUsersList.value = freeUsersList.value.filter(
+        (user) => user.id !== invitedUserId
+      );
+      console.log("freeUsersList after insert", freeUsersList.value);
+
+      // if (freeUsersList.value.hasOwnProperty(inseredUserData[0].userId)) {
+      //   delete freeUsersList.value[inseredUserData[0].userId];
+      // }
+
+      // if (!roomsData.value.hasOwnProperty(inseredUserData.inseredData.chatId))
+      //   return;
+      store.commit("chat/addUserToGroup", {
+        chatId: inseredUserData.inseredData.chatId,
+        userData: inseredUserData.userData,
+      });
+    });
+
+    chatSocket.on("removeChatUser", (removeUser) => {
+      debugger;
+      if (!removeUser.userData) {
+        console.log("ERROR");
+        return;
+      }
+
+      console.log("remove user", removeUser);
+
+      let roomData = null;
+
+      if (store.state.chat.chats.hasOwnProperty(removeUser.userData.chatId)) {
+        roomData = store.state.chat.chats[removeUser.userData.chatId];
+      } else if (
+        (store.state.chat.currentTempChatData.id = removeUser.userData.chatId)
+      ) {
+        roomData = store.state.chat.currentTempChatData;
+      } else {
+        console.log("ERROR");
+        return;
+      }
+
+      freeUsersList.value.push(removeUser.deletedUserInfo);
+
+      roomData.users = roomData.users.filter(
+        (user) => user.id !== removeUser.deletedUserInfo.id
+      );
+
+      // delete roomsData.value[removeUserData.chatId].users[removeUserData.userId];
+      if (removeUser.deletedUserInfo.id !== userData.value.id) return;
+
+      store.commit("chat/deleteChatData", removeUser.userData.chatId);
+      router.push("/");
+    });
 
     return {
       chatData,
@@ -134,13 +279,19 @@ export default {
       invaitedUsers,
       removeUsersList,
       selectedMessages,
-      exitGroup,
+      privateChatOnlineStatus,
+      isShowUsersList,
+      chatGroupMembersCount,
+      freeUsersList,
+      // exitGroup,
+      addChatMember,
+      deleteChatMember,
       deleteMessages,
-      addUserToChat,
-      removeUserFromChat,
+      getFreeChatUsersHandler,
+      // addUserToChat,
+      // removeUserFromChat,
     };
   },
-  components: { NavbarUserList },
 };
 </script>
 

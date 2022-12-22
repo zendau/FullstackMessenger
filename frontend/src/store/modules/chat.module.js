@@ -246,6 +246,17 @@ export const chat = {
           )
       );
     },
+    addUserToGroup(state, { chatId, userData }) {
+      if (!state.chats[chatId]) return;
+      state.chats[chatId].users.push(userData);
+    },
+    deleteChatData(state, chatId) {
+      if (state.chats[chatId]) {
+        delete state.chats[chatId];
+      } else if (state.currentTempChatData.id === chatId) {
+        state.currentTempChatData = null;
+      }
+    },
     // addMessage(state, message) {
     //   state.messages.unshift(message);
     // },
