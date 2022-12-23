@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from './contact.entity';
 import { UserService } from 'src/user/user.service';
 import { union } from 'src/utils/typeorm/union';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class ContactService {
@@ -270,12 +271,61 @@ export class ContactService {
     return res;
   }
 
-  // async getUserRequest(userId: number) {
-  //   const usersList = await this.userSerivce.getAllUsers()
-  //   const contactsList = await this.getContactList(userId)
-  //   console.log(userId, typeof userId)
-  //   const freeUsersList = usersList.filter((item) => !contactsList.includes(item) && item.id !== userId && !item.isBanned)
-  //   return freeUsersList
+  async getContactData(userId: number, contactId: number) {
+    const contactData = await this.userService.getUserById(contactId);
 
-  // }
+    if (!(contactData instanceof User)) return contactData;
+    debugger;
+    const resStatus = Object.assign(contactData, {
+      isBanned: false,
+      isBannedByContact: false,
+      isFriend: false,
+      isConfirmRequest: false,
+      isPendingRequest: false,
+    });
+
+    const userStatus = await this.contactRepository
+      .createQueryBuilder()
+      .where('userId = :userId', { userId })
+      .andWhere('contactId = :contactId', { contactId })
+      .getOne();
+
+    if (userStatus?.isBanned) {
+      resStatus.isBannedByContact = true;
+      return resStatus;
+    }
+
+    if (userStatus?.isContact) {
+      resStatus.isFriend = true;
+      return resStatus;
+    } else if (userStatus?.isContact === false) {
+      resStatus.isPendingRequest = true;
+      return resStatus;
+    }
+
+    const contactStatus = await this.contactRepository
+      .createQueryBuilder()
+      .where('contactId = :userId', { userId })
+      .andWhere('userId = :contactId', { contactId })
+      .getOne();
+
+    if (contactStatus?.isBanned) {
+      resStatus.isBanned = true;
+      return resStatus;
+    }
+
+    if (contactStatus?.isContact === false) {
+      resStatus.isConfirmRequest = true;
+      return resStatus;
+    }
+    return resStatus;
+    // async getUserRequest(userId: number) {
+    //   const usersList = await this.userSerivce.getAllUsers()
+    //   const contactsList = await this.getContactList(userId)
+    //   console.log(userId, typeof userId)
+    //   const freeUsersList = usersList.filter((item) => !contactsList.includes(item) && item.id !== userId && !item.isBanned)
+    //   return freeUsersList
+
+    // }
+  }
 }

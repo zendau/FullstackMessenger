@@ -134,10 +134,10 @@ export default {
             inMemory: messagePagination.inMemory,
           });
         }
-      },
-      {
-        rootMargin: "100px",
       }
+      // {
+      //   rootMargin: "100px",
+      // }
     );
 
     const message = computed(() => store.state.chat.message);
@@ -193,7 +193,16 @@ export default {
       //observer.observe(scrollEnd.value);
     });
 
+    chatSocket.on("updateReadMessages", (newData) => {
+      store.commit("chat/updateReadMessages", {
+        chatId,
+        unreadCount,
+      });
+    });
+
     function setRefMessage(el, index) {
+      if (!el) return;
+
       //const roomData = currentTempChatData.value ?? roomsData.value[chatId.value];
       const isLastMessage = index === messages.value?.length - 1;
       debugger;

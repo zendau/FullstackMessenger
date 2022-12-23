@@ -146,7 +146,7 @@ export const chat = {
       state.chats = chats;
     },
     appendChatsData(state, newChats) {
-      state.chats = Object.assign(state.chats, newChats)
+      state.chats = Object.assign(state.chats, newChats);
     },
     saveCurrentTempChat(state, chatData) {
       debugger;
@@ -269,6 +269,13 @@ export const chat = {
           }
         });
       });
+    },
+    updateReadMessages(state, { chatId, unreadCount }) {
+      if (state.chats.hasOwnProperty(chatId)) {
+        state.chats[chatId].isNotUnread = unreadCount;
+      } else if (state.currentTempChatData.id === chatId) {
+        state.currentTempChatData.isNotUnread = unreadCount;
+      }
     },
     // addMessage(state, message) {
     //   state.messages.unshift(message);

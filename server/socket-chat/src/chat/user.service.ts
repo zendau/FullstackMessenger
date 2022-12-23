@@ -4,6 +4,7 @@ import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
 import { firstValueFrom } from 'rxjs';
 import IUser from './interfaces/IUser';
 import IGetDataError from './interfaces/IGetDataError';
+import IUserChat from 'src/socket/interfaces/user/IUserChat';
 
 @Injectable()
 export class UserService {
@@ -86,5 +87,25 @@ export class UserService {
 
     if (typeof res === 'boolean') return res;
     else throw new HttpException(res.message, res.httpCode);
+  }
+
+  async getContactData(userData: IUserChat) {
+    // const contactData: IUser = await this.socketRedisAdapter.getValue(
+    //   'user',
+    //   {
+    //     getValuesFromDB: async () => {
+    //       const res = await firstValueFrom(
+    //         this.authServiceClient.send('user/id', userId),
+    //       );
+    //       return res;
+    //     },
+    //     isExpire: true,
+    //   },
+    //   userId,
+    // );
+    const contactData = await firstValueFrom(
+      this.authServiceClient.send('contact/getContactData', userData),
+    );
+    return contactData;
   }
 }

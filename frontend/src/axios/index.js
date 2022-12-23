@@ -1,7 +1,7 @@
 import axios from "axios";
 import store from "../store";
 
-const API_URL = import.meta.env.VUE_APP_API;
+const API_URL = import.meta.env.VITE_API;
 console.log("API_URL", API_URL);
 const $api = axios.create({
   withCredentials: true,

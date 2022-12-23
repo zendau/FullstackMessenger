@@ -150,10 +150,7 @@ export class ContactController {
   @MessagePattern('contact/block')
   async blockUserContact(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .blockUser(
-        parseInt(requestData.userId),
-        parseInt(requestData.contactId),
-      )
+      .blockUser(parseInt(requestData.userId), parseInt(requestData.contactId))
       .catch((err) => {
         return {
           status: false,
@@ -168,6 +165,23 @@ export class ContactController {
   async unblockUserContact(@Payload() requestData: IContact) {
     const res = await this.contactService
       .unblockUser(
+        parseInt(requestData.userId),
+        parseInt(requestData.contactId),
+      )
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
+  }
+
+  @MessagePattern('contact/getContactData')
+  async getContactData(@Payload() requestData: IContact) {
+    const res = await this.contactService
+      .getContactData(
         parseInt(requestData.userId),
         parseInt(requestData.contactId),
       )

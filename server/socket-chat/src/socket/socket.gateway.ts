@@ -220,4 +220,11 @@ export class SocketGateway {
 
     this.server.to(socket.id).emit('getFreeChatContacts', freeUsers);
   }
+
+  @SubscribeMessage('getContactData')
+  async getContactData(socket: Socket, payload: IUserChat) {
+    const contactData = await this.socketService.getContactData(payload);
+
+    this.server.to(socket.id).emit('contactData', contactData);
+  }
 }

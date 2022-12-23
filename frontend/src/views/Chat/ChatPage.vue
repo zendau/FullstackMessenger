@@ -9,6 +9,7 @@
     <contacts v-else />
     <chatContainer />
   </section>
+  <UserModal />
 </template>
 
 <script>
@@ -23,10 +24,12 @@ import Contacts from "../../components/chat/contacts.vue";
 import ChatContainer from "../../components/chat/chatContainer.vue";
 import Chats from "../../components/chat/chats.vue";
 
+import UserModal from "../../components/chat/userModal.vue";
+
 import $api from "../../axios";
 
 export default {
-  components: { chatNavbar, Contacts, ChatContainer, Chats },
+  components: { chatNavbar, Contacts, ChatContainer, Chats, UserModal },
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -145,6 +148,7 @@ export default {
     }
 
     function setLastChatElement(el) {
+      if (!el) return;
       console.log("LAST ELEMENT", el);
       chatObserver.observe(el);
     }
@@ -152,7 +156,7 @@ export default {
     chatSocket.on("appendRoomsData", (newRoomsData) => {
       loadChatsPagination.hasMore = newRoomsData.hasMore;
       loadChatsPagination.page = newRoomsData.page;
-      console.log('loadChatsPagination', loadChatsPagination)
+      console.log("loadChatsPagination", loadChatsPagination);
       store.commit("chat/appendChatsData", newRoomsData.roomsData);
     });
 

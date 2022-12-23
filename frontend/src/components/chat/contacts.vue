@@ -1,20 +1,39 @@
 <template>
-  <div class="chat__contacts" :class="{'chat__contacts--active': !isShowMobileMessages}">
-    <button class="btn" @click="groupType = !groupType">
+  <div
+    class="chat__contacts"
+    :class="{ 'chat__contacts--active': !isShowMobileMessages }"
+  >
+    <!-- <button class="btn" @click="groupType = !groupType">
       {{ groupType ? "Close" : "Create group" }}
-    </button>
+    </button> -->
+    <div style="display: flex;">
+      <button>Add | Contacts</button>
+      <button>Pending</button>
+      <button>Outgoing</button>
+    </div>
+
+    <input type="text" />
     <p class="empty_message" v-if="contacts.length === 0">No contacts</p>
     <create-group v-if="groupType" :groupUsers="groupUsers" :adminId="userId" />
     <ul class="contacts__list">
-      <li class="contact__item" v-for="user in contacts" :key="user.id" @click="openUserChat(user.id)">
+      <li
+        class="contact__item"
+        v-for="user in contacts"
+        :key="user.id"
+        @click="openUserChat(user.id)"
+      >
         <i class="bi bi-person"></i>
-        <input v-if="groupType" v-model="groupUsers" :value="user.id" type="checkbox">
+        <input
+          v-if="groupType"
+          v-model="groupUsers"
+          :value="user.id"
+          type="checkbox"
+        />
         <p>{{ user.login }}</p>
       </li>
     </ul>
   </div>
 </template>
-
 
 <script>
 //import { ref } from "vue";
@@ -33,10 +52,10 @@ export default {
     const router = useRouter();
     const store = useStore();
 
-    const isShowMobileMessages = inject('isShowMobileMessages')
+    const isShowMobileMessages = inject("isShowMobileMessages");
 
-    const userData = computed(() => store.state.auth.user)
-    const contacts = computed(() => store.state.chat.constacts)
+    const userData = computed(() => store.state.auth.user);
+    const contacts = computed(() => store.state.chat.constacts);
 
     const groupUsers = ref([]);
 

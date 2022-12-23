@@ -805,7 +805,7 @@ export class SocketService {
     };
   }
 
-  async removeUserFromChat(userData: { chatId: string; userId: number }) {
+  async removeUserFromChat(userData: IUserChat) {
     const resDeleted = await this.chatService.exitUserGroup(userData);
 
     if (!resDeleted) return false;
@@ -830,5 +830,10 @@ export class SocketService {
       deletedUserInfo,
       userData,
     };
+  }
+
+  async getContactData(userData: IUserChat) {
+    const contactData = await this.userService.getContactData(userData);
+    return contactData;
   }
 }

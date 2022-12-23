@@ -1,17 +1,5 @@
 <template>
-  <Teleport to="#app" v-if="isShowCTX">
-    <div
-      @contextmenu.prevent="closeMessageCTX"
-      @click="closeMessageCTX"
-      style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        background: rgba(0, 0, 0, 0.5);
-        height: 100vh;
-        width: 100%;
-      "
-    ></div>
+  <Modal :isShowCTX="isShowCTX" @closeMessageCTX="closeMessageCTX">
     <ul
       style="
         position: absolute;
@@ -49,13 +37,15 @@
         Delete
       </li>
     </ul>
-  </Teleport>
+  </Modal>
 </template>
 
 <script>
 import { inject, computed } from "vue";
+import Modal from "../UI/Modal.vue";
 
 export default {
+  components: { Modal },
   emits: ["deleteMessages"],
   props: ["ctxMenuData"],
   setup(props, { emit }) {
