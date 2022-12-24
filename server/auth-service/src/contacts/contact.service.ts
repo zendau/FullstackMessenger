@@ -169,7 +169,7 @@ export class ContactService {
     const resDeleted = await this.contactRepository
       .createQueryBuilder()
       .delete()
-      .where('userId = :userId and contactId = :contactId', {
+      .where('userId = :contactId and contactId = :userId', {
         userId: requestData.userId,
         contactId: requestData.contactId,
       })

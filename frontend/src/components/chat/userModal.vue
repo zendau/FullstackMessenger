@@ -41,7 +41,7 @@
 
 <script>
 import Modal from "../UI/Modal.vue";
-import { ref, inject, computed } from "vue";
+import { ref, inject, computed, watch } from "vue";
 import { useStore } from "vuex";
 import $api from "../../axios";
 
@@ -50,106 +50,83 @@ export default {
   setup() {
     const store = useStore();
 
-    const contactData = ref(null);
     const userId = computed(() => store.state.auth.user.id);
+    const contactId = ref(1);
+    const contactData = computed(
+      () => store.state.contact.contacts[contactId.value]
+    );
 
     const chatSocket = inject("chatSocket");
 
-    chatSocket.emit("getContactData", {
-      userId: userId.value,
-      contactId: 3,
-    });
+    watch(
+      contactId,
+      (id) => {
+        console.log("id", id);
+        if (!contactData.value) {
+          console.log("emit");
+          chatSocket.emit("getContactData", {
+            userId: userId.value,
+            contactId: id,
+          });
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
 
     chatSocket.on("contactData", (data) => {
-      console.log("!!!!!!1", data);
-      contactData.value = data;
+      console.log("get data", data);
+      store.commit("contact/setContactData", data);
     });
 
     async function blockUser() {
-      console.log("block user by id ", contactData.value.id);
-      const res = await $api.patch("/contact/block", {
+      store.dispatch("contact/blockUser", {
         userId: userId.value,
-        contactId: contactData.value.id,
+        contactId: contactId.value,
       });
-      console.log("res", res);
     }
 
     async function unblockUser() {
-      console.log("unblock user by id ", contactData.value.id);
-      const res = await $api.patch("/contact/unBlock", {
+      store.dispatch("contact/unblockUser", {
         userId: userId.value,
-        contactId: contactData.value.id,
+        contactId: contactId.value,
       });
-      console.log("res", res);
     }
 
     async function deleteFromContacts() {
-      console.log(
-        "delete user with id ",
-        contactData.value.id,
-        "userId - ",
-        userId.value
-      );
-      const res = await $api.delete("/contact/delete", {
-        data: {
-          userId: userId.value,
-          contactId: contactData.value.id,
-        },
+      store.dispatch("contact/deleteFromContacts", {
+        userId: userId.value,
+        contactId: contactId.value,
       });
     }
 
     async function addToContacts() {
-      console.log(
-        "add user with id ",
-        contactData.value.id,
-        "userId - ",
-        userId.value
-      );
-      const res = await $api.post("/contact/sendRequest", {
+      store.dispatch("contact/addToContacts", {
         userId: userId.value,
-        contactId: contactData.value.id,
+        contactId: contactId.value,
       });
     }
 
     async function cancelOutgoingRequest() {
-      console.log(
-        "cancel user request with id ",
-        contactData.value.id,
-        "userId - ",
-        userId.value
-      );
-      const res = await $api.post("/contact/reject", {
+      store.dispatch("contact/cancelOutgoingRequest", {
         userId: userId.value,
-        contactId: contactData.value.id,
+        contactId: contactId.value,
       });
     }
 
     async function confirmContactRequest() {
-      console.log(
-        "confirm user request with id ",
-        contactData.value.id,
-        "userId - ",
-        userId.value
-      );
-      const res = await $api.post("/contact/confirm", {
+       store.dispatch("contact/confirmContactRequest", {
         userId: userId.value,
-        contactId: contactData.value.id,
+        contactId: contactId.value,
       });
-      console.log("res", res);
     }
 
     async function cancelPendingRequest() {
-      console.log(
-        "reject pending user request with id ",
-        contactData.value.id,
-        "userId - ",
-        userId.value
-      );
-      const res = await $api.post("/contact/reject", {
-        userId: contactData.value.id,
-        contactId: userId.value,
+       store.dispatch("contact/cancelPendingRequest", {
+        userId: userId.value,
+        contactId: contactId.value,
       });
-      console.log("res", res);
     }
 
     return {
