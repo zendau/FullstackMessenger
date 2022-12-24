@@ -25,6 +25,8 @@ import {
 import { HttpErrorDTO } from '../ResponseDTO/httpError.dto';
 import { ContactDTO } from '../ResponseDTO/contact.dto';
 import { ParseIntPipe } from '@nestjs/common/pipes';
+import IGetContactList from './interfaces/IGetContactList';
+import IContact from './interfaces/IContact';
 
 @ApiBearerAuth()
 @ApiTags('Auth microservice - Contact controller')
@@ -43,10 +45,10 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   //@UseGuards(JwtAuthGuard)
-  @Get('list/:userId')
-  async getUserContactList(@Param('userId', ParseIntPipe) userId: number) {
+  @Get('list')
+  async getUserContactList(@Body() listData: IGetContactList) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/list', userId),
+      this.authServiceClient.send('contact/list', listData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -66,10 +68,10 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   //@UseGuards(JwtAuthGuard)
-  @Get('freeList/:userId')
-  async getFreeUserList(@Param('userId', ParseIntPipe) userId: number) {
+  @Get('freeList')
+  async getFreeUserList(@Body() listData: IGetContactList) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/freeList', userId),
+      this.authServiceClient.send('contact/freeList', listData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -92,7 +94,7 @@ export class ContactController {
   //@UseGuards(JwtAuthGuard)
   //TODO
   @Post('sendRequest')
-  async sendContactRequest(@Body() requestData: ContactDTO) {
+  async sendContactRequest(@Body() requestData: IContact) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/sendRequest', requestData),
     );
@@ -114,12 +116,10 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   //@UseGuards(JwtAuthGuard)
-  @Get('pending/:userId')
-  async getContactsRequestPending(
-    @Param('userId', ParseIntPipe) userId: number,
-  ) {
+  @Get('pending')
+  async getContactsRequestPending(@Body() listData: IGetContactList) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/pending', userId),
+      this.authServiceClient.send('contact/pending', listData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -139,12 +139,10 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   //@UseGuards(JwtAuthGuard)
-  @Get('outgoing/:userId')
-  async getContactsRequestOutgoing(
-    @Param('userId', ParseIntPipe) userId: number,
-  ) {
+  @Get('outgoing')
+  async getContactsRequestOutgoing(@Body() listData: IGetContactList) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/outgoing', userId),
+      this.authServiceClient.send('contact/outgoing', listData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -166,7 +164,7 @@ export class ContactController {
   @UsePipes(ValidationPipe)
   //@UseGuards(JwtAuthGuard)
   @Post('confirm')
-  async confirmUserRequest(@Body() requestData: ContactDTO) {
+  async confirmUserRequest(@Body() requestData: IContact) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/confirm', requestData),
     );
@@ -190,7 +188,7 @@ export class ContactController {
   @UsePipes(ValidationPipe)
   //@UseGuards(JwtAuthGuard)
   @Post('reject')
-  async rejectUserRequest(@Body() requestData: ContactDTO) {
+  async rejectUserRequest(@Body() requestData: IContact) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/reject', requestData),
     );
@@ -214,7 +212,7 @@ export class ContactController {
   @UsePipes(ValidationPipe)
   //@UseGuards(JwtAuthGuard)
   @Delete('delete')
-  async deleteUserFromContact(@Body() requestData: ContactDTO) {
+  async deleteUserFromContact(@Body() requestData: IContact) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/delete', requestData),
     );
@@ -236,10 +234,10 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   //@UseGuards(JwtAuthGuard)
-  @Get('blockedUsers/:userId')
-  async getBlockedUsers(@Param('userId', ParseIntPipe) userId: number) {
+  @Get('blockedUsers')
+  async getBlockedUsers(@Body() listData: IGetContactList) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/blockedUsers', userId),
+      this.authServiceClient.send('contact/blockedUsers', listData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -261,7 +259,7 @@ export class ContactController {
   @UsePipes(ValidationPipe)
   //@UseGuards(JwtAuthGuard)
   @Patch('block')
-  async blockUserContact(@Body() requestData: ContactDTO) {
+  async blockUserContact(@Body() requestData: IContact) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/block', requestData),
     );

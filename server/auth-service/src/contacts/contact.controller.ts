@@ -3,15 +3,16 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ParseIntPipe } from 'src/pipes/parse-int.pipe';
 import { ContactService } from './contact.service';
 import IContact from './interfaces/IContact';
+import IGetContactList from './interfaces/IGetContactList';
 
 @Controller()
 export class ContactController {
   constructor(private contactService: ContactService) {}
 
   @MessagePattern('contact/list')
-  async getUserContactList(@Payload(new ParseIntPipe()) userId: number) {
+  async getUserContactList(listData: IGetContactList) {
     const res = await this.contactService
-      .getContactList(userId)
+      .getContactList(listData)
       .catch((err) => {
         return {
           status: false,
@@ -23,25 +24,27 @@ export class ContactController {
   }
 
   @MessagePattern('contact/freeList')
-  async getFreeUserList(@Payload(new ParseIntPipe()) userId: number) {
+  async getFreeUserList(listData: IGetContactList) {
     debugger;
-    const res = await this.contactService.getFreeUsers(userId).catch((err) => {
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
+    const res = await this.contactService
+      .getFreeUsers(listData)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
     return res;
   }
 
   @MessagePattern('contact/sendRequest')
   async sendContactRequest(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .sendContactRequest(
-        parseInt(requestData.userId),
-        parseInt(requestData.contactId),
-      )
+      .sendContactRequest({
+        userId: requestData.userId,
+        contactId: requestData.contactId,
+      })
       .catch((err) => {
         return {
           status: false,
@@ -53,9 +56,9 @@ export class ContactController {
   }
 
   @MessagePattern('contact/pending')
-  async getContactsRequestPending(@Payload(new ParseIntPipe()) userId: number) {
+  async getContactsRequestPending(listData: IGetContactList) {
     const res = await this.contactService
-      .getContactsPending(userId)
+      .getContactsPending(listData)
       .catch((err) => {
         return {
           status: false,
@@ -67,11 +70,9 @@ export class ContactController {
   }
 
   @MessagePattern('contact/outgoing')
-  async getContactsRequestOutgoing(
-    @Payload(new ParseIntPipe()) userId: number,
-  ) {
+  async getContactsRequestOutgoing(@Payload() listData: IGetContactList) {
     const res = await this.contactService
-      .getContactsOutgoing(userId)
+      .getContactsOutgoing(listData)
       .catch((err) => {
         return {
           status: false,
@@ -85,10 +86,10 @@ export class ContactController {
   @MessagePattern('contact/confirm')
   async confirmUserRequest(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .confirmRequest(
-        parseInt(requestData.userId),
-        parseInt(requestData.contactId),
-      )
+      .confirmRequest({
+        userId: requestData.userId,
+        contactId: requestData.contactId,
+      })
       .catch((err) => {
         return {
           status: false,
@@ -102,10 +103,10 @@ export class ContactController {
   @MessagePattern('contact/reject')
   async rejectUserRequest(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .rejectRequest(
-        parseInt(requestData.userId),
-        parseInt(requestData.contactId),
-      )
+      .rejectRequest({
+        userId: requestData.userId,
+        contactId: requestData.contactId,
+      })
       .catch((err) => {
         return {
           status: false,
@@ -119,10 +120,10 @@ export class ContactController {
   @MessagePattern('contact/delete')
   async deleteUserFromContact(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .deleteUserFromContact(
-        parseInt(requestData.userId),
-        parseInt(requestData.contactId),
-      )
+      .deleteUserFromContact({
+        userId: requestData.userId,
+        contactId: requestData.contactId,
+      })
       .catch((err) => {
         return {
           status: false,
@@ -134,9 +135,9 @@ export class ContactController {
   }
 
   @MessagePattern('contact/blockedUsers')
-  async getBlockedUsers(@Payload(new ParseIntPipe()) userId: number) {
+  async getBlockedUsers(listData: IGetContactList) {
     const res = await this.contactService
-      .getBlockedUsers(userId)
+      .getBlockedUsers(listData)
       .catch((err) => {
         return {
           status: false,
@@ -150,7 +151,10 @@ export class ContactController {
   @MessagePattern('contact/block')
   async blockUserContact(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .blockUser(parseInt(requestData.userId), parseInt(requestData.contactId))
+      .blockUser({
+        userId: requestData.userId,
+        contactId: requestData.contactId,
+      })
       .catch((err) => {
         return {
           status: false,
@@ -164,10 +168,10 @@ export class ContactController {
   @MessagePattern('contact/unblock')
   async unblockUserContact(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .unblockUser(
-        parseInt(requestData.userId),
-        parseInt(requestData.contactId),
-      )
+      .unblockUser({
+        userId: requestData.userId,
+        contactId: requestData.contactId,
+      })
       .catch((err) => {
         return {
           status: false,
@@ -181,10 +185,10 @@ export class ContactController {
   @MessagePattern('contact/getContactData')
   async getContactData(@Payload() requestData: IContact) {
     const res = await this.contactService
-      .getContactData(
-        parseInt(requestData.userId),
-        parseInt(requestData.contactId),
-      )
+      .getContactData({
+        userId: requestData.userId,
+        contactId: requestData.contactId,
+      })
       .catch((err) => {
         return {
           status: false,

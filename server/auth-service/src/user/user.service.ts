@@ -141,14 +141,31 @@ export class UserService {
     subQuery: SelectQueryBuilder<Contact> | UnionParameters,
     userId: number,
     isNot: boolean,
+    page: number,
+    limit: number,
+    pattern: string | null,
   ) {
     //console.log('sub', await subQuery.getRawMany());
-    const resList = await this.usersRepository
+
+    const start = page * limit;
+
+    console.log('start', start, page, limit)
+
+    let query = this.usersRepository
       .createQueryBuilder()
       .select('id, email, login, lastOnline')
       .where(`id ${isNot ? 'NOT' : ''} IN (${subQuery.getQuery()})`)
       .andWhere('id != :userId', { userId })
-      .getRawMany();
+      .offset(start)
+      .limit(limit);
+
+    if (pattern) {
+      query = query.andWhere('login like :title', {
+        title: `%${pattern}%`,
+      });
+    }
+
+    const resList = await query.getRawMany();
     return resList;
   }
 

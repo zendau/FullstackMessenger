@@ -38,8 +38,6 @@ export class ChatService {
 
   async getChatPagination({ page, limit, userId }: IChatPagination) {
     const start = page * limit;
-    let hasMore = true;
-
     const listPaginationData = await this.chatRepository
       .createQueryBuilder('chat')
       .select('chat.id')
@@ -59,13 +57,10 @@ export class ChatService {
       .getMany();
 
     const idList = listPaginationData.map((item) => item.id);
-    if (idList.length !== limit) {
-      hasMore = false;
-    }
 
     return {
       idList,
-      hasMore,
+      hasMore: idList.length !== limit,
     };
   }
 
