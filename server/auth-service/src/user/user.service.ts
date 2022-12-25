@@ -141,30 +141,35 @@ export class UserService {
     subQuery: SelectQueryBuilder<Contact> | UnionParameters,
     userId: number,
     isNot: boolean,
-    page: number,
-    limit: number,
+    page: string | null,
+    limit: string | null,
     pattern: string | null,
   ) {
     //console.log('sub', await subQuery.getRawMany());
 
-    const start = page * limit;
+    const start = parseInt(page) * parseInt(limit);
 
-    console.log('start', start, page, limit)
+    console.log('start', start, page, limit);
 
     let query = this.usersRepository
       .createQueryBuilder()
       .select('id, email, login, lastOnline')
       .where(`id ${isNot ? 'NOT' : ''} IN (${subQuery.getQuery()})`)
-      .andWhere('id != :userId', { userId })
-      .offset(start)
-      .limit(limit);
+      .andWhere('id != :userId', { userId });
+
+    if (!Number.isNaN(start)) {
+      console.log('setOffset');
+      query = query.offset(start).limit(parseInt(limit));
+    }
 
     if (pattern) {
+      console.log('set pattern');
       query = query.andWhere('login like :title', {
         title: `%${pattern}%`,
       });
     }
 
+    console.log('userId', query.getQuery());
     const resList = await query.getRawMany();
     return resList;
   }

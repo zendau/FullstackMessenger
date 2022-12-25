@@ -12,6 +12,7 @@ import {
   UsePipes,
   ValidationPipe,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -46,7 +47,8 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('list')
-  async getUserContactList(@Body() listData: IGetContactList) {
+  async getUserContactList(@Query() listData: IGetContactList) {
+    console.log('test', listData);
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/list', listData),
     );
@@ -69,7 +71,7 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('freeList')
-  async getFreeUserList(@Body() listData: IGetContactList) {
+  async getFreeUserList(@Query() listData: IGetContactList) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/freeList', listData),
     );
@@ -117,7 +119,7 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('pending')
-  async getContactsRequestPending(@Body() listData: IGetContactList) {
+  async getContactsRequestPending(@Query() listData: IGetContactList) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/pending', listData),
     );
@@ -140,7 +142,7 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('outgoing')
-  async getContactsRequestOutgoing(@Body() listData: IGetContactList) {
+  async getContactsRequestOutgoing(@Query() listData: IGetContactList) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/outgoing', listData),
     );
@@ -235,7 +237,7 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('blockedUsers')
-  async getBlockedUsers(@Body() listData: IGetContactList) {
+  async getBlockedUsers(@Query() listData: IGetContactList) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/blockedUsers', listData),
     );

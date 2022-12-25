@@ -42,6 +42,8 @@ export default {
 
     const chatId = computed(() => route.params.id);
     const userId = computed(() => store.state.auth.user.id);
+    const modalUserlId = ref(null);
+    provide("modalUserlId", modalUserlId);
 
     const showChats = ref(true);
     provide("showChats", showChats);

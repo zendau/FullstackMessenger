@@ -1,10 +1,25 @@
 // eslint-disable-next-line no-unused-vars
 import $api from "../../axios";
 
+const defaultPatination = {
+  page: 0,
+  limit: 6,
+  hasMore: true,
+};
+
 export const contact = {
   namespaced: true,
   state: {
-    contacts: {},
+    contacts: [],
+    contactsPagintation: { ...defaultPatination },
+    freeUsers: [],
+    freeUsersPagintation: {
+      ...defaultPatination,
+    },
+    pendingRequests: [],
+    outgoingRequests: [],
+    blockedUsers: [],
+    users: {},
     error: null,
   },
   actions: {
@@ -122,19 +137,90 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
+    async getContactsList({ commit, state }, userId) {
+      try {
+        console.log("1");
+        if (!state.contactsPagintation.hasMore) return;
+        console.log("2");
+        const res = await $api.get("/contact/list", {
+          params: {
+            userId,
+            page: state.contactsPagintation.page,
+            limit: state.contactsPagintation.limit,
+          },
+        });
+        commit("setContacts", res.data);
+      } catch (e) {
+        commit("setError", e.response.data.message);
+      }
+    },
+    async getFreeUsersList({ commit, state }, userId) {
+      try {
+        if (!state.freeUsersPagintation.hasMore) return;
+
+        const res = await $api.get("/contact/freeList", {
+          params: {
+            userId,
+            page: state.freeUsersPagintation.page,
+            limit: state.freeUsersPagintation.limit,
+          },
+        });
+        commit("setFreeUsers", res.data);
+      } catch (e) {
+        commit("setError", e.response.data.message);
+      }
+    },
+    async getPendingRequests({ commit }, userId) {
+      try {
+        const res = await $api.get("/contact/pending", {
+          params: {
+            userId,
+          },
+        });
+        commit("setPendingRequests", res.data);
+      } catch (e) {
+        commit("setError", e.response.data.message);
+      }
+    },
+    async getOutgoingRequests({ commit, state }, userId) {
+      try {
+        const res = await $api.get("/contact/outgoing", {
+          params: {
+            userId,
+          },
+        });
+        commit("setOutgoingRequests", res.data);
+      } catch (e) {
+        commit("setError", e.response.data.message);
+      }
+    },
+    async getBlockedUsers({ commit, state }, userId) {
+      try {
+        if (!state.freeUsersPagintation.hasMore) return;
+
+        const res = await $api.get("/contact/blockedUsers", {
+          params: {
+            userId,
+          },
+        });
+        commit("setBannedUsersList", res.data);
+      } catch (e) {
+        commit("setError", e.response.data.message);
+      }
+    },
   },
   mutations: {
     setContactData(state, data) {
-      state.contacts[data.id] = data;
+      state.users[data.id] = data;
     },
     setNewContactStatus(state, { contactId, status, value }) {
       console.log("setNewContactStatus", contactId, status, value);
-      if (!state.contacts[contactId]) return;
-      state.contacts[contactId][status] = value;
+      if (!state.users[contactId]) return;
+      state.users[contactId][status] = value;
     },
     blockUser(state, contactId) {
-      if (!state.contacts[contactId]) return;
-      const contactData = state.contacts[contactId];
+      if (!state.users[contactId]) return;
+      const contactData = state.users[contactId];
       contactData.isBanned = true;
       contactData.isConfirmRequest = false;
       contactData.isConfirmRequest = false;
@@ -143,6 +229,37 @@ export const contact = {
     },
     setError(state, message) {
       state.error = message;
+    },
+    setContacts(state, data) {
+      if (data.resList.length > 0) {
+        state.contacts.push(...data.resList);
+      }
+
+      state.contactsPagintation.page = data.page;
+      state.contactsPagintation.hasMore = data.hasMore;
+    },
+    setFreeUsers(state, data) {
+      if (data.freeUsersList.length > 0) {
+        state.freeUsers.push(...data.freeUsersList);
+      }
+
+      state.freeUsersPagintation.page = data.page;
+      state.freeUsersPagintation.hasMore = data.hasMore;
+    },
+    setPendingRequests(state, data) {
+      if (data.length > 0) {
+        state.pendingRequests.push(...data);
+      }
+    },
+    setOutgoingRequests(state, data) {
+      if (data.length > 0) {
+        state.outgoingRequests.push(...data);
+      }
+    },
+    setBannedUsersList(state, data) {
+      if (data.length > 0) {
+        state.blockedUsers.push(...data);
+      }
     },
   },
   getters: {},

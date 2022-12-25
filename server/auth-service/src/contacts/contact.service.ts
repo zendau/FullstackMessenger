@@ -45,7 +45,11 @@ export class ContactService {
       listData.limit,
       listData.pattern,
     );
-    return { resList, hasMore: resList.length === listData.limit };
+    return {
+      resList,
+      hasMore: resList.length === parseInt(listData.limit),
+      page: parseInt(listData.page) + 1,
+    };
   }
 
   async getFreeUsers(listData: IGetContactList) {
@@ -70,7 +74,11 @@ export class ContactService {
       listData.limit,
       listData.pattern,
     );
-    return { freeUsersList, hasMore: freeUsersList.length === listData.limit };
+    return {
+      freeUsersList,
+      hasMore: freeUsersList.length === parseInt(listData.limit),
+      page: parseInt(listData.page) + 1,
+    };
   }
 
   async sendContactRequest(requestData: IContact) {
@@ -127,7 +135,8 @@ export class ContactService {
       .createQueryBuilder()
       .select('contactId')
       .where('userId = :userId', { userId: listData.userId })
-      .andWhere('isContact = 0');
+      .andWhere('isContact = 0')
+      .andWhere('isBanned = 0');
 
     // const resList = await this.contactRepository
     //   .createQueryBuilder()

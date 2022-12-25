@@ -1,6 +1,6 @@
 <template>
-  <Modal :isShowCTX="true">
-    <div class="test" v-if="contactData">
+  <Modal :isShowCTX="contactData">
+    <div class="test">
       <a class="close-btn"></a>
 
       <div v-if="contactData.isBannedByContact">BLOCKED BY THIS USER</div>
@@ -51,9 +51,9 @@ export default {
     const store = useStore();
 
     const userId = computed(() => store.state.auth.user.id);
-    const contactId = ref(1);
+    const contactId = inject("modalUserlId");
     const contactData = computed(
-      () => store.state.contact.contacts[contactId.value]
+      () => store.state.contact.users[contactId.value]
     );
 
     const chatSocket = inject("chatSocket");
@@ -116,20 +116,21 @@ export default {
     }
 
     async function confirmContactRequest() {
-       store.dispatch("contact/confirmContactRequest", {
+      store.dispatch("contact/confirmContactRequest", {
         userId: userId.value,
         contactId: contactId.value,
       });
     }
 
     async function cancelPendingRequest() {
-       store.dispatch("contact/cancelPendingRequest", {
+      store.dispatch("contact/cancelPendingRequest", {
         userId: userId.value,
         contactId: contactId.value,
       });
     }
 
     return {
+      contactId,
       contactData,
       blockUser,
       unblockUser,

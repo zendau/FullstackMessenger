@@ -1,6 +1,6 @@
 export default interface IGetContactList {
   userId: number;
-  page: number;
-  limit: number;
+  page: number | null;
+  limit: number | null;
   pattern: string | null;
 }

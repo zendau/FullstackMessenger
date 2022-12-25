@@ -6,32 +6,23 @@
     <!-- <button class="btn" @click="groupType = !groupType">
       {{ groupType ? "Close" : "Create group" }}
     </button> -->
-    <div style="display: flex;">
-      <button>Add | Contacts</button>
-      <button>Pending</button>
-      <button>Outgoing</button>
-    </div>
-
     <input type="text" />
+    <div style="display: flex">
+      {{ listType }}
+      <button @click="listType = 'freeUsers'">Add</button>
+      <button @click="listType = 'contacts'">Contacts</button>
+      <button @click="listType = 'pendingRequests'">Pending</button>
+      <button @click="listType = 'outgoingRequests'">Outgoing</button>
+      <button @click="listType = 'blockedUsers'">Blocked</button>
+    </div>
+    <ContactsList v-if="listType === 'contacts'" />
+    <FreeUsersList v-else-if="listType === 'freeUsers'" />
+    <PendingList v-else-if="listType === 'pendingRequests'" />
+    <OutgoingList v-else-if="listType === 'outgoingRequests'" />
+    <BlockedList v-else-if="listType === 'blockedUsers'" />
+
     <p class="empty_message" v-if="contacts.length === 0">No contacts</p>
-    <create-group v-if="groupType" :groupUsers="groupUsers" :adminId="userId" />
-    <ul class="contacts__list">
-      <li
-        class="contact__item"
-        v-for="user in contacts"
-        :key="user.id"
-        @click="openUserChat(user.id)"
-      >
-        <i class="bi bi-person"></i>
-        <input
-          v-if="groupType"
-          v-model="groupUsers"
-          :value="user.id"
-          type="checkbox"
-        />
-        <p>{{ user.login }}</p>
-      </li>
-    </ul>
+    <!-- <create-group v-if="groupType" :groupUsers="groupUsers" :adminId="userId" /> -->
   </div>
 </template>
 
@@ -46,20 +37,39 @@ import createGroup from "./createGroup.vue";
 
 import { useStore } from "vuex";
 
+import ContactsList from "./contacts/contactsList.vue";
+import FreeUsersList from "./contacts/freeUsersList.vue";
+import PendingList from "./contacts/pendingList.vue";
+import OutgoingList from "./contacts/outgoingList.vue";
+import BlockedList from "./contacts/blockedList.vue";
+
 export default {
-  components: { createGroup },
+  components: {
+    createGroup,
+    ContactsList,
+    FreeUsersList,
+    PendingList,
+    OutgoingList,
+    BlockedList,
+  },
   setup() {
     const router = useRouter();
     const store = useStore();
+
+    const listType = ref("contacts");
 
     const isShowMobileMessages = inject("isShowMobileMessages");
 
     const userData = computed(() => store.state.auth.user);
     const contacts = computed(() => store.state.chat.constacts);
 
+    const listData = computed(() => store.state.contact[listType.value]);
+
     const groupUsers = ref([]);
 
     const login = userData.value.login;
+
+    const scrollEnd = ref(null);
 
     //store.dispatch('chat/getContacts')
 
@@ -67,6 +77,7 @@ export default {
     const userId = userData.value.id;
 
     const roomName = ref("");
+    console.log("CALL DISPATCH");
 
     async function openUserChat(id) {
       if (groupType.value) return;
@@ -91,6 +102,12 @@ export default {
       }
     }
 
+    // store.dispatch("contact/getContactsList", userId);
+    // store.dispatch("contact/getFreeUsersList", userId);
+    // store.dispatch("contact/getPendingRequests", userId);
+    // store.dispatch("contact/getOutgoingRequests", userId);
+    // store.dispatch("contact/getBlockedUsers", userId);
+
     async function createGroupChat() {
       console.log("groupCreate");
       const chatData = await $api.post("/chat/create", {
@@ -111,7 +128,10 @@ export default {
       groupUsers,
       userId,
       roomName,
+      listType,
+      listData,
       isShowMobileMessages,
+      scrollEnd,
       openUserChat,
       createGroupChat,
     };
