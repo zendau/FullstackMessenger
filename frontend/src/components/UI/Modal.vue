@@ -1,8 +1,11 @@
 <template>
   <Teleport to="#app" v-if="isShowCTX">
     <div
-      @contextmenu.prevent="closeMessageCTX"
-      @click="closeMessageCTX"
+      ref="modalRoot"
+      tabindex="0"
+      @keydown="closeCTX"
+      @contextmenu.prevent="closeCTX"
+      @click="closeCTX"
       style="
         position: fixed;
         top: 0;
@@ -17,16 +20,28 @@
 </template>
 
 <script>
+import { onUpdated, ref } from "vue";
 export default {
-  emits: ['closeMessageCTX'],
+  emits: ["closeCTX"],
   props: ["isShowCTX"],
   setup(_, { emit }) {
-    function closeMessageCTX() {
-      emit("closeMessageCTX");
+    function closeCTX() {
+      emit("closeCTX");
     }
 
+    const modalRoot = ref(null);
+
+    onUpdated(() => {
+      if (modalRoot.value) {
+        modalRoot.value.focus();
+      }
+    });
+
+
+
     return {
-      closeMessageCTX,
+      modalRoot,
+      closeCTX,
     };
   },
 };

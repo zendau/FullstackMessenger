@@ -1,7 +1,7 @@
 <template>
-  <Modal :isShowCTX="contactData">
+  <Modal :isShowCTX="contactData" @closeCTX="closeCTX">
     <div class="test">
-      <a class="close-btn"></a>
+      <a class="close-btn" @click="closeCTX"></a>
 
       <div v-if="contactData.isBannedByContact">BLOCKED BY THIS USER</div>
       <div v-else>
@@ -41,7 +41,7 @@
 
 <script>
 import Modal from "../UI/Modal.vue";
-import { ref, inject, computed, watch } from "vue";
+import { ref, inject, computed, watch, onUpdated, onMounted } from "vue";
 import { useStore } from "vuex";
 import $api from "../../axios";
 
@@ -51,29 +51,21 @@ export default {
     const store = useStore();
 
     const userId = computed(() => store.state.auth.user.id);
-    const contactId = inject("modalUserlId");
+    const contactId = inject("modalUserId");
     const contactData = computed(
       () => store.state.contact.users[contactId.value]
     );
 
     const chatSocket = inject("chatSocket");
 
-    watch(
-      contactId,
-      (id) => {
-        console.log("id", id);
-        if (!contactData.value) {
-          console.log("emit");
-          chatSocket.emit("getContactData", {
-            userId: userId.value,
-            contactId: id,
-          });
-        }
-      },
-      {
-        immediate: true,
+    onUpdated(() => {
+      if (!contactData.value && contactId.value) {
+        chatSocket.emit("getContactData", {
+          userId: userId.value,
+          contactId: contactId.value,
+        });
       }
-    );
+    });
 
     chatSocket.on("contactData", (data) => {
       console.log("get data", data);
@@ -129,9 +121,14 @@ export default {
       });
     }
 
+    function closeCTX() {
+      contactId.value = null;
+    }
+
     return {
       contactId,
       contactData,
+      closeCTX,
       blockUser,
       unblockUser,
       deleteFromContacts,

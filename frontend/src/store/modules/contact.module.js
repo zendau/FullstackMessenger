@@ -137,17 +137,28 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async getContactsList({ commit, state }, userId) {
+    async getContactsList({ commit, state }, { pattern, userId }) {
       try {
-        console.log("1");
-        if (!state.contactsPagintation.hasMore) return;
-        console.log("2");
-        const res = await $api.get("/contact/list", {
-          params: {
+        let params = null;
+
+        if (pattern) {
+          commit('clearListData', 'contacts')
+          params = {
+            pattern,
+            userId,
+          };
+        } else {
+          if (!state.contactsPagintation.hasMore) return;
+
+          params = {
             userId,
             page: state.contactsPagintation.page,
             limit: state.contactsPagintation.limit,
-          },
+          };
+        }
+
+        const res = await $api.get("/contact/list", {
+          params,
         });
         commit("setContacts", res.data);
       } catch (e) {
@@ -210,6 +221,11 @@ export const contact = {
     },
   },
   mutations: {
+    clearListData(state, field) {
+      if (!state[field] && !Array.isArray(state[field])) return;
+
+      state[field] = [];
+    },
     setContactData(state, data) {
       state.users[data.id] = data;
     },
@@ -240,7 +256,7 @@ export const contact = {
     },
     setFreeUsers(state, data) {
       if (data.freeUsersList.length > 0) {
-        state.freeUsers.push(...data.freeUsersList);
+        state.freeUsers.push(...data.resList);
       }
 
       state.freeUsersPagintation.page = data.page;
@@ -248,17 +264,17 @@ export const contact = {
     },
     setPendingRequests(state, data) {
       if (data.length > 0) {
-        state.pendingRequests.push(...data);
+        state.pendingRequests.push(...data.resList);
       }
     },
     setOutgoingRequests(state, data) {
       if (data.length > 0) {
-        state.outgoingRequests.push(...data);
+        state.outgoingRequests.push(...data.resList);
       }
     },
     setBannedUsersList(state, data) {
       if (data.length > 0) {
-        state.blockedUsers.push(...data);
+        state.blockedUsers.push(...data.resList);
       }
     },
   },

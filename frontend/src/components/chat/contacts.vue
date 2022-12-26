@@ -6,22 +6,15 @@
     <!-- <button class="btn" @click="groupType = !groupType">
       {{ groupType ? "Close" : "Create group" }}
     </button> -->
-    <input type="text" />
+    <input type="text" @input="searchContacts" />
     <div style="display: flex">
-      {{ listType }}
-      <button @click="listType = 'freeUsers'">Add</button>
-      <button @click="listType = 'contacts'">Contacts</button>
-      <button @click="listType = 'pendingRequests'">Pending</button>
-      <button @click="listType = 'outgoingRequests'">Outgoing</button>
-      <button @click="listType = 'blockedUsers'">Blocked</button>
+      <ContactsListType :listType="listType" @changeListType="changeListType" />
     </div>
-    <ContactsList v-if="listType === 'contacts'" />
+    <ContactsList  v-if="listType === 'contacts'" />
     <FreeUsersList v-else-if="listType === 'freeUsers'" />
     <PendingList v-else-if="listType === 'pendingRequests'" />
     <OutgoingList v-else-if="listType === 'outgoingRequests'" />
     <BlockedList v-else-if="listType === 'blockedUsers'" />
-
-    <p class="empty_message" v-if="contacts.length === 0">No contacts</p>
     <!-- <create-group v-if="groupType" :groupUsers="groupUsers" :adminId="userId" /> -->
   </div>
 </template>
@@ -32,7 +25,7 @@ import $api from "../../axios";
 
 import { useRouter } from "vue-router";
 
-import { computed, inject, ref } from "vue";
+import { computed, inject, provide, ref } from "vue";
 import createGroup from "./createGroup.vue";
 
 import { useStore } from "vuex";
@@ -43,6 +36,10 @@ import PendingList from "./contacts/pendingList.vue";
 import OutgoingList from "./contacts/outgoingList.vue";
 import BlockedList from "./contacts/blockedList.vue";
 
+import ContactsListType from "./contactsListType.vue";
+
+import debounce from "../../utils/debounce";
+
 export default {
   components: {
     createGroup,
@@ -51,6 +48,7 @@ export default {
     PendingList,
     OutgoingList,
     BlockedList,
+    ContactsListType,
   },
   setup() {
     const router = useRouter();
@@ -70,6 +68,26 @@ export default {
     const login = userData.value.login;
 
     const scrollEnd = ref(null);
+    const pattern = ref(null);
+    provide("contactsPattern", pattern);
+
+    const searchContacts = debounce((el) => {
+      pattern.value = el.target.value;
+      // if (pattern.length === 0) {
+      //   searchData.value = null;
+      //   return;
+      // }
+
+      // console.log({
+      //   userId: userId.value,
+      //   pattern,
+      // });
+
+      // chatSocket.emit("serchChats", {
+      //   userId: userId.value,
+      //   pattern,
+      // });
+    });
 
     //store.dispatch('chat/getContacts')
 
@@ -78,6 +96,10 @@ export default {
 
     const roomName = ref("");
     console.log("CALL DISPATCH");
+
+    function changeListType(type) {
+      listType.value = type;
+    }
 
     async function openUserChat(id) {
       if (groupType.value) return;
@@ -132,6 +154,9 @@ export default {
       listData,
       isShowMobileMessages,
       scrollEnd,
+      searchContacts,
+      pattern,
+      changeListType,
       openUserChat,
       createGroupChat,
     };
@@ -159,6 +184,13 @@ export default {
 }
 
 .contacts {
+  &__btn {
+    &--active {
+      background-color: blue;
+      color: white;
+    }
+  }
+
   &__list {
     overflow: auto;
     margin-top: 12.5px;

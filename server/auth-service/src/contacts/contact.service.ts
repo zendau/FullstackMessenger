@@ -45,11 +45,7 @@ export class ContactService {
       listData.limit,
       listData.pattern,
     );
-    return {
-      resList,
-      hasMore: resList.length === parseInt(listData.limit),
-      page: parseInt(listData.page) + 1,
-    };
+    return resList;
   }
 
   async getFreeUsers(listData: IGetContactList) {
@@ -74,11 +70,7 @@ export class ContactService {
       listData.limit,
       listData.pattern,
     );
-    return {
-      freeUsersList,
-      hasMore: freeUsersList.length === parseInt(listData.limit),
-      page: parseInt(listData.page) + 1,
-    };
+    return freeUsersList;
   }
 
   async sendContactRequest(requestData: IContact) {
@@ -341,7 +333,7 @@ export class ContactService {
       .getOne();
 
     if (userStatus?.isBanned) {
-      resStatus.isBannedByContact = true;
+      resStatus.isBanned = true;
       return resStatus;
     }
 
@@ -360,7 +352,7 @@ export class ContactService {
       .getOne();
 
     if (contactStatus?.isBanned) {
-      resStatus.isBanned = true;
+      resStatus.isBannedByContact = true;
       return resStatus;
     }
 

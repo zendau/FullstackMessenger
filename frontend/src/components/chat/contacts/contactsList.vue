@@ -4,7 +4,7 @@
       class="contact__item"
       v-for="(user, index) in listData"
       :key="user.id"
-      @click="openUserChat(user.id)"
+      @click="openUserModal(user.id)"
       :ref="(el) => setObserver(el, index)"
     >
       <i class="bi bi-person"></i>
@@ -18,10 +18,11 @@
       <p>{{ user.lastOnline }}</p>
     </li>
   </ul>
+  <p class="empty_message" v-if="listData.length === 0">No users</p>
 </template>
 
 <script>
-import { computed, onMounted } from "vue";
+import { computed, inject, watch } from "vue";
 import { useStore } from "vuex";
 
 export default {
@@ -29,18 +30,39 @@ export default {
     const store = useStore();
     const listData = computed(() => store.state.contact.contacts);
     const userId = computed(() => store.state.auth.user.id);
+
+    const modalUserId = inject("modalUserId");
+    const contactsPattern = inject("contactsPattern");
+
     const observer = new IntersectionObserver(async (entries) => {
       console.log("contacts", entries[0]);
       if (entries[0].isIntersecting) {
         console.log("observer getContactsList");
-        store.dispatch("contact/getContactsList", userId);
       }
     });
 
-    onMounted(() => {
-      if (listData.value.length !== 0) return;
-      store.dispatch("contact/getContactsList", userId.value);
-    });
+    console.log("setup");
+
+    watch(
+      contactsPattern,
+      (pattern) => {
+        console.log("pattern", pattern);
+
+        if (pattern) {
+          store.dispatch("contact/getContactsList", {
+            userId: userId.value,
+            pattern: contactsPattern.value,
+          });
+          return;
+        }
+
+        if (listData.value.length !== 0) return;
+        store.dispatch("contact/getContactsList", { userId: userId.value });
+      },
+      {
+        immediate: true,
+      }
+    );
 
     function setObserver(el, index) {
       if (index !== listData.value.length - 1) return;
@@ -49,8 +71,14 @@ export default {
       observer.observe(el);
     }
 
+    function openUserModal(userId) {
+      modalUserId.value = userId;
+    }
+
     return {
+      contactsPattern,
       listData,
+      openUserModal,
       setObserver,
     };
   },

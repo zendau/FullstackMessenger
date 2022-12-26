@@ -1,5 +1,5 @@
 <template>
-  <Modal :isShowCTX="isShowCTX" @closeMessageCTX="closeMessageCTX">
+  <Modal :isShowCTX="isShowCTX" @closeCTX="closeCTX">
     <ul
       style="
         position: absolute;
@@ -89,7 +89,7 @@ export default {
       isShowMessageCTX.value = null;
     }
 
-    function closeMessageCTX() {
+    function closeCTX() {
       console.log("close", isShowMessageCTX.value);
       isShowMessageCTX.value = null;
     }
@@ -98,7 +98,7 @@ export default {
       selectMessageHandler,
       editMessage,
       deleteMessage,
-      closeMessageCTX,
+      closeCTX,
       isShowCTX,
     };
   },

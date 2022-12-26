@@ -147,6 +147,7 @@ export class UserService {
   ) {
     //console.log('sub', await subQuery.getRawMany());
 
+    debugger;
     const start = parseInt(page) * parseInt(limit);
 
     console.log('start', start, page, limit);
@@ -171,7 +172,12 @@ export class UserService {
 
     console.log('userId', query.getQuery());
     const resList = await query.getRawMany();
-    return resList;
+
+    return {
+      resList,
+      hasMore: pattern ? true : resList.length === parseInt(limit),
+      page: pattern ? 0 : parseInt(page) + 1,
+    };
   }
 
   async getManyUserById(isList: number[]) {

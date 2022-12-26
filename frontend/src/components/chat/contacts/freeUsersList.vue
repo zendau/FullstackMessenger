@@ -4,7 +4,7 @@
       class="contact__item"
       v-for="(user, index) in listData"
       :key="user.id"
-      @click="openUserChat(user.id)"
+      @click="openUserModal(user.id)"
       :ref="(el) => setObserver(el, index)"
     >
       <i class="bi bi-person"></i>
@@ -18,10 +18,11 @@
       <p>{{ user.lastOnline }}</p>
     </li>
   </ul>
+  <p class="empty_message" v-if="listData.length === 0">No users</p>
 </template>
 
 <script>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 
 export default {
@@ -29,13 +30,15 @@ export default {
     const store = useStore();
     const listData = computed(() => store.state.contact.freeUsers);
     const userId = computed(() => store.state.auth.user.id);
+
+    const modalUserId = inject("modalUserId");
+
     const observer = new IntersectionObserver(async (entries) => {
       console.log("free", entries[0]);
       if (entries[0].isIntersecting) {
         store.dispatch("contact/getFreeUsersList", userId.value);
       }
     });
-
 
     onMounted(() => {
       if (listData.value.length !== 0) return;
@@ -48,8 +51,13 @@ export default {
       observer.observe(el);
     }
 
+    function openUserModal(userId) {
+      modalUserId.value = userId;
+    }
+
     return {
       listData,
+      openUserModal,
       setObserver,
     };
   },
