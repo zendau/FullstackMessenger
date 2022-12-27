@@ -21,9 +21,9 @@
           </router-link>
         </li>
         <li>
-          <router-link class="chat__list-item" to="/user">
-            <i class="bi bi-person-circle"></i>
-            <span>User</span>
+          <router-link class="chat__list-item" to="/settings">
+            <i class="bi bi-gear"></i>
+            <span>Settings</span>
           </router-link>
         </li>
       </ul>

@@ -58,8 +58,8 @@ export default {
                     link: "/create"
                 },
                 {
-                    name: "User",
-                    link: "/user"
+                    name: "Settings",
+                    link: "/settings"
                 }
             ]
         };
