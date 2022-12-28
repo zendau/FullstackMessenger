@@ -47,7 +47,7 @@ export default {
         }
 
         const onSubmitForm = handleSubmit(value => {
-            store.commit('auth/clearMessage')
+            store.commit('auth/clearAlert')
             store.dispatch('auth/login', {
                 email: value.email,
                 password: value.password

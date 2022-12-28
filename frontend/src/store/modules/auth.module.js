@@ -14,9 +14,11 @@ export const auth = {
       login: null,
       role: null,
       isBanned: null,
+      deviceId: null,
     },
+    devices: [],
     authStatus: false,
-    message: {
+    alert: {
       text: "",
       type: null,
     },
@@ -136,7 +138,19 @@ export const auth = {
         login: "five",
         role: "USER",
         isBanned: false,
+        deviceId: 1,
       });
+    },
+    async getUserDevices({ commit, state }) {
+      try {
+        const devicesData = await $api.get(
+          `/user/getDevicesData/${state.user.id}`
+        );
+        commit('saveDivicesData', devicesData.data)
+      } catch (e) {
+        const message = e.response.data;
+        commit("setErrorMessage", message);
+      }
     },
   },
   mutations: {
@@ -148,6 +162,7 @@ export const auth = {
         login: userData.login,
         role: userData.role,
         isBanned: userData.isBanned,
+        deviceId: userData.deviceId,
       };
       state.authStatus = true;
     },
@@ -172,9 +187,12 @@ export const auth = {
       };
       state.authStatus = false;
     },
-    clearMessage(state) {
-      state.message.text = "";
-      state.message.type = null;
+    saveDivicesData(state, diveces) {
+      state.devices = diveces;
+    },
+    clearAlert(state) {
+      state.alert.text = "";
+      state.alert.type = null;
     },
     setErrorMessage(state, text) {
       let message = null;
@@ -186,12 +204,12 @@ export const auth = {
         message = text[0];
       }
 
-      state.message.text = message;
-      state.message.type = alert.danger;
+      state.alert.text = message;
+      state.alert.type = alert.danger;
     },
     setSuccessMessage(state, text) {
-      state.message.text = text;
-      state.message.type = alert.success;
+      state.alert.text = text;
+      state.alert.type = alert.success;
     },
   },
   getters: {},

@@ -23,7 +23,7 @@ export class Token {
   @Column('text')
   refreshToken: string;
 
-  @OneToOne(() => Device)
+  @OneToOne(() => Device, (device) => device.tokenId, { cascade: true })
   @JoinColumn({ name: 'deviceId' })
   deviceId: number;
 

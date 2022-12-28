@@ -96,4 +96,22 @@ export class DeviceService {
 
     return !!resUpdate.affected;
   }
+
+  async getTokensDeviceData(userId: number) {
+    console.log('test');
+    const devicesData = await this.deviceRepository
+      .createQueryBuilder('device')
+      .select([
+        'device.brand, device.model, device.osName, device.osVersion, device.ipAdress',
+      ])
+      .addSelect('device.id', 'id')
+      .addSelect('token.createdAt', 'lastOnline')
+      .innerJoin('device.tokenId', 'token')
+      .where('token.userId = :userId', { userId })
+      .getRawMany();
+
+    console.log('devicesData', devicesData);
+
+    return devicesData;
+  }
 }

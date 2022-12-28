@@ -63,7 +63,7 @@ export default {
 
       registerData.value = value
       isConfirmCode.value = true
-      store.commit('auth/clearMessage')
+      store.commit('auth/clearAlert')
       //store.dispatch('auth/register', )
     }, onInvalidSubmit)
 

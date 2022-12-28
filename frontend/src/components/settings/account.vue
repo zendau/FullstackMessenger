@@ -71,7 +71,7 @@ export default {
       console.log('value', value)
       userData.value = value
       isConfirmCode.value = true
-      store.commit('auth/clearMessage')
+      store.commit('auth/clearAlert')
     }, onInvalidSubmit)
 
     function confirmChangeData(confirmCode) {

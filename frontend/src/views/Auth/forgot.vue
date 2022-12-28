@@ -40,7 +40,7 @@ export default {
     const { value: email } = useField('email');
 
     onUnmounted(() => {
-      store.commit('auth/clearMessage')
+      store.commit('auth/clearAlert')
     })
 
     function onInvalidSubmit({ errors }) {
@@ -51,7 +51,7 @@ export default {
     const onSubmitForm = handleSubmit(value => {
       tempEmail.value =  value.email
       isConfirmCode.value = true
-      store.commit('auth/clearMessage')
+      store.commit('auth/clearAlert')
     }, onInvalidSubmit)
 
     function confirmResetPassword(confirmCode) {

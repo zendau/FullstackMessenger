@@ -9,6 +9,7 @@ import IConfirmData from './interfaces/IConfirmData';
 import IEditUser from './interfaces/IEditUserData';
 import IRefreshData from './interfaces/IRefreshData';
 import { UserRole } from './user.entity';
+import { DeviceService } from 'src/token/device.service';
 
 @Controller()
 export class UsersController {
@@ -17,6 +18,7 @@ export class UsersController {
     private authService: AuthService,
     private confirmCodeService: ConfirmCodeService,
     private tokenService: TokenService,
+    private deviceService: DeviceService,
   ) {}
 
   @MessagePattern('user/register')
@@ -185,11 +187,26 @@ export class UsersController {
 
   @MessagePattern('user/updateLastOnline')
   async updateUserLastOnline(
-    @Payload() roleData: { userId: number, lastOnline: Date },
+    @Payload() roleData: { userId: number; lastOnline: Date },
   ) {
     const res = await this.userService
       .setLastOnline(roleData.userId, roleData.lastOnline)
       .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
+  }
+  @MessagePattern('user/getTokensDeviceData')
+  async getTokensDeviceData(@Payload() userId: number) {
+    console.log('userId', userId);
+    const res = await this.deviceService
+      .getTokensDeviceData(userId)
+      .catch((err) => {
+        console.log('err', err);
         return {
           status: false,
           message: err.sqlMessage,

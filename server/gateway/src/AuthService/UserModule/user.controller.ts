@@ -329,4 +329,28 @@ export class UserController {
 
     return resData;
   }
+
+  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'get user by id' })
+  @ApiResponse({ status: 200, type: GetUserDTO })
+  @ApiResponse({
+    status: 400,
+    description: 'user not found',
+    type: HttpErrorDTO,
+  })
+  //@UseGuards(JwtRefreshGuard)
+  @Get('getDevicesData/:id')
+  async getTokensDeviceData(@Param('id', ParseIntPipe) id: number) {
+    console.log('id', id);
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/getTokensDeviceData', id),
+    );
+    console.log('resData', resData);
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
 }

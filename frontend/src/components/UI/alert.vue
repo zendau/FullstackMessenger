@@ -1,38 +1,33 @@
 <template>
-  <div v-if="message.text" class="alert" :class="'alert__' + message.type">
-    <p class="alert__text" v-html="message.text" />
+  <div v-if="alert.text" class="alert" :class="'alert__' + alert.type">
+    <p class="alert__text" v-html="alert.text" />
   </div>
 </template>
 
 <script>
-
-import { useStore } from 'vuex'
-import { computed } from 'vue'
-import { onBeforeRouteLeave } from 'vue-router'
+import { useStore } from "vuex";
+import { computed } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 
 export default {
   setup() {
-
-    const store = useStore()
-
+    const store = useStore();
 
     onBeforeRouteLeave(() => {
-      store.commit('auth/clearMessage')
-    })
+      store.commit("auth/clearAlert");
+    });
 
-    const message = computed(() => store.state.auth.message)
+    const alert = computed(() => store.state.auth.alert);
 
     return {
-      message
-    }
-
-  }
-}
+      alert,
+    };
+  },
+};
 </script>
 
-<style lang='scss'>
+<style lang="scss">
 .alert {
-
   width: 250px;
   height: auto;
   margin: 0 auto;

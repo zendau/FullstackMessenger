@@ -1,16 +1,18 @@
 <template>
-  <user-info />
+  <account />
   <language />
   <theme />
+  <devices />
 </template>
 
 <script>
-import userInfo from "../components/settings/userInfo.vue";
+import account from "../components/settings/account.vue";
 import language from "../components/settings/language.vue";
 import theme from "../components/settings/theme.vue";
+import devices from "../components/settings/devices.vue";
 
 export default {
-  components: { userInfo, language, theme },
+  components: { account, language, theme, devices },
 };
 </script>
 

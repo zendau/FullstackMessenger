@@ -1,8 +1,5 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Token } from './token.entity';
 
 @Entity()
 export class Device {
@@ -26,4 +23,7 @@ export class Device {
 
   @Column()
   ipAdress: string;
+
+  @OneToOne(() => Token, (token) => token.deviceId)
+  tokenId: number;
 }
