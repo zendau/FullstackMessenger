@@ -10,7 +10,7 @@
     <div style="display: flex">
       <ContactsListType :listType="listType" @changeListType="changeListType" />
     </div>
-    <ContactsList  v-if="listType === 'contacts'" />
+    <ContactsList v-if="listType === 'contacts'" />
     <FreeUsersList v-else-if="listType === 'freeUsers'" />
     <PendingList v-else-if="listType === 'pendingRequests'" />
     <OutgoingList v-else-if="listType === 'outgoingRequests'" />
@@ -69,7 +69,10 @@ export default {
 
     const scrollEnd = ref(null);
     const pattern = ref(null);
+    const userId = userData.value.id;
     provide("contactsPattern", pattern);
+
+    store.dispatch("contact/getContactCount", userId);
 
     const searchContacts = debounce((el) => {
       pattern.value = el.target.value;
@@ -92,7 +95,6 @@ export default {
     //store.dispatch('chat/getContacts')
 
     const groupType = ref(false);
-    const userId = userData.value.id;
 
     const roomName = ref("");
     console.log("CALL DISPATCH");

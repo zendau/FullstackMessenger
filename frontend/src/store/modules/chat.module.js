@@ -197,10 +197,10 @@ export const chat = {
       if (!roomData) return;
 
       if (messagesData.authorId !== userId) {
-        roomData.unread++;
+        roomData.userUnread++;
       }
 
-      roomData.isNotUnread++;
+      roomData.chatUnread++;
     },
 
     setLastChatMessage(state, roomId) {
@@ -272,9 +272,9 @@ export const chat = {
     },
     updateReadMessages(state, { chatId, unreadCount }) {
       if (state.chats.hasOwnProperty(chatId)) {
-        state.chats[chatId].isNotUnread = unreadCount;
+        state.chats[chatId].chatUnread = unreadCount;
       } else if (state.currentTempChatData.id === chatId) {
-        state.currentTempChatData.isNotUnread = unreadCount;
+        state.currentTempChatData.chatUnread = unreadCount;
       }
     },
     // addMessage(state, message) {

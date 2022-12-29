@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { computed, onMounted, inject } from "vue";
+import { computed, watch, inject } from "vue";
 import { useStore } from "vuex";
 
 export default {
@@ -32,18 +32,38 @@ export default {
     const userId = computed(() => store.state.auth.user.id);
 
     const modalUserId = inject("modalUserId");
+    const contactsPattern = inject("contactsPattern");
 
     const observer = new IntersectionObserver(async (entries) => {
       console.log("free", entries[0]);
-      if (entries[0].isIntersecting) {
-        store.dispatch("contact/getFreeUsersList", userId.value);
+      if (entries[0].isIntersecting && !contactsPattern.value) {
+        store.dispatch("contact/getFreeUsersList", { userId: userId.value });
       }
     });
 
-    onMounted(() => {
-      if (listData.value.length !== 0) return;
-      store.dispatch("contact/getFreeUsersList", userId.value);
-    });
+    watch(
+      contactsPattern,
+      (pattern, oldPattern) => {
+        console.log("pattern", pattern);
+
+        if (pattern) {
+          store.dispatch("contact/getFreeUsersList", {
+            userId: userId.value,
+            pattern: contactsPattern.value,
+          });
+          return;
+        } else {
+          if (oldPattern) {
+            store.commit("contact/clearListData", "freeUsers");
+          }
+        }
+
+        store.dispatch("contact/getFreeUsersList", { userId: userId.value });
+      },
+      {
+        immediate: true,
+      }
+    );
 
     function setObserver(el, index) {
       if (index !== listData.value.length - 1) return;

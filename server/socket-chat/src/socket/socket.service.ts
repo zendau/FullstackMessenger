@@ -414,7 +414,7 @@ export class SocketService {
     //   JSON.stringify(this.getRoomDataWithOnlineStatus(this.rooms[chatId])),
     // );
     const chatData = (await this.getChatById(chatId)) as IChatExtended;
-    chatData.isNotUnread = await this.getUnreadMessagesCount(
+    chatData.chatUnread = await this.getUnreadMessagesCount(
       chatId,
       chatData.users,
     );
@@ -443,9 +443,9 @@ export class SocketService {
     );
 
     if (unreadCount) {
-      chatData.unread = unreadCount;
+      chatData.userUnread = unreadCount;
     } else {
-      chatData.unread = 0;
+      chatData.userUnread = 0;
     }
 
     // if (

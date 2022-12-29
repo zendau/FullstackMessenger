@@ -198,4 +198,17 @@ export class ContactController {
       });
     return res;
   }
+  @MessagePattern('contact/getContactCount')
+  async getUserContactsCount(@Payload() userId: number) {
+    const res = await this.contactService
+      .getUserContactsCount(userId)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
+  }
 }

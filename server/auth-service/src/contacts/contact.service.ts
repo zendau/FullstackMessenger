@@ -115,7 +115,7 @@ export class ContactService {
       false,
       listData.page,
       listData.limit,
-      null,
+      listData.pattern,
     );
     return resList;
 
@@ -142,9 +142,49 @@ export class ContactService {
       false,
       listData.page,
       listData.limit,
-      null,
+      listData.pattern,
     );
     return resList;
+  }
+
+  async getUserContactsCount(userId: number) {
+    const contactsCount = await this.contactRepository
+      .createQueryBuilder()
+      .select('COUNT(contactId)', 'count')
+      .where('userId = :userId', { userId })
+      .andWhere('isContact = 1')
+      .getRawOne();
+
+    console.log('1', contactsCount);
+
+    const pendingCount = await this.contactRepository
+      .createQueryBuilder()
+      .select('COUNT(userId)', 'count')
+      .where('contactId = :userId', { userId })
+      .andWhere('isContact = 0')
+      .getRawOne();
+
+    const outgoingCount = await this.contactRepository
+      .createQueryBuilder()
+      .select('COUNT(userId)', 'count')
+      .where('userId = :userId', { userId })
+      .andWhere('isContact = 0')
+      .andWhere('isBanned = 0')
+      .getRawOne();
+
+    const blockedCount = await this.contactRepository
+      .createQueryBuilder()
+      .select('COUNT(contactId)', 'count')
+      .where('userId = :userId', { userId })
+      .andWhere('isBanned = 1')
+      .getRawOne();
+
+    return {
+      contacts: contactsCount.count,
+      pendingRequests: pendingCount.count,
+      outgoingRequests: outgoingCount.count,
+      blockedUsers: blockedCount.count,
+    };
   }
 
   async confirmRequest(requestData: IContact) {

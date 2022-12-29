@@ -6,16 +6,22 @@
     @click="changeListType(key)"
   >
     {{ type }}
+    <div v-if="key !== 'freeUsers'">({{ contactsCount[key] }})</div>
   </button>
 </template>
 
 <script>
-import { reactive, ref } from "vue";
+import { computed } from "vue";
+import { useStore } from "vuex";
 
 export default {
   props: ["listType"],
   emits: ["changeListType"],
   setup(_, { emit }) {
+    const store = useStore();
+
+    const contactsCount = computed(() => store.state.contact.contactsCount);
+
     const listTypes = {
       freeUsers: "Add",
       contacts: "Contacts",
@@ -30,6 +36,7 @@ export default {
 
     return {
       changeListType,
+      contactsCount,
       listTypes,
     };
   },

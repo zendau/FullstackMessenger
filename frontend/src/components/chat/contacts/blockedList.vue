@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { computed, onMounted, inject } from "vue";
+import { computed, watch, inject } from "vue";
 import { useStore } from "vuex";
 
 export default {
@@ -31,13 +31,30 @@ export default {
     const userId = computed(() => store.state.auth.user.id);
 
     const modalUserId = inject("modalUserId");
+    const contactsPattern = inject("contactsPattern");
+    watch(
+      contactsPattern,
+      (pattern, oldPattern) => {
+        if (pattern) {
+          store.dispatch("contact/getBlockedUsers", {
+            userId: userId.value,
+            pattern: contactsPattern.value,
+          });
+          return;
+        } else {
+          if (oldPattern) {
+            store.commit("contact/clearListData", "blockedUsers");
+          }
+        }
 
-    onMounted(() => {
-      console.log('mounted block')
-      if (listData.value.length !== 0) return;
-      console.log('get block')
-      store.dispatch("contact/getBlockedUsers", userId.value);
-    });
+        if (listData.value.length > 0) return;
+
+        store.dispatch("contact/getBlockedUsers", { userId: userId.value });
+      },
+      {
+        immediate: true,
+      }
+    );
 
     function openUserModal(userId) {
       modalUserId.value = userId;

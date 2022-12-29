@@ -87,8 +87,8 @@ export default {
       });
 
       //const roomData = currentTempChatData.value ?? roomsData.value[chatId.value];
-      const resCount = chatData.unread - messageReadCount;
-      chatData.unread = Math.max(0, resCount);
+      const resCount = chatData.userUnread - messageReadCount;
+      chatData.userUnread = Math.max(0, resCount);
       messageReadCount = 0;
     }, 1000);
 
@@ -210,8 +210,8 @@ export default {
         console.log("last message", isLastMessage, el.$el.nextElementSibling);
         messageScrollObserver.observe(el.$el.nextElementSibling);
       }
-      if (chatData.unread === 0) return;
-      const isReadMessage = index - chatData.unread;
+      if (chatData.userUnread === 0) return;
+      const isReadMessage = index - chatData.userUnread;
       // console.log("EL!!!", el, index, roomData.value, res);
       if (isReadMessage < 0) {
         console.log(
@@ -224,11 +224,11 @@ export default {
     }
 
     function isReadMessage(index) {
-      return index - chatData.isNotUnread >= 0;
+      return index - chatData.chatUnread >= 0;
     }
 
     function isFirstUnread(index) {
-      return index - chatData.unread === -1;
+      return index - chatData.userUnread === -1;
     }
 
     const ctxMenuData = ref({

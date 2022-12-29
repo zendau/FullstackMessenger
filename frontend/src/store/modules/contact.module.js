@@ -19,6 +19,7 @@ export const contact = {
     pendingRequests: [],
     outgoingRequests: [],
     blockedUsers: [],
+    contactsCount: {},
     users: {},
     error: null,
   },
@@ -137,12 +138,21 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
+    async getContactCount({ commit }, userId) {
+      try {
+        const res = await $api.get(`/contact/getContactCount/${userId}`);
+        commit("setContactsCount", res.data);
+      } catch (e) {
+        commit("setError", e.response.data.message);
+      }
+    },
     async getContactsList({ commit, state }, { pattern, userId }) {
       try {
+        debugger;
         let params = null;
 
         if (pattern) {
-          commit('clearListData', 'contacts')
+          commit("clearListData", "contacts");
           params = {
             pattern,
             userId,
@@ -165,54 +175,101 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async getFreeUsersList({ commit, state }, userId) {
+    async getFreeUsersList({ commit, state }, { userId, pattern }) {
       try {
-        if (!state.freeUsersPagintation.hasMore) return;
+        let params = null;
 
-        const res = await $api.get("/contact/freeList", {
-          params: {
+        if (pattern) {
+          commit("clearListData", "freeUsers");
+          params = {
+            pattern,
+            userId,
+          };
+        } else {
+          params = {
             userId,
             page: state.freeUsersPagintation.page,
             limit: state.freeUsersPagintation.limit,
-          },
+          };
+        }
+
+        if (!state.freeUsersPagintation.hasMore) return;
+
+        const res = await $api.get("/contact/freeList", {
+          params,
         });
         commit("setFreeUsers", res.data);
       } catch (e) {
+        console.log("e", e);
         commit("setError", e.response.data.message);
       }
     },
-    async getPendingRequests({ commit }, userId) {
+    async getPendingRequests({ commit }, { userId, pattern }) {
       try {
-        const res = await $api.get("/contact/pending", {
-          params: {
+        let params = null;
+
+        if (pattern) {
+          commit("clearListData", "pendingRequests");
+          params = {
+            pattern,
             userId,
-          },
+          };
+        } else {
+          params = {
+            userId,
+          };
+        }
+
+        const res = await $api.get("/contact/pending", {
+          params,
         });
         commit("setPendingRequests", res.data);
       } catch (e) {
         commit("setError", e.response.data.message);
       }
     },
-    async getOutgoingRequests({ commit, state }, userId) {
+    async getOutgoingRequests({ commit }, { userId, pattern }) {
       try {
-        const res = await $api.get("/contact/outgoing", {
-          params: {
+        let params = null;
+
+        if (pattern) {
+          commit("clearListData", "outgoingRequests");
+          params = {
+            pattern,
             userId,
-          },
+          };
+        } else {
+          params = {
+            userId,
+          };
+        }
+
+        const res = await $api.get("/contact/outgoing", {
+          params,
         });
         commit("setOutgoingRequests", res.data);
       } catch (e) {
         commit("setError", e.response.data.message);
       }
     },
-    async getBlockedUsers({ commit, state }, userId) {
+    async getBlockedUsers({ commit }, { userId, pattern }) {
       try {
-        if (!state.freeUsersPagintation.hasMore) return;
+        let params = null;
+
+        if (pattern) {
+          commit("clearListData", "blockedUsers");
+          params = {
+            pattern,
+            userId,
+          };
+        } else {
+          params = {
+            userId,
+          };
+        }
 
         const res = await $api.get("/contact/blockedUsers", {
-          params: {
-            userId,
-          },
+          params,
         });
         commit("setBannedUsersList", res.data);
       } catch (e) {
@@ -255,7 +312,7 @@ export const contact = {
       state.contactsPagintation.hasMore = data.hasMore;
     },
     setFreeUsers(state, data) {
-      if (data.freeUsersList.length > 0) {
+      if (data.resList.length > 0) {
         state.freeUsers.push(...data.resList);
       }
 
@@ -263,19 +320,22 @@ export const contact = {
       state.freeUsersPagintation.hasMore = data.hasMore;
     },
     setPendingRequests(state, data) {
-      if (data.length > 0) {
+      if (data.resList.length > 0) {
         state.pendingRequests.push(...data.resList);
       }
     },
     setOutgoingRequests(state, data) {
-      if (data.length > 0) {
+      if (data.resList.length > 0) {
         state.outgoingRequests.push(...data.resList);
       }
     },
     setBannedUsersList(state, data) {
-      if (data.length > 0) {
+      if (data.resList.length > 0) {
         state.blockedUsers.push(...data.resList);
       }
+    },
+    setContactsCount(state, countData) {
+      state.contactsCount = countData;
     },
   },
   getters: {},

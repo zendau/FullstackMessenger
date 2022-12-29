@@ -132,8 +132,9 @@ export const auth = {
       //       commit("authSuccess", tokenDecode);
       //     }
       //   }
+      const userId = parseInt(localStorage.getItem("userId"));
       commit("authSuccess", {
-        id: 5,
+        id: userId,
         email: "test5@gmail.com",
         login: "five",
         role: "USER",
@@ -225,14 +226,21 @@ export const auth = {
       state.alert.type = alert.success;
     },
     deleteDivicesData(state, devicesIdList) {
-      console.log('devicesIdList', devicesIdList, state.devices, Array.isArray(state.devices))
-      state.devices = state.devices.filter(
-        (device) => {
-          console.log(devicesIdList.includes(device.id), devicesIdList, device.id)
-          return !devicesIdList.includes(device.id)
-        }
+      console.log(
+        "devicesIdList",
+        devicesIdList,
+        state.devices,
+        Array.isArray(state.devices)
       );
-      console.log("RES", state.devices)
+      state.devices = state.devices.filter((device) => {
+        console.log(
+          devicesIdList.includes(device.id),
+          devicesIdList,
+          device.id
+        );
+        return !devicesIdList.includes(device.id);
+      });
+      console.log("RES", state.devices);
     },
   },
   getters: {},

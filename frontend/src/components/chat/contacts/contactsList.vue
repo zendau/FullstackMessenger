@@ -26,6 +26,7 @@ import { computed, inject, watch } from "vue";
 import { useStore } from "vuex";
 
 export default {
+  props: ["count"],
   setup() {
     const store = useStore();
     const listData = computed(() => store.state.contact.contacts);
@@ -35,9 +36,10 @@ export default {
     const contactsPattern = inject("contactsPattern");
 
     const observer = new IntersectionObserver(async (entries) => {
-      console.log("contacts", entries[0]);
-      if (entries[0].isIntersecting) {
+      console.log("contacts", entries[0], contactsPattern.value);
+      if (entries[0].isIntersecting && !contactsPattern.value) {
         console.log("observer getContactsList");
+        store.dispatch("contact/getContactsList", { userId: userId.value });
       }
     });
 
@@ -45,18 +47,18 @@ export default {
 
     watch(
       contactsPattern,
-      (pattern) => {
-        console.log("pattern", pattern);
-
+      (pattern, oldPattern) => {
         if (pattern) {
           store.dispatch("contact/getContactsList", {
             userId: userId.value,
             pattern: contactsPattern.value,
           });
           return;
+        } else {
+          if (oldPattern) {
+            store.commit("contact/clearListData", "contacts");
+          }
         }
-
-        if (listData.value.length !== 0) return;
         store.dispatch("contact/getContactsList", { userId: userId.value });
       },
       {

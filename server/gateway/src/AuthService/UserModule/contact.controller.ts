@@ -82,6 +82,29 @@ export class ContactController {
     return resData;
   }
 
+  @ApiOperation({ summary: 'Get users list who are not added to contacts' })
+  @ApiResponse({
+    status: 200,
+    type: GetUserDTO,
+    isArray: true,
+  })
+  @ApiResponse({
+    status: 400,
+    type: HttpErrorDTO,
+  })
+  //@UseGuards(JwtAuthGuard)
+  @Get('getContactCount/:id')
+  async getUserContactsCount(@Param('id', ParseIntPipe) id: number) {
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('contact/getContactCount', id),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
+
   @ApiOperation({ summary: 'Send contact request to user' })
   @ApiResponse({
     status: 200,

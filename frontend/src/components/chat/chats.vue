@@ -30,6 +30,7 @@
           <p>{{ chat.title }}</p>
           <p>{{ chat.lastMessage?.authorLogin }}</p>
           <p>{{ chat.lastMessage?.text }}</p>
+          <p>{{ chat.userUnread }}</p>
         </div>
         <!-- </router-link> -->
       </li>

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { computed, onMounted, inject } from "vue";
+import { computed, watch, inject } from "vue";
 import { useStore } from "vuex";
 
 export default {
@@ -31,11 +31,31 @@ export default {
     const userId = computed(() => store.state.auth.user.id);
 
     const modalUserId = inject("modalUserId");
+    const contactsPattern = inject("contactsPattern");
 
-    onMounted(() => {
-      if (listData.value.length !== 0) return;
-      store.dispatch("contact/getOutgoingRequests", userId.value);
-    });
+    watch(
+      contactsPattern,
+      (pattern, oldPattern) => {
+        if (pattern) {
+          store.dispatch("contact/getOutgoingRequests", {
+            userId: userId.value,
+            pattern: contactsPattern.value,
+          });
+          return;
+        } else {
+          if (oldPattern) {
+            store.commit("contact/clearListData", "outgoingRequests");
+          }
+        }
+
+        if (listData.value.length > 0) return;
+
+        store.dispatch("contact/getOutgoingRequests", { userId: userId.value });
+      },
+      {
+        immediate: true,
+      }
+    );
 
     function openUserModal(userId) {
       modalUserId.value = userId;

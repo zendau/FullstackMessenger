@@ -54,7 +54,7 @@ export default {
       console.log('errors', errors)
 
       let message = ''
- 
+
       Object.keys(errors).forEach(item => message += `<span>${errors[item]}</span>`)
       console.log(message)
       store.commit('auth/setErrorMessage', message)
@@ -70,18 +70,19 @@ export default {
       })
       formData = value
 
-     
+
     }, onInvalidSubmit)
 
-    watch(() => store.state.chat.chatData.id, (chatId) => {
-       store.dispatch('conference/createConference', {
-        title: formData.title,
-        adminId: adminId.value,
-        chatId,
-        type: formData.type,
-        socket
-      })
-    })
+    // TODO: ????
+    // watch(() => store.state.chat.chatData.id, (chatId) => {
+    //    store.dispatch('conference/createConference', {
+    //     title: formData.title,
+    //     adminId: adminId.value,
+    //     chatId,
+    //     type: formData.type,
+    //     socket
+    //   })
+    // })
 
     return {
       onSubmitForm,
