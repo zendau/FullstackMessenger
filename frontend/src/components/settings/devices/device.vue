@@ -6,13 +6,37 @@
     <font-awesome-icon
       :icon="getDeviceIcon(deviceData.brand, deviceData.osName)"
     />
+    <button @click="showDeviceModal(true)">Open</button>
+    <device-modal
+      :isCurrent="isCurrent"
+      :isShowCTX="isOpenDeviceModal"
+      :deviceData="deviceData"
+      :icon="getDeviceIcon(deviceData.brand, deviceData.osName)"
+      @deleteDevices="deleteDevices"
+      @closeCTX="showDeviceModal(false)"
+    />
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+import deviceModal from "./deviceModal.vue";
+
 export default {
-  props: ["deviceData"],
-  setup() {
+  props: ["deviceData", "isCurrent"],
+  emit: ["deleteDevices"],
+  components: { deviceModal },
+  setup(_, { emit }) {
+    const isOpenDeviceModal = ref(false);
+
+    function showDeviceModal(status) {
+      isOpenDeviceModal.value = status;
+    }
+
+    function deleteDevices(deviceId) {
+      emit("deleteDevices", deviceId);
+    }
+
     const getDeviceIcon = (deviceName, osName) => {
       if (osName === "Android") {
         return "fa-brands fa-android";
@@ -47,7 +71,10 @@ export default {
     };
 
     return {
+      isOpenDeviceModal,
+      deleteDevices,
       getDeviceIcon,
+      showDeviceModal,
     };
   },
 };

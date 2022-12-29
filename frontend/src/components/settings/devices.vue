@@ -2,21 +2,28 @@
   <div style="color: gray">
     <h1>current</h1>
 
-    <device :deviceData="currenteDevice" />
+    <device :deviceData="currenteDevice" :isCurrent="true" />
+
+    <button @click="deleteDevices()">End all other sessions</button>
   </div>
   <h1>OTHER SESSIONS</h1>
-  <ul>
+  <ul v-if="othersDevices.length > 0">
     <li style="color: white" v-for="device in othersDevices" :key="device.id">
-      <device :deviceData="device" />
-      <!-- <p>{{ device.osVersion }}</p> -->
-      <!-- <p>{{ device.ipAdress }}</p> -->
+      <device
+        :deviceData="device"
+        :isCurrent="false"
+        @deleteDevices="deleteDevices"
+      />
       <hr />
     </li>
   </ul>
+  <div>
+    No sessions
+  </div>
 </template>
 
 <script>
-import { computed, reactive } from "@vue/runtime-core";
+import { computed, reactive, watch, ref } from "vue";
 import { useStore } from "vuex";
 import device from "./devices/device.vue";
 
@@ -26,18 +33,35 @@ export default {
     const store = useStore();
 
     const deviceId = computed(() => store.state.auth.user.deviceId);
-    const devicesData = computed(() => store.state.auth.devices);
 
     const othersDevices = reactive([]);
-    const currenteDevice = computed(
-      () =>
-        devicesData.value.filter((device) => {
-          if (device.id === deviceId.value) return device;
-          console.log("PUSH", device);
-          othersDevices.push(device);
-          return false;
-        })[0]
+    const currenteDevice = ref(null);
+
+    watch(
+      () => store.state.auth.devices,
+      (devices) => {
+        console.log("watch", devices);
+        othersDevices.length = 0;
+        devices.forEach((device) => {
+          if (device.id === deviceId.value) currenteDevice.value = device;
+          else othersDevices.push(device);
+        });
+      },
+      {
+        immediate: true,
+      }
     );
+
+    function deleteDevices(deviceId) {
+      let devicesIdList = null;
+
+      if (deviceId) {
+        devicesIdList = deviceId;
+      } else {
+        devicesIdList = othersDevices.map((device) => device.id);
+      }
+      store.dispatch("auth/deleteDevices", devicesIdList);
+    }
 
     store.dispatch("auth/getUserDevices");
 
@@ -45,6 +69,7 @@ export default {
       deviceId,
       othersDevices,
       currenteDevice,
+      deleteDevices,
     };
   },
 };

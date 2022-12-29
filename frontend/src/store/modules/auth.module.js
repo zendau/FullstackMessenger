@@ -146,9 +146,22 @@ export const auth = {
         const devicesData = await $api.get(
           `/user/getDevicesData/${state.user.id}`
         );
-        commit('saveDivicesData', devicesData.data)
+        commit("saveDivicesData", devicesData.data);
       } catch (e) {
         const message = e.response.data;
+        commit("setErrorMessage", message);
+      }
+    },
+    async deleteDevices({ commit }, devicesIdList) {
+      try {
+        // TODO: Request to api
+        // const devicesData = await $api.get(
+        //   `/user/getDevicesData/${state.user.id}`
+        // );
+        commit("deleteDivicesData", devicesIdList);
+      } catch (e) {
+        // const message = e.response.data;
+        const message = "error";
         commit("setErrorMessage", message);
       }
     },
@@ -210,6 +223,16 @@ export const auth = {
     setSuccessMessage(state, text) {
       state.alert.text = text;
       state.alert.type = alert.success;
+    },
+    deleteDivicesData(state, devicesIdList) {
+      console.log('devicesIdList', devicesIdList, state.devices, Array.isArray(state.devices))
+      state.devices = state.devices.filter(
+        (device) => {
+          console.log(devicesIdList.includes(device.id), devicesIdList, device.id)
+          return !devicesIdList.includes(device.id)
+        }
+      );
+      console.log("RES", state.devices)
     },
   },
   getters: {},

@@ -2,14 +2,30 @@
   <header>
     <nav class="chat__menu">
       <ul class="chat__list">
-        <li @click="showChats = true; isShowMobileMessages = false">
-          <a class="chat__list-item" :class="{ 'chat__list-item--active': showChats }">
+        <li
+          @click="
+            showChats = true;
+            isShowMobileMessages = false;
+          "
+        >
+          <a
+            class="chat__list-item"
+            :class="{ 'chat__list-item--active': showChats }"
+          >
             <i class="bi bi-chat-dots"></i>
             <span>Chats</span>
           </a>
         </li>
-        <li @click="showChats = false; isShowMobileMessages = false">
-          <a class="chat__list-item" :class="{ 'chat__list-item--active': !showChats }">
+        <li
+          @click="
+            showChats = false;
+            isShowMobileMessages = false;
+          "
+        >
+          <a
+            class="chat__list-item"
+            :class="{ 'chat__list-item--active': !showChats }"
+          >
             <i class="bi bi-person-lines-fill"></i>
             <span>Contacts</span>
           </a>
@@ -36,34 +52,34 @@
 </template>
 
 <script>
-import { inject } from '@vue/runtime-core'
+import { inject } from "vue";
 
-import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
+import { useRoute } from "vue-router";
+import { useStore } from "vuex";
 
 export default {
   setup() {
-    const route = useRoute()
-    const store = useStore()
+    const route = useRoute();
+    const store = useStore();
 
-    const isShowMobileMessages = inject('isShowMobileMessages')
+    const isShowMobileMessages = inject("isShowMobileMessages");
 
-    const showChats = inject('showChats')
+    const showChats = inject("showChats");
 
-    route.query.page = 'chat'
-    console.log('NAVBAR', route)
+    route.query.page = "chat";
+    console.log("NAVBAR", route);
 
     function logout() {
-      store.dispatch('auth/logout')
+      store.dispatch("auth/logout");
     }
 
     return {
       isShowMobileMessages,
       showChats,
       logout,
-    }
-  }
-}
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
