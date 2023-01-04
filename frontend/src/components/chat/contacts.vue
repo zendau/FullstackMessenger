@@ -70,9 +70,17 @@ export default {
     const scrollEnd = ref(null);
     const pattern = ref(null);
     const userId = userData.value.id;
+
+    const chatSocket = inject("chatSocket");
+
     provide("contactsPattern", pattern);
 
     store.dispatch("contact/getContactCount", userId);
+
+    chatSocket.on("changeContactStatus", (data) => {
+      store.commit("contact/changeContactStatus", data);
+      console.log("data", data);
+    });
 
     const searchContacts = debounce((el) => {
       pattern.value = el.target.value;

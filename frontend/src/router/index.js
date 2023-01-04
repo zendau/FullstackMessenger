@@ -186,7 +186,8 @@ router.beforeEach((to, from, next) => {
   const startAuthPage = import.meta.env.VUE_APP_ROUTER_START_AUTH_PAGE_PATH;
 
   const authStatus = store.state.auth.authStatus;
-  const userRole = store.state.auth.user.role.accessLevel;
+  // const userRole = store.state.auth.user.role.accessLevel;
+  const userRole = 1;
   const isBanned = store.state.auth.user.isBanned;
 
   if (to.meta.requiresAuth) {

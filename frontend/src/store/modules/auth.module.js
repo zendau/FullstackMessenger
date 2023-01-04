@@ -132,14 +132,15 @@ export const auth = {
       //       commit("authSuccess", tokenDecode);
       //     }
       //   }
-      const userId = parseInt(localStorage.getItem("userId"));
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      console.log("userData", userData);
       commit("authSuccess", {
-        id: userId,
-        email: "test5@gmail.com",
-        login: "five",
-        role: "USER",
-        isBanned: false,
-        deviceId: 1,
+        id: userData.id,
+        email: userData.email,
+        login: userData.login,
+        role: userData.role,
+        isBanned: userData.isBanned,
+        deviceId: userData.deviceId,
       });
     },
     async getUserDevices({ commit, state }) {
@@ -243,5 +244,14 @@ export const auth = {
       console.log("RES", state.devices);
     },
   },
-  getters: {},
+  getters: {
+    getUserContactData(state) {
+      return {
+        email: state.user.email,
+        id: state.user.id,
+        lastOnline: "online",
+        login: state.user.login,
+      };
+    },
+  },
 };

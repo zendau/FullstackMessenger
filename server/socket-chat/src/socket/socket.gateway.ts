@@ -27,6 +27,7 @@ import IReadMessage from './interfaces/message/IReadMessage';
 import IUserData from './interfaces/user/IUserData';
 import IChatLoad from './interfaces/chat/IChatLoad';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
+import { IContactStatus } from './interfaces/contact/IContactStatus';
 
 @WebSocketGateway(80, {
   path: '/socketChat',
@@ -58,6 +59,7 @@ export class SocketGateway {
   async connectUser(socket: Socket, userId: number) {
     const userStatus = this.socketService.addUser(userId);
     const rooms = await this.socketService.getUserRoomsIds(userId);
+
     socket.data.userId = userId;
     socket.join(rooms);
     socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
@@ -226,5 +228,17 @@ export class SocketGateway {
     const contactData = await this.socketService.getContactData(payload);
 
     this.server.to(socket.id).emit('contactData', contactData);
+  }
+
+  @SubscribeMessage('chatContactStatus')
+  async chatContactStatus(socket: Socket, payload: IContactStatus) {
+    for (const userSocket of this.server.sockets.sockets?.values()) {
+      console.log('userSocket', userSocket.data, payload);
+
+      if (userSocket.data?.userId == payload.contactId) {
+        console.log('!!!!userSocket.data', userSocket.id);
+        this.server.to(userSocket.id).emit('changeContactStatus', payload);
+      }
+    }
   }
 }

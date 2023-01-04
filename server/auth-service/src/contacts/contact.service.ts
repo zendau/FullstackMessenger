@@ -102,7 +102,8 @@ export class ContactService {
       .createQueryBuilder()
       .select('userId')
       .where('contactId = :userId', { userId: listData.userId })
-      .andWhere('isContact = 0');
+      .andWhere('isContact = 0')
+      .andWhere('isBanned = 0');
     // const resList = await this.contactRepository
     //   .createQueryBuilder()
     //   .select('contactId as id')
@@ -162,6 +163,7 @@ export class ContactService {
       .select('COUNT(userId)', 'count')
       .where('contactId = :userId', { userId })
       .andWhere('isContact = 0')
+      .andWhere('isBanned = 0')
       .getRawOne();
 
     const outgoingCount = await this.contactRepository
@@ -210,7 +212,7 @@ export class ContactService {
     const resDeleted = await this.contactRepository
       .createQueryBuilder()
       .delete()
-      .where('userId = :contactId and contactId = :userId', {
+      .where('userId = :userId and contactId = :contactId', {
         userId: requestData.userId,
         contactId: requestData.contactId,
       })

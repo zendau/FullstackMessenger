@@ -171,11 +171,14 @@ export class UserService {
     }
 
     console.log('userId', query.getQuery());
-    const resList = await query.getRawMany();
-
+    const resQuery = await query.getRawMany();
+    const resList = resQuery.reduce(
+      (prev, curr) => ({ ...prev, [curr.id]: curr }),
+      {},
+    );
     return {
       resList,
-      hasMore: pattern ? true : resList.length === parseInt(limit),
+      hasMore: pattern ? true : resQuery.length === parseInt(limit),
       page: pattern ? 0 : parseInt(page) + 1,
     };
   }

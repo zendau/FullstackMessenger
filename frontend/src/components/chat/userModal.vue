@@ -72,11 +72,30 @@ export default {
       store.commit("contact/setContactData", data);
     });
 
+    const listTypes = {
+      AddContact: "AddContact",
+      PendingAccept: "PendingAccept",
+      PendingReject: "PendingReject",
+      OutgointCancel: "OutgointCancel",
+      DeleteContact: "DeleteContact",
+      BlockUser: "BlockUser",
+      UnBlockUser: "UnBlockUser",
+    };
+
     async function blockUser() {
       store.dispatch("contact/blockUser", {
         userId: userId.value,
         contactId: contactId.value,
       });
+
+      const statusData = {
+        operation: listTypes.BlockUser,
+        contactId: contactId.value,
+        userData: store.getters["auth/getUserContactData"],
+      };
+
+      chatSocket.emit("chatContactStatus", statusData);
+      store.commit("contact/changeUserStatus", statusData);
     }
 
     async function unblockUser() {
@@ -84,6 +103,15 @@ export default {
         userId: userId.value,
         contactId: contactId.value,
       });
+
+      const statusData = {
+        operation: listTypes.UnBlockUser,
+        contactId: contactId.value,
+        userData: store.getters["auth/getUserContactData"],
+      };
+
+      chatSocket.emit("chatContactStatus", statusData);
+      store.commit("contact/changeUserStatus", statusData);
     }
 
     async function deleteFromContacts() {
@@ -91,6 +119,15 @@ export default {
         userId: userId.value,
         contactId: contactId.value,
       });
+
+      const statusData = {
+        operation: listTypes.DeleteContact,
+        contactId: contactId.value,
+        userData: store.getters["auth/getUserContactData"],
+      };
+
+      chatSocket.emit("chatContactStatus", statusData);
+      store.commit("contact/changeUserStatus", statusData);
     }
 
     async function addToContacts() {
@@ -98,6 +135,20 @@ export default {
         userId: userId.value,
         contactId: contactId.value,
       });
+      console.log("ASASASAS", {
+        operation: listTypes.AddContact,
+        contactId: contactId.value,
+        userData: store.getters["auth/getUserContactData"],
+      });
+
+      const statusData = {
+        operation: listTypes.AddContact,
+        contactId: contactId.value,
+        userData: store.getters["auth/getUserContactData"],
+      };
+
+      chatSocket.emit("chatContactStatus", statusData);
+      store.commit("contact/changeUserStatus", statusData);
     }
 
     async function cancelOutgoingRequest() {
@@ -105,6 +156,15 @@ export default {
         userId: userId.value,
         contactId: contactId.value,
       });
+
+      const statusData = {
+        operation: listTypes.OutgointCancel,
+        contactId: contactId.value,
+        userData: store.getters["auth/getUserContactData"],
+      };
+
+      chatSocket.emit("chatContactStatus", statusData);
+      store.commit("contact/changeUserStatus", statusData);
     }
 
     async function confirmContactRequest() {
@@ -112,6 +172,15 @@ export default {
         userId: userId.value,
         contactId: contactId.value,
       });
+
+      const statusData = {
+        operation: listTypes.PendingAccept,
+        contactId: contactId.value,
+        userData: store.getters["auth/getUserContactData"],
+      };
+
+      chatSocket.emit("chatContactStatus", statusData);
+      store.commit("contact/changeUserStatus", statusData);
     }
 
     async function cancelPendingRequest() {
@@ -119,6 +188,15 @@ export default {
         userId: userId.value,
         contactId: contactId.value,
       });
+
+      const statusData = {
+        operation: listTypes.PendingReject,
+        contactId: contactId.value,
+        userData: store.getters["auth/getUserContactData"],
+      };
+
+      chatSocket.emit("chatContactStatus", statusData);
+      store.commit("contact/changeUserStatus", statusData);
     }
 
     function closeCTX() {
