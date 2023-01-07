@@ -1,7 +1,7 @@
 
 <template>
   <section class="main-container">
-    <alert v-if="mediaError" />
+    <AlertNotification v-if="mediaError" />
     <div v-else class="conference-container" :class="{ 'conference-container--audio': !roomData.type }">
       <router-view />
     </div>
@@ -20,10 +20,10 @@ import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "v
 
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import Alert from '../components/UI/alert.vue';
+import AlertNotification from '../components/UI/alertNotification.vue';
 
 export default {
-  components: { footerComponent, conferenceChat, Alert },
+  components: { footerComponent, conferenceChat, AlertNotification },
   setup() {
 
     const showChat = ref(false)

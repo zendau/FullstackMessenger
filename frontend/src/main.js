@@ -4,12 +4,10 @@ import router from "./router";
 import store from "./store";
 import "./style.css";
 
-
 import { library } from "@fortawesome/fontawesome-svg-core";
 
-
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+import { faGlobe, faPenToSquare, faXmark } from "@fortawesome/free-solid-svg-icons";
 import {
   faEdge,
   faInternetExplorer,
@@ -19,7 +17,7 @@ import {
   faOpera,
   faYandex,
   faAndroid,
-  faApple
+  faApple,
 } from "@fortawesome/free-brands-svg-icons";
 
 library.add(
@@ -32,7 +30,9 @@ library.add(
   faSafari,
   faFirefox,
   faOpera,
-  faYandex
+  faYandex,
+  faPenToSquare,
+  faXmark,
 );
 
 // import 'bootstrap'

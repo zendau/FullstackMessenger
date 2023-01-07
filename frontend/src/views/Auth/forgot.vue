@@ -1,6 +1,6 @@
 <template>
   <h1 class="user__title">Forgot password</h1>
-  <alert />
+  <AlertNotification />
   <confirm-code v-if="isConfirmCode" @confirmCode="confirmResetPassword" :email="tempEmail" />
   <form v-else class="user__form" @submit="onSubmitForm">
     <form-input id="email" title="Email" type="email" v-model="email" />
@@ -10,7 +10,7 @@
 
 <script>
 
-import Alert from '../../components/UI/alert.vue'
+import AlertNotification from '../../components/UI/alertNotification.vue'
 import FormInput from '../../components/UI/input.vue'
 
 import * as yup from 'yup';
@@ -21,7 +21,7 @@ import { onUnmounted, ref } from 'vue';
 import confirmCode from '../../components/confirmCode.vue';
 
 export default {
-  components: { Alert, FormInput, confirmCode },
+  components: { AlertNotification, FormInput, confirmCode },
   setup() {
 
     const store = useStore()
@@ -40,18 +40,18 @@ export default {
     const { value: email } = useField('email');
 
     onUnmounted(() => {
-      store.commit('auth/clearAlert')
+      store.commit('alert/clearAlert')
     })
 
     function onInvalidSubmit({ errors }) {
       const errorMessage = Object.keys(errors).map(error => `<span>${errors[error]}</span>`).join('')
-      store.commit('auth/setErrorMessage', errorMessage)
+      store.commit('alert/setErrorMessage', errorMessage)
     }
 
     const onSubmitForm = handleSubmit(value => {
       tempEmail.value =  value.email
       isConfirmCode.value = true
-      store.commit('auth/clearAlert')
+      store.commit('alert/clearAlert')
     }, onInvalidSubmit)
 
     function confirmResetPassword(confirmCode) {

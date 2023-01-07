@@ -34,7 +34,7 @@ export default {
     const { value: confirmCode } = useField('confirmCode');
 
     function onInvalidSubmit({ errors }) {
-      store.commit('auth/setErrorMessage', errors.confirmCode)
+      store.commit('alert/setErrorMessage', errors.confirmCode)
     }
 
     const onSubmitForm = handleSubmit(value => {

@@ -23,7 +23,7 @@ export const conference = {
           adminId: conferenceData.adminId,
           chatId: conferenceData.chatId,
           roomWithVideo: conferenceData.type
-  
+
         })
 
         const room = res.data
@@ -41,10 +41,10 @@ export const conference = {
       } catch (error) {
         $api.delete(`/chat/delete/${conferenceData.chatId}`)
 
-        commit('auth/setErrorMessage', error.response.data.message, { root: true })
+        commit('alert/setErrorMessage', error.response.data.message, { root: true })
       }
     },
-    async getConferenceData({ commit }, roomId) { 
+    async getConferenceData({ commit }, roomId) {
       try {
         const res = await $api.get('/room/get/' + roomId)
         commit('saveConferenceData', res.data)
@@ -58,7 +58,7 @@ export const conference = {
           roomTitle: conferenceData.title,
           roomWithVideo: conferenceData.type,
           id: conferenceData.id
-  
+
         })
         commit('saveConferenceData', {
           adminLogin: state.adminLogin,
@@ -71,7 +71,7 @@ export const conference = {
         const roomType = conferenceData.type ? 'video' : 'audio'
         router.push(`/conference/${roomType}/${conferenceData.id}`)
       } catch (error) {
-        commit('auth/setErrorMessage', error.response.data.message, { root: true })
+        commit('alert/setErrorMessage', error.response.data.message, { root: true })
       }
     },
     async deleteConference({ commit }, id) {
@@ -79,7 +79,7 @@ export const conference = {
         await $api.delete(`/room/delete/${id}`)
         commit('clearConferenceData')
       } catch (error) {
-        commit('auth/setErrorMessage', error.response.data.message, { root: true })
+        commit('alert/setErrorMessage', error.response.data.message, { root: true })
       }
     },
     async getConferesRooms({ commit }) {
@@ -87,7 +87,7 @@ export const conference = {
         const res = await $api.get('/room/getAll')
         commit('saveRoomsData', res.data)
       } catch (error) {
-        commit('auth/setErrorMessage', error.response.data.message, { root: true })
+        commit('alert/setErrorMessage', error.response.data.message, { root: true })
       }
     }
   },

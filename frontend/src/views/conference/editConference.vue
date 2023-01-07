@@ -1,7 +1,7 @@
 <template>
   <section class="user__container">
     <h1 class="user__title">Edit conference</h1>
-    <alert />
+    <AlertNotification />
     <form class="user__form" @submit="onSubmitForm">
       <form-input id="title" title="Conference title" type="text" v-model="title" />
 
@@ -18,7 +18,7 @@
 <script>
 
 import FormInput from '../../components/UI/input.vue'
-import Alert from '../../components/UI/alert.vue'
+import AlertNotification from '../../components/UI/alertNotification.vue'
 
 import { useStore } from 'vuex'
 
@@ -28,13 +28,13 @@ import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 export default {
-  components: { Alert, FormInput },
+  components: { AlertNotification, FormInput },
   setup() {
     const store = useStore()
     const route = useRoute()
     const router = useRouter()
 
-    const roomId = computed(() => route.params.id) 
+    const roomId = computed(() => route.params.id)
 
     const adminId = computed(() => store.state.conference.adminId)
     const userId = computed(() => store.state.auth.user.id)
@@ -68,7 +68,7 @@ export default {
 
       Object.keys(errors).forEach(item => message += `<span>${errors[item]}</span>`)
       console.log(message)
-      store.commit('auth/setErrorMessage', message)
+      store.commit('alert/setErrorMessage', message)
     }
     const onSubmitForm = handleSubmit(value => {
       console.log(confirmedAdmin)
@@ -88,7 +88,7 @@ export default {
         confirmedAdmin = true
       } else {
         router.push('/conferences')
-        
+
       }
     }, {
       immediate: true

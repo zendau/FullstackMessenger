@@ -16,6 +16,7 @@ import IUserChat from './interfaces/user/IUserChat';
 import IReadMessage from './interfaces/message/IReadMessage';
 import IMessageCreated from './interfaces/message/IMessageCreated';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
+import IChatCreate from 'src/chat/interfaces/IChatCreate';
 
 // interface userData {
 //   login: string;
@@ -573,7 +574,8 @@ export class SocketService {
     //   return this.messages[roomId].at(-1);
     // }
   }
-  async getPrivateChatTitle(userId: number, chatUsers: IUser[]) {
+
+  async getPrivateChatTitle(userId: number, chatUsers: (IUser | number)[]) {
     console.log('chatUsers', chatUsers);
     // const filteredUserId = (
     //   Object.keys(chatUsers) as unknown as Array<keyof typeof chatUsers>
@@ -582,13 +584,24 @@ export class SocketService {
     //     return id;
     //   }
     // })[0];
+
     const filteredUser = chatUsers.filter((user) => {
-      if (user.id != userId) {
+      debugger;
+      if (typeof user === 'number' && user !== userId) {
+        return user;
+      } else if (typeof user !== 'number' && user.id !== userId) {
         return user;
       }
+      return false;
     })[0];
-    const userData = await this.userService.getUserById(filteredUser.id);
-    return userData.login;
+
+    if (typeof filteredUser === 'number') {
+      const userData = await this.userService.getUserById(filteredUser);
+      return userData.login;
+    }
+    // const userData = await this.userService.getUserById(filteredUser.id);
+    // return userData.login;
+    return filteredUser.login;
   }
 
   async getUserRoomsIds(userId: number) {
@@ -835,5 +848,27 @@ export class SocketService {
   async getContactData(userData: IUserChat) {
     const contactData = await this.userService.getContactData(userData);
     return contactData;
+  }
+
+  async createChat(chatData: IChatCreate) {
+    const res = await this.chatService.createChat(chatData);
+
+    if ('status' in res) return res;
+
+    const createdChatData: IChatExtended = {} as any;
+    createdChatData.id = res.id;
+    createdChatData.adminId = res.adminId;
+    createdChatData.title = await this.getPrivateChatTitle(
+      res.adminId,
+      chatData.users,
+    );
+    createdChatData.chatUnread = 0;
+    createdChatData.lastMessage = null;
+    createdChatData.userUnread = 0;
+
+    const groupUsers = await this.chatService.getUsersListData(chatData.users);
+    createdChatData.users = await this.setUserOnlineStatus(groupUsers);
+
+    return createdChatData;
   }
 }

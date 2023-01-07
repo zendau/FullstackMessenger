@@ -5,7 +5,7 @@
     <p class="user__text">Role: {{ userData.role.value }}</p>
     <hr class="user__hr">
     <h2 class="user__title">Change user data</h2>
-    <alert />
+    <AlertNotification />
     <confirm-code v-if="isConfirmCode" @confirmCode="confirmChangeData" :email="userData.email" />
     <form v-else class="user__form" @submit="onSubmitForm">
       <form-input id="email" title="Email" type="email" v-model="email" />
@@ -25,12 +25,12 @@ import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 
 import FormInput from '../../components/UI/input.vue'
-import Alert from '../../components/UI/alert.vue'
+import AlertNotification from '../UI/alertNotification.vue'
 
 import confirmCode from '../../components/confirmCode.vue';
 
 export default {
-  components: { Alert, FormInput, confirmCode },
+  components: { AlertNotification, FormInput, confirmCode },
   setup() {
     const store = useStore()
 
@@ -64,14 +64,14 @@ export default {
 
     function onInvalidSubmit({ errors }) {
       const errorMessage = Object.keys(errors).map(error => `<span>${errors[error]}</span>`).join('')
-      store.commit('auth/setErrorMessage', errorMessage)
+      store.commit('alert/setErrorMessage', errorMessage)
     }
 
     const onSubmitForm = handleSubmit(value => {
       console.log('value', value)
       userData.value = value
       isConfirmCode.value = true
-      store.commit('auth/clearAlert')
+      store.commit('alert/clearAlert')
     }, onInvalidSubmit)
 
     function confirmChangeData(confirmCode) {

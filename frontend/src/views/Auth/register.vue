@@ -1,6 +1,6 @@
 <template>
   <h1 class="user__title">Register</h1>
-  <alert />
+  <AlertNotification />
   <confirm-code v-if="isConfirmCode" @confirmCode="confirmRegister" :email="registerData.email" />
   <form v-else class="user__form" @submit.prevent="onSubmitForm">
 
@@ -15,7 +15,7 @@
 
 <script>
 
-import Alert from '../../components/UI/alert.vue'
+import AlertNotification from '../../components/UI/alertNotification.vue'
 import FormInput from '../../components/UI/input.vue'
 
 import { useStore } from 'vuex'
@@ -27,7 +27,7 @@ import * as yup from 'yup';
 import { ref } from 'vue';
 
 export default {
-  components: { Alert, FormInput, confirmCode },
+  components: { AlertNotification, FormInput, confirmCode },
   setup() {
 
     const store = useStore()
@@ -56,14 +56,14 @@ export default {
 
     function onInvalidSubmit({ errors }) {
       const errorMessage = Object.keys(errors).map(error => `<span>${errors[error]}</span>`).join('')
-      store.commit('auth/setErrorMessage', errorMessage)
+      store.commit('alert/setErrorMessage', errorMessage)
     }
 
     const onSubmitForm = handleSubmit(value => {
 
       registerData.value = value
       isConfirmCode.value = true
-      store.commit('auth/clearAlert')
+      store.commit('alert/clearAlert')
       //store.dispatch('auth/register', )
     }, onInvalidSubmit)
 

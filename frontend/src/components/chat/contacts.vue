@@ -6,7 +6,7 @@
     <!-- <button class="btn" @click="groupType = !groupType">
       {{ groupType ? "Close" : "Create group" }}
     </button> -->
-    <input type="text" @input="searchContacts" />
+    <searchInput @searchByPattern="searchContacts" />
     <div style="display: flex">
       <ContactsListType :listType="listType" @changeListType="changeListType" />
     </div>
@@ -25,7 +25,7 @@ import $api from "../../axios";
 
 import { useRouter } from "vue-router";
 
-import { computed, inject, provide, ref } from "vue";
+import { computed, inject, provide, ref, watch } from "vue";
 import createGroup from "./createGroup.vue";
 
 import { useStore } from "vuex";
@@ -38,7 +38,7 @@ import BlockedList from "./contacts/blockedList.vue";
 
 import ContactsListType from "./contactsListType.vue";
 
-import debounce from "../../utils/debounce";
+import searchInput from "./searchInput.vue";
 
 export default {
   components: {
@@ -49,6 +49,7 @@ export default {
     OutgoingList,
     BlockedList,
     ContactsListType,
+    searchInput,
   },
   setup() {
     const router = useRouter();
@@ -75,6 +76,8 @@ export default {
 
     provide("contactsPattern", pattern);
 
+    const createGroupUsers = inject("createGroupUsers");
+
     store.dispatch("contact/getContactCount", userId);
 
     chatSocket.on("changeContactStatus", (data) => {
@@ -82,8 +85,19 @@ export default {
       console.log("data", data);
     });
 
-    const searchContacts = debounce((el) => {
-      pattern.value = el.target.value;
+    watch(
+      createGroupUsers,
+      (value) => {
+        if (value.length !== 1) return;
+        listType.value = 'contacts';
+      },
+      {
+        deep: true,
+      }
+    );
+
+    const searchContacts = (value) => {
+      pattern.value = value;
       // if (pattern.length === 0) {
       //   searchData.value = null;
       //   return;
@@ -98,7 +112,7 @@ export default {
       //   userId: userId.value,
       //   pattern,
       // });
-    });
+    };
 
     //store.dispatch('chat/getContacts')
 

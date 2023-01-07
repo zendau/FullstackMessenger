@@ -3,7 +3,7 @@
     class="chats__container"
     :class="{ 'chats__container--active': !isShowMobileMessages }"
   >
-    <input type="text" @input="searchChats" />
+    <searchInput @searchByPattern="searchChats" />
     <p
       class="empty_message"
       style="color: red"
@@ -41,10 +41,11 @@
 <script>
 import { computed, inject, ref } from "vue";
 import { useStore } from "vuex";
-import debounce from "../../utils/debounce";
+import searchInput from "./searchInput.vue";
 // import { io } from "socket.io-client";
 
 export default {
+  components: { searchInput },
   setup(_, { emit }) {
     const store = useStore();
     // store.dispatch('chat/getChats')
@@ -73,14 +74,13 @@ export default {
     const searchData = ref(null);
     const chatsList = computed(() => searchData.value ?? chatsData.value);
 
-    const searchChats = debounce((el) => {
+    const searchChats = (pattern) => {
       // socket.emit("serchChats", {
       //   userId: "",
       //   pattern: chatId.value,
       // });
       // console.log("press_end");
 
-      const pattern = el.target.value;
       //console.log('pattern', pattern.length, pattern)
       if (pattern.length === 0) {
         searchData.value = null;
@@ -96,7 +96,7 @@ export default {
         userId: userId.value,
         pattern,
       });
-    });
+    };
 
     function setLastChatItem(el, index) {
       if (searchData.value) return;

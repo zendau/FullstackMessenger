@@ -1,28 +1,29 @@
 <template>
   <ul class="contacts__list">
     <li
-      class="contact__item"
       v-for="(user, index) in listData"
       :key="user.id"
-      @click="openUserModal(user.id)"
       :ref="(el) => setObserver(el, index)"
     >
-      <i class="bi bi-person"></i>
-      <!-- <input
-        v-if="groupType"
-        v-model="groupUsers"
+      <div class="contact__item" @click="openUserModal(user.id)">
+        <i class="bi bi-person"></i>
+
+        <p>{{ user.login }}</p>
+        <p>{{ user.lastOnline }}</p>
+      </div>
+      <input
+        v-if="createGroupUsers.length > 0"
+        v-model="createGroupUsers"
         :value="user.id"
         type="checkbox"
-      /> -->
-      <p>{{ user.login }}</p>
-      <p>{{ user.lastOnline }}</p>
+      />
     </li>
   </ul>
   <p class="empty_message" v-if="listData.length === 0">No users</p>
 </template>
 
 <script>
-import { computed, inject, watch } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useStore } from "vuex";
 
 export default {
@@ -34,6 +35,7 @@ export default {
 
     const modalUserId = inject("modalUserId");
     const contactsPattern = inject("contactsPattern");
+    const createGroupUsers = inject("createGroupUsers");
 
     const observer = new IntersectionObserver(async (entries) => {
       console.log("contacts", entries[0], contactsPattern.value);
@@ -78,6 +80,8 @@ export default {
     }
 
     return {
+
+      createGroupUsers,
       contactsPattern,
       listData,
       openUserModal,

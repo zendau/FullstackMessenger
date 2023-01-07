@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { computed, onUnmounted, provide, inject } from "vue";
+import { computed, provide, inject, reactive } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
 import { ref, watch } from "vue";
@@ -38,6 +38,8 @@ export default {
     const isShowMobileMessages = ref(false);
     provide("isShowMobileMessages", isShowMobileMessages);
 
+    const createGroupUsers = ref([]);
+    provide("createGroupUsers", createGroupUsers);
     const chatSocket = inject("chatSocket");
 
     const chatId = computed(() => route.params.id);
@@ -127,10 +129,18 @@ export default {
       }
     });
 
+    chatSocket.on("chatCreateError", (errorData) => {
+      store.commit("alert/setErrorMessage", errorData.message);
+    });
+
+    chatSocket.on("newChat", (chatData) => {
+      store.commit("chat/appendChatsData", chatData);
+    });
+
     //store.commit("chat/cleanChatData");
 
     function openChatRoom(roomId, isFirstLoad = false) {
-      if (chatId.value === roomId && !isFirstLoad) return;
+      if (!roomId || (chatId.value === roomId && !isFirstLoad)) return;
       console.log("OPEN", roomId);
       router.push(`/chat/${roomId}`);
 

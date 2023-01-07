@@ -177,7 +177,7 @@ export default {
       })
     }).catch(() => {
       mediaError.value = true
-      store.commit('auth/setErrorMessage', 'Could not start video source')
+      store.commit('alert/setErrorMessage', 'Could not start video source')
     })
 
 
@@ -205,7 +205,7 @@ export default {
         })
       } catch {
         mediaError.value = true
-        store.commit('auth/setErrorMessage', 'Could not start video source')
+        store.commit('alert/setErrorMessage', 'Could not start video source')
       }
 
     })

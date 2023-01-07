@@ -10,7 +10,7 @@ export default class ScreenShare {
   }
 
   async startShareScreen() {
-    
+
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia()
       this.screenStream = stream
@@ -32,7 +32,7 @@ export default class ScreenShare {
         this.#returnVideoStream()
       );
     } catch (e) {
-      this.store.commit('auth/setErrorMessage', e)
+      this.store.commit('alert/setErrorMessage', e)
     }
   }
 

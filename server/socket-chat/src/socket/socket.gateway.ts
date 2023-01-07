@@ -28,6 +28,7 @@ import IUserData from './interfaces/user/IUserData';
 import IChatLoad from './interfaces/chat/IChatLoad';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 import { IContactStatus } from './interfaces/contact/IContactStatus';
+import IChatCreate from 'src/chat/interfaces/IChatCreate';
 
 @WebSocketGateway(80, {
   path: '/socketChat',
@@ -239,6 +240,31 @@ export class SocketGateway {
         console.log('!!!!userSocket.data', userSocket.id);
         this.server.to(userSocket.id).emit('changeContactStatus', payload);
       }
+    }
+  }
+
+  @SubscribeMessage('createChat')
+  async createChat(socket: Socket, payload: IChatCreate) {
+    const chatData = await this.socketService.createChat(payload);
+
+    if ('status' in chatData) {
+      this.server.to(socket.id).emit('chatCreateError', payload);
+    } else {
+      for (const userSocket of this.server.sockets.sockets?.values()) {
+        if (payload.users.includes(userSocket.data?.userId)) {
+          this.server
+            .to(userSocket.id)
+            .emit('newChat', { [chatData.id]: chatData });
+        }
+      }
+
+      this.sendMessage(socket, {
+        roomId: chatData.id,
+        authorId: null,
+        authorLogin: null,
+        text: 'Created',
+        files: null,
+      });
     }
   }
 }

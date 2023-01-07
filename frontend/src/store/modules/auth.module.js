@@ -3,8 +3,6 @@ import jwt_decode from "jwt-decode";
 
 import router from "../../router";
 
-import { alert } from "../../components/UI/alert";
-
 export const auth = {
   namespaced: true,
   state: {
@@ -18,10 +16,6 @@ export const auth = {
     },
     devices: [],
     authStatus: false,
-    alert: {
-      text: "",
-      type: null,
-    },
   },
   actions: {
     async login({ commit }, loginData) {
@@ -39,7 +33,9 @@ export const auth = {
       } catch (e) {
         debugger;
         const message = e.response.data;
-        commit("setErrorMessage", message);
+        commit("alert/setErrorMessage", message, {
+          root: true,
+        });
       }
     },
     async resetPassword({ commit }, resetData) {
@@ -49,10 +45,18 @@ export const auth = {
           confirmCode: resetData.confirmCode,
         });
 
-        commit("setSuccessMessage", "New password was send to your email");
+        commit(
+          "alert/setSuccessMessage",
+          "New password was send to your email",
+          {
+            root: true,
+          }
+        );
       } catch (e) {
         const message = e.response.data.message;
-        commit("setErrorMessage", message);
+        commit("alert/setErrorMessage", message, {
+          root: true,
+        });
       }
     },
     async changeUserData({ commit }, userData) {
@@ -67,11 +71,15 @@ export const auth = {
           confirmCode: userData.confirmCode,
         });
 
-        commit("setSuccessMessage", "Your data was updated");
+        commit("alert/setSuccessMessage", "Your data was updated", {
+          root: true,
+        });
         commit("updateData", userData);
       } catch (e) {
         const message = e.response.data.message;
-        commit("setErrorMessage", message);
+        commit("alert/setErrorMessage", message, {
+          root: true,
+        });
       }
     },
     async logout({ commit }) {
@@ -98,7 +106,9 @@ export const auth = {
         router.push("/users");
       } catch (e) {
         const message = e.response.data;
-        commit("setErrorMessage", message);
+        commit("alert/setErrorMessage", message, {
+          root: true,
+        });
       }
     },
     async confirmCode({ commit }, email) {
@@ -108,7 +118,9 @@ export const auth = {
         });
       } catch (e) {
         const message = e.response.data;
-        commit("setErrorMessage", message);
+        commit("alert/setErrorMessage", message, {
+          root: true,
+        });
       }
     },
     async checkAuth({ commit }) {
@@ -151,7 +163,9 @@ export const auth = {
         commit("saveDivicesData", devicesData.data);
       } catch (e) {
         const message = e.response.data;
-        commit("setErrorMessage", message);
+        commit("alert/setErrorMessage", message, {
+          root: true,
+        });
       }
     },
     async deleteDevices({ commit }, devicesIdList) {
@@ -164,7 +178,9 @@ export const auth = {
       } catch (e) {
         // const message = e.response.data;
         const message = "error";
-        commit("setErrorMessage", message);
+        commit("alert/setErrorMessage", message, {
+          root: true,
+        });
       }
     },
   },
@@ -205,27 +221,7 @@ export const auth = {
     saveDivicesData(state, diveces) {
       state.devices = diveces;
     },
-    clearAlert(state) {
-      state.alert.text = "";
-      state.alert.type = null;
-    },
-    setErrorMessage(state, text) {
-      let message = null;
-      if (typeof text === "string") {
-        message = text;
-      } else if (text.message) {
-        message = text.message;
-      } else {
-        message = text[0];
-      }
 
-      state.alert.text = message;
-      state.alert.type = alert.danger;
-    },
-    setSuccessMessage(state, text) {
-      state.alert.text = text;
-      state.alert.type = alert.success;
-    },
     deleteDivicesData(state, devicesIdList) {
       console.log(
         "devicesIdList",

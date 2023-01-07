@@ -25,46 +25,46 @@ export class ChatController {
   //   return res;
   // }
 
-  @MessagePattern('chat/check')
-  async checkChat(@Payload() chatData: IChatCreate) {
-    const res = await this.chatService.checkChat(chatData).catch((err) => {
-      console.log(err);
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
-    return res;
-  }
+  // @MessagePattern('chat/check')
+  // async checkChat(@Payload() chatData: IChatCreate) {
+  //   const res = await this.chatService.checkChat(chatData).catch((err) => {
+  //     console.log(err);
+  //     return {
+  //       status: false,
+  //       message: err.sqlMessage,
+  //       httpCode: HttpStatus.BAD_REQUEST,
+  //     };
+  //   });
+  //   return res;
+  // }
 
-  @MessagePattern('chat/checkId')
-  async checkChatId(@Payload() id: string) {
-    const res = await this.chatService.getChatById(id).catch((err) => {
-      console.log('err', err);
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
-    console.log('res', res);
-    return res;
-  }
+  // @MessagePattern('chat/checkId')
+  // async checkChatId(@Payload() id: string) {
+  //   const res = await this.chatService.getChatById(id).catch((err) => {
+  //     console.log('err', err);
+  //     return {
+  //       status: false,
+  //       message: err.sqlMessage,
+  //       httpCode: HttpStatus.BAD_REQUEST,
+  //     };
+  //   });
+  //   console.log('res', res);
+  //   return res;
+  // }
 
-  @MessagePattern('chat/create')
-  async createChat(@Payload() chatData: IChatCreate) {
-    const res = await this.chatService.createChat(chatData).catch((err) => {
-      console.log(err);
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
-    console.log('res', res);
-    return res;
-  }
+  // @MessagePattern('chat/create')
+  // async createChat(@Payload() chatData: IChatCreate) {
+  //   const res = await this.chatService.createChat(chatData).catch((err) => {
+  //     console.log(err);
+  //     return {
+  //       status: false,
+  //       message: err.sqlMessage,
+  //       httpCode: HttpStatus.BAD_REQUEST,
+  //     };
+  //   });
+  //   console.log('res', res);
+  //   return res;
+  // }
 
   @MessagePattern('chat/getContacts')
   async getContacts() {

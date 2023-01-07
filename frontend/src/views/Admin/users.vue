@@ -1,5 +1,5 @@
 <template>
-  <alert />
+  <AlertNotification />
   <table class="table">
     <thead>
       <tr>
@@ -33,10 +33,10 @@ import { onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import $api from '../../axios'
 
-import Alert from '../../components/UI/alert.vue'
+import AlertNotification from '../../components/UI/alertNotification.vue'
 
 export default {
-  components: { Alert },
+  components: { AlertNotification },
   setup() {
     const store = useStore()
 
@@ -61,7 +61,7 @@ export default {
           return user
         })
       } catch {
-        store.commit('auth/setErrorMessage', 'error connection')
+        store.commit('alert/setErrorMessage', 'error connection')
       }
     }
 
@@ -77,7 +77,7 @@ export default {
           return user
         })
       } catch {
-        store.commit('auth/setErrorMessage', 'error connection')
+        store.commit('alert/setErrorMessage', 'error connection')
       }
     }
 
