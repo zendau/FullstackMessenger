@@ -5,7 +5,12 @@
       :key="user.id"
       :ref="(el) => setObserver(el, index)"
     >
-      <div class="contact__item" @click="openUserModal(user.id)">
+      <div
+        class="contact__item"
+        @contextmenu.prevent
+        @click.left="openChat(user)"
+        @click.right="openUserModal(user.id)"
+      >
         <i class="bi bi-person"></i>
 
         <p>{{ user.login }}</p>
@@ -27,8 +32,9 @@ import { computed, inject, ref, watch } from "vue";
 import { useStore } from "vuex";
 
 export default {
+  emits: ["openChat"],
   props: ["count"],
-  setup() {
+  setup(_, { emit }) {
     const store = useStore();
     const listData = computed(() => store.state.contact.contacts);
     const userId = computed(() => store.state.auth.user.id);
@@ -75,12 +81,21 @@ export default {
       observer.observe(el);
     }
 
+    function openChat(userData) {
+      emit("openChat", userData.chat ?? 'temp');
+      store.commit("chat/setTempPrivateChat", {
+        title: userData.login,
+        lastOnline: userData.lastOnline,
+      });
+      console.log("open chat", userData.chat);
+    }
+
     function openUserModal(userId) {
       modalUserId.value = userId;
     }
 
     return {
-
+      openChat,
       createGroupUsers,
       contactsPattern,
       listData,

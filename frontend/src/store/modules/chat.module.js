@@ -7,6 +7,7 @@ export const chat = {
     chats: {},
     currentTempChatData: null,
     messages: {},
+    tempPrivateChat: null,
   },
   actions: {
     newChatMessage(
@@ -277,6 +278,9 @@ export const chat = {
         state.currentTempChatData.chatUnread = unreadCount;
       }
     },
+    setTempPrivateChat(state, chatData) {
+      state.tempPrivateChat = chatData;
+    },
     // addMessage(state, message) {
     //   state.messages.unshift(message);
     // },
@@ -351,8 +355,11 @@ export const chat = {
   },
   getters: {
     selectedChat: (state) => (chatId) => {
-      const chatData = state.currentTempChatData ?? state.chats[chatId];
-      return chatData;
+      if (state.chats[chatId]) return state.chats[chatId];
+      else if (state.currentTempChatData?.id === chatId)
+        return state.currentTempChatData.id;
+      else if (state.tempPrivateChat) return state.tempPrivateChat;
+      else return null;
     },
     // getRemoveUserList(state, getters, rootState) {
     //   if (!state.chatData.group) return null;

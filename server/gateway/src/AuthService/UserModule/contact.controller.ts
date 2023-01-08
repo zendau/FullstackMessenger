@@ -33,7 +33,10 @@ import IContact from './interfaces/IContact';
 @ApiTags('Auth microservice - Contact controller')
 @Controller('contact')
 export class ContactController {
-  constructor(@Inject('AUTH_SERVICE') private authServiceClient: ClientProxy) {}
+  constructor(
+    @Inject('AUTH_SERVICE') private authServiceClient: ClientProxy,
+    @Inject('CHAT_SERVICE') private chatServiceClient: ClientProxy,
+  ) {}
 
   @ApiOperation({ summary: 'Get contact list' })
   @ApiResponse({
@@ -50,7 +53,7 @@ export class ContactController {
   async getUserContactList(@Query() listData: IGetContactList) {
     console.log('test', listData);
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/list', listData),
+      this.chatServiceClient.send('chat/contacts', listData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);

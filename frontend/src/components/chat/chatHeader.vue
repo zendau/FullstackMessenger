@@ -6,7 +6,7 @@
       <button @click="selectedMessages = []">Cancel</button>
     </div>
     <div class="chat__header-data">
-      <div v-if="chatData.adminId">
+      <div v-if="chatData?.adminId">
         <h1 class="chat__title chat__title--private">
           Group - {{ chatData.title }}
         </h1>
@@ -106,7 +106,7 @@ export default {
     const router = useRouter();
 
     const chatId = computed(() => route.params.id);
-    const chatData = computed(() => store.state.chat.chats[chatId.value]);
+    const chatData = inject("chatData");
     const userData = computed(() => store.state.auth.user);
 
     const selectedMessages = inject("selectedMessages");
@@ -130,6 +130,8 @@ export default {
     const chatSocket = inject("chatSocket");
 
     const privateChatOnlineStatus = computed(() => {
+      if (!chatData.value?.users) return chatData.value.lastOnline;
+
       const userId = Object.keys(chatData.value.users)[0];
       return chatData.value.users[userId].lastOnline;
     });

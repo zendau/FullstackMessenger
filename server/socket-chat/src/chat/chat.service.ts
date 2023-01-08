@@ -14,6 +14,7 @@ import { UserService } from './user.service';
 import IChatPagination from 'src/socket/interfaces/chat/IChatPagination';
 import IUserChat from 'src/socket/interfaces/user/IUserChat';
 import IChatCreate from './interfaces/IChatCreate';
+import IGetContactList from './interfaces/IGetContactList';
 
 @Injectable()
 export class ChatService {
@@ -300,5 +301,53 @@ export class ChatService {
 
     const idList = listData.map((item) => item.chatId);
     return idList;
+  }
+
+  async getContactList(listData: IGetContactList) {
+    debugger;
+    const contactList = await this.userService.getContactList(listData);
+
+    const contactListId = Object.keys(contactList.resList).map((contactId) =>
+      parseInt(contactId),
+    );
+
+    const privateData = await this.getUsersPrivateChats(
+      listData.userId,
+      contactListId,
+    );
+
+    const keys = Object.keys(contactList.resList);
+
+    privateData.forEach((item) => {
+      debugger;
+
+      if (!keys.includes(item.userId.toString())) return;
+
+      contactList.resList[item.userId].chat = item.chat.id;
+    });
+
+    console.log('privateData', privateData);
+
+    return contactList;
+  }
+
+  async getUsersPrivateChats(userId: number, userIdList: number[]) {
+    const privateChats = await this.chatUserRepository
+      .createQueryBuilder('chatUsers')
+      .select(['chatUsers.userId', 'chat.id'])
+      .innerJoin('chatUsers.chat', 'chat')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('chatSQ.chatId')
+          .where('chatSQ.userId = :userId', { userId })
+          .from(ChatUsers, 'chatSQ')
+          .getQuery();
+        return 'chatUsers.chatId IN ' + subQuery;
+      })
+      .andWhere('userId IN (:userList)', { userList: userIdList })
+      .getMany();
+
+    return privateChats;
   }
 }

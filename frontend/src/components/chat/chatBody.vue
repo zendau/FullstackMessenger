@@ -52,7 +52,7 @@ export default {
     const chatId = computed(() => route.params.id);
     const messages = computed(() => store.state.chat.messages[chatId.value]);
     const scrollEnd = ref(null);
-    const chatData = store.getters["chat/selectedChat"](chatId.value);
+    const chatData = inject("chatData");
 
     const isShowMessageCTX = ref(null);
     provide("isShowMessageCTX", isShowMessageCTX);

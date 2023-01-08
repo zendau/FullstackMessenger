@@ -45,7 +45,7 @@ export default {
     });
 
     chatSocket.on("updateUserOnline", (userStatus) => {
-      store.commit('chat/updateUserOnline', userStatus)
+      store.commit("chat/updateUserOnline", userStatus);
     });
 
     function deleteMessages(messagesList) {
@@ -66,8 +66,16 @@ export default {
       store.dispatch("chat/deletedMessages", payload);
     });
 
-    const chatData = computed(() => store.state.chat.chats[chatId.value]);
-    console.log("CHATDATA", chatData, chatId.value);
+    const chatData = computed(() =>
+      store.getters["chat/selectedChat"](chatId.value)
+    );
+
+    // const chatData = computed(
+    //   () =>
+    //     store.state.chat.chats[chatId.value] ?? store.state.chat.tempPrivateChat
+    // );
+
+    provide("chatData", chatData);
     return {
       deleteMessages,
       deleteMessagesMany,

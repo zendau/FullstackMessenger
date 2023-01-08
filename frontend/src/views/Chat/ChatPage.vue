@@ -6,7 +6,7 @@
       @openChat="openChatRoom"
       @setLastChatElement="setLastChatElement"
     />
-    <contacts v-else />
+    <contacts v-else @openChat="openChatRoom" />
     <chatContainer />
   </section>
   <UserModal />
@@ -144,8 +144,13 @@ export default {
       console.log("OPEN", roomId);
       router.push(`/chat/${roomId}`);
 
-      const roomMessages = store.state.chat.messages[roomId];
+      if (roomId === "temp") {
+        router.push(`/chat`);
+        return;
+      }
+
       const roomData = store.state.chat.chats[roomId];
+      const roomMessages = store.state.chat.messages[roomId];
 
       if (roomMessages === undefined || roomMessages?.length === 0) {
         const messagePagination =

@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import IUser from './interfaces/IUser';
 import IGetDataError from './interfaces/IGetDataError';
 import IUserChat from 'src/socket/interfaces/user/IUserChat';
+import IGetContactList from './interfaces/IGetContactList';
 
 @Injectable()
 export class UserService {
@@ -24,16 +25,16 @@ export class UserService {
     return res;
   }
 
-  async getContacts() {
-    const res: IUser[] | IGetDataError = await firstValueFrom(
-      this.authServiceClient.send('user/all', ''),
-    );
+  // async getContacts() {
+  //   const res: IUser[] | IGetDataError = await firstValueFrom(
+  //     this.authServiceClient.send('user/all', ''),
+  //   );
 
-    if ('status' in res) {
-      throw new HttpException(res.message, res.httpCode);
-    }
-    return res;
-  }
+  //   if ('status' in res) {
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   return res;
+  // }
 
   async getManyUserByid(idList: number[]) {
     const res: IUser[] | IGetDataError = await firstValueFrom(
@@ -65,17 +66,17 @@ export class UserService {
     return userData;
   }
 
-  async getInvaitedUsers(usersIdList: number[]) {
-    const allUsers = await this.getContacts();
+  // async getInvaitedUsers(usersIdList: number[]) {
+  //   const allUsers = await this.getContacts();
 
-    //const ids = usersId.map((id) => parseInt(id));
+  //   //const ids = usersId.map((id) => parseInt(id));
 
-    const invaitedUsers = allUsers.filter(
-      (userData) => usersIdList.indexOf(userData.id) === -1,
-    );
+  //   const invaitedUsers = allUsers.filter(
+  //     (userData) => usersIdList.indexOf(userData.id) === -1,
+  //   );
 
-    return invaitedUsers;
-  }
+  //   return invaitedUsers;
+  // }
 
   async updateLastOnline(userId: number, lastOnline: Date) {
     const res: boolean | IGetDataError = await firstValueFrom(
@@ -87,6 +88,13 @@ export class UserService {
 
     if (typeof res === 'boolean') return res;
     else throw new HttpException(res.message, res.httpCode);
+  }
+
+  async getContactList(listData: IGetContactList) {
+    const contactList = await firstValueFrom(
+      this.authServiceClient.send('contact/list', listData),
+    );
+    return contactList;
   }
 
   async getContactData(userData: IUserChat) {

@@ -41,7 +41,8 @@ export default {
   setup() {
     const store = useStore();
     const chatId = computed(() => route.params.id);
-    const chatData = computed(() => store.state.chat.chats[chatId.value]);
+    const chatData = inject("chatData");
+    // const chatData = computed(() => store.state.chat.chats[chatId.value]);
     const editMessageData = inject("editMessageData");
     const chatSocket = inject("chatSocket");
 

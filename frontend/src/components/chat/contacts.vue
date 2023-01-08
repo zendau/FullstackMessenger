@@ -10,7 +10,7 @@
     <div style="display: flex">
       <ContactsListType :listType="listType" @changeListType="changeListType" />
     </div>
-    <ContactsList v-if="listType === 'contacts'" />
+    <ContactsList v-if="listType === 'contacts'" @openChat="openChat" />
     <FreeUsersList v-else-if="listType === 'freeUsers'" />
     <PendingList v-else-if="listType === 'pendingRequests'" />
     <OutgoingList v-else-if="listType === 'outgoingRequests'" />
@@ -51,7 +51,8 @@ export default {
     ContactsListType,
     searchInput,
   },
-  setup() {
+  emits: ["openChat"],
+  setup(_, { emit }) {
     const router = useRouter();
     const store = useStore();
 
@@ -89,7 +90,7 @@ export default {
       createGroupUsers,
       (value) => {
         if (value.length !== 1) return;
-        listType.value = 'contacts';
+        listType.value = "contacts";
       },
       {
         deep: true,
@@ -167,6 +168,10 @@ export default {
       }
     }
 
+    function openChat(chatId) {
+      emit("openChat", chatId);
+    }
+
     return {
       login,
       contacts,
@@ -183,6 +188,7 @@ export default {
       changeListType,
       openUserChat,
       createGroupChat,
+      openChat,
     };
   },
 };
