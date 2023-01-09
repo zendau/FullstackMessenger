@@ -858,10 +858,7 @@ export class SocketService {
     const createdChatData: IChatExtended = {} as any;
     createdChatData.id = res.id;
     createdChatData.adminId = res.adminId;
-    createdChatData.title = await this.getPrivateChatTitle(
-      res.adminId,
-      chatData.users,
-    );
+    createdChatData.title = res.title;
     createdChatData.chatUnread = 0;
     createdChatData.lastMessage = null;
     createdChatData.userUnread = 0;

@@ -129,6 +129,12 @@ export default {
       }
     });
 
+    chatSocket.on("newChat", (data) => {
+      const chatId = Object.keys(data)[0];
+      store.commit("chat/appendChatsData", data);
+      router.push(`/chat/${chatId}`);
+    });
+
     chatSocket.on("chatCreateError", (errorData) => {
       store.commit("alert/setErrorMessage", errorData.message);
     });
@@ -154,7 +160,7 @@ export default {
 
       if (roomMessages === undefined || roomMessages?.length === 0) {
         const messagePagination =
-          roomData.loadMessagesPagination ?? defoultLoadMessagesPagination;
+          roomData?.loadMessagesPagination ?? defoultLoadMessagesPagination;
         chatSocket.emit("getRoomMessages", {
           chatId: roomId,
           page: messagePagination.page,

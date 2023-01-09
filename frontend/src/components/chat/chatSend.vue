@@ -30,9 +30,9 @@
 <script>
 import $api from "../../axios";
 
-import { inject, ref, computed } from "vue";
+import { inject, ref, computed, watch } from "vue";
 import { useStore } from "vuex";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import debounce from "../../utils/debounce";
 import throttle from "../../utils/throttle";
@@ -47,6 +47,7 @@ export default {
     const chatSocket = inject("chatSocket");
 
     const route = useRoute();
+    const router = useRouter();
     const message = ref(null);
 
     const files = inject("files");
@@ -60,6 +61,8 @@ export default {
     const userPressing = ref(null);
 
     const deletedFiles = [];
+
+    let isCallSendAfterCreate = false;
 
     function deleteFileById(fileId, file) {
       files.value = files.value.filter((_, index) => index !== fileId);
@@ -103,8 +106,37 @@ export default {
     //   files.value.length = 0;
     // }
 
+    watch(
+      () => route.params.id,
+      () => {
+        if (route.params.id && isCallSendAfterCreate) {
+          isCallSendAfterCreate = false;
+          sendMessage();
+        }
+      }
+    );
+
     async function sendMessage() {
       debugger;
+
+      if (!route.params.id && store.state.chat.tempPrivateChat) {
+        // store.dispatch("chat/createChat", {
+
+        // });
+
+        chatSocket.emit("createChat", {
+          users: [
+            store.state.chat.tempPrivateChat.id,
+            store.state.auth.user.id,
+          ],
+        });
+        console.log("create chat before sending message");
+        isCallSendAfterCreate = true;
+        return;
+      }
+
+      console.log('sending message')
+
       let filesUpload = null;
       const inseredFilesData = [];
       console.log("files", files.value);

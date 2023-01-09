@@ -60,6 +60,7 @@ export default {
     const userData = computed(() => store.state.auth.user);
     let messageReadCount = 0;
     chatSocket.on("newMessage", (messagesData) => {
+      console.log('newMessage', messagesData)
       store.dispatch("chat/newChatMessage", {
         messagesData,
         chatSocket,

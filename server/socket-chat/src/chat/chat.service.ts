@@ -166,13 +166,15 @@ export class ChatService {
   async createChat(chatData: IChatCreate) {
     try {
       const chatInseted = await this.chatRepository.save({
-        ...(chatData?.groupName && { adminId: chatData.adminId }),
-        groupName: chatData?.groupName,
+        adminId: chatData?.adminId,
+        title: chatData?.groupName,
       });
 
       const usersEntity: ChatUsers[] = [];
 
-      usersEntity.push(this.createEntity(chatData.adminId, chatInseted));
+      if (chatData?.adminId) {
+        usersEntity.push(this.createEntity(chatData.adminId, chatInseted));
+      }
 
       chatData.users.forEach((userId) => {
         usersEntity.push(this.createEntity(userId, chatInseted));

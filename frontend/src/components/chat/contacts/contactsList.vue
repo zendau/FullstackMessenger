@@ -84,6 +84,7 @@ export default {
     function openChat(userData) {
       emit("openChat", userData.chat ?? 'temp');
       store.commit("chat/setTempPrivateChat", {
+        id: userData.id,
         title: userData.login,
         lastOnline: userData.lastOnline,
       });

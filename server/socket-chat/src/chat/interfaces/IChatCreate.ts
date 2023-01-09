@@ -1,5 +1,5 @@
 export default interface IChatCreate {
-  adminId: number;
+  adminId?: number;
   users: number[];
   groupName?: string;
 }

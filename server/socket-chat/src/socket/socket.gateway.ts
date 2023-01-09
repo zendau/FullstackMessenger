@@ -189,6 +189,7 @@ export class SocketGateway {
 
   @SubscribeMessage('sendMessage')
   async sendMessage(socket: Socket, payload: IMessageData) {
+    console.log('new message', payload);
     // const res = await this.messageService.create(
     //   {
     //     authorLogin: payload.authorLogin,
@@ -245,26 +246,41 @@ export class SocketGateway {
 
   @SubscribeMessage('createChat')
   async createChat(socket: Socket, payload: IChatCreate) {
+    console.log('create chat', payload);
+    debugger;
     const chatData = await this.socketService.createChat(payload);
 
     if ('status' in chatData) {
+      console.log('ERROR', chatData);
       this.server.to(socket.id).emit('chatCreateError', payload);
     } else {
       for (const userSocket of this.server.sockets.sockets?.values()) {
         if (payload.users.includes(userSocket.data?.userId)) {
+          console.log('userSocket.id', userSocket.id);
+          userSocket.join(chatData.id);
+
+          if (!chatData.title) {
+            chatData.title = await this.socketService.getPrivateChatTitle(
+              userSocket.data?.userId,
+              chatData.users,
+            );
+          }
+
           this.server
             .to(userSocket.id)
             .emit('newChat', { [chatData.id]: chatData });
         }
       }
 
-      this.sendMessage(socket, {
-        roomId: chatData.id,
-        authorId: null,
-        authorLogin: null,
-        text: 'Created',
-        files: null,
-      });
+      if (chatData.adminId) {
+        this.sendMessage(socket, {
+          roomId: chatData.id,
+          authorId: null,
+          authorLogin: null,
+          text: 'Created',
+          files: null,
+        });
+      }
     }
   }
 }

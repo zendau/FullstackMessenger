@@ -121,22 +121,24 @@ export const chat = {
     //     commit("removeUserFromGroup", removeData.userId);
     //   }
     // },
-    // async createChat({ commit }, chatData) {
-    //   $api
-    //     .post("/chat/create", {
-    //       adminId: chatData.adminId,
-    //       users: chatData.users,
-    //       groupName: chatData?.groupName,
-    //     })
-    //     .then(async (res) => {
-    //       await commit("setChatId", res.data.id);
-    //     })
-    //     .catch((error) => {
-    //       commit("auth/setErrorMessage", error.response.data.message, {
-    //         root: true,
-    //       });
-    //     });
-    // },
+    async createChat({ commit }, chatData) {
+      $api
+        .post("/chat/create", {
+          adminId: chatData.adminId,
+          users: chatData.users,
+          groupName: chatData?.groupName,
+        })
+        .then((res) => {
+          console.log("res create", res);
+          //commit("setChatId", res.data.id);
+        })
+        .catch((error) => {
+          console.log("res error", error);
+          // commit("auth/setErrorMessage", error.response.data.message, {
+          //   root: true,
+          // });
+        });
+    },
   },
   mutations: {
     // saveContacts(state, constacts) {
@@ -155,6 +157,8 @@ export const chat = {
     },
     saveMessages(state, { chatId, uploadMessagesData }) {
       if (!state.messages[chatId]) state.messages[chatId] = [];
+
+      console.log("!!!!!!!!11", chatId, uploadMessagesData);
 
       state.messages[chatId].push(...uploadMessagesData.messages);
       state.chats[chatId].loadMessagesPagination = {
