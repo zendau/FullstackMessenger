@@ -96,24 +96,4 @@ export class UserService {
     );
     return contactList;
   }
-
-  async getContactData(userData: IUserChat) {
-    // const contactData: IUser = await this.socketRedisAdapter.getValue(
-    //   'user',
-    //   {
-    //     getValuesFromDB: async () => {
-    //       const res = await firstValueFrom(
-    //         this.authServiceClient.send('user/id', userId),
-    //       );
-    //       return res;
-    //     },
-    //     isExpire: true,
-    //   },
-    //   userId,
-    // );
-    const contactData = await firstValueFrom(
-      this.authServiceClient.send('contact/getContactData', userData),
-    );
-    return contactData;
-  }
 }

@@ -1,5 +1,11 @@
 import { Chat } from './entities/chat.entity';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -15,6 +21,7 @@ import IChatPagination from 'src/socket/interfaces/chat/IChatPagination';
 import IUserChat from 'src/socket/interfaces/user/IUserChat';
 import IChatCreate from './interfaces/IChatCreate';
 import IGetContactList from './interfaces/IGetContactList';
+import { SocketService } from 'src/socket/socket.service';
 
 @Injectable()
 export class ChatService {
@@ -24,6 +31,8 @@ export class ChatService {
     @InjectRepository(ChatUsers)
     private chatUserRepository: Repository<ChatUsers>,
     private userService: UserService,
+    @Inject(forwardRef(() => SocketService))
+    private socketService: SocketService,
   ) {}
 
   async getChatsIdList(userId: number) {
@@ -37,7 +46,7 @@ export class ChatService {
     return idList;
   }
 
-  async getChatPagination({ page, limit, userId }: IChatPagination) {
+  async getChatPagination({ page, limit, userId, chatId }: IChatPagination) {
     const start = page * limit;
     const listPaginationData = await this.chatRepository
       .createQueryBuilder('chat')
@@ -59,84 +68,22 @@ export class ChatService {
 
     const idList = listPaginationData.map((item) => item.id);
 
+    const chatsData = await this.socketService.getUserRoomsData(userId, idList);
+
+    const currentTempChatData = await this.socketService.getCurrentChatRoom(
+      chatsData,
+      userId,
+      chatId,
+    );
+
     return {
-      idList,
+      roomsData: chatsData,
       hasMore: idList.length !== limit,
+      page: page + 1,
+      limit,
+      ...(currentTempChatData && { currentTempChatData }),
     };
   }
-
-  // async getChats(chatList: string[]) {
-  //   // const res = await this.chatRepository
-  //   //   .createQueryBuilder('chat')
-  //   //   .innerJoinAndSelect('chat.chatUsers', 'chatUsers')
-  //   //   .where((qb) => {
-  //   //     const subQuery = qb
-  //   //       .subQuery()
-  //   //       .from(Chat, 'chat')
-  //   //       .innerJoinAndSelect('chat.chatUsers', 'chatUsers')
-  //   //       .select('chat.id')
-  //   //       .where('chatUsers.userId = :userId', { userId })
-  //   //       .getQuery();
-  //   //     return 'chat.id IN' + subQuery;
-  //   //   })
-  //   //   .getMany();
-
-  //   const resList = await this.chatRepository
-  //     .createQueryBuilder('')
-  //     .where('id IN (:chatList) ', { chatList })
-  //     .getMany();
-
-  //   return resList;
-
-  //   // const chatData = await this.createNameToChat(res, userId);
-  //   // return chatData;
-  // }
-
-  // async createNameToChat(data: Chat[], userId: number) {
-  //   return await Promise.all(
-  //     data.map(async (item) => {
-  //       if (item.title === null) {
-  //         const chatUserId = item.chatUsers.filter(
-  //           (user) => user.userId != userId,
-  //         );
-  //         const userData = await this.userService.getUserById(
-  //           chatUserId[0].userId,
-  //         );
-
-  //         item.title = userData.login;
-  //       }
-  //       return item;
-  //     }),
-  //   );
-  // }
-
-  // async getUserByid(id: number | string) {
-  //   if (!id) return null;
-
-  //   const res = await firstValueFrom(
-  //     this.authServiceClient.send('user/id', id),
-  //   );
-  //   return res;
-  // }
-
-  // async checkChat(chatData: IChatCreate) {
-  //   const res: { chatId: string; id: string; adminId: number }[] =
-  //     await this.chatRepository
-  //       .createQueryBuilder('chat')
-  //       .select('chatUsers.chatId, chat.id, chat.adminId')
-  //       .addSelect('chat.groupName')
-  //       .innerJoin('chat.chatUsers', 'chatUsers')
-  //       .addSelect('COUNT(chatUsers.userId)', 'userCount')
-  //       .where('chatUsers.userId = :userId', { userId: chatData.adminId })
-  //       .orWhere('chatUsers.userId = (:companionId)', {
-  //         companionId: chatData.users,
-  //       })
-  //       .groupBy('chatUsers.chatId')
-  //       .having('userCount > 1')
-  //       .andHaving('chat.groupName IS NULL')
-  //       .getRawMany();
-  //   return { status: res.length > 0, chatId: res[0]?.id };
-  // }
 
   async getChatById(id: string) {
     const res = (await this.chatRepository
@@ -302,7 +249,9 @@ export class ChatService {
       .getRawMany();
 
     const idList = listData.map((item) => item.chatId);
-    return idList;
+
+    const chatsData = await this.socketService.getUserRoomsData(userId, idList);
+    return chatsData;
   }
 
   async getContactList(listData: IGetContactList) {

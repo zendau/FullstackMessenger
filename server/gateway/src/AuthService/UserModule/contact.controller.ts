@@ -28,6 +28,7 @@ import { ContactDTO } from '../ResponseDTO/contact.dto';
 import { ParseIntPipe } from '@nestjs/common/pipes';
 import IGetContactList from './interfaces/IGetContactList';
 import IContact from './interfaces/IContact';
+import IUserChat from 'src/ChatService/interfaces/IUserChat';
 
 @ApiBearerAuth()
 @ApiTags('Auth microservice - Contact controller')
@@ -315,6 +316,18 @@ export class ContactController {
   async unBlockUserContact(@Body() requestData: ContactDTO) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/unblock', requestData),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData;
+  }
+
+  @Get('contactData')
+  async getContactData(@Query() contactData: IUserChat) {
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('contact/getContactData', contactData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);

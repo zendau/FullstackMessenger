@@ -51,6 +51,7 @@ export default {
     const selectedMessages = inject("selectedMessages");
     const chatId = computed(() => route.params.id);
     const messages = computed(() => store.state.chat.messages[chatId.value]);
+    const userId = computed(() => store.state.auth.user.id);
     const scrollEnd = ref(null);
     const chatData = inject("chatData");
 
@@ -60,10 +61,9 @@ export default {
     const userData = computed(() => store.state.auth.user);
     let messageReadCount = 0;
     chatSocket.on("newMessage", (messagesData) => {
-      console.log('newMessage', messagesData)
+      console.log("newMessage", messagesData);
       store.dispatch("chat/newChatMessage", {
         messagesData,
-        chatSocket,
         userId: userData.value.id,
       });
     });
@@ -128,11 +128,10 @@ export default {
             inMemory: messagePagination.inMemory,
           });
           messageScrollObserver.unobserve(entries[0].target);
-          chatSocket.emit("getRoomMessages", {
+
+          store.dispatch("chat/getChatMessages", {
             chatId: chatId.value,
-            page: messagePagination.page,
-            limit: messagePagination.limit,
-            inMemory: messagePagination.inMemory,
+            userId: userId.value,
           });
         }
       }

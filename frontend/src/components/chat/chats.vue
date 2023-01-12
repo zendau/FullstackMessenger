@@ -63,16 +63,14 @@ export default {
     // });
 
     const isShowMobileMessages = inject("isShowMobileMessages");
-    const chatSocket = inject("chatSocket");
-
     const chatsData = computed(() => store.state.chat.chats);
     const userId = computed(() => store.state.auth.user.id);
     function openChat(chatId) {
       emit("openChat", chatId);
     }
 
-    const searchData = ref(null);
-    const chatsList = computed(() => searchData.value ?? chatsData.value);
+    const isChatsByPattern = computed(() => store.getters["chat/isChatsByPattern"]);
+    const chatsList = computed(() => store.getters["chat/chatList"]);
 
     const searchChats = (pattern) => {
       // socket.emit("serchChats", {
@@ -83,7 +81,7 @@ export default {
 
       //console.log('pattern', pattern.length, pattern)
       if (pattern.length === 0) {
-        searchData.value = null;
+        store.commit('chat/clearChatsByPattern')
         return;
       }
 
@@ -92,24 +90,20 @@ export default {
         pattern,
       });
 
-      chatSocket.emit("serchChats", {
+      store.dispatch("chat/serchChats", {
         userId: userId.value,
         pattern,
       });
     };
 
     function setLastChatItem(el, index) {
-      if (searchData.value) return;
+      if (isChatsByPattern.value) return;
 
       if (Object.keys(chatsData.value).length - 1 !== index) return;
 
       emit("setLastChatElement", el);
     }
 
-    chatSocket.on("getChatsByPattern", (chatsData) => {
-      console.log("chatsData", chatsData);
-      searchData.value = chatsData;
-    });
 
     return {
       isShowMobileMessages,

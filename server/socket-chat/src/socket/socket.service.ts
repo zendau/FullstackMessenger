@@ -1,5 +1,5 @@
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Inject, Logger, forwardRef } from '@nestjs/common';
 import { ChatService } from 'src/chat/chat.service';
 import { MessageService } from 'src/message/message.service';
 import IChatMessages from './interfaces/chat/IChatMessages';
@@ -28,11 +28,11 @@ export class SocketService {
   private readonly logger = new Logger(SocketService.name);
 
   constructor(
+    @Inject(forwardRef(() => ChatService))
     private chatService: ChatService,
     private messageService: MessageService,
     private userService: UserService,
     private socketRedisAdapter: SocketRedisAdapter,
-    @InjectRedis() private readonly redis: Redis,
   ) {
     // this.getUsers();
     //this.socketRedisAdapter.setValues('user', this.users);
@@ -196,62 +196,62 @@ export class SocketService {
     return message;
   }
 
-  async getRoomMessages(scrollData: IChatMessages) {
-    // debugger;
-    // const messagesKeys = await this.socketRedisAdapter.getBranchesSubKeys(
-    //   'message',
-    //   roomId,
-    // );
-    debugger;
-    let roomMessages: Message[] = [];
+  // async getRoomMessages(scrollData: IChatMessages) {
+  //   // debugger;
+  //   // const messagesKeys = await this.socketRedisAdapter.getBranchesSubKeys(
+  //   //   'message',
+  //   //   roomId,
+  //   // );
+  //   debugger;
+  //   let roomMessages: Message[] = [];
 
-    if (scrollData.inMemory) {
-      const takeLength = scrollData.page * scrollData.limit;
+  //   if (scrollData.inMemory) {
+  //     const takeLength = scrollData.page * scrollData.limit;
 
-      roomMessages = await this.socketRedisAdapter.getHashes(
-        'message',
-        null,
-        scrollData.chatId,
-        takeLength,
-        takeLength + scrollData.limit,
-      );
+  //     roomMessages = await this.socketRedisAdapter.getHashes(
+  //       'message',
+  //       null,
+  //       scrollData.chatId,
+  //       takeLength,
+  //       takeLength + scrollData.limit,
+  //     );
 
-      if (roomMessages?.length >= scrollData.limit)
-        return {
-          messages: roomMessages,
-          page: scrollData.page + 1,
-          limit: scrollData.limit,
-          inMemory: true,
-          hasMore: true,
-        };
-      scrollData.page = 0;
-    }
+  //     if (roomMessages?.length >= scrollData.limit)
+  //       return {
+  //         messages: roomMessages,
+  //         page: scrollData.page + 1,
+  //         limit: scrollData.limit,
+  //         inMemory: true,
+  //         hasMore: true,
+  //       };
+  //     scrollData.page = 0;
+  //   }
 
-    const roomDbMessages = await this.messageService.getAllByChat(
-      scrollData.chatId,
-      scrollData.page,
-      scrollData.limit,
-    );
+  //   const roomDbMessages = await this.messageService.getAllByChat(
+  //     scrollData.chatId,
+  //     scrollData.page,
+  //     scrollData.limit,
+  //   );
 
-    if (roomMessages?.length <= scrollData.limit) {
-      roomDbMessages.unshift(...roomMessages);
-    }
+  //   if (roomMessages?.length <= scrollData.limit) {
+  //     roomDbMessages.unshift(...roomMessages);
+  //   }
 
-    return {
-      messages: roomDbMessages,
-      page: scrollData.page + 1,
-      limit: scrollData.limit,
-      inMemory: false,
-      hasMore: roomDbMessages.length >= scrollData.limit,
-    };
-    //this.logger.debug(`get room messages - `, roomMessages);
+  //   return {
+  //     messages: roomDbMessages,
+  //     page: scrollData.page + 1,
+  //     limit: scrollData.limit,
+  //     inMemory: false,
+  //     hasMore: roomDbMessages.length >= scrollData.limit,
+  //   };
+  //   //this.logger.debug(`get room messages - `, roomMessages);
 
-    // if (this.messages.hasOwnProperty(room)) {
-    //   return this.messages[room];
-    // } else {
-    //   return [];
-    // }
-  }
+  //   // if (this.messages.hasOwnProperty(room)) {
+  //   //   return this.messages[room];
+  //   // } else {
+  //   //   return [];
+  //   // }
+  // }
 
   // getUsers() {
   // const values1 = {
@@ -488,14 +488,14 @@ export class SocketService {
     return currentTempChatData;
   }
 
-  async getUserRoomsData(userId: number, page: number, limit: number) {
-    const chatsPagination = await this.chatService.getChatPagination({
-      page,
-      limit,
-      userId,
-    });
+  async getUserRoomsData(userId: number, chatIdList: string[]) {
+    // const chatsPagination = await this.chatService.getChatPagination({
+    //   page,
+    //   limit,
+    //   userId,
+    // });
     const resChatData: IChatPaginationData = {};
-    for (const chatId of chatsPagination.idList) {
+    for (const chatId of chatIdList) {
       resChatData[chatId] = await this.getChatData(userId, chatId);
       //const roomData = await this.socketRedisAdapter.getValue('room', chatId);
       // const userRooms = await this.socketRedisAdapter.getSet(
@@ -508,22 +508,16 @@ export class SocketService {
       // if (roomData.users.includes(userId)) {
       // }
     }
-    return {
-      roomsData: resChatData,
-      hasMore: chatsPagination.hasMore,
-      page: page + 1,
-      limit,
-    };
-  }
-
-  async getChatsByPattern(userId: number, pattern: string) {
-    const chatsData = await this.chatService.getChatsByPattern(userId, pattern);
-    const resChatData: IChatPaginationData = {};
-    for (const chatId of chatsData) {
-      resChatData[chatId] = await this.getChatData(userId, chatId);
-    }
     return resChatData;
   }
+
+  // async getChatsByPattern(userId, idList: string[]) {
+  //   const resChatData: IChatPaginationData = {};
+  //   for (const chatId of idList) {
+  //     resChatData[chatId] = await this.getChatData(userId, chatId);
+  //   }
+  //   return resChatData;
+  // }
 
   async getUnreadMessagesCount(roomId: string, roomUsers?: IUser[]) {
     //const roomUsers = Object.keys(this.rooms[roomId].users);
@@ -843,11 +837,6 @@ export class SocketService {
       deletedUserInfo,
       userData,
     };
-  }
-
-  async getContactData(userData: IUserChat) {
-    const contactData = await this.userService.getContactData(userData);
-    return contactData;
   }
 
   async createChat(chatData: IChatCreate) {

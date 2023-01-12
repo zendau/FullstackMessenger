@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,10 +8,13 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
 import { UserService } from './user.service';
+import { SocketService } from 'src/socket/socket.service';
+import { SocketModule } from 'src/socket/socket.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Chat, ChatUsers]),
+    forwardRef(() => SocketModule),
     ClientsModule.registerAsync([
       {
         name: 'AUTH_SERVICE',
@@ -36,7 +39,7 @@ import { UserService } from './user.service';
     ]),
   ],
   controllers: [ChatController],
-  providers: [ChatService, UserService, SocketRedisAdapter],
+  providers: [ChatService, UserService],
   exports: [ChatService, UserService],
 })
 export class ChatModule {}

@@ -3,6 +3,7 @@ import { MessageService } from './message.service';
 
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { IMessage } from './interfaces/IMessage';
+import IChatMessages from 'src/socket/interfaces/chat/IChatMessages';
 //import IUpdateMessage from './interfaces/IUpdateMessage';
 
 @Controller('message')
@@ -23,12 +24,10 @@ export class MessageController {
     return res;
   }
 
-  @MessagePattern('message/getAllChat')
-  async findAll(
-    @Payload() userData: { chatId: string; page: number; limit: number },
-  ) {
+  @MessagePattern('message/listPagination')
+  async getMessagesPagination(@Payload() loadData: IChatMessages) {
     const res = await this.messageService
-      .getAllByChat(userData.chatId, userData.page, userData.limit)
+      .getRoomMessages(loadData)
       .catch((err) => {
         return {
           status: false,

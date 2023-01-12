@@ -1,7 +1,13 @@
 import { Media } from './entities/media.entity';
 import { Chat } from './../chat/entities/chat.entity';
 import { ChatService } from './../chat/chat.service';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
@@ -11,6 +17,8 @@ import { IMessage } from './interfaces/IMessage';
 import IEditMessage from 'src/socket/interfaces/message/IEditMessage';
 import IFile from 'src/socket/interfaces/message/IFile';
 import { IDeletedData } from 'src/socket/interfaces/message/IDeleteMessage';
+import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
+import IChatMessages from 'src/socket/interfaces/chat/IChatMessages';
 
 @Injectable()
 export class MessageService {
@@ -19,7 +27,9 @@ export class MessageService {
     private messageRepository: Repository<Message>,
     @InjectRepository(Media)
     private mediaRepository: Repository<Media>,
+    @Inject(forwardRef(() => ChatService))
     private chatService: ChatService,
+    private socketRedisAdapter: SocketRedisAdapter,
     @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
   ) {}
   async create(createMessageDTO: IMessage, files?: IFile[]) {
@@ -62,7 +72,56 @@ export class MessageService {
     console.log(messages);
   }
 
-  async getAllByChat(chatId: string, page: number, limit: number) {
+  async getRoomMessages(scrollData: IChatMessages) {
+    // debugger;
+    // const messagesKeys = await this.socketRedisAdapter.getBranchesSubKeys(
+    //   'message',
+    //   roomId,
+    // );
+    let roomMessages: Message[] = [];
+
+    if (scrollData.inMemory) {
+      const takeLength = scrollData.page * scrollData.limit;
+
+      roomMessages = await this.socketRedisAdapter.getHashes(
+        'message',
+        null,
+        scrollData.chatId,
+        takeLength,
+        takeLength + scrollData.limit,
+      );
+
+      if (roomMessages?.length >= scrollData.limit)
+        return {
+          messages: roomMessages,
+          page: scrollData.page + 1,
+          limit: scrollData.limit,
+          inMemory: true,
+          hasMore: true,
+        };
+      scrollData.page = 0;
+    }
+
+    const roomDbMessages = await this.getMessagesDB(
+      scrollData.chatId,
+      scrollData.page,
+      scrollData.limit,
+    );
+
+    if (roomMessages?.length <= scrollData.limit) {
+      roomDbMessages.unshift(...roomMessages);
+    }
+
+    return {
+      messages: roomDbMessages,
+      page: scrollData.page + 1,
+      limit: scrollData.limit,
+      inMemory: false,
+      hasMore: roomDbMessages.length >= scrollData.limit,
+    };
+  }
+
+  async getMessagesDB(chatId: string, page: number, limit: number) {
     const skip = page * limit;
 
     const messages = await this.messageRepository

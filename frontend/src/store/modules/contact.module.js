@@ -54,7 +54,7 @@ export const contact = {
     async deleteFromContacts({ commit }, { userId, contactId }) {
       try {
         const res = await $api.delete("/contact/delete", {
-          data: {
+          params: {
             userId,
             contactId,
           },
@@ -142,6 +142,19 @@ export const contact = {
       try {
         const res = await $api.get(`/contact/getContactCount/${userId}`);
         commit("setContactsCount", res.data);
+      } catch (e) {
+        commit("setError", e.response.data.message);
+      }
+    },
+    async getContactData({ commit }, { userId, contactId }) {
+      try {
+        const res = await $api.get(`/contact/contactData`, {
+          params: {
+            userId,
+            contactId,
+          },
+        });
+        commit("setContactData", res.data);
       } catch (e) {
         commit("setError", e.response.data.message);
       }

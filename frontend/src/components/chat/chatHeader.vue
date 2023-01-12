@@ -125,7 +125,7 @@ export default {
       () => store.getters["chat/getRemoveUserList"]
     );
     const invaitedUsers = computed(() => store.state.chat.invaitedUsers);
-    const freeUsersList = ref([]);
+    const freeUsersList = computed(() => store.state.chat.getFreeChatUsers);
 
     const chatSocket = inject("chatSocket");
 
@@ -141,11 +141,6 @@ export default {
     );
 
     const isShowUsersList = ref(false);
-
-    chatSocket.on("getFreeChatContacts", (freeContacts) => {
-      console.log("freeContacts", freeContacts);
-      freeUsersList.value = freeContacts;
-    });
 
     // async function addUserToChat(id) {
     //   store.dispatch("chat/invaiteUserToChat", {
@@ -182,7 +177,7 @@ export default {
     // }
 
     function getFreeChatUsersHandler() {
-      chatSocket.emit("getFreeChatUsers", {
+      store.dispatch("chat/getFreeChatUsers", {
         userId: userData.value.id,
         chatId: chatId.value,
       });

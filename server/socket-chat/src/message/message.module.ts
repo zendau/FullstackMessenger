@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Media } from './entities/media.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { ConfigService } from '@nestjs/config';
     ]),
   ],
   controllers: [MessageController],
-  providers: [MessageService],
+  providers: [MessageService, SocketRedisAdapter],
   exports: [MessageService],
 })
 export class MessageModule {}

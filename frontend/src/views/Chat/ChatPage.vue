@@ -52,19 +52,8 @@ export default {
 
     const userData = computed(() => store.state.auth.user);
 
-    const loadChatsPagination = {
-      page: 0,
-      limit: 6,
-      hasMore: true,
-      inMemory: true,
-    };
-
-    const defoultLoadMessagesPagination = {
-      page: 0,
-      limit: 10,
-      hasMore: true,
-      inMemory: true,
-    };
+    const isCallSendAfterCreate = ref(false);
+    provide("isCallSendAfterCreate", isCallSendAfterCreate);
 
     // const socket = io(import.meta.env.VITE_SOCKET_HOST, { path: '/socketChat'});
     // provide("socket", socket);
@@ -83,20 +72,10 @@ export default {
     const chatObserver = new IntersectionObserver(
       (entries) => {
         console.log("entity test", entries);
-        if (entries[0].isIntersecting && loadChatsPagination.hasMore) {
-          console.log(
-            "observer chat",
-            {
-              userId: userId.value,
-              page: loadChatsPagination.page,
-              limit: loadChatsPagination.limit,
-            },
-            loadChatsPagination
-          );
-          chatSocket.emit("load-chats", {
+        if (entries[0].isIntersecting) {
+          console.log('call in observer')
+          store.dispatch("chat/getChats", {
             userId: userId.value,
-            page: loadChatsPagination.page,
-            limit: loadChatsPagination.limit,
           });
         }
       },
@@ -105,33 +84,22 @@ export default {
       }
     );
 
-    chatSocket.emit("get-chats", {
+    console.log('call in setup')
+    store.dispatch("chat/getChats", {
       userId: userId.value,
-      page: loadChatsPagination.page,
-      limit: loadChatsPagination.limit,
       chatId: chatId.value,
     });
 
-    chatSocket.on("getRoomsData", (data) => {
-      //loadChatsPagination.limit = data.limit;
-      console.log("ROOMS DATA", data);
-
-      loadChatsPagination.page = data.page;
-      loadChatsPagination.hasMore = data.hasMore;
-      loadChatsPagination.inMemory = data.inMemory;
-
-      store.commit("chat/saveCurrentTempChat", data.currentTempChatData);
-      store.commit("chat/saveChats", data.roomsData);
-      console.log("#######3", chatId.value);
-      if (chatId.value) {
-        console.log("open room", chatId.value);
-        openChatRoom(chatId.value, true);
-      }
-    });
+    if (chatId.value) {
+      console.log("open room", chatId.value);
+      openChatRoom(chatId.value, true);
+    }
 
     chatSocket.on("newChat", (data) => {
       const chatId = Object.keys(data)[0];
       store.commit("chat/appendChatsData", data);
+
+      if (!isCallSendAfterCreate.value) return;
       router.push(`/chat/${chatId}`);
     });
 
@@ -139,9 +107,9 @@ export default {
       store.commit("alert/setErrorMessage", errorData.message);
     });
 
-    chatSocket.on("newChat", (chatData) => {
-      store.commit("chat/appendChatsData", chatData);
-    });
+    // chatSocket.on("newChat", (chatData) => {
+    //   store.commit("chat/appendChatsData", chatData);
+    // });
 
     //store.commit("chat/cleanChatData");
 
@@ -159,13 +127,10 @@ export default {
       const roomMessages = store.state.chat.messages[roomId];
 
       if (roomMessages === undefined || roomMessages?.length === 0) {
-        const messagePagination =
-          roomData?.loadMessagesPagination ?? defoultLoadMessagesPagination;
-        chatSocket.emit("getRoomMessages", {
-          chatId: roomId,
-          page: messagePagination.page,
-          limit: messagePagination.limit,
-          inMemory: messagePagination.inMemory,
+
+        store.dispatch("chat/getChatMessages", {
+          chatId: chatId.value,
+          userId: userId.value,
         });
       }
     }
@@ -176,17 +141,17 @@ export default {
       chatObserver.observe(el);
     }
 
-    chatSocket.on("appendRoomsData", (newRoomsData) => {
-      loadChatsPagination.hasMore = newRoomsData.hasMore;
-      loadChatsPagination.page = newRoomsData.page;
-      console.log("loadChatsPagination", loadChatsPagination);
-      store.commit("chat/appendChatsData", newRoomsData.roomsData);
-    });
+    // chatSocket.on("appendRoomsData", (newRoomsData) => {
+    //   loadChatsPagination.hasMore = newRoomsData.hasMore;
+    //   loadChatsPagination.page = newRoomsData.page;
+    //   console.log("loadChatsPagination", loadChatsPagination);
+    //   store.commit("chat/appendChatsData", newRoomsData.roomsData);
+    // });
 
-    chatSocket.on("appendRoomData", (newRoomData) => {
-      const chatId = newRoomData.chatId;
-      store.commit("chat/appendChatsData", { [chatId]: newRoomData.data });
-    });
+    // chatSocket.on("appendRoomData", (newRoomData) => {
+    //   const chatId = newRoomData.chatId;
+    //   store.commit("chat/appendChatsData", { [chatId]: newRoomData.data });
+    // });
 
     // if (
     //   !roomMessages.hasOwnProperty(chatId.value) ||
@@ -250,15 +215,15 @@ export default {
     //   { immediate: true }
     // );
 
-    chatSocket.on("upload_messages", (uploadMessagesData) => {
-      console.log("messages", uploadMessagesData);
+    // chatSocket.on("upload_messages", (uploadMessagesData) => {
+    //   console.log("messages", uploadMessagesData);
 
-      if (!uploadMessagesData) return;
-      store.commit("chat/saveMessages", {
-        chatId: chatId.value,
-        uploadMessagesData,
-      });
-    });
+    //   if (!uploadMessagesData) return;
+    //   store.commit("chat/saveMessages", {
+    //     chatId: chatId.value,
+    //     uploadMessagesData,
+    //   });
+    // });
 
     return {
       // chatId,

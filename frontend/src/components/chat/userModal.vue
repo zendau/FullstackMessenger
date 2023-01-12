@@ -60,17 +60,13 @@ export default {
 
     onUpdated(() => {
       if (!contactData.value && contactId.value) {
-        chatSocket.emit("getContactData", {
+        store.dispatch("contact/getContactData", {
           userId: userId.value,
           contactId: contactId.value,
         });
       }
     });
 
-    chatSocket.on("contactData", (data) => {
-      console.log("get data", data);
-      store.commit("contact/setContactData", data);
-    });
 
     const listTypes = {
       AddContact: "AddContact",

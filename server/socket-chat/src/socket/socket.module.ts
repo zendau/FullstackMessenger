@@ -1,5 +1,5 @@
 import { MessageModule } from './../message/message.module';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { SocketService } from './socket.service';
 import { SocketGateway } from './socket.gateway';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -7,11 +7,12 @@ import { ConfigService } from '@nestjs/config';
 import { ChatModule } from 'src/chat/chat.module';
 import { TasksService } from './task.service';
 import { SocketRedisAdapter } from './socketRedisAdapter.service';
+import { ChatService } from 'src/chat/chat.service';
 
 @Module({
   imports: [
     MessageModule,
-    ChatModule,
+    forwardRef(() => ChatModule),
     ClientsModule.registerAsync([
       {
         name: 'FILE_SERVICE',
@@ -36,6 +37,6 @@ import { SocketRedisAdapter } from './socketRedisAdapter.service';
     ]),
   ],
   providers: [SocketGateway, SocketService, SocketRedisAdapter],
-  exports: [SocketRedisAdapter],
+  exports: [SocketRedisAdapter, SocketService],
 })
 export class SocketModule {}

@@ -32,6 +32,9 @@ import { CheckChatIdDTO } from './dto/checkChatId.dto';
 import { GetUserDTO } from 'src/AuthService/ResponseDTO/getUser.dto';
 import { UsersIdDTO } from './dto/usersId.dto';
 import { JwtAuthGuard } from 'src/AuthService/guards/jwt-auth.guard';
+import IChatPagination from '../interfaces/IChatPagination';
+import IChatSearch from '../interfaces/IChatSearch';
+import IUserChat from '../interfaces/IUserChat';
 
 @ApiBearerAuth()
 @ApiTags('Chat microservice - chat controller')
@@ -43,13 +46,110 @@ export class ChatController {
     @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
   ) {}
 
-  @ApiOperation({ summary: 'Get all user chats' })
-  @ApiResponse({ status: 200, type: UpdateChatDTO })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @Get('getByUser/:id')
-  async getChats(@Param('id', ParseIntPipe) id: number) {
+  // @ApiOperation({ summary: 'Get all user chats' })
+  // @ApiResponse({ status: 200, type: UpdateChatDTO })
+  // @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @Get('getByUser/:id')
+  // async getChats(@Param('id', ParseIntPipe) id: number) {
+  //   const res = await firstValueFrom(
+  //     this.chatServiceClient.send('chat/getByUser', id),
+  //   );
+  //   if (res.status === false) {
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   return res;
+  // }
+
+  // @ApiOperation({ summary: 'Check chat with selected user was created' })
+  // @ApiResponse({ status: 200, type: SuccessCheckChatDTO })
+  // @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @UsePipes(ValidationPipe)
+  // @Post('check')
+  // async checkChat(@Body() chatData: CheckChatDTO) {
+  //   const res = await firstValueFrom(
+  //     this.chatServiceClient.send('chat/check', chatData),
+  //   );
+  //   console.log('res', res);
+  //   if (res.status === false) {
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   return res;
+  // }
+
+  // @ApiOperation({ summary: 'Check chat id' })
+  // @ApiResponse({ status: 200, type: CheckChatIdDTO })
+  // @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @Get('checkId/:id')
+  // async checkChatId(@Param('id') id: string) {
+  //   const res = await firstValueFrom(
+  //     this.chatServiceClient.send('chat/checkId', id),
+  //   );
+  //   if (res.status === false) {
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   return res;
+  // }
+
+  // @ApiOperation({ summary: 'Create new chat' })
+  // @ApiResponse({ status: 200, type: CheckChatIdDTO })
+  // @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @UsePipes(ValidationPipe)
+  // @Post('create')
+  // async createChat(@Body() chatData: ChatDTO) {
+  //   const res = await firstValueFrom(
+  //     this.chatServiceClient.send('chat/create', chatData),
+  //   );
+  //   if (res.status === false) {
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+
+  //   const resFileInsert = await firstValueFrom(
+  //     this.fileServiceClient.send('foulder/add', {
+  //       path: res.id,
+  //     }),
+  //   );
+  //   if (resFileInsert.status === false) {
+  //     console.log('resFile', resFileInsert);
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   console.log('res', res);
+  //   return res;
+  // }
+
+  // @ApiOperation({ summary: 'Get all contacts' })
+  // @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
+  // @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @Get('getContacts')
+  // async getContacts() {
+  //   const res = await firstValueFrom(
+  //     this.chatServiceClient.send('chat/getContacts', ''),
+  //   );
+  //   if (res.status === false) {
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   return res;
+  // }
+
+  // @ApiOperation({ summary: 'Delete chat by id' })
+  // @ApiResponse({ status: 200, description: 'Success operation' })
+  // @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @Delete('delete/:id')
+  // async remove(@Param('id') chatId: string) {
+  //   console.log('id', chatId);
+  //   const res = await firstValueFrom(
+  //     this.chatServiceClient.send('chat/delete', chatId),
+  //   );
+  //   if (res.status === false) {
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   return res;
+  // }
+
+  @Get('listPagination')
+  async getChatsPagination(@Query() paginationData: IChatPagination) {
+    console.log('paginationData', paginationData)
     const res = await firstValueFrom(
-      this.chatServiceClient.send('chat/getByUser', id),
+      this.chatServiceClient.send('chat/listPagination', paginationData),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
@@ -57,29 +157,10 @@ export class ChatController {
     return res;
   }
 
-  @ApiOperation({ summary: 'Check chat with selected user was created' })
-  @ApiResponse({ status: 200, type: SuccessCheckChatDTO })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @UsePipes(ValidationPipe)
-  @Post('check')
-  async checkChat(@Body() chatData: CheckChatDTO) {
+  @Get('serch')
+  async getChatsByPattern(@Query() searchData: IChatSearch) {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('chat/check', chatData),
-    );
-    console.log('res', res);
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
-    return res;
-  }
-
-  @ApiOperation({ summary: 'Check chat id' })
-  @ApiResponse({ status: 200, type: CheckChatIdDTO })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @Get('checkId/:id')
-  async checkChatId(@Param('id') id: string) {
-    const res = await firstValueFrom(
-      this.chatServiceClient.send('chat/checkId', id),
+      this.chatServiceClient.send('chat/serch', searchData),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
@@ -87,39 +168,10 @@ export class ChatController {
     return res;
   }
 
-  @ApiOperation({ summary: 'Create new chat' })
-  @ApiResponse({ status: 200, type: CheckChatIdDTO })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @UsePipes(ValidationPipe)
-  @Post('create')
-  async createChat(@Body() chatData: ChatDTO) {
+  @Get('byId')
+  async loadChatById(@Query() loadData: IUserChat) {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('chat/create', chatData),
-    );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
-
-    const resFileInsert = await firstValueFrom(
-      this.fileServiceClient.send('foulder/add', {
-        path: res.id,
-      }),
-    );
-    if (resFileInsert.status === false) {
-      console.log('resFile', resFileInsert);
-      throw new HttpException(res.message, res.httpCode);
-    }
-    console.log('res', res);
-    return res;
-  }
-
-  @ApiOperation({ summary: 'Get all contacts' })
-  @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @Get('getContacts')
-  async getContacts() {
-    const res = await firstValueFrom(
-      this.chatServiceClient.send('chat/getContacts', ''),
+      this.chatServiceClient.send('chat/byId', loadData),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
@@ -127,14 +179,10 @@ export class ChatController {
     return res;
   }
 
-  @ApiOperation({ summary: 'Delete chat by id' })
-  @ApiResponse({ status: 200, description: 'Success operation' })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @Delete('delete/:id')
-  async remove(@Param('id') chatId: string) {
-    console.log('id', chatId);
+  @Get('freeUsers')
+  async getFreeChatUsers(@Query() chatData: IUserChat) {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('chat/delete', chatId),
+      this.chatServiceClient.send('chat/freeUsers', chatData),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);

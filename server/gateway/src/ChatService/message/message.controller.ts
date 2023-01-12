@@ -21,6 +21,7 @@ import { JwtAuthGuard } from 'src/AuthService/guards/jwt-auth.guard';
 import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
 import { MessageDTO } from './dto/message.dto';
 import { UpdateMessageDTO } from './dto/update-message.dto';
+import IChatPagination from '../interfaces/IChatPagination';
 
 @ApiBearerAuth()
 @ApiTags('Chat microservice - Message controller')
@@ -50,35 +51,15 @@ export class MessageController {
   @ApiOperation({ summary: 'Get all chat messages' })
   @ApiResponse({ status: 200, type: UpdateMessageDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @Get('getAllChat/:id')
-  async findAll(
-    @Param('id', ParseIntPipe) chatId: number,
-    @Query('page', ParseIntPipe) page: number,
-    @Query('limit', ParseIntPipe) limit: number,
-  ) {
+  @Get('listPagination')
+  async getMessagesPagination(@Query() paginationData: IChatPagination) {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('message/getAllChat', {
-        chatId,
-        page,
-        limit,
-      }),
-    );
-
-
-
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
-
-    if (res.length === 0) return res;
-
-    const resWithFileData = await firstValueFrom(
-      this.fileServiceClient.send('file/messagesFileData', res),
+      this.chatServiceClient.send('message/listPagination', paginationData),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
     }
-    return resWithFileData;
+    return res;
   }
 
   @ApiOperation({ summary: 'Get message by id' })

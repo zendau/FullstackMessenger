@@ -5,43 +5,21 @@ import { ChatService } from './chat.service';
 import IChatCreate from './interfaces/IChatCreate';
 import { UserService } from './user.service';
 import IGetContactList from './interfaces/IGetContactList';
+import { SocketService } from 'src/socket/socket.service';
+import IChatPagination from 'src/socket/interfaces/chat/IChatPagination';
+import IChatSearch from 'src/socket/interfaces/chat/IChatSearch';
 
 @Controller('chat')
 export class ChatController {
   constructor(
     private readonly chatService: ChatService,
     private readonly userService: UserService,
+    private readonly socketService: SocketService,
   ) {}
 
-  // @MessagePattern('chat/getByUser')
-  // async getChats(@Payload() id: number) {
-  //   const res = await this.chatService.getChats(id).catch((err) => {
-  //     console.log(err);
-  //     return {
-  //       status: false,
-  //       message: err.sqlMessage,
-  //       httpCode: HttpStatus.BAD_REQUEST,
-  //     };
-  //   });
-  //   return res;
-  // }
-
-  // @MessagePattern('chat/check')
-  // async checkChat(@Payload() chatData: IChatCreate) {
-  //   const res = await this.chatService.checkChat(chatData).catch((err) => {
-  //     console.log(err);
-  //     return {
-  //       status: false,
-  //       message: err.sqlMessage,
-  //       httpCode: HttpStatus.BAD_REQUEST,
-  //     };
-  //   });
-  //   return res;
-  // }
-
-  // @MessagePattern('chat/checkId')
-  // async checkChatId(@Payload() id: string) {
-  //   const res = await this.chatService.getChatById(id).catch((err) => {
+  // @MessagePattern('chat/delete')
+  // async remove(@Payload() chatId: string) {
+  //   const res = await this.chatService.remove(chatId).catch((err) => {
   //     console.log('err', err);
   //     return {
   //       status: false,
@@ -49,48 +27,8 @@ export class ChatController {
   //       httpCode: HttpStatus.BAD_REQUEST,
   //     };
   //   });
-  //   console.log('res', res);
   //   return res;
   // }
-
-  // @MessagePattern('chat/create')
-  // async createChat(@Payload() chatData: IChatCreate) {
-  //   const res = await this.chatService.createChat(chatData).catch((err) => {
-  //     console.log(err);
-  //     return {
-  //       status: false,
-  //       message: err.sqlMessage,
-  //       httpCode: HttpStatus.BAD_REQUEST,
-  //     };
-  //   });
-  //   console.log('res', res);
-  //   return res;
-  // }
-
-  // @MessagePattern('chat/getContacts')
-  // async getContacts() {
-  //   const res = await this.userService.getContacts().catch((err) => {
-  //     return {
-  //       status: false,
-  //       message: err,
-  //       httpCode: HttpStatus.BAD_REQUEST,
-  //     };
-  //   });
-  //   return res;
-  // }
-
-  @MessagePattern('chat/delete')
-  async remove(@Payload() chatId: string) {
-    const res = await this.chatService.remove(chatId).catch((err) => {
-      console.log('err', err);
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
-    return res;
-  }
 
   @MessagePattern('chat/groupUser')
   async getGroupUser(@Payload() chatId: string) {
@@ -103,21 +41,6 @@ export class ChatController {
     });
     return res;
   }
-
-  // @MessagePattern('chat/invaitedUsers')
-  // async getInvaitedUsers(@Payload() usersIdList: number[]) {
-  //   const res = await this.userService
-  //     .getInvaitedUsers(usersIdList)
-  //     .catch((err) => {
-  //       console.log(err);
-  //       return {
-  //         status: false,
-  //         message: err.sqlMessage,
-  //         httpCode: HttpStatus.BAD_REQUEST,
-  //       };
-  //     });
-  //   return res;
-  // }
 
   @MessagePattern('chat/invaiteToChat')
   async invaiteUsersToChat(@Payload() invateData: IUserChat) {
@@ -177,5 +100,70 @@ export class ChatController {
         };
       });
     return res;
+  }
+
+  @MessagePattern('chat/listPagination')
+  async getChatsPagination(@Payload() paginationData: IChatPagination) {
+    debugger;
+    const userRoomsData = await this.chatService
+      .getChatPagination({
+        userId: paginationData.userId,
+        page: 0,
+        limit: paginationData.limit,
+      })
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return userRoomsData;
+  }
+
+  @MessagePattern('chat/serch')
+  async getChatsByPattern(@Payload() searchData: IChatSearch) {
+    const userRoomsData = await this.chatService
+      .getChatsByPattern(searchData.userId, searchData.pattern)
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return userRoomsData;
+  }
+
+  @MessagePattern('chat/byId')
+  async loadChatById(@Payload() loadData: IUserChat) {
+    const userRoomsData = await this.socketService
+      .getCurrentChatById(loadData.userId, loadData.chatId)
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return userRoomsData;
+  }
+
+  @MessagePattern('chat/freeUsers')
+  async getFreeChatUsers(@Payload() chatData: IUserChat) {
+    const userRoomsData = await this.socketService
+      .getFreeChatUsers(chatData.chatId, chatData.userId)
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return userRoomsData;
   }
 }

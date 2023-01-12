@@ -62,7 +62,7 @@ export default {
 
     const deletedFiles = [];
 
-    let isCallSendAfterCreate = false;
+    const isCallSendAfterCreate = inject('isCallSendAfterCreate')
 
     function deleteFileById(fileId, file) {
       files.value = files.value.filter((_, index) => index !== fileId);
@@ -109,8 +109,8 @@ export default {
     watch(
       () => route.params.id,
       () => {
-        if (route.params.id && isCallSendAfterCreate) {
-          isCallSendAfterCreate = false;
+        if (route.params.id && isCallSendAfterCreate.value) {
+          isCallSendAfterCreate.value = false;
           sendMessage();
         }
       }
@@ -131,7 +131,7 @@ export default {
           ],
         });
         console.log("create chat before sending message");
-        isCallSendAfterCreate = true;
+        isCallSendAfterCreate.value = true;
         return;
       }
 

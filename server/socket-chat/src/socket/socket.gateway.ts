@@ -16,7 +16,6 @@ import { firstValueFrom } from 'rxjs';
 import IUserConnect from './interfaces/message/IMessagePressing';
 import IUserJoin from './interfaces/user/IUserChat';
 import IMessageData from './interfaces/message/IMessageData';
-import IUserConnectData from './interfaces/chat/IChatLoad';
 import IChatPagination from './interfaces/chat/IChatPagination';
 import IChatSearch from './interfaces/chat/IChatSearch';
 import IUserChat from './interfaces/user/IUserChat';
@@ -25,7 +24,6 @@ import IChatMessages from './interfaces/chat/IChatMessages';
 import IEditMessage from './interfaces/message/IEditMessage';
 import IReadMessage from './interfaces/message/IReadMessage';
 import IUserData from './interfaces/user/IUserData';
-import IChatLoad from './interfaces/chat/IChatLoad';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 import { IContactStatus } from './interfaces/contact/IContactStatus';
 import IChatCreate from 'src/chat/interfaces/IChatCreate';
@@ -66,57 +64,61 @@ export class SocketGateway {
     socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
   }
 
-  @SubscribeMessage('get-chats')
-  async getChats(socket: Socket, payload: IChatLoad) {
-    const userRoomsData = await this.socketService.getUserRoomsData(
-      payload.userId,
-      0,
-      payload.limit,
-    );
+  // API
+  // @SubscribeMessage('get-chats')
+  // async getChats(socket: Socket, payload: IChatLoad) {
+  //   const userRoomsData = await this.socketService.getUserRoomsData(
+  //     payload.userId,
+  //     0,
+  //     payload.limit,
+  //   );
 
-    const currentTempChatData = await this.socketService.getCurrentChatRoom(
-      userRoomsData.roomsData,
-      payload.userId,
-      payload.chatId,
-    );
+  //   const currentTempChatData = await this.socketService.getCurrentChatRoom(
+  //     userRoomsData.roomsData,
+  //     payload.userId,
+  //     payload.chatId,
+  //   );
 
-    this.server
-      .to(socket.id)
-      .emit('getRoomsData', { ...userRoomsData, currentTempChatData });
-  }
+  //   this.server
+  //     .to(socket.id)
+  //     .emit('getRoomsData', { ...userRoomsData, currentTempChatData });
+  // }
 
-  @SubscribeMessage('load-chats')
-  async loadChatsPage(socket: Socket, payload: IChatPagination) {
-    //const rooms = await this.socketService.getUserRooms(payload.userId);
-    const userRoomsData = await this.socketService.getUserRoomsData(
-      payload.userId,
-      payload.page,
-      payload.limit,
-    );
-    this.server.to(socket.id).emit('appendRoomsData', userRoomsData);
-  }
+  // API
+  // @SubscribeMessage('load-chats')
+  // async loadChatsPage(socket: Socket, payload: IChatPagination) {
+  //   //const rooms = await this.socketService.getUserRooms(payload.userId);
+  //   const userRoomsData = await this.socketService.getUserRoomsData(
+  //     payload.userId,
+  //     payload.page,
+  //     payload.limit,
+  //   );
+  //   this.server.to(socket.id).emit('appendRoomsData', userRoomsData);
+  // }
 
-  @SubscribeMessage('serchChats')
-  async getChatsByPattern(socket: Socket, payload: IChatSearch) {
-    const userRoomsData = await this.socketService.getChatsByPattern(
-      payload.userId,
-      payload.pattern,
-    );
-    this.server.to(socket.id).emit('getChatsByPattern', userRoomsData);
-  }
+  // API
+  // @SubscribeMessage('serchChats')
+  // async getChatsByPattern(socket: Socket, payload: IChatSearch) {
+  //   const userRoomsData = await this.socketService.getChatsByPattern(
+  //     payload.userId,
+  //     payload.pattern,
+  //   );
+  //   this.server.to(socket.id).emit('getChatsByPattern', userRoomsData);
+  // }
 
-  @SubscribeMessage('load-chat-by-id')
-  async loadChatById(socket: Socket, payload: IUserChat) {
-    const currentChatData = await this.socketService.getCurrentChatById(
-      payload.userId,
-      payload.chatId,
-    );
+  // API
+  // @SubscribeMessage('load-chat-by-id')
+  // async loadChatById(socket: Socket, payload: IUserChat) {
+  //   const currentChatData = await this.socketService.getCurrentChatById(
+  //     payload.userId,
+  //     payload.chatId,
+  //   );
 
-    this.server.to(socket.id).emit('appendRoomData', {
-      chatId: payload.chatId,
-      data: currentChatData,
-    });
-  }
+  //   this.server.to(socket.id).emit('appendRoomData', {
+  //     chatId: payload.chatId,
+  //     data: currentChatData,
+  //   });
+  // }
 
   @SubscribeMessage('invite-user')
   async inviteUserToChat(socket: Socket, payload: IUserChat) {
@@ -155,11 +157,12 @@ export class SocketGateway {
     socket.broadcast.to(payload.roomId).emit('message_status', payload);
   }
 
-  @SubscribeMessage('getRoomMessages')
-  async getRoomMessagesHandler(socket: Socket, payload: IChatMessages) {
-    const messagesData = await this.socketService.getRoomMessages(payload);
-    this.server.to(socket.id).emit('upload_messages', messagesData);
-  }
+  // API
+  // @SubscribeMessage('getRoomMessages')
+  // async getRoomMessagesHandler(socket: Socket, payload: IChatMessages) {
+  //   const messagesData = await this.socketService.getRoomMessages(payload);
+  //   this.server.to(socket.id).emit('upload_messages', messagesData);
+  // }
 
   @SubscribeMessage('delete_messages')
   deleteMessagesHandler(socket: Socket, payload: IDeleteMessage) {
@@ -215,22 +218,24 @@ export class SocketGateway {
     this.server.to(payload.roomId).emit('newMessage', message);
   }
 
-  @SubscribeMessage('getFreeChatUsers')
-  async getFreeChatUsers(socket: Socket, payload: IUserChat) {
-    const freeUsers = await this.socketService.getFreeChatUsers(
-      payload.chatId,
-      payload.userId,
-    );
+  // API
+  // @SubscribeMessage('getFreeChatUsers')
+  // async getFreeChatUsers(socket: Socket, payload: IUserChat) {
+  //   const freeUsers = await this.socketService.getFreeChatUsers(
+  //     payload.chatId,
+  //     payload.userId,
+  //   );
 
-    this.server.to(socket.id).emit('getFreeChatContacts', freeUsers);
-  }
+  //   this.server.to(socket.id).emit('getFreeChatContacts', freeUsers);
+  // }
 
-  @SubscribeMessage('getContactData')
-  async getContactData(socket: Socket, payload: IUserChat) {
-    const contactData = await this.socketService.getContactData(payload);
+  // API
+  // @SubscribeMessage('getContactData')
+  // async getContactData(socket: Socket, payload: IUserChat) {
+  //   const contactData = await this.socketService.getContactData(payload);
 
-    this.server.to(socket.id).emit('contactData', contactData);
-  }
+  //   this.server.to(socket.id).emit('contactData', contactData);
+  // }
 
   @SubscribeMessage('chatContactStatus')
   async chatContactStatus(socket: Socket, payload: IContactStatus) {
@@ -258,8 +263,8 @@ export class SocketGateway {
         if (payload.users.includes(userSocket.data?.userId)) {
           console.log('userSocket.id', userSocket.id);
           userSocket.join(chatData.id);
-
-          if (!chatData.title) {
+          debugger;
+          if (!chatData.adminId) {
             chatData.title = await this.socketService.getPrivateChatTitle(
               userSocket.data?.userId,
               chatData.users,

@@ -1,35 +1,97 @@
 import $api from "../../axios";
 
+const defaultLoadChatsPagination = {
+  page: 0,
+  limit: 6,
+  hasMore: true,
+};
+
+const defoultLoadMessagesPagination = {
+  page: 0,
+  limit: 10,
+  hasMore: true,
+  inMemory: true,
+};
+
 export const chat = {
   namespaced: true,
   state: {
-    constacts: {},
     chats: {},
+    chatsByPattern: {}, // TODO: изменить на нул
     currentTempChatData: null,
     messages: {},
     tempPrivateChat: null,
+    loadChatsPagination: { ...defaultLoadChatsPagination },
+    freeChatUsers: null,
   },
   actions: {
-    newChatMessage(
-      { commit, state, getters },
-      { messagesData, chatSocket, userId }
-    ) {
-      console.log("resieve message", messagesData);
+    async newChatMessage({ commit, state, getters }, { messagesData, userId }) {
+      try {
+        console.log("resieve message", messagesData);
 
-      commit("setNewMessageData", {
-        messagesData,
-        userId,
-        roomData: getters.selectedChat(messagesData.roomId),
-      });
+        if (!state.chats[messagesData.roomId]) {
+          const res = await $api.get("/chat/byId", {
+            params: {
+              userId,
+              chatId: messagesData.roomId,
+            },
+          });
 
-      if (state.chats[messagesData.roomId]) {
+          const { chatId } = res.data;
+
+          commit("saveChats", { [chatId]: res.data });
+        }
+
+        commit("setNewMessageData", {
+          messagesData,
+          userId,
+          roomData: getters.selectedChat(messagesData.roomId),
+        });
+
         console.log("2222");
         commit("setLastChatMessage", messagesData.roomId);
         commit("sortByMessageDate");
-      } else {
-        chatSocket.emit("load-chat-by-id", {
-          userId,
-          chatId: messagesData.roomId,
+      } catch (e) {
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
+      }
+    },
+    async getChatMessages({ commit, state }, { chatId, userId }) {
+      try {
+        if (!state.chats[chatId]) {
+          const chatData = await $api.get("/chat/byId", {
+            params: {
+              userId,
+              chatId,
+            },
+          });
+
+          commit("saveChats", { [chatId]: chatData.data });
+        }
+        // chatId: chatId.value,
+        // page: messagePagination.page,
+        // limit: messagePagination.limit,
+        // inMemory: messagePagination.inMemory,
+
+        const messagePagination =
+          state.chats[chatId]?.loadMessagesPagination ??
+          defoultLoadMessagesPagination;
+
+        const messages = await $api.get("message/listPagination", {
+          params: {
+            chatId,
+            page: messagePagination.page,
+            limit: messagePagination.limit,
+            inMemory: messagePagination.inMemory,
+          },
+        });
+
+        commit("saveMessages", { chatId, uploadMessagesData: messages.data });
+      } catch (e) {
+        console.log("e", e);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
         });
       }
     },
@@ -64,6 +126,69 @@ export const chat = {
         }
       }
     },
+    async getChats({ commit, state }, paginationData) {
+      if (!state.loadChatsPagination.hasMore) return;
+      console.log("call");
+      try {
+        const res = await $api.get("/chat/listPagination", {
+          params: {
+            page: state.loadChatsPagination.page,
+            limit: state.loadChatsPagination.limit,
+            userId: paginationData.userId,
+            ...(paginationData.chatId && { chatId: paginationData.chatId }),
+          },
+        });
+        console.log('RES', res)
+
+        commit("saveNewChatsPagination", {
+          page: res.data.page,
+          hasMore: res.data.hasMore,
+          inMemory: res.data.inMemory,
+        });
+        commit("saveChats", res.data.roomsData);
+
+        if (res.data.currentTempChatData) {
+          commit("saveCurrentTempChat", res.data.currentTempChatData);
+        }
+      } catch (e) {
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
+      }
+    },
+    async getChatsByPattern({ commit }, searchData) {
+      try {
+        const res = await $api.get("/chat/listPagination", {
+          params: {
+            userId: searchData.userId,
+            pattern: searchData.pattern,
+          },
+        });
+
+        commit("saveChatsByPattern", res.data);
+      } catch (e) {
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
+      }
+    },
+    async getFreeChatUsers({ commit }, chatData) {
+      try {
+        const res = await $api.get("/chat/freeUsers", {
+          params: {
+            userId: chatData.userId,
+            chatId: chatData.chatId,
+          },
+        });
+
+        commit("saveFreeChatUsers", res.data);
+      } catch (e) {
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
+      }
+    },
+
     // async getContacts({ commit, rootState }) {
     //   const res = await $api.get("/chat/getContacts");
     //   const userLogin = rootState.auth.user.login;
@@ -141,15 +266,8 @@ export const chat = {
     },
   },
   mutations: {
-    // saveContacts(state, constacts) {
-    //   state.constacts = constacts;
-    // },
     saveChats(state, chats) {
-      debugger;
-      state.chats = chats;
-    },
-    appendChatsData(state, newChats) {
-      state.chats = Object.assign(state.chats, newChats);
+      state.chats = Object.assign(state.chats, chats);
     },
     saveCurrentTempChat(state, chatData) {
       debugger;
@@ -161,6 +279,7 @@ export const chat = {
       console.log("!!!!!!!!11", chatId, uploadMessagesData);
 
       state.messages[chatId].push(...uploadMessagesData.messages);
+
       state.chats[chatId].loadMessagesPagination = {
         page: uploadMessagesData.page,
         limit: uploadMessagesData.limit,
@@ -285,6 +404,22 @@ export const chat = {
     setTempPrivateChat(state, chatData) {
       state.tempPrivateChat = chatData;
     },
+    saveNewChatsPagination(state, { page, hasMore, inMemory }) {
+      state.loadChatsPagination.page = page;
+      state.loadChatsPagination.hasMore = hasMore;
+    },
+    setDefaultChatsPagination(state) {
+      state.loadChatsPagination = { ...defaultLoadChatsPagination };
+    },
+    saveChatsByPattern(state, chats) {
+      state.chatsByPattern = chats;
+    },
+    clearChatsByPattern(state) {
+      state.chatsByPattern = {};
+    },
+    saveFreeChatUsers(state, freeUsers) {
+      state.freeChatUsers = freeUsers;
+    },
     // addMessage(state, message) {
     //   state.messages.unshift(message);
     // },
@@ -364,6 +499,15 @@ export const chat = {
         return state.currentTempChatData.id;
       else if (state.tempPrivateChat) return state.tempPrivateChat;
       else return null;
+    },
+    isChatsByPattern(state) {
+      return !!Object.keys(state.chatsByPattern).length;
+    },
+    chatList(state, getters) {
+      if (getters.isChatsByPattern) {
+        return state.chatsByPattern;
+      }
+      return state.chats;
     },
     // getRemoveUserList(state, getters, rootState) {
     //   if (!state.chatData.group) return null;
