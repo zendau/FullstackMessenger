@@ -161,7 +161,7 @@ export const contact = {
     },
     async getContactsList({ commit, state }, { pattern, userId }) {
       try {
-        debugger;
+        ;
         let params = null;
 
         if (pattern) {
@@ -338,7 +338,7 @@ export const contact = {
       }
     },
     setOutgoingRequests(state, data) {
-      debugger;
+      ;
       if (Object.keys(data.resList).length > 0) {
         Object.assign(state.outgoingRequests, data.resList);
       }
@@ -396,7 +396,7 @@ export const contact = {
 
         case "BlockUser": {
           let contactData = null;
-          debugger;
+          ;
           if (state.contacts[statusData.contactId]) {
             contactData = state.contacts[statusData.contactId];
             delete state.contacts[statusData.contactId];
@@ -419,7 +419,7 @@ export const contact = {
         }
 
         case "UnBlockUser": {
-          debugger;
+          ;
           if (!state.blockedUsers[statusData.contactId]) break;
           const contactData = state.blockedUsers[statusData.contactId];
           delete state.blockedUsers[statusData.contactId];

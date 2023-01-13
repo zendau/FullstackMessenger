@@ -79,9 +79,10 @@ export class MessageService {
     //   roomId,
     // );
     let roomMessages: Message[] = [];
+    const page = parseInt(scrollData.page);
 
     if (scrollData.inMemory) {
-      const takeLength = scrollData.page * scrollData.limit;
+      const takeLength = page * scrollData.limit;
 
       roomMessages = await this.socketRedisAdapter.getHashes(
         'message',
@@ -94,17 +95,17 @@ export class MessageService {
       if (roomMessages?.length >= scrollData.limit)
         return {
           messages: roomMessages,
-          page: scrollData.page + 1,
+          page: page + 1,
           limit: scrollData.limit,
           inMemory: true,
           hasMore: true,
         };
-      scrollData.page = 0;
+      scrollData.page = '0';
     }
 
     const roomDbMessages = await this.getMessagesDB(
       scrollData.chatId,
-      scrollData.page,
+      page,
       scrollData.limit,
     );
 
@@ -114,10 +115,10 @@ export class MessageService {
 
     return {
       messages: roomDbMessages,
-      page: scrollData.page + 1,
+      page: page + 1,
       limit: scrollData.limit,
       inMemory: false,
-      hasMore: roomDbMessages.length >= scrollData.limit,
+      hasMore: roomDbMessages.length == scrollData.limit,
     };
   }
 

@@ -119,7 +119,8 @@ export default {
 
     const messageScrollObserver = new IntersectionObserver(
       (entries) => {
-        const messagePagination = chatData.loadMessagesPagination;
+        const messagePagination = chatData.value.loadMessagesPagination;
+        debugger;
         if (entries[0].isIntersecting && messagePagination?.hasMore) {
           console.log("load message scrool observer", {
             chatId: chatId.value,
@@ -129,6 +130,7 @@ export default {
           });
           messageScrollObserver.unobserve(entries[0].target);
 
+          console.log("!1");
           store.dispatch("chat/getChatMessages", {
             chatId: chatId.value,
             userId: userId.value,
@@ -205,7 +207,7 @@ export default {
 
       //const roomData = currentTempChatData.value ?? roomsData.value[chatId.value];
       const isLastMessage = index === messages.value?.length - 1;
-      debugger;
+
       if (isLastMessage) {
         console.log("last message", isLastMessage, el.$el.nextElementSibling);
         messageScrollObserver.observe(el.$el.nextElementSibling);

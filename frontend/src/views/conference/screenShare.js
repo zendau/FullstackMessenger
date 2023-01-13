@@ -44,7 +44,7 @@ export default class ScreenShare {
   }
 
   #returnVideoStream() {
-    debugger
+
     let videoTrack = this.mainStream.value.getVideoTracks()[0];
     this.streams.forEach(asd => {
       let sender = asd.peerConnection.getSenders().find((s) => {

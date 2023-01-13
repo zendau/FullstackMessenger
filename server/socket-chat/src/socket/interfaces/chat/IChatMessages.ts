@@ -1,6 +1,6 @@
 export default interface IChatMessages {
   chatId: string;
-  page: number;
+  page: string;
   limit: number;
   inMemory: boolean;
 }

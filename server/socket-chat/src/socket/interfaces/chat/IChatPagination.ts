@@ -1,6 +1,6 @@
 export default interface IChatPagination {
   userId: number;
-  page: number;
+  page: string;
   limit: number;
   chatId?: string;
 }

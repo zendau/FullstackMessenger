@@ -47,6 +47,8 @@ export default {
     const modalUserId = ref(null);
     provide("modalUserId", modalUserId);
 
+    let isFirstChatsLoad = true;
+
     const showChats = ref(true);
     provide("showChats", showChats);
 
@@ -73,7 +75,7 @@ export default {
       (entries) => {
         console.log("entity test", entries);
         if (entries[0].isIntersecting) {
-          console.log('call in observer')
+          console.log("call in observer");
           store.dispatch("chat/getChats", {
             userId: userId.value,
           });
@@ -84,16 +86,11 @@ export default {
       }
     );
 
-    console.log('call in setup')
+    console.log("call in setup");
     store.dispatch("chat/getChats", {
       userId: userId.value,
       chatId: chatId.value,
     });
-
-    if (chatId.value) {
-      console.log("open room", chatId.value);
-      openChatRoom(chatId.value, true);
-    }
 
     chatSocket.on("newChat", (data) => {
       const chatId = Object.keys(data)[0];
@@ -127,9 +124,9 @@ export default {
       const roomMessages = store.state.chat.messages[roomId];
 
       if (roomMessages === undefined || roomMessages?.length === 0) {
-
+        console.log("!2");
         store.dispatch("chat/getChatMessages", {
-          chatId: chatId.value,
+          chatId: roomId,
           userId: userId.value,
         });
       }
@@ -139,6 +136,12 @@ export default {
       if (!el) return;
       console.log("LAST ELEMENT", el);
       chatObserver.observe(el);
+
+      if (chatId.value && isFirstChatsLoad) {
+        isFirstChatsLoad = false;
+        console.log("open room", chatId.value);
+        openChatRoom(chatId.value, true);
+      }
     }
 
     // chatSocket.on("appendRoomsData", (newRoomsData) => {

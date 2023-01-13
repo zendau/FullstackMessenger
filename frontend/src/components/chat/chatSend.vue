@@ -117,7 +117,7 @@ export default {
     );
 
     async function sendMessage() {
-      debugger;
+      ;
 
       if (!route.params.id && store.state.chat.tempPrivateChat) {
         // store.dispatch("chat/createChat", {

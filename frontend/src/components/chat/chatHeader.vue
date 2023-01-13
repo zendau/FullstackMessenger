@@ -232,7 +232,7 @@ export default {
     });
 
     chatSocket.on("removeChatUser", (removeUser) => {
-      debugger;
+      ;
       if (!removeUser.userData) {
         console.log("ERROR");
         return;

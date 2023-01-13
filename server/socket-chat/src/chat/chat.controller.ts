@@ -108,7 +108,7 @@ export class ChatController {
     const userRoomsData = await this.chatService
       .getChatPagination({
         userId: paginationData.userId,
-        page: 0,
+        page: paginationData.page,
         limit: paginationData.limit,
       })
       .catch((err) => {
@@ -127,18 +127,20 @@ export class ChatController {
     const userRoomsData = await this.chatService
       .getChatsByPattern(searchData.userId, searchData.pattern)
       .catch((err) => {
-        console.log(err);
+        console.log('1', err);
         return {
           status: false,
           message: err.sqlMessage,
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
+    console.log('2', userRoomsData);
     return userRoomsData;
   }
 
   @MessagePattern('chat/byId')
   async loadChatById(@Payload() loadData: IUserChat) {
+    debugger;
     const userRoomsData = await this.socketService
       .getCurrentChatById(loadData.userId, loadData.chatId)
       .catch((err) => {

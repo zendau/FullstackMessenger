@@ -463,6 +463,7 @@ export class SocketService {
 
   async getCurrentChatById(userId: number, chatId: string) {
     // const checkStatus = this.checkUserExistsInRoom(userId, chatId);
+
     const checkStatus = await this.socketRedisAdapter.isSetValueExist(
       'userRooms',
       userId,
@@ -618,19 +619,19 @@ export class SocketService {
     //   'fddc14b1-215f-4d69-ad4d-fb0a009e7eb3',
     // ];
     //debugger;
-    // const userRooms = await this.socketRedisAdapter.getSetValue(
-    //   'userRooms',
-    //   {
-    //     getValuesFromDB: async () =>
-    //       await this.chatService.getChatsIdList(userId),
-    //     isExpire: true,
-    //   },
-    //   userId,
-    // );
+    const userRooms = await this.socketRedisAdapter.getSetValue(
+      'userRooms',
+      {
+        getValuesFromDB: async () =>
+          await this.chatService.getChatsIdList(userId),
+        isExpire: true,
+      },
+      userId,
+    );
     // const userRooms = rooms.filter((room) =>
     //   this.userRooms[userId]?.includes(room),
     // );
-    const userRooms = await this.chatService.getChatsIdList(userId);
+    // const userRooms = await this.chatService.getChatsIdList(userId);
     return userRooms;
   }
 

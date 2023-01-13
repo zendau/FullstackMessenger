@@ -61,7 +61,7 @@ export default {
     //     chatId: route.params.id,
     //   });
     // });
-
+    const searchPattern = ref(null)
     const isShowMobileMessages = inject("isShowMobileMessages");
     const chatsData = computed(() => store.state.chat.chats);
     const userId = computed(() => store.state.auth.user.id);
@@ -69,7 +69,7 @@ export default {
       emit("openChat", chatId);
     }
 
-    const isChatsByPattern = computed(() => store.getters["chat/isChatsByPattern"]);
+
     const chatsList = computed(() => store.getters["chat/chatList"]);
 
     const searchChats = (pattern) => {
@@ -79,8 +79,10 @@ export default {
       // });
       // console.log("press_end");
 
-      //console.log('pattern', pattern.length, pattern)
-      if (pattern.length === 0) {
+      searchPattern.value = pattern
+
+      if (searchPattern.value.length === 0) {
+        console.log('clear')
         store.commit('chat/clearChatsByPattern')
         return;
       }
@@ -90,14 +92,14 @@ export default {
         pattern,
       });
 
-      store.dispatch("chat/serchChats", {
+      store.dispatch("chat/getChatsByPattern", {
         userId: userId.value,
         pattern,
       });
     };
 
     function setLastChatItem(el, index) {
-      if (isChatsByPattern.value) return;
+      if (searchPattern.value) return;
 
       if (Object.keys(chatsData.value).length - 1 !== index) return;
 

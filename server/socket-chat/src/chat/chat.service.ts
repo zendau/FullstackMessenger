@@ -47,7 +47,9 @@ export class ChatService {
   }
 
   async getChatPagination({ page, limit, userId, chatId }: IChatPagination) {
-    const start = page * limit;
+    debugger;
+
+    const start = parseInt(page) * limit;
     const listPaginationData = await this.chatRepository
       .createQueryBuilder('chat')
       .select('chat.id')
@@ -78,8 +80,8 @@ export class ChatService {
 
     return {
       roomsData: chatsData,
-      hasMore: idList.length !== limit,
-      page: page + 1,
+      hasMore: idList.length == limit,
+      page: parseInt(page) + 1,
       limit,
       ...(currentTempChatData && { currentTempChatData }),
     };

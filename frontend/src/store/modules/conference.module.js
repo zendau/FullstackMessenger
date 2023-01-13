@@ -16,7 +16,7 @@ export const conference = {
   },
   actions: {
     async createConference({ commit }, conferenceData) {
-      debugger
+
       try {
         const res = await $api.post('/room/add', {
           roomTitle: conferenceData.title,

@@ -31,7 +31,7 @@ export const auth = {
         localStorage.setItem("token", accessToken);
         router.push("/users");
       } catch (e) {
-        debugger;
+        ;
         const message = e.response.data;
         commit("alert/setErrorMessage", message, {
           root: true,
