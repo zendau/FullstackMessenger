@@ -170,7 +170,7 @@ export class SocketService {
     // } else {
     //   this.messages[room] = [message];
     // }
-    // debugger;
+    //
 
     const message: IMessageCreated = {
       authorId: messageData.authorId,
@@ -191,18 +191,29 @@ export class SocketService {
       false,
     );
 
+    this.socketRedisAdapter.deleteListValue(
+      'hotChats',
+      messageData.authorId,
+      messageData.roomId,
+    );
+    this.socketRedisAdapter.shiftList(
+      'hotChats',
+      messageData.authorId,
+      messageData.roomId,
+    );
+
     //this.redis.rpush(`message:${room}`, JSON.stringify(message));
     this.addUnReadStatus(messageData.roomId, message.authorId);
     return message;
   }
 
   // async getRoomMessages(scrollData: IChatMessages) {
-  //   // debugger;
+  //   //
   //   // const messagesKeys = await this.socketRedisAdapter.getBranchesSubKeys(
   //   //   'message',
   //   //   roomId,
   //   // );
-  //   debugger;
+  //
   //   let roomMessages: Message[] = [];
 
   //   if (scrollData.inMemory) {
@@ -312,7 +323,7 @@ export class SocketService {
   }
 
   async deleteMessages({ roomId, deletedData }: IDeleteMessage) {
-    // debugger;
+    //
     this.socketRedisAdapter.deleteHashManyMessages(
       {
         deleteValuesFromDB: () => this.messageService.removeMany(deletedData),
@@ -419,7 +430,7 @@ export class SocketService {
       chatId,
       chatData.users,
     );
-    debugger;
+
     chatData.users = await this.setUserOnlineStatus(chatData.users);
 
     // chatData.users = await this.socketRedisAdapter.getManyValues(
@@ -476,14 +487,11 @@ export class SocketService {
   }
 
   async getCurrentChatRoom(
-    userRoomsData: IChatPaginationData,
+    userRoomsData: Set<string>,
     userId: number,
     chatId: string,
   ) {
-    if (!chatId) return;
-
-    const userRoomsId = Object.keys(userRoomsData);
-    if (userRoomsId.includes(chatId)) return;
+    if (!chatId || !userRoomsData.has(chatId)) return;
 
     const currentTempChatData = await this.getCurrentChatById(userId, chatId);
     return currentTempChatData;
@@ -495,9 +503,9 @@ export class SocketService {
     //   limit,
     //   userId,
     // });
-    const resChatData: IChatPaginationData = {};
+    const resChatData = new Map<string, IChatExtended>();
     for (const chatId of chatIdList) {
-      resChatData[chatId] = await this.getChatData(userId, chatId);
+      resChatData.set(chatId, await this.getChatData(userId, chatId));
       //const roomData = await this.socketRedisAdapter.getValue('room', chatId);
       // const userRooms = await this.socketRedisAdapter.getSet(
       //   'userRooms',
@@ -552,7 +560,7 @@ export class SocketService {
   }
 
   async getLastChatMessage(roomId: string) {
-    // debugger;
+    //
     const lastMessage: Message | undefined =
       await this.socketRedisAdapter.getLastHashValue(
         'message',
@@ -581,7 +589,6 @@ export class SocketService {
     // })[0];
 
     const filteredUser = chatUsers.filter((user) => {
-      debugger;
       if (typeof user === 'number' && user !== userId) {
         return user;
       } else if (typeof user !== 'number' && user.id !== userId) {
@@ -618,7 +625,7 @@ export class SocketService {
     //   '2bf8581e-3a2a-42e9-bdfa-c3efadbbe2d7',
     //   'fddc14b1-215f-4d69-ad4d-fb0a009e7eb3',
     // ];
-    //debugger;
+    //
     const userRooms = await this.socketRedisAdapter.getSetValue(
       'userRooms',
       {

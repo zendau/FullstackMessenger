@@ -104,12 +104,12 @@ export class ChatController {
 
   @MessagePattern('chat/listPagination')
   async getChatsPagination(@Payload() paginationData: IChatPagination) {
-    debugger;
     const userRoomsData = await this.chatService
       .getChatPagination({
         userId: paginationData.userId,
         page: paginationData.page,
         limit: paginationData.limit,
+        inMemory: paginationData.inMemory,
       })
       .catch((err) => {
         console.log(err);
@@ -140,7 +140,6 @@ export class ChatController {
 
   @MessagePattern('chat/byId')
   async loadChatById(@Payload() loadData: IUserChat) {
-    debugger;
     const userRoomsData = await this.socketService
       .getCurrentChatById(loadData.userId, loadData.chatId)
       .catch((err) => {

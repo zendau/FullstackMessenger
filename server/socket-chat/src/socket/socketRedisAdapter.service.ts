@@ -6,7 +6,7 @@ import IEditMessage from './interfaces/message/IEditMessage';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 
 type redisValue = 'user' | '' | 'room' | 'unread' | 'userContacts';
-type redisList = '';
+type redisList = 'hotChats';
 type redisSet = 'userRooms' | 'userContacts' | 'online';
 type redisSortedSet = '';
 type redisHash = 'message';
@@ -206,25 +206,40 @@ export class SocketRedisAdapter {
     }
   }
 
-  // async getList(key: redisList, ...idList: string[]) {
-  //   if (idList.length === 0) return null;
-  //   const valueKey = key + idList.map((id) => `:${id}`).join('');
-  //   const listData = await this.redis.lrange(valueKey, 0, -1);
-  //   debugger;
-  //   if (listData.length === 0) return [];
+  shiftList(
+    key: redisList,
+    id: number,
+    value: number | string,
+    withExpire = true,
+  ) {
+    const valueKey = `${key}:${id}`;
 
-  //   //this.logger.debug(typeof listData, valueKey);
-  //   const parsedData = listData.map((item) => JSON.parse(item));
-  //   return parsedData;
-  // }
+    this.redis.lpush(valueKey, value);
+
+    if (withExpire) {
+      this.redis.expire(valueKey, this.EXPIRE);
+    }
+  }
+
+  async getListRange(
+    key: redisList,
+    id: number,
+    startPos: number,
+    endPos: number,
+  ) {
+    const valueKey = `${key}:${id}`;
+    const listData = await this.redis.lrange(valueKey, startPos, endPos);
+
+    return listData;
+  }
 
   async isListValueExist(key: redisList, value: string | number) {
     const existStatus = await this.redis.lpos(key, value);
     return !!existStatus;
   }
 
-  async deleteListValue(key: redisList, value: string | number) {
-    this.redis.lrem(key, 1, value);
+  async deleteListValue(key: redisList, id: number, value: string | number) {
+    this.redis.lrem(`${key}:${id}`, 1, value);
   }
 
   // Sorted set
@@ -550,7 +565,7 @@ export class SocketRedisAdapter {
   ) {
     const valueKey = `message:${roomId}`;
     const multiPipe = this.redis.multi();
-    debugger;
+
     deletedData.forEach(async (deletedMessage) => {
       const fieldId = deletedMessage.id.toString();
       multiPipe.hdel(valueKey, fieldId);

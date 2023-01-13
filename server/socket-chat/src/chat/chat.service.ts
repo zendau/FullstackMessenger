@@ -33,6 +33,7 @@ export class ChatService {
     private userService: UserService,
     @Inject(forwardRef(() => SocketService))
     private socketService: SocketService,
+    private socketRedisAdapter: SocketRedisAdapter,
   ) {}
 
   async getChatsIdList(userId: number) {
@@ -46,43 +47,85 @@ export class ChatService {
     return idList;
   }
 
-  async getChatPagination({ page, limit, userId, chatId }: IChatPagination) {
+  async getChatPagination({
+    page,
+    limit,
+    userId,
+    chatId,
+    inMemory,
+  }: IChatPagination) {
     debugger;
 
-    const start = parseInt(page) * limit;
-    const listPaginationData = await this.chatRepository
-      .createQueryBuilder('chat')
-      .select('chat.id')
-      .addSelect(
-        (qb) =>
-          qb
-            .select('max(m.created_at)')
-            .from(Message, 'm')
-            .where('m.chatId = chatUsers.chatId'),
-        'ord',
-      )
-      .innerJoin('chat.chatUsers', 'chatUsers')
-      .where('chatUsers.userId = :userId', { userId })
-      .orderBy('ord', 'DESC')
-      .offset(start)
-      .limit(limit)
-      .getMany();
+    const chatIdList = new Set<string>();
 
-    const idList = listPaginationData.map((item) => item.id);
+    let paginationPage = parseInt(page);
+    const paginationLimit = parseInt(limit);
 
-    const chatsData = await this.socketService.getUserRoomsData(userId, idList);
+    if (inMemory) {
+      const start = paginationPage * paginationLimit;
+      const idList = await this.socketRedisAdapter.getListRange(
+        'hotChats',
+        userId,
+        start,
+        start + paginationLimit,
+      );
+
+      if (idList.length != paginationLimit) {
+        inMemory = false;
+        paginationPage = 0;
+      }
+
+      idList.forEach((id) => chatIdList.add(id));
+    }
+
+    if (!inMemory) {
+      const start = paginationPage * paginationLimit;
+      const listPaginationData = await this.chatRepository
+        .createQueryBuilder('chat')
+        .select('chat.id')
+        .addSelect(
+          (qb) =>
+            qb
+              .select('max(m.created_at)')
+              .from(Message, 'm')
+              .where('m.chatId = chatUsers.chatId'),
+          'ord',
+        )
+        .innerJoin('chat.chatUsers', 'chatUsers')
+        .where('chatUsers.userId = :userId', { userId })
+        .orderBy('ord', 'DESC')
+        .offset(start)
+        .limit(paginationLimit)
+        .getMany();
+
+      const idList = listPaginationData.map((item) => item.id);
+      // chatIdList.push(...idList);
+      idList.forEach((id) => chatIdList.add(id));
+    }
+
+    const chatsData = await this.socketService.getUserRoomsData(
+      userId,
+      Array.from(chatIdList),
+    );
 
     const currentTempChatData = await this.socketService.getCurrentChatRoom(
-      chatsData,
+      chatIdList,
       userId,
       chatId,
     );
 
+    const test = {};
+
+    for (const item of chatsData) {
+      test[item[0]] = item[1];
+    }
+
     return {
-      roomsData: chatsData,
-      hasMore: idList.length == limit,
-      page: parseInt(page) + 1,
+      roomsData: test,
+      hasMore: Array.from(chatIdList).length >= paginationLimit,
+      page: paginationPage + 1,
       limit,
+      inMemory,
       ...(currentTempChatData && { currentTempChatData }),
     };
   }
@@ -257,7 +300,6 @@ export class ChatService {
   }
 
   async getContactList(listData: IGetContactList) {
-    debugger;
     const contactList = await this.userService.getContactList(listData);
 
     const contactListId = Object.keys(contactList.resList).map((contactId) =>
@@ -272,8 +314,6 @@ export class ChatService {
     const keys = Object.keys(contactList.resList);
 
     privateData.forEach((item) => {
-      debugger;
-
       if (!keys.includes(item.userId.toString())) return;
 
       contactList.resList[item.userId].chat = item.chat.id;

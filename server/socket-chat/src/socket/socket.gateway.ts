@@ -172,7 +172,6 @@ export class SocketGateway {
 
   @SubscribeMessage('edit_message')
   async editMessageHandler(socket: Socket, payload: IEditMessage) {
-    debugger;
     const editedStatus = await this.socketService.editMessage(payload);
     this.server
       .to(payload.roomId)
@@ -252,7 +251,7 @@ export class SocketGateway {
   @SubscribeMessage('createChat')
   async createChat(socket: Socket, payload: IChatCreate) {
     console.log('create chat', payload);
-    debugger;
+
     const chatData = await this.socketService.createChat(payload);
 
     if ('status' in chatData) {
@@ -263,7 +262,7 @@ export class SocketGateway {
         if (payload.users.includes(userSocket.data?.userId)) {
           console.log('userSocket.id', userSocket.id);
           userSocket.join(chatData.id);
-          debugger;
+
           if (!chatData.adminId) {
             chatData.title = await this.socketService.getPrivateChatTitle(
               userSocket.data?.userId,

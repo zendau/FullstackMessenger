@@ -4,6 +4,7 @@ const defaultLoadChatsPagination = {
   page: 0,
   limit: 6,
   hasMore: true,
+  inMemory: true,
 };
 
 const defoultLoadMessagesPagination = {
@@ -140,6 +141,7 @@ export const chat = {
           params: {
             page: state.loadChatsPagination.page,
             limit: state.loadChatsPagination.limit,
+            inMemory: state.loadChatsPagination.inMemory,
             userId: paginationData.userId,
             ...(paginationData.chatId && { chatId: paginationData.chatId }),
           },

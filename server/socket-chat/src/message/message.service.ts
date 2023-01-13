@@ -73,7 +73,7 @@ export class MessageService {
   }
 
   async getRoomMessages(scrollData: IChatMessages) {
-    // debugger;
+    //
     // const messagesKeys = await this.socketRedisAdapter.getBranchesSubKeys(
     //   'message',
     //   roomId,
@@ -170,7 +170,7 @@ export class MessageService {
   }
 
   async update(updateMessageData: IEditMessage) {
-    debugger;
+
 
     const res = await this.messageRepository
       .createQueryBuilder()
