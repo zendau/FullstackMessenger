@@ -242,8 +242,8 @@ export default {
 
       let roomData = null;
 
-      if (store.state.chat.chats.hasOwnProperty(removeUser.userData.chatId)) {
-        roomData = store.state.chat.chats[removeUser.userData.chatId];
+      if (store.state.chat.chats.has(removeUser.userData.chatId)) {
+        roomData = store.state.chat.chats.get(removeUser.userData.chatId);
       } else if (
         (store.state.chat.currentTempChatData.id = removeUser.userData.chatId)
       ) {

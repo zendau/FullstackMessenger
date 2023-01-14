@@ -200,6 +200,7 @@ export class SocketService {
       'hotChats',
       messageData.authorId,
       messageData.roomId,
+      false,
     );
 
     //this.redis.rpush(`message:${room}`, JSON.stringify(message));
@@ -491,7 +492,7 @@ export class SocketService {
     userId: number,
     chatId: string,
   ) {
-    if (!chatId || !userRoomsData.has(chatId)) return;
+    if (!chatId || userRoomsData.has(chatId)) return;
 
     const currentTempChatData = await this.getCurrentChatById(userId, chatId);
     return currentTempChatData;
@@ -589,9 +590,9 @@ export class SocketService {
     // })[0];
 
     const filteredUser = chatUsers.filter((user) => {
-      if (typeof user === 'number' && user !== userId) {
+      if (typeof user === 'number' && user != userId) {
         return user;
-      } else if (typeof user !== 'number' && user.id !== userId) {
+      } else if (typeof user !== 'number' && user.id != userId) {
         return user;
       }
       return false;

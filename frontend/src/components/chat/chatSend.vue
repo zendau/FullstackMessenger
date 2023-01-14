@@ -117,8 +117,7 @@ export default {
     );
 
     async function sendMessage() {
-      ;
-
+      debugger
       if (!route.params.id && store.state.chat.tempPrivateChat) {
         // store.dispatch("chat/createChat", {
 
@@ -203,6 +202,7 @@ export default {
           text: messageText,
           files: inseredFilesData,
         };
+        console.log('chatData', chatData.value.users)
         chatSocket.emit("sendMessage", messageData);
       }
 

@@ -105,12 +105,7 @@ export class ChatController {
   @MessagePattern('chat/listPagination')
   async getChatsPagination(@Payload() paginationData: IChatPagination) {
     const userRoomsData = await this.chatService
-      .getChatPagination({
-        userId: paginationData.userId,
-        page: paginationData.page,
-        limit: paginationData.limit,
-        inMemory: paginationData.inMemory,
-      })
+      .getChatPagination(paginationData)
       .catch((err) => {
         console.log(err);
         return {

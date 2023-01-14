@@ -98,9 +98,7 @@ export class ChatService {
         .limit(paginationLimit)
         .getMany();
 
-      const idList = listPaginationData.map((item) => item.id);
-      // chatIdList.push(...idList);
-      idList.forEach((id) => chatIdList.add(id));
+      listPaginationData.forEach((item) => chatIdList.add(item.id));
     }
 
     const chatsData = await this.socketService.getUserRoomsData(
@@ -114,15 +112,9 @@ export class ChatService {
       chatId,
     );
 
-    const test = {};
-
-    for (const item of chatsData) {
-      test[item[0]] = item[1];
-    }
-
     return {
-      roomsData: test,
-      hasMore: Array.from(chatIdList).length >= paginationLimit,
+      roomsData: JSON.stringify([...chatsData]),
+      hasMore: chatIdList.size >= paginationLimit,
       page: paginationPage + 1,
       limit,
       inMemory,

@@ -4,33 +4,28 @@
     :class="{ 'chats__container--active': !isShowMobileMessages }"
   >
     <searchInput @searchByPattern="searchChats" />
-    <p
-      class="empty_message"
-      style="color: red"
-      v-if="Object.keys(chatsList).length === 0"
-    >
+    <p class="empty_message" style="color: red" v-if="chatsList.size === 0">
       No chats
     </p>
     <ul class="chats__list">
       <li
         class="chats__item"
-        v-for="(chat, _, index) in chatsList"
-        :key="chat.id"
+        v-for="(chat, index) in chatsList"
+        :key="chat[1].id"
         :ref="(el) => setLastChatItem(el, index)"
-        @click="openChat(chat.id)"
+        @click="openChat(chat[1].id)"
       >
         <!-- <router-link
           :to="`/chat/${chat.id}`"
           @click="isShowMobileMessages = true"
         > -->
-
-        <i class="bi bi-people" v-if="chat.adminId" />
+        <i class="bi bi-people" v-if="chat[1].adminId" />
         <i class="bi bi-person" v-else />
         <div class="chats__info">
-          <p>{{ chat.title }}</p>
-          <p>{{ chat.lastMessage?.authorLogin }}</p>
-          <p>{{ chat.lastMessage?.text }}</p>
-          <p>{{ chat.userUnread }}</p>
+          <p>{{ chat[1].title }}</p>
+          <p>{{ chat[1].lastMessage?.authorLogin }}</p>
+          <p>{{ chat[1].lastMessage?.text }}</p>
+          <p>{{ chat[1].userUnread }}</p>
         </div>
         <!-- </router-link> -->
       </li>
@@ -61,14 +56,13 @@ export default {
     //     chatId: route.params.id,
     //   });
     // });
-    const searchPattern = ref(null)
+    const searchPattern = ref(null);
     const isShowMobileMessages = inject("isShowMobileMessages");
     const chatsData = computed(() => store.state.chat.chats);
     const userId = computed(() => store.state.auth.user.id);
     function openChat(chatId) {
       emit("openChat", chatId);
     }
-
 
     const chatsList = computed(() => store.getters["chat/chatList"]);
 
@@ -79,11 +73,11 @@ export default {
       // });
       // console.log("press_end");
 
-      searchPattern.value = pattern
+      searchPattern.value = pattern;
 
       if (searchPattern.value.length === 0) {
-        console.log('clear')
-        store.commit('chat/clearChatsByPattern')
+        console.log("clear");
+        store.commit("chat/clearChatsByPattern");
         return;
       }
 
@@ -99,13 +93,13 @@ export default {
     };
 
     function setLastChatItem(el, index) {
+      debugger;
       if (searchPattern.value) return;
 
-      if (Object.keys(chatsData.value).length - 1 !== index) return;
+      if (chatsData.value.size - 1 !== index) return;
 
       emit("setLastChatElement", el);
     }
-
 
     return {
       isShowMobileMessages,

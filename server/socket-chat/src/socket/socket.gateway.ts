@@ -58,7 +58,7 @@ export class SocketGateway {
   async connectUser(socket: Socket, userId: number) {
     const userStatus = this.socketService.addUser(userId);
     const rooms = await this.socketService.getUserRoomsIds(userId);
-
+    console.log('joined rooms', rooms);
     socket.data.userId = userId;
     socket.join(rooms);
     socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
@@ -191,6 +191,7 @@ export class SocketGateway {
 
   @SubscribeMessage('sendMessage')
   async sendMessage(socket: Socket, payload: IMessageData) {
+    debugger;
     console.log('new message', payload);
     // const res = await this.messageService.create(
     //   {

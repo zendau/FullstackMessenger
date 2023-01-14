@@ -17,7 +17,7 @@ const defoultLoadMessagesPagination = {
 export const chat = {
   namespaced: true,
   state: {
-    chats: {},
+    chats: new Map(),
     chatsByPattern: null,
     currentTempChatData: null,
     messages: {},
@@ -30,7 +30,7 @@ export const chat = {
       try {
         console.log("resieve message", messagesData);
 
-        if (!state.chats[messagesData.roomId]) {
+        if (!state.chats.has(messagesData.roomId)) {
           const res = await $api.get("/chat/byId", {
             params: {
               userId,
@@ -38,9 +38,7 @@ export const chat = {
             },
           });
 
-          const { chatId } = res.data;
-
-          commit("saveChats", { [chatId]: res.data });
+          commit("saveChat", res.data);
         }
 
         commit("setNewMessageData", {
@@ -53,6 +51,7 @@ export const chat = {
         commit("setLastChatMessage", messagesData.roomId);
         commit("sortByMessageDate");
       } catch (e) {
+        console.log("e", e);
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });
@@ -60,7 +59,8 @@ export const chat = {
     },
     async getChatMessages({ commit, state }, { chatId, userId }) {
       try {
-        if (!state.chats[chatId]) {
+        debugger;
+        if (!state.chats.has(chatId)) {
           const chatData = await $api.get("/chat/byId", {
             params: {
               userId,
@@ -69,7 +69,7 @@ export const chat = {
           });
 
           if (chatData.data) {
-            commit("saveChats", { [chatId]: chatData.data });
+            commit("saveChat", chatData.data);
           } else {
             commit("alert/setErrorMessage", `Not fount chat - ${chatId}`, {
               root: true,
@@ -82,7 +82,7 @@ export const chat = {
         // inMemory: messagePagination.inMemory,
 
         const messagePagination =
-          state.chats[chatId]?.loadMessagesPagination ??
+          state.chats.get(chatId)?.loadMessagesPagination ??
           defoultLoadMessagesPagination;
 
         if (!messagePagination.hasMore) return;
@@ -116,14 +116,9 @@ export const chat = {
 
         const isDeletedLastMessage = deletedMessageData.deletedData.find(
           (item) => {
-            console.log(
-              "qq",
-              item.id,
-              state.chats[deletedMessageData.roomId],
-              state.chats[deletedMessageData.roomId].lastMessage.id
-            );
             return (
-              item.id === state.chats[deletedMessageData.roomId].lastMessage.id
+              item.id ===
+              state.chats.get(deletedMessageData.roomId)?.lastMessage.id
             );
           }
         );
@@ -159,6 +154,7 @@ export const chat = {
           commit("saveCurrentTempChat", res.data.currentTempChatData);
         }
       } catch (e) {
+        console.log("e", e);
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });
@@ -274,9 +270,12 @@ export const chat = {
     },
   },
   mutations: {
+    saveChat(state, chat) {
+      state.chats.set(chat.id, chat);
+    },
     saveChats(state, chats) {
-      console.log(Object.keys(state.chats), Object.keys(chats));
-      state.chats = Object.assign(state.chats, chats);
+      const newChats = new Map(JSON.parse(chats));
+      state.chats = new Map([...state.chats, ...newChats]);
     },
     saveCurrentTempChat(state, chatData) {
       state.currentTempChatData = chatData;
@@ -289,7 +288,7 @@ export const chat = {
       console.log("!!!!!!!!11", chatId, uploadMessagesData);
 
       state.messages[chatId].push(...uploadMessagesData.messages);
-      state.chats[chatId].loadMessagesPagination = {
+      state.chats.get(chatId).loadMessagesPagination = {
         page: uploadMessagesData.page,
         limit: uploadMessagesData.limit,
         hasMore: uploadMessagesData.hasMore,
@@ -297,21 +296,21 @@ export const chat = {
       };
     },
     sortByMessageDate(state) {
-      const sortedMessagesByDate = Object.keys(state.chats)
+      const sortedMessagesByDate = [...state.chats.keys()]
         .sort((a, b) => {
           const dateA = new Date(
-            state.chats[a]?.lastMessage?.created_at || null
+            state.chats.get(a)?.lastMessage?.created_at || null
           ).getTime();
           const dateB = new Date(
-            state.chats[b]?.lastMessage?.created_at || null
+            state.chats.get(b)?.lastMessage?.created_at || null
           ).getTime();
 
           return dateA < dateB ? 1 : dateA === dateB ? 0 : -1;
         })
         .reduce((obj, key) => {
-          obj[key] = { ...state.chats[key] };
+          obj.set(key, state.chats.get(key));
           return obj;
-        }, {});
+        }, new Map());
 
       state.chats = sortedMessagesByDate;
     },
@@ -341,12 +340,11 @@ export const chat = {
       if (!messages) return [];
 
       const lastMessage = messages[0];
-      const messageRoom = state.chats[roomId];
       // if (!messageRoom.hasOwnProperty("lastMessage")) {
       //   messageRoom.lastMessage = {};
       // }
 
-      messageRoom.lastMessage = lastMessage;
+      state.chats.get(roomId).lastMessage = lastMessage;
     },
     updateMessage(state, updatedMessageData) {
       state.messages[updatedMessageData.roomId] = state.messages[
@@ -383,28 +381,28 @@ export const chat = {
       );
     },
     addUserToGroup(state, { chatId, userData }) {
-      if (!state.chats[chatId]) return;
+      if (!state.chats.has(chatId)) return;
       state.chats[chatId].users.push(userData);
     },
     deleteChatData(state, chatId) {
-      if (state.chats[chatId]) {
-        delete state.chats[chatId];
+      if (state.chats.has(chatId)) {
+        state.chats.delete(chatId);
       } else if (state.currentTempChatData.id === chatId) {
         state.currentTempChatData = null;
       }
     },
     updateUserOnline(state, userStatus) {
-      Object.keys(state.chats).forEach((chat) => {
-        state.chats[chat].users.forEach((user) => {
+      for (const chat of state.chats.values()) {
+        chat.users.forEach((user) => {
           if (user.id === userStatus.userId) {
             user.lastOnline = userStatus.status;
           }
         });
-      });
+      }
     },
     updateReadMessages(state, { chatId, unreadCount }) {
-      if (state.chats.hasOwnProperty(chatId)) {
-        state.chats[chatId].chatUnread = unreadCount;
+      if (state.chats.has(chatId)) {
+        state.chats.get(chatId).chatUnread = unreadCount;
       } else if (state.currentTempChatData.id === chatId) {
         state.currentTempChatData.chatUnread = unreadCount;
       }
@@ -420,7 +418,7 @@ export const chat = {
       state.loadChatsPagination = { ...defaultLoadChatsPagination };
     },
     saveChatsByPattern(state, chats) {
-      state.chatsByPattern = chats;
+      state.chatsByPattern = new Map(JSON.parse(chats));
     },
     clearChatsByPattern(state) {
       state.chatsByPattern = null;
@@ -502,9 +500,9 @@ export const chat = {
   },
   getters: {
     selectedChat: (state) => (chatId) => {
-      if (state.chats[chatId]) return state.chats[chatId];
+      if (state.chats.has(chatId)) return state.chats.get(chatId);
       else if (state.currentTempChatData?.id === chatId)
-        return state.currentTempChatData.id;
+        return state.currentTempChatData;
       else if (state.tempPrivateChat) return state.tempPrivateChat;
       else return null;
     },

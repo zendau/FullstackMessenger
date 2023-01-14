@@ -100,6 +100,13 @@ export default {
       router.push(`/chat/${chatId}`);
     });
 
+    chatSocket.on("newMessage", (messagesData) => {
+      store.dispatch("chat/newChatMessage", {
+        messagesData,
+        userId: userData.value.id,
+      });
+    });
+
     chatSocket.on("chatCreateError", (errorData) => {
       store.commit("alert/setErrorMessage", errorData.message);
     });
@@ -111,6 +118,7 @@ export default {
     //store.commit("chat/cleanChatData");
 
     function openChatRoom(roomId, isFirstLoad = false) {
+      debugger;
       if (!roomId || (chatId.value === roomId && !isFirstLoad)) return;
       console.log("OPEN", roomId);
       router.push(`/chat/${roomId}`);
@@ -119,8 +127,6 @@ export default {
         router.push(`/chat`);
         return;
       }
-
-      const roomData = store.state.chat.chats[roomId];
       const roomMessages = store.state.chat.messages[roomId];
 
       if (roomMessages === undefined || roomMessages?.length === 0) {
@@ -136,7 +142,7 @@ export default {
       if (!el) return;
       console.log("LAST ELEMENT", el);
       chatObserver.observe(el);
-
+      debugger;
       if (chatId.value && isFirstChatsLoad) {
         isFirstChatsLoad = false;
         console.log("open room", chatId.value);
