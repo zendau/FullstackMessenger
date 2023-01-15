@@ -107,6 +107,39 @@ export default {
       });
     });
 
+    chatSocket.on("inviteChatUser", (inseredUserData) => {
+      console.log("inseredUserData", inseredUserData);
+
+      if (!inseredUserData) {
+        console.log("ERROR");
+        return;
+      }
+
+      if (inseredUserData.userData.id === userId.value) {
+        store.dispatch("chat/getChatMessages", {
+          chatId: inseredUserData.inseredData.chatId,
+          userId: userId.value,
+        });
+      } else {
+        store.commit("chat/addUserToGroup", {
+          chatId: inseredUserData.inseredData.chatId,
+          userData: inseredUserData.userData,
+        });
+      }
+
+      // if (freeUsersList.value.hasOwnProperty(inseredUserData[0].userId)) {
+      //   delete freeUsersList.value[inseredUserData[0].userId];
+      // }
+
+      // if (!roomsData.value.hasOwnProperty(inseredUserData.inseredData.chatId))
+      //   return;
+    });
+
+    chatSocket.on("removeChatUser", (removeUser) => {
+      console.log("REMOVE", removeUser);
+      store.dispatch("chat/deleteFromChat", removeUser);
+    });
+
     chatSocket.on("chatCreateError", (errorData) => {
       store.commit("alert/setErrorMessage", errorData.message);
     });

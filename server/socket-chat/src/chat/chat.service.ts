@@ -60,8 +60,9 @@ export class ChatService {
 
     let paginationPage = parseInt(page);
     const paginationLimit = parseInt(limit);
+    let inMemoryData: boolean = JSON.parse(inMemory);
 
-    if (inMemory) {
+    if (inMemoryData) {
       const start = paginationPage * paginationLimit;
       const idList = await this.socketRedisAdapter.getListRange(
         'hotChats',
@@ -71,14 +72,14 @@ export class ChatService {
       );
 
       if (idList.length != paginationLimit) {
-        inMemory = false;
+        inMemoryData = false;
         paginationPage = 0;
       }
 
       idList.forEach((id) => chatIdList.add(id));
     }
 
-    if (!inMemory) {
+    if (!inMemoryData) {
       const start = paginationPage * paginationLimit;
       const listPaginationData = await this.chatRepository
         .createQueryBuilder('chat')
@@ -117,7 +118,7 @@ export class ChatService {
       hasMore: chatIdList.size >= paginationLimit,
       page: paginationPage + 1,
       limit,
-      inMemory,
+      inMemory: inMemoryData,
       ...(currentTempChatData && { currentTempChatData }),
     };
   }

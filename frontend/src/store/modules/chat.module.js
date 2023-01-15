@@ -1,4 +1,5 @@
 import $api from "../../axios";
+import router from "../../router";
 
 const defaultLoadChatsPagination = {
   page: 0,
@@ -29,7 +30,7 @@ export const chat = {
     async newChatMessage({ commit, state, getters }, { messagesData, userId }) {
       try {
         console.log("resieve message", messagesData);
-
+        debugger;
         if (!state.chats.has(messagesData.roomId)) {
           const res = await $api.get("/chat/byId", {
             params: {
@@ -182,6 +183,7 @@ export const chat = {
           params: {
             userId: chatData.userId,
             chatId: chatData.chatId,
+            users: chatData.users,
           },
         });
 
@@ -192,82 +194,60 @@ export const chat = {
         });
       }
     },
+    async deleteFromChat({ commit, getters, rootState }, deleteData) {
+      debugger;
+      try {
+        if (!deleteData.userData) {
+          commit("alert/setErrorMessage", "Error when deleting a user", {
+            root: true,
+          });
+          return;
+        }
 
-    // async getContacts({ commit, rootState }) {
-    //   const res = await $api.get("/chat/getContacts");
-    //   const userLogin = rootState.auth.user.login;
-    //   const contacts = res.data.filter((user) => user.login !== userLogin);
-    //   commit("saveContacts", contacts);
-    // },
-    // async getChats({ commit, rootState }) {
-    //   const userId = rootState.auth.user.id;
-    //   console.log("TEST", rootState.auth);
-    //   const res = await $api.get(`/chat/getByUser/${userId}`);
-    //   commit("saveChats", res.data);
-    // },
-    // async getMessges({ commit, state }, chatId) {
-    //   const messagesRes = await $api.get(`/message/getAllChat/${chatId}`, {
-    //     params: {
-    //       page: state.message.page,
-    //       limit: state.message.limit,
-    //     },
-    //   });
-    //   if (messagesRes.data.status !== false) {
-    //     console.log("commit messages");
-    //     commit("saveMessages", messagesRes.data);
-    //   }
-    // },
-    // async getInvaitedUsers({ commit, state }) {
-    //   const usersId = [];
-    //   state.chatData.group.forEach((user) => {
-    //     usersId.push(user.id);
-    //   });
-    //   const res = await $api.post("/chat/invaitedUsers/", {
-    //     users: usersId,
-    //   });
-    //   if (res.data) {
-    //     commit("saveInvaitedUsers", res.data);
-    //   }
-    // },
-    // async invaiteUserToChat({ commit }, invaitedData) {
-    //   const res = await $api.patch("/chat/invaiteToChat", {
-    //     userId: invaitedData.userId,
-    //     roomId: invaitedData.chatId,
-    //   });
-    //   if (!res.data.status) {
-    //     const res = await $api.get(`/user/getById/${invaitedData.userId}`);
-    //     commit("addUserToGroup", res.data);
-    //   }
-    // },
-    // async removeUserFromChat({ commit }, removeData) {
-    //   const res = await $api.delete("/chat/exitUser", {
-    //     params: {
-    //       chatId: removeData.chatId,
-    //       userId: removeData.userId,
-    //     },
-    //   });
-    //   if (res.data) {
-    //     commit("removeUserFromGroup", removeData.userId);
-    //   }
-    // },
-    async createChat({ commit }, chatData) {
-      $api
-        .post("/chat/create", {
-          adminId: chatData.adminId,
-          users: chatData.users,
-          groupName: chatData?.groupName,
-        })
-        .then((res) => {
-          console.log("res create", res);
-          //commit("setChatId", res.data.id);
-        })
-        .catch((error) => {
-          console.log("res error", error);
-          // commit("auth/setErrorMessage", error.response.data.message, {
-          //   root: true,
-          // });
+        const chatData = getters.selectedChat(deleteData.userData.chatId);
+
+        if (!chatData) {
+          commit("alert/setErrorMessage", "Error when deleting a user", {
+            root: true,
+          });
+          return;
+        }
+
+        commit("deleteUserFromChat", {
+          userData: deleteData.deletedUserInfo,
+          chatData,
+          chatUsers: deleteData.chatUsers,
         });
+
+        // delete roomsData.value[removeUserData.chatId].users[removeUserData.userId];
+        if (deleteData.deletedUserInfo.id !== rootState.auth.user.id) return;
+
+        commit("deleteChatData", deleteData.userData.chatId);
+        router.push("/chat");
+      } catch (e) {
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
+      }
     },
+    // async createChat({ commit }, chatData) {
+    //   $api
+    //     .post("/chat/create", {
+    //       adminId: chatData.adminId,
+    //       users: chatData.users,
+    //       groupName: chatData?.groupName,
+    //     })
+    //     .then((res) => {
+    //       console.log("res create", res);
+    //       //commit("setChatId", res.data.id);
+    //     })
+    //     .catch((error) => {
+    //       console.log("res error", error);
+    //       // commit("auth/setErrorMessage", error.response.data.message, {
+    //       //   root: true,
+    //       // });
+    //     });
+    // },
   },
   mutations: {
     saveChat(state, chat) {
@@ -381,8 +361,13 @@ export const chat = {
       );
     },
     addUserToGroup(state, { chatId, userData }) {
+      debugger;
       if (!state.chats.has(chatId)) return;
-      state.chats[chatId].users.push(userData);
+      state.chats.get(chatId).users.push(userData);
+
+      state.freeChatUsers = state.freeChatUsers.filter(
+        (user) => user.id !== userData.id
+      );
     },
     deleteChatData(state, chatId) {
       if (state.chats.has(chatId)) {
@@ -410,9 +395,10 @@ export const chat = {
     setTempPrivateChat(state, chatData) {
       state.tempPrivateChat = chatData;
     },
-    saveNewChatsPagination(state, { page, hasMore }) {
+    saveNewChatsPagination(state, { page, hasMore, inMemory }) {
       state.loadChatsPagination.page = page;
       state.loadChatsPagination.hasMore = hasMore;
+      state.loadChatsPagination.inMemory = inMemory;
     },
     setDefaultChatsPagination(state) {
       state.loadChatsPagination = { ...defaultLoadChatsPagination };
@@ -425,6 +411,13 @@ export const chat = {
     },
     saveFreeChatUsers(state, freeUsers) {
       state.freeChatUsers = freeUsers;
+    },
+    deleteUserFromChat(state, { userData, chatData, chatUsers }) {
+      debugger;
+      if (!state.freeChatUsers) state.freeChatUsers = [];
+
+      state.freeChatUsers.push(userData);
+      chatData.users = chatUsers;
     },
     // addMessage(state, message) {
     //   state.messages.unshift(message);

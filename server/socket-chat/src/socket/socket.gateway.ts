@@ -122,8 +122,8 @@ export class SocketGateway {
 
   @SubscribeMessage('invite-user')
   async inviteUserToChat(socket: Socket, payload: IUserChat) {
+    debugger;
     const inseredUserData = await this.socketService.inviteUserToChat(payload);
-    this.server.emit('inviteChatUser', inseredUserData);
 
     if (!inseredUserData) return inseredUserData;
 
@@ -133,7 +133,15 @@ export class SocketGateway {
       authorLogin: null,
       text: `Added ${inseredUserData.userData.login}`,
       files: null,
+      users: inseredUserData.inseredData.users,
     });
+
+    for (const userSocket of this.server.sockets.sockets?.values()) {
+      if (payload.userId === userSocket.data?.userId) {
+        userSocket.join(payload.chatId);
+      }
+    }
+    this.server.emit('inviteChatUser', inseredUserData);
   }
 
   @SubscribeMessage('remove-user')
@@ -143,12 +151,19 @@ export class SocketGateway {
 
     if (!userData) return;
 
+    for (const userSocket of this.server.sockets.sockets?.values()) {
+      if (payload.userId === userSocket.data?.userId) {
+        userSocket.leave(payload.chatId);
+      }
+    }
+
     this.sendMessage(socket, {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
       text: `Deleted ${userData.deletedUserInfo.login}`,
       files: null,
+      users: userData.chatUsers,
     });
   }
 
@@ -284,6 +299,7 @@ export class SocketGateway {
           authorLogin: null,
           text: 'Created',
           files: null,
+          users: chatData.users,
         });
       }
     }

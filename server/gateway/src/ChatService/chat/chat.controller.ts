@@ -190,19 +190,19 @@ export class ChatController {
     return res;
   }
 
-  @ApiOperation({ summary: 'Get all chat group users' })
-  @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @Get('groupUser/:id')
-  async getGroupUser(@Param('id') chatId: string) {
-    const res = await firstValueFrom(
-      this.chatServiceClient.send('chat/groupUser', chatId),
-    );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
-    return res;
-  }
+  // @ApiOperation({ summary: 'Get all chat group users' })
+  // @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
+  // @ApiResponse({ status: 400, type: HttpErrorDTO })
+  // @Get('groupUser/:id')
+  // async getGroupUser(@Param('id') chatId: string) {
+  //   const res = await firstValueFrom(
+  //     this.chatServiceClient.send('chat/groupUser', chatId),
+  //   );
+  //   if (res.status === false) {
+  //     throw new HttpException(res.message, res.httpCode);
+  //   }
+  //   return res;
+  // }
 
   @ApiOperation({ summary: 'Get all invaited users to chat group' })
   @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })

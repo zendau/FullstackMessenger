@@ -58,9 +58,9 @@ export class SocketRedisAdapter {
       if (!setQuery) return null;
 
       const dbData = await setQuery.getValuesFromDB();
-      this.setValues(key, mainId, dbData, setQuery.isExpire);
+      this.setValues(key, mainId, dbData.resList, setQuery.isExpire);
       console.log('dbData', dbData);
-      return dbData;
+      return dbData.resList;
     }
 
     const multiPipe = this.redis.multi();
@@ -118,10 +118,10 @@ export class SocketRedisAdapter {
     withExpire = true,
   ) {
     const multiPipe = this.redis.multi();
-    for (const item of data) {
-      const valueKey = `${key}:${mainId}:${item.id}`;
+    for (const id in data) {
+      const valueKey = `${key}:${mainId}:${id}`;
 
-      multiPipe.set(valueKey, JSON.stringify(item));
+      multiPipe.set(valueKey, JSON.stringify(data[id]));
       //this.setValue(key, data[valueId], withExpire, valueId, null);
       if (withExpire) {
         multiPipe.expire(valueKey, this.EXPIRE);
@@ -239,6 +239,7 @@ export class SocketRedisAdapter {
   }
 
   async deleteListValue(key: redisList, id: number, value: string | number) {
+    console.log(`${key}:${id}`, 1, value);
     this.redis.lrem(`${key}:${id}`, 1, value);
   }
 
@@ -331,11 +332,22 @@ export class SocketRedisAdapter {
     }
   }
 
-  setSetValue(key: redisSet, value: string | number, withExpire: boolean) {
-    this.redis.sadd(key, value);
+  setSetValue(
+    key: redisSet,
+    id: null | number,
+    value: string | number,
+    withExpire = true,
+  ) {
+    let redisKey: string = key;
+
+    if (id) {
+      redisKey = `${key}:${id}`;
+    }
+
+    this.redis.sadd(redisKey, value);
 
     if (withExpire) {
-      this.redis.expire(key, this.EXPIRE);
+      this.redis.expire(redisKey, this.EXPIRE);
     }
   }
 

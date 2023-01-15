@@ -3,5 +3,5 @@ export default interface IChatPagination {
   page: string;
   limit: string;
   chatId?: string;
-  inMemory: boolean;
+  inMemory: string;
 }

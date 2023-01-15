@@ -5,16 +5,34 @@
         :ctxMenuData="ctxMenuData"
         @deleteMessages="deleteMessages"
       />
-      <message
-        v-for="(message, index) in messages"
-        :key="message.id"
-        :message="message"
-        :isFirstUnread="isFirstUnread(index)"
-        :ref="(el) => setRefMessage(el, index)"
-        :isRead="isReadMessage(index)"
-        :userId="userData.id"
-        @openCTXMenu="openCTXMenu"
-      />
+      <template v-for="(message, index) in messages" :key="message.id">
+        <message
+          v-if="message.authorLogin"
+          :message="message"
+          :isFirstUnread="isFirstUnread(index)"
+          :ref="(el) => setRefMessage(el, index)"
+          :isRead="isReadMessage(index)"
+          :userId="userData.id"
+          @openCTXMenu="openCTXMenu"
+        />
+        <div
+          style="
+            width: 100px;
+            align-self: center;
+            color: white;
+            display: flex;
+            justify-content: center;
+            margin: 5px 10px;
+            padding: 10px;
+            background-color: var(--messageColor);
+            border-radius: 5px;
+          "
+          v-else
+        >
+          {{ message.text }}
+        </div>
+      </template>
+
       <div ref="scrollEnd"></div>
     </div>
   </file-upload>

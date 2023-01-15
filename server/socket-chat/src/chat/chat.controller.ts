@@ -30,47 +30,47 @@ export class ChatController {
   //   return res;
   // }
 
-  @MessagePattern('chat/groupUser')
-  async getGroupUser(@Payload() chatId: string) {
-    const res = await this.chatService.getGroupUsers(chatId).catch((err) => {
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
-    return res;
-  }
+  // @MessagePattern('chat/groupUser')
+  // async getGroupUser(@Payload() chatId: string) {
+  //   const res = await this.chatService.getGroupUsers(chatId).catch((err) => {
+  //     return {
+  //       status: false,
+  //       message: err.sqlMessage,
+  //       httpCode: HttpStatus.BAD_REQUEST,
+  //     };
+  //   });
+  //   return res;
+  // }
 
-  @MessagePattern('chat/invaiteToChat')
-  async invaiteUsersToChat(@Payload() invateData: IUserChat) {
-    const res = await this.chatService
-      .invaiteUsersToChat(invateData)
-      .catch((err) => {
-        console.log(err);
-        return {
-          status: false,
-          message: err.sqlMessage,
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      });
-    return res;
-  }
+  // @MessagePattern('chat/invaiteToChat')
+  // async invaiteUsersToChat(@Payload() invateData: IUserChat) {
+  //   const res = await this.chatService
+  //     .invaiteUsersToChat(invateData)
+  //     .catch((err) => {
+  //       console.log(err);
+  //       return {
+  //         status: false,
+  //         message: err.sqlMessage,
+  //         httpCode: HttpStatus.BAD_REQUEST,
+  //       };
+  //     });
+  //   return res;
+  // }
 
-  @MessagePattern('chat/exitUser')
-  async exitUserGroup(@Payload() exitUserData: IUserChat) {
-    const res = await this.chatService
-      .exitUserGroup(exitUserData)
-      .catch((err) => {
-        console.log(err);
-        return {
-          status: false,
-          message: err.sqlMessage,
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      });
-    return res;
-  }
+  // @MessagePattern('chat/exitUser')
+  // async exitUserGroup(@Payload() exitUserData: IUserChat) {
+  //   const res = await this.chatService
+  //     .exitUserGroup(exitUserData)
+  //     .catch((err) => {
+  //       console.log(err);
+  //       return {
+  //         status: false,
+  //         message: err.sqlMessage,
+  //         httpCode: HttpStatus.BAD_REQUEST,
+  //       };
+  //     });
+  //   return res;
+  // }
 
   @MessagePattern('chat/contacts')
   async getUserContacts(@Payload() listData: IGetContactList) {
@@ -151,7 +151,7 @@ export class ChatController {
   @MessagePattern('chat/freeUsers')
   async getFreeChatUsers(@Payload() chatData: IUserChat) {
     const userRoomsData = await this.socketService
-      .getFreeChatUsers(chatData.chatId, chatData.userId)
+      .getFreeChatUsers(chatData)
       .catch((err) => {
         console.log(err);
         return {

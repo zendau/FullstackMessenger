@@ -1,3 +1,4 @@
+import IUser from 'src/chat/interfaces/IUser';
 import IFile from './IFile';
 
 export default interface IMessageData {
@@ -6,4 +7,5 @@ export default interface IMessageData {
   authorLogin: string;
   text: string;
   files?: IFile[];
+  users: IUser[];
 }

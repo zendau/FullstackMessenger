@@ -173,13 +173,9 @@ export class SocketService {
     //
 
     const message: IMessageCreated = {
-      authorId: messageData.authorId,
-      authorLogin: messageData.authorLogin,
-      text: messageData.text,
+      ...messageData,
       created_at: new Date(),
       id: new Date().getTime(),
-      files: messageData.files,
-      roomId: messageData.roomId,
       isEdited: false,
     };
 
@@ -191,17 +187,34 @@ export class SocketService {
       false,
     );
 
-    this.socketRedisAdapter.deleteListValue(
-      'hotChats',
-      messageData.authorId,
-      messageData.roomId,
-    );
-    this.socketRedisAdapter.shiftList(
-      'hotChats',
-      messageData.authorId,
-      messageData.roomId,
-      false,
-    );
+    if (message.authorId) {
+      this.socketRedisAdapter.deleteListValue(
+        'hotChats',
+        messageData.authorId,
+        messageData.roomId,
+      );
+      this.socketRedisAdapter.shiftList(
+        'hotChats',
+        messageData.authorId,
+        messageData.roomId,
+        false,
+      );
+    }
+
+    debugger;
+    messageData.users.forEach((user) => {
+      this.socketRedisAdapter.deleteListValue(
+        'hotChats',
+        user.id,
+        messageData.roomId,
+      );
+      this.socketRedisAdapter.shiftList(
+        'hotChats',
+        user.id,
+        messageData.roomId,
+        false,
+      );
+    });
 
     //this.redis.rpush(`message:${room}`, JSON.stringify(message));
     this.addUnReadStatus(messageData.roomId, message.authorId);
@@ -381,7 +394,7 @@ export class SocketService {
   }
 
   addUser(userId: number) {
-    this.socketRedisAdapter.setSetValue('online', userId, false);
+    this.socketRedisAdapter.setSetValue('online', null, userId, false);
     //this.onlineUsers[user.userId] = socketId;
     return {
       userId: userId,
@@ -740,37 +753,41 @@ export class SocketService {
     return await this.getUnreadMessagesCount(chatId);
   }
 
-  async getFreeChatUsers(chatId: string, userId: number) {
+  async getFreeChatUsers(chatData: IUserChat) {
     // if (
     //   !this.rooms.hasOwnProperty(chatId) ||
     //   !this.userContacts.hasOwnProperty(userId)
     // ) {
     //   return [];
     // }
-    const userContacts: IUser[] = await this.socketRedisAdapter.getManyValues(
-      'userContacts',
-      userId,
-      true,
-      {
-        getValuesFromDB: async () =>
-          await this.userService.getFreeUserList(userId),
-        isExpire: true,
-      },
-    );
-    const chatUsers = await this.getChatUsers(chatId);
+    debugger;
+    const userContacts: { [key: number]: IUser } =
+      await this.socketRedisAdapter.getManyValues(
+        'userContacts',
+        chatData.userId,
+        true,
+        {
+          getValuesFromDB: async () =>
+            await this.userService.getContactList({
+              userId: chatData.userId,
+            }),
+          isExpire: true,
+        },
+      );
 
-    if (!userContacts || !chatUsers) return [];
+    if (!userContacts) return [];
 
     //const chatUsers = Object.keys(this.rooms[chatId].users);
 
-    const freeChatUsers: IUser[] = userContacts.reduce(
-      (freeUsers, userData) => {
-        const isChatUserExist = chatUsers.some(
-          (user) => user.id === userData.id,
+    const freeChatUsers: IUser[] = Object.keys(userContacts).reduce(
+      (freeUsers, userId) => {
+        const isChatUserExist = chatData.users.some(
+          (user) =>
+            JSON.parse(user as unknown as string)?.id === parseInt(userId),
         );
 
         if (!isChatUserExist) {
-          freeUsers.push(userData);
+          freeUsers.push(userContacts[userId]);
         }
         return freeUsers;
       },
@@ -809,12 +826,28 @@ export class SocketService {
 
     roomData.users.push(userData);
 
+    debugger;
+
     this.socketRedisAdapter.setValue(
       'room',
       roomData,
       true,
       inseredData.chatId,
     );
+
+    this.socketRedisAdapter.setSetValue(
+      'userRooms',
+      inseredData.userId,
+      inseredData.chatId,
+    );
+
+    this.socketRedisAdapter.shiftList(
+      'hotChats',
+      inseredData.userId,
+      inseredData.chatId,
+      false,
+    );
+
     return {
       inseredData,
       userData,
@@ -840,11 +873,27 @@ export class SocketService {
       return true;
     });
 
+    debugger;
+
     this.socketRedisAdapter.setValue('room', roomData, true, userData.chatId);
+
+    this.socketRedisAdapter.deleteSetValue(
+      'userRooms',
+      userData.userId,
+      userData.chatId,
+    );
+
+    console.log('DELETE', userData);
+    this.socketRedisAdapter.deleteListValue(
+      'hotChats',
+      userData.userId,
+      userData.chatId,
+    );
 
     return {
       deletedUserInfo,
       userData,
+      chatUsers: roomData.users,
     };
   }
 

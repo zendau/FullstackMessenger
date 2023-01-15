@@ -201,8 +201,8 @@ export default {
           authorLogin: userLogin,
           text: messageText,
           files: inseredFilesData,
+          users: chatData.value.users
         };
-        console.log('chatData', chatData.value.users)
         chatSocket.emit("sendMessage", messageData);
       }
 

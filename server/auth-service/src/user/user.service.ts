@@ -141,9 +141,9 @@ export class UserService {
     subQuery: SelectQueryBuilder<Contact> | UnionParameters,
     userId: number,
     isNot: boolean,
-    page: string | null,
-    limit: string | null,
-    pattern: string | null,
+    page: string | undefined,
+    limit: string | undefined,
+    pattern: string | undefined,
   ) {
     //console.log('sub', await subQuery.getRawMany());
 
