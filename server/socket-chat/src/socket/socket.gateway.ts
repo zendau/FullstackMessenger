@@ -27,6 +27,7 @@ import IUserData from './interfaces/user/IUserData';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 import { IContactStatus } from './interfaces/contact/IContactStatus';
 import IChatCreate from 'src/chat/interfaces/IChatCreate';
+import IChatGroupMember from './interfaces/chat/IChatGroupMember';
 
 @WebSocketGateway(80, {
   path: '/socketChat',
@@ -121,11 +122,16 @@ export class SocketGateway {
   // }
 
   @SubscribeMessage('invite-user')
-  async inviteUserToChat(socket: Socket, payload: IUserChat) {
+  async inviteUserToChat(socket: Socket, payload: IChatGroupMember) {
     debugger;
     const inseredUserData = await this.socketService.inviteUserToChat(payload);
 
-    if (!inseredUserData) return inseredUserData;
+    if (!inseredUserData) {
+      this.server
+        .to(socket.id)
+        .emit('chatSocketError', { message: 'Error when invite a user' });
+      return;
+    }
 
     this.sendMessage(socket, {
       roomId: payload.chatId,
@@ -141,15 +147,27 @@ export class SocketGateway {
         userSocket.join(payload.chatId);
       }
     }
-    this.server.emit('inviteChatUser', inseredUserData);
+    this.server.emit('inviteChatUser', {
+      ...inseredUserData,
+      adminId: payload.adminId,
+    });
   }
 
   @SubscribeMessage('remove-user')
-  async removeUserFromChat(socket: Socket, payload: IUserChat) {
+  async removeUserFromChat(socket: Socket, payload: IChatGroupMember) {
     const userData = await this.socketService.removeUserFromChat(payload);
-    this.server.to(payload.chatId).emit('removeChatUser', userData);
 
-    if (!userData) return;
+    if (!userData) {
+      this.server
+        .to(socket.id)
+        .emit('chatSocketError', { message: 'Error when deleting a user' });
+      return;
+    }
+
+    this.server.to(payload.chatId).emit('removeChatUser', {
+      ...userData,
+      adminId: payload.adminId,
+    });
 
     for (const userSocket of this.server.sockets.sockets?.values()) {
       if (payload.userId === userSocket.data?.userId) {
@@ -162,6 +180,34 @@ export class SocketGateway {
       authorId: null,
       authorLogin: null,
       text: `Deleted ${userData.deletedUserInfo.login}`,
+      files: null,
+      users: userData.chatUsers,
+    });
+  }
+
+  @SubscribeMessage('exit-chat')
+  async exitUserFromChat(socket: Socket, payload: IChatGroupMember) {
+    const userData = await this.socketService.removeUserFromChat(payload);
+
+    if (!userData) {
+      this.server
+        .to(socket.id)
+        .emit('chatSocketError', { message: 'Error when exit from chat' });
+      return;
+    }
+
+    this.server.to(payload.chatId).emit('removeChatUser', {
+      ...userData,
+      adminId: payload.adminId,
+    });
+
+    socket.leave(payload.chatId);
+
+    this.sendMessage(socket, {
+      roomId: payload.chatId,
+      authorId: null,
+      authorLogin: null,
+      text: `Exit ${userData.deletedUserInfo.login}`,
       files: null,
       users: userData.chatUsers,
     });
@@ -271,8 +317,7 @@ export class SocketGateway {
     const chatData = await this.socketService.createChat(payload);
 
     if ('status' in chatData) {
-      console.log('ERROR', chatData);
-      this.server.to(socket.id).emit('chatCreateError', payload);
+      this.server.to(socket.id).emit('chatSocketError', payload);
     } else {
       for (const userSocket of this.server.sockets.sockets?.values()) {
         if (payload.users.includes(userSocket.data?.userId)) {
@@ -286,9 +331,7 @@ export class SocketGateway {
             );
           }
 
-          this.server
-            .to(userSocket.id)
-            .emit('newChat', { [chatData.id]: chatData });
+          this.server.to(userSocket.id).emit('newChat', chatData);
         }
       }
 
@@ -301,6 +344,32 @@ export class SocketGateway {
           files: null,
           users: chatData.users,
         });
+      }
+    }
+  }
+
+  @SubscribeMessage('deleteChat')
+  async deleteChatGroup(
+    socket: Socket,
+    payload: { chatId: string; adminId: number },
+  ) {
+    const deleteRes = await this.socketService.deleteChat(
+      payload.chatId,
+      payload.adminId,
+    );
+
+    if ('status' in deleteRes) {
+      this.server.to(socket.id).emit('chatSocketError', deleteRes);
+      return;
+    }
+
+    this.server.to(payload.chatId).emit('deletedChatGroup', {
+      chatId: payload.chatId,
+    });
+
+    for (const userSocket of this.server.sockets.sockets?.values()) {
+      if (deleteRes.includes(userSocket.data?.userId)) {
+        userSocket.leave(payload.chatId);
       }
     }
   }

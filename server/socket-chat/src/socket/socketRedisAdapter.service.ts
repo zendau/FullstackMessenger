@@ -6,7 +6,7 @@ import IEditMessage from './interfaces/message/IEditMessage';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 
 type redisValue = 'user' | '' | 'room' | 'unread' | 'userContacts';
-type redisList = 'hotChats';
+type redisList = 'hotChats' | 'map-message';
 type redisSet = 'userRooms' | 'userContacts' | 'online';
 type redisSortedSet = '';
 type redisHash = 'message';
@@ -152,10 +152,14 @@ export class SocketRedisAdapter {
     return deletedMessages;
   }
 
-  async deleteValue(key: redisValue, id: string) {
-    const valueKey = `${key}:${id}`;
-    const deletedValue = await this.redis.getdel(valueKey);
-    return JSON.parse(deletedValue);
+  async deleteValue(
+    key: redisValue | redisList | redisSet | redisSortedSet | redisHash,
+    mainId: string | number,
+    subId?: string | number,
+  ) {
+    const valueKey = `${key}:${mainId}` + (subId ? `:${subId}` : '');
+    const deletedValue = await this.redis.del(valueKey);
+    return deletedValue;
   }
 
   async incValue(

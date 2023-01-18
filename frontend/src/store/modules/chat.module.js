@@ -24,7 +24,7 @@ export const chat = {
     messages: {},
     tempPrivateChat: null,
     loadChatsPagination: { ...defaultLoadChatsPagination },
-    freeChatUsers: null,
+    freeChatUsers: [],
   },
   actions: {
     async newChatMessage({ commit, state, getters }, { messagesData, userId }) {
@@ -172,6 +172,7 @@ export const chat = {
 
         commit("saveChatsByPattern", res.data);
       } catch (e) {
+        console.log('e', e)
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });
@@ -197,12 +198,6 @@ export const chat = {
     async deleteFromChat({ commit, getters, rootState }, deleteData) {
       debugger;
       try {
-        if (!deleteData.userData) {
-          commit("alert/setErrorMessage", "Error when deleting a user", {
-            root: true,
-          });
-          return;
-        }
 
         const chatData = getters.selectedChat(deleteData.userData.chatId);
 
@@ -213,16 +208,19 @@ export const chat = {
           return;
         }
 
-        commit("deleteUserFromChat", {
-          userData: deleteData.deletedUserInfo,
-          chatData,
-          chatUsers: deleteData.chatUsers,
-        });
+        chatData.users = deleteData.chatUsers;
+
+        // commit("deleteUserFromChat", {
+        //   userData: deleteData.deletedUserInfo,
+        //   chatData,
+        //   chatUsers: deleteData.chatUsers,
+        // });
 
         // delete roomsData.value[removeUserData.chatId].users[removeUserData.userId];
         if (deleteData.deletedUserInfo.id !== rootState.auth.user.id) return;
 
         commit("deleteChatData", deleteData.userData.chatId);
+        commit('clearChatMessages', deleteData.userData.chatId)
         router.push("/chat");
       } catch (e) {
         commit("alert/setErrorMessage", e.response.data.message, {
@@ -274,6 +272,9 @@ export const chat = {
         hasMore: uploadMessagesData.hasMore,
         inMemory: uploadMessagesData.inMemory,
       };
+    },
+    clearChatMessages(state, chatId) {
+      state.messages[chatId] = [];
     },
     sortByMessageDate(state) {
       const sortedMessagesByDate = [...state.chats.keys()]
@@ -364,10 +365,6 @@ export const chat = {
       debugger;
       if (!state.chats.has(chatId)) return;
       state.chats.get(chatId).users.push(userData);
-
-      state.freeChatUsers = state.freeChatUsers.filter(
-        (user) => user.id !== userData.id
-      );
     },
     deleteChatData(state, chatId) {
       if (state.chats.has(chatId)) {
@@ -404,7 +401,7 @@ export const chat = {
       state.loadChatsPagination = { ...defaultLoadChatsPagination };
     },
     saveChatsByPattern(state, chats) {
-      state.chatsByPattern = new Map(JSON.parse(chats));
+      state.chatsByPattern = new Map(chats);
     },
     clearChatsByPattern(state) {
       state.chatsByPattern = null;
@@ -412,12 +409,13 @@ export const chat = {
     saveFreeChatUsers(state, freeUsers) {
       state.freeChatUsers = freeUsers;
     },
-    deleteUserFromChat(state, { userData, chatData, chatUsers }) {
-      debugger;
-      if (!state.freeChatUsers) state.freeChatUsers = [];
-
+    updateFreeChatUsers(state, withoutId) {
+      state.freeChatUsers = state.freeChatUsers.filter(
+        (user) => user.id !== withoutId
+      );
+    },
+    pushFreeChatUsers(state, userData) {
       state.freeChatUsers.push(userData);
-      chatData.users = chatUsers;
     },
     // addMessage(state, message) {
     //   state.messages.unshift(message);

@@ -1,0 +1,77 @@
+<template>
+  <Modal :isShowCTX="isOpenModal" @closeCTX="closeCTX">
+    <div class="test">
+      <h2>{{title}}</h2>
+      <button @click="actionHandler">Confirm</button>
+      <button @click="closeCTX">Cancel</button>
+    </div>
+  </Modal>
+</template>
+
+<script>
+import Modal from "../UI/Modal.vue";
+
+export default {
+  props: ["isOpenModal", 'actionHandler', 'title'],
+  emits: ["closeConfirmModal"],
+  components: { Modal },
+  setup(props, { emit }) {
+    function closeCTX() {
+      emit("closeConfirmModal");
+    }
+
+    function actionHandler() {
+      props.actionHandler()
+    }
+
+    return {
+      actionHandler,
+      closeCTX,
+    };
+  },
+};
+</script>
+
+<style lang="scss">
+.test {
+  width: 400px;
+  height: 400px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  background-color: var(--bgcColor);
+  color: var(--textColor);
+}
+
+.close-btn {
+  position: absolute;
+  right: 32px;
+  top: 32px;
+  width: 32px;
+  height: 32px;
+  opacity: 0.3;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:before,
+  &:after {
+    position: absolute;
+    left: 15px;
+    content: " ";
+    height: 33px;
+    width: 2px;
+    background-color: #333;
+  }
+
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+}
+</style>

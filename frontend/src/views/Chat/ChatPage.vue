@@ -52,8 +52,6 @@ export default {
     const showChats = ref(true);
     provide("showChats", showChats);
 
-    const userData = computed(() => store.state.auth.user);
-
     const isCallSendAfterCreate = ref(false);
     provide("isCallSendAfterCreate", isCallSendAfterCreate);
 
@@ -92,27 +90,26 @@ export default {
       chatId: chatId.value,
     });
 
-    chatSocket.on("newChat", (data) => {
-      const chatId = Object.keys(data)[0];
-      store.commit("chat/appendChatsData", data);
-
-      if (!isCallSendAfterCreate.value) return;
-      router.push(`/chat/${chatId}`);
+    chatSocket.on("newChat", (chatData) => {
+      console.log("NEW CHAT", chatData);
+      store.commit("chat/saveChat", chatData);
+      if (chatData.adminId === userId.value || isCallSendAfterCreate.value) {
+        router.push(`/chat/${chatData.id}`);
+      }
     });
 
     chatSocket.on("newMessage", (messagesData) => {
       store.dispatch("chat/newChatMessage", {
         messagesData,
-        userId: userData.value.id,
+        userId: userId.value,
       });
     });
 
     chatSocket.on("inviteChatUser", (inseredUserData) => {
       console.log("inseredUserData", inseredUserData);
 
-      if (!inseredUserData) {
-        console.log("ERROR");
-        return;
+      if (inseredUserData?.adminId === userId.value) {
+        store.commit("chat/updateFreeChatUsers", inseredUserData.userData.id);
       }
 
       if (inseredUserData.userData.id === userId.value) {
@@ -138,9 +135,22 @@ export default {
     chatSocket.on("removeChatUser", (removeUser) => {
       console.log("REMOVE", removeUser);
       store.dispatch("chat/deleteFromChat", removeUser);
+
+      if (removeUser?.adminId === userId.value) {
+        store.commit("chat/pushFreeChatUsers", removeUser.deletedUserInfo);
+      }
     });
 
-    chatSocket.on("chatCreateError", (errorData) => {
+    chatSocket.on("deletedChatGroup", (removeData) => {
+      if (removeData.chatId === chatId.value) {
+        router.push("/chat");
+      }
+
+      store.commit("chat/deleteChatData", removeData.chatId);
+      store.commit("chat/clearChatMessages", removeData.chatId);
+    });
+
+    chatSocket.on("chatSocketError", (errorData) => {
       store.commit("alert/setErrorMessage", errorData.message);
     });
 

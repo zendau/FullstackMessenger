@@ -24,7 +24,17 @@
       <!-- <NavbarUserList :users="groupUsers" :show="showUsers" /> -->
     </div>
 
-    <div class="chat__topbar" v-if="showTollbar">
+    <div v-if="chatData?.adminId">
+      <button
+        class="chat__exit"
+        @click="isShowConfirmModal = true"
+        v-if="isChatAdmin"
+      >
+        Delete chat
+      </button>
+      <button class="chat__exit" @click="exitFromChat" v-else>Exit chat</button>
+    </div>
+    <div class="chat__topbar" v-if="isChatAdmin">
       <!-- <div class="chat__user-group">
         <button class="btn" @click="showAddUsers = !showAddUsers">
           <i class="bi bi-person-plus-fill"></i>
@@ -49,13 +59,6 @@
         />
       </div> -->
     </div>
-    <a
-      class="chat__exit"
-      href="#"
-      @click="exitGroup"
-      v-if="groupUsers && !showTollbar"
-      >Exit chat</a
-    >
   </div>
   <div
     v-if="isShowUsersList"
@@ -72,7 +75,7 @@
           <div>{{ userData.login }}</div>
           <div>{{ userData.lastOnline }}</div>
         </div>
-        <div v-if='chatData.adminId === userData.id'>ADMIN</div>
+        <div v-if="chatData.adminId === userData.id">ADMIN</div>
         <button
           @click="deleteChatMember(userData.id)"
           v-else-if="chatData.adminId === mainUserData.id"
@@ -94,6 +97,12 @@
       </ul>
     </div>
   </div>
+  <ConfirmModal
+    :isOpenModal="isShowConfirmModal"
+    :actionHandler="deleteChat"
+    :title="'Delete selected chat ?'"
+    @closeConfirmModal="isShowConfirmModal = false"
+  />
 </template>
 
 <script>
@@ -101,12 +110,12 @@ import { computed, inject, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
-import $api from "../../axios";
 import NavbarUserList from "./navbarUserList.vue";
+import ConfirmModal from "./confirmModal.vue";
 
 export default {
   emits: ["deleteMessages"],
-  components: { NavbarUserList },
+  components: { NavbarUserList, ConfirmModal },
   setup(_, { emit }) {
     const store = useStore();
     const route = useRoute();
@@ -118,7 +127,7 @@ export default {
 
     const selectedMessages = inject("selectedMessages");
 
-    const showTollbar = computed(
+    const isChatAdmin = computed(
       () => chatData.value.adminId === userData.value.id
     );
 
@@ -149,20 +158,25 @@ export default {
     );
 
     const isShowUsersList = ref(false);
+    const isShowConfirmModal = ref(false);
 
-    // async function addUserToChat(id) {
-    //   store.dispatch("chat/invaiteUserToChat", {
-    //     userId: id,
-    //     chatId: chatId.value,
-    //   });
-    // }
+    function exitFromChat() {
+      console.log("exit from chat");
+      chatSocket.emit("exit-chat", {
+        chatId: chatId.value,
+        userId: userData.value.id,
+        users: chatData.value.users,
+        adminId: null,
+      });
+    }
 
-    // async function removeUserFromChat(id) {
-    //   store.dispatch("chat/removeUserFromChat", {
-    //     userId: id,
-    //     chatId: chatId.value,
-    //   });
-    // }
+    function deleteChat() {
+      chatSocket.emit('deleteChat', {
+        chatId: chatId.value,
+        adminId: userData.value.id
+      })
+      console.log("detele chat");
+    }
 
     // async function exitGroup() {
     //   console.log("exit user with id ", userId);
@@ -202,6 +216,7 @@ export default {
         chatId: chatId.value,
         userId: memberId,
         users: chatData.value.users,
+        adminId: userData.value.id,
       });
     }
 
@@ -210,10 +225,9 @@ export default {
         chatId: chatId.value,
         userId: memberId,
         users: chatData.value.users,
+        adminId: userData.value.id,
       });
     }
-
-
 
     function openUserInfo(userId) {
       if (userData.value.id === userId) return;
@@ -227,7 +241,7 @@ export default {
       showUsers,
       showAddUsers,
       showRemoveUsers,
-      showTollbar,
+      isChatAdmin,
       groupUsers,
       removeUsersList,
       selectedMessages,
@@ -235,14 +249,14 @@ export default {
       isShowUsersList,
       chatGroupMembersCount,
       freeUsersList,
-      // exitGroup,
       addChatMember,
       deleteChatMember,
       deleteMessages,
       getFreeChatUsersHandler,
       mainUserData: userData,
-      // addUserToChat,
-      // removeUserFromChat,
+      deleteChat,
+      exitFromChat,
+      isShowConfirmModal,
     };
   },
 };

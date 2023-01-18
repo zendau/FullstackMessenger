@@ -19,7 +19,9 @@
       @click="cancelCreateGroup"
       color="white"
     />
-    <button @click="test" :disabled="isValidGroupUsersLength">create</button>
+    <button @click="onCreateChat" :disabled="isValidGroupUsersLength">
+      create
+    </button>
   </div>
 </template>
 
@@ -39,6 +41,8 @@ export default {
   setup(_, { emit }) {
     const store = useStore();
     const userId = store.state.auth.user.id;
+
+    const chatSocket = inject("chatSocket");
 
     const createGroupUsers = inject("createGroupUsers");
     const showChats = inject("showChats");
@@ -76,14 +80,16 @@ export default {
       console.log("ERRORS", errors);
     }
 
-    const onSubmitForm = handleSubmit((value) => {
-      if (isValidGroupUsersLength.value) return;
-      console.log("CREATE GROUP", {
+    const onCreateChat = handleSubmit((data) => {
+      console.log("CREATE GROUP");
+      if (isValidGroupUsersLength.data) return;
+
+      chatSocket.emit("createChat", {
         adminId: userId,
         users: createGroupUsers.value,
-        groupName: value.chatTitle,
+        groupName: data.chatTitle,
       });
-      cancelCreateGroup()
+      cancelCreateGroup();
 
       // store.commit("alert/clearAlert");
       // store.dispatch("auth/login", {
@@ -92,11 +98,6 @@ export default {
       // });
     }, onInvalidSubmit);
 
-    function test() {
-      console.log("createGroupUsers", createGroupUsers.value);
-      onSubmitForm();
-    }
-
     const isValidGroupUsersLength = computed(
       () => createGroupUsers.value.length < 3
     );
@@ -104,7 +105,7 @@ export default {
     return {
       isValidGroupUsersLength,
       chatTitle,
-      test,
+      onCreateChat,
       searchByPattern,
       createGroupUsers,
       startCreateGroup,

@@ -1,5 +1,11 @@
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
-import { Injectable, Inject, Logger, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  Logger,
+  forwardRef,
+  HttpStatus,
+} from '@nestjs/common';
 import { ChatService } from 'src/chat/chat.service';
 import { MessageService } from 'src/message/message.service';
 import IChatMessages from './interfaces/chat/IChatMessages';
@@ -531,7 +537,7 @@ export class SocketService {
       // if (roomData.users.includes(userId)) {
       // }
     }
-    return resChatData;
+    return JSON.stringify([...resChatData]);
   }
 
   // async getChatsByPattern(userId, idList: string[]) {
@@ -914,5 +920,33 @@ export class SocketService {
     createdChatData.users = await this.setUserOnlineStatus(groupUsers);
 
     return createdChatData;
+  }
+
+  async deleteChat(chatId: string, adminId: number) {
+    const chatData = await this.getChatById(chatId);
+
+    if (chatData.adminId !== adminId)
+      return {
+        status: false,
+        message: `User with id - ${adminId} is not admin chat - ${chatId}`,
+        httpCode: HttpStatus.FORBIDDEN,
+      };
+
+    const usersIdList = [];
+
+    chatData.users.forEach((user) => {
+      this.socketRedisAdapter.deleteListValue('hotChats', user.id, chatId);
+      this.socketRedisAdapter.deleteSetValue('userRooms', user.id, chatId);
+      this.socketRedisAdapter.deleteValue('unread', user.id, chatId);
+      usersIdList.push(user.id);
+    });
+
+    this.socketRedisAdapter.deleteValue('room', chatId);
+    this.socketRedisAdapter.deleteValue('message', chatId);
+    this.socketRedisAdapter.deleteValue('map-message', chatId);
+
+    this.chatService.remove(chatId);
+
+    return usersIdList;
   }
 }

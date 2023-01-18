@@ -114,7 +114,7 @@ export class ChatService {
     );
 
     return {
-      roomsData: JSON.stringify([...chatsData]),
+      roomsData: chatsData,
       hasMore: chatIdList.size >= paginationLimit,
       page: paginationPage + 1,
       limit,
@@ -157,9 +157,9 @@ export class ChatService {
 
       const usersEntity: ChatUsers[] = [];
 
-      if (chatData?.adminId) {
-        usersEntity.push(this.createEntity(chatData.adminId, chatInseted));
-      }
+      // if (chatData?.adminId) {
+      //   usersEntity.push(this.createEntity(chatData.adminId, chatInseted));
+      // }
 
       chatData.users.forEach((userId) => {
         usersEntity.push(this.createEntity(userId, chatInseted));
