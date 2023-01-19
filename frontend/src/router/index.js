@@ -32,7 +32,7 @@ const routes = [
     component: conferences,
     meta: {
       requiresAuth: true,
-      role: Role.User,
+      role: Role.USER,
       layout: Layout.Main,
     },
   },
@@ -47,7 +47,7 @@ const routes = [
         component: audioConference,
         meta: {
           requiresAuth: true,
-          role: Role.User,
+          role: Role.USER,
           layout: Layout.Main,
         },
       },
@@ -57,7 +57,7 @@ const routes = [
         component: videoConference,
         meta: {
           requiresAuth: true,
-          role: Role.User,
+          role: Role.USER,
           layout: Layout.Main,
         },
       },
@@ -69,7 +69,7 @@ const routes = [
     name: "chat",
     meta: {
       requiresAuth: true,
-      role: Role.User,
+      role: Role.USER,
       layout: Layout.Chat,
     },
   },
@@ -79,7 +79,7 @@ const routes = [
     name: "adminLayout",
     meta: {
       requiresAuth: true,
-      role: Role.Admin,
+      role: Role.ADMIN,
     },
     children: [
       {
@@ -88,7 +88,7 @@ const routes = [
         name: "adminUsers",
         meta: {
           requiresAuth: true,
-          role: Role.Admin,
+          role: Role.ADMIN,
           layout: Layout.Main,
         },
       },
@@ -100,7 +100,7 @@ const routes = [
     name: "register",
     meta: {
       requiresAuth: false,
-      role: Role.noAuth,
+      role: Role.GUEST,
       layout: Layout.NoAuth,
     },
   },
@@ -110,7 +110,7 @@ const routes = [
     name: "login",
     meta: {
       requiresAuth: false,
-      role: Role.noAuth,
+      role: Role.GUEST,
       layout: Layout.NoAuth,
     },
   },
@@ -120,7 +120,7 @@ const routes = [
     name: "forgot",
     meta: {
       requiresAuth: false,
-      role: Role.noAuth,
+      role: Role.GUEST,
       layout: Layout.NoAuth,
     },
   },
@@ -130,7 +130,7 @@ const routes = [
     name: "settings",
     meta: {
       requiresAuth: true,
-      role: Role.User,
+      role: Role.USER,
       layout: Layout.Main,
     },
   },
@@ -140,7 +140,7 @@ const routes = [
     name: "createConference",
     meta: {
       requiresAuth: true,
-      role: Role.User,
+      role: Role.USER,
       layout: Layout.Main,
     },
   },
@@ -150,7 +150,7 @@ const routes = [
     name: "editConference",
     meta: {
       requiresAuth: true,
-      role: Role.User,
+      role: Role.USER,
       layout: Layout.Main,
     },
   },
@@ -159,7 +159,7 @@ const routes = [
     component: pageNotFound,
     meta: {
       requiresAuth: true,
-      role: Role.noAuth,
+      role: Role.GUEST,
       layout: Layout.Main,
     },
   },
@@ -168,7 +168,7 @@ const routes = [
     component: pageNotFound,
     meta: {
       requiresAuth: false,
-      role: Role.noAuth,
+      role: Role.GUEST,
       layout: Layout.noAuth,
     },
   },
@@ -180,22 +180,21 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const noAuthRedicect = import.meta.env.VUE_APP_ROUTER_REDIRECT_NO_AUTH_PATH;
+  const noAuthRedicect = import.meta.env.VITE_ROUTER_REDIRECT_NO_AUTH_PATH;
   const wrongRoleRedicect = import.meta.env
-    .VUE_APP_ROUTER_REDIRECT_WRONG_ROLE_PATH;
-  const startAuthPage = import.meta.env.VUE_APP_ROUTER_START_AUTH_PAGE_PATH;
+    .VITE_ROUTER_REDIRECT_WRONG_ROLE_PATH;
+  const startAuthPage = import.meta.env.VITE_ROUTER_START_AUTH_PAGE_PATH;
 
   const authStatus = store.state.auth.authStatus;
-  // const userRole = store.state.auth.user.role.accessLevel;
-  const userRole = 1;
+  const userRole = store.state.auth.user.role;
   const isBanned = store.state.auth.user.isBanned;
-
+  debugger;
   if (to.meta.requiresAuth) {
     if (authStatus) {
       if (isBanned) {
         store.dispatch("auth/logout");
       } else {
-        if (to.meta.role <= userRole) {
+        if (to.meta.role <= Role[userRole]) {
           next();
         } else {
           next(wrongRoleRedicect);

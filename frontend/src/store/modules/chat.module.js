@@ -273,6 +273,11 @@ export const chat = {
         inMemory: uploadMessagesData.inMemory,
       };
     },
+    clearTempData(state) {
+      state.currentTempChatData = null
+      state.tempPrivateChat = null
+      state.freeChatUsers = []
+    },
     clearChatMessages(state, chatId) {
       state.messages[chatId] = [];
     },

@@ -166,7 +166,7 @@ export default {
       console.log("OPEN", roomId);
       router.push(`/chat/${roomId}`);
 
-      if (roomId === "temp") {
+      if (roomId === "contact") {
         router.push(`/chat`);
         return;
       }
@@ -185,7 +185,6 @@ export default {
       if (!el) return;
       console.log("LAST ELEMENT", el);
       chatObserver.observe(el);
-      debugger;
       if (chatId.value && isFirstChatsLoad) {
         isFirstChatsLoad = false;
         console.log("open room", chatId.value);

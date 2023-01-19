@@ -215,6 +215,7 @@ export class SocketGateway {
 
   @SubscribeMessage('message_pressing')
   handleMessagePressing(socket: Socket, payload: IMessagePressing) {
+    console.log('message_pressing', payload);
     socket.broadcast.to(payload.roomId).emit('message_status', payload);
   }
 
@@ -301,11 +302,16 @@ export class SocketGateway {
   @SubscribeMessage('chatContactStatus')
   async chatContactStatus(socket: Socket, payload: IContactStatus) {
     for (const userSocket of this.server.sockets.sockets?.values()) {
-      console.log('userSocket', userSocket.data, payload);
-
       if (userSocket.data?.userId == payload.contactId) {
-        console.log('!!!!userSocket.data', userSocket.id);
+        console.log('userSocket', userSocket.data, payload);
+        console.log(
+          '!!!!userSocket.data',
+          userSocket.id,
+          userSocket.data?.userId,
+        );
+        console.log(socket.rooms);
         this.server.to(userSocket.id).emit('changeContactStatus', payload);
+        break;
       }
     }
   }

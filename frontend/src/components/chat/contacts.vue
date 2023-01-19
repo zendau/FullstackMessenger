@@ -82,8 +82,8 @@ export default {
     store.dispatch("contact/getContactCount", userId);
 
     chatSocket.on("changeContactStatus", (data) => {
-      store.commit("contact/changeContactStatus", data);
       console.log("data", data);
+      store.commit("contact/changeContactStatus", data);
     });
 
     watch(

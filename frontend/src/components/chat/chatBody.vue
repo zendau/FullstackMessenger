@@ -1,6 +1,6 @@
 <template>
   <file-upload>
-    <div class="chat__body">
+    <div class="chat__body" ref="bodyRef">
       <MessageContexMenu
         :ctxMenuData="ctxMenuData"
         @deleteMessages="deleteMessages"
@@ -72,6 +72,8 @@ export default {
     const userId = computed(() => store.state.auth.user.id);
     const scrollEnd = ref(null);
     const chatData = inject("chatData");
+
+    const bodyRef = ref(null)
 
     const isShowMessageCTX = ref(null);
     provide("isShowMessageCTX", isShowMessageCTX);
@@ -153,58 +155,25 @@ export default {
       // }
     );
 
-    const message = computed(() => store.state.chat.message);
-    //const isLoadedMessages = ref(false);
 
-    // const observer = new IntersectionObserver(async (entries) => {
-    //   console.log(entries, entries[0].isIntersecting, message.value.hasMore);
-    //   if (
-    //     entries[0].isIntersecting &&
-    //     message.value.hasMore &&
-    //     messages.value.length !== 0
-    //   ) {
-    //     console.log("observer");
-    //     store.dispatch("chat/getMessges", chatId.value);
-    //     //  message.value.page++;
-    //     // isLoadedMessages.value = true;
-    //     // const messagesRes = await $api.get(
-    //     //   `/message/getAllChat/${chatId.value}`,
-    //     //   {
-    //     //     params: {
-    //     //       page:  message.value.page,
-    //     //       limit:  message.value.limit,
-    //     //     },
-    //     //   }
-    //     // );
-    //     // if (messagesRes.data.length === 0) {
-    //     //    message.value.hasMore = false;
-    //     // }
-    //     // messages.value.push(...messagesRes.data);
-    //     // console.log("messagesRes", messagesRes);
-    //     // isLoadedMessages.value = false;
-    //   }
-    // });
-    console.log("setup");
+    // console.log("setup");
     //store.dispatch('chat/getMessges', chatId.value)
 
-    onUpdated(() => {
-      console.log("updated");
-    });
-
-    // watch(messages, () => {
-    //   console.log("UPDATE");
-    //   if (messages.value.length === 0) {
-    //     store.dispatch("chat/getMessges", chatId.value);
-    //     // observer.observe(scrollEnd.value);
-    //   }
+    // onUpdated(() => {
+    //   console.log("updated");
     // });
 
-    onMounted(() => {
-      console.log("MOUNTED");
-
-      //store.dispatch("chat/getMessges", chatId.value);
-      //observer.observe(scrollEnd.value);
+    watch(chatId, () => {
+      store.commit('chat/clearTempData')
+      bodyRef.value.scrollTop = 0
     });
+
+    // onMounted(() => {
+    //   console.log("MOUNTED");
+
+    //   //store.dispatch("chat/getMessges", chatId.value);
+    //   //observer.observe(scrollEnd.value);
+    // });
 
     chatSocket.on("updateReadMessages", (newData) => {
       store.commit("chat/updateReadMessages", {
@@ -273,6 +242,7 @@ export default {
       scrollEnd,
       messages,
       userData,
+      bodyRef,
     };
   },
 };

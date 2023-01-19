@@ -55,6 +55,7 @@ export default {
     });
 
     const chatSocket = io("http://localhost:80", { path: "/socketChat" });
+    console.log('chatSOCKET', chatSocket)
 
     provide("chatSocket", chatSocket);
 

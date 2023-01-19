@@ -68,10 +68,10 @@ export class ChatService {
         'hotChats',
         userId,
         start,
-        start + paginationLimit,
+        start + (paginationLimit - 1),
       );
 
-      if (idList.length != paginationLimit) {
+      if (idList.length < paginationLimit) {
         inMemoryData = false;
         paginationPage = 0;
       }
@@ -95,11 +95,11 @@ export class ChatService {
         .innerJoin('chat.chatUsers', 'chatUsers')
         .where('chatUsers.userId = :userId', { userId })
         .orderBy('ord', 'DESC')
-        .offset(start)
-        .limit(paginationLimit)
-        .getMany();
+        .skip(start)
+        .take(paginationLimit)
+        .getRawMany();
 
-      listPaginationData.forEach((item) => chatIdList.add(item.id));
+      listPaginationData.forEach((item) => chatIdList.add(item.chat_id));
     }
 
     const chatsData = await this.socketService.getUserRoomsData(
@@ -293,6 +293,7 @@ export class ChatService {
   }
 
   async getContactList(listData: IGetContactList) {
+    debugger;
     const contactList = await this.userService.getContactList(listData);
 
     const contactListId = Object.keys(contactList.resList).map((contactId) =>
@@ -332,6 +333,7 @@ export class ChatService {
         return 'chatUsers.chatId IN ' + subQuery;
       })
       .andWhere('userId IN (:userList)', { userList: userIdList })
+      .andWhere('chat.adminId IS NULL')
       .getMany();
 
     return privateChats;

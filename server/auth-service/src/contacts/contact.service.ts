@@ -31,6 +31,7 @@ export class ContactService {
   }
 
   async getContactList(listData: IGetContactList) {
+    debugger;
     const subQuery = this.contactRepository
       .createQueryBuilder()
       .select('contactId as id')
@@ -221,6 +222,7 @@ export class ContactService {
   }
 
   async deleteUserFromContact(requestData: IContact) {
+    debugger;
     const resDeleted = await this.deleteFromContact({
       userId: requestData.userId,
       contactId: requestData.contactId,

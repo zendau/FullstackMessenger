@@ -93,7 +93,6 @@ export default {
     };
 
     function setLastChatItem(el, index) {
-      debugger;
       if (searchPattern.value) return;
 
       if (chatsData.value.size - 1 !== index) return;

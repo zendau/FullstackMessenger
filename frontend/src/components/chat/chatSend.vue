@@ -2,7 +2,7 @@
   <div class="chat__send" v-if="chatData.title">
     <div v-if="editMessageData">
       <p>{{ editMessageData.text }}</p>
-      <button @click="cancelEditMessage">Cancel</button>
+      <button @click="cancelMessage">Cancel</button>
     </div>
     <p v-if="userPressing">{{ userPressing }} is pressing ...</p>
     <div
@@ -23,6 +23,15 @@
         >{{ file?.name ?? file?.fileName }}
       </li>
     </ul>
+    <div
+      v-if="fileUploadPercent > 0"
+      style="background-color: #20201f; border-radius: 20px; padding: 4px"
+    >
+      <div
+        style="background-color: #f7901e; height: 16px; border-radius: 10px"
+        :style="{ width: fileUploadPercent + '%' }"
+      ></div>
+    </div>
     <button @click="sendMessage"><i class="bi bi-send"></i></button>
   </div>
 </template>
@@ -62,7 +71,7 @@ export default {
 
     const deletedFiles = [];
 
-    const isCallSendAfterCreate = inject('isCallSendAfterCreate')
+    const isCallSendAfterCreate = inject("isCallSendAfterCreate");
 
     function deleteFileById(fileId, file) {
       files.value = files.value.filter((_, index) => index !== fileId);
@@ -117,7 +126,7 @@ export default {
     );
 
     async function sendMessage() {
-      debugger
+      debugger;
       if (!route.params.id && store.state.chat.tempPrivateChat) {
         // store.dispatch("chat/createChat", {
 
@@ -134,7 +143,7 @@ export default {
         return;
       }
 
-      console.log('sending message')
+      console.log("sending message");
 
       let filesUpload = null;
       const inseredFilesData = [];
@@ -156,7 +165,7 @@ export default {
               (progressEvent.loaded * 100) / progressEvent.total
             );
             console.log("upload file - ", percentCompleted);
-            //fileUploadPercent.value = percentCompleted;
+            fileUploadPercent.value = percentCompleted;
           },
         };
 
@@ -191,7 +200,7 @@ export default {
           deletedFiles,
           files: inseredFilesData,
         });
-        cancelEditMessage();
+        cancelMessage();
       } else {
         if (!messageText && inseredFilesData.length === 0) return;
 
@@ -201,15 +210,14 @@ export default {
           authorLogin: userLogin,
           text: messageText,
           files: inseredFilesData,
-          users: chatData.value.users
+          users: chatData.value.users,
         };
         chatSocket.emit("sendMessage", messageData);
       }
-
-      message.value.textContent = "";
+      cancelMessage()
     }
 
-    function cancelEditMessage() {
+    function cancelMessage() {
       editMessageData.value = null;
       message.value.textContent = null;
       deletedFiles.length = 0;
@@ -223,18 +231,18 @@ export default {
     }
 
     const inputEndPress = debounce(() => {
-      // chatSocket.emit("message_pressing", {
-      //   userName: "",
-      //   roomId: chatId.value,
-      // });
+      chatSocket.emit("message_pressing", {
+        userName: "",
+        roomId: chatId.value,
+      });
       console.log("press_end");
     });
 
     const inputStartPress = throttle(() => {
-      // chatSocket.emit("message_pressing", {
-      //   userName: userId.value,
-      //   roomId: chatId.value,
-      // });
+      chatSocket.emit("message_pressing", {
+        userName: userId,
+        roomId: chatId.value,
+      });
       console.log("press_start");
     }, 5000);
 
@@ -253,8 +261,9 @@ export default {
       files,
       deleteFileById,
       editMessageData,
-      cancelEditMessage,
+      cancelMessage,
       userPressing,
+      fileUploadPercent,
     };
   },
 };

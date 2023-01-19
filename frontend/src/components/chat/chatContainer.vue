@@ -5,7 +5,10 @@
   >
     <chat-header v-if="chatData?.title" @deleteMessages="deleteMessagesMany" />
     <chat-body v-if="chatData?.title" @deleteMessages="deleteMessages" />
-    <chat-send v-if="chatData?.title" />
+    <template v-if="chatData?.title">
+       <div v-if="isPrivateBanned" style="color: white;">BANNED</div>
+       <chat-send v-else  />
+    </template>
   </div>
 </template>
 
@@ -24,6 +27,7 @@ export default {
     const route = useRoute();
 
     const chatId = computed(() => route.params.id);
+    const userId = computed(() => store.state.auth.user.id)
 
     const isShowMobileMessages = inject("isShowMobileMessages");
     const chatSocket = inject("chatSocket");
@@ -66,9 +70,29 @@ export default {
       store.dispatch("chat/deletedMessages", payload);
     });
 
-    const chatData = computed(() =>
-      store.getters["chat/selectedChat"](chatId.value)
-    );
+    const chatData = computed(() => store.getters["chat/selectedChat"](chatId.value))
+
+    const privateMemberId = ref(null)
+    const isPrivateBanned = computed(() => {
+      const data = store.state.contact.users[privateMemberId.value]
+
+      if (!data) return null
+      return data.isBanned || data.isBannedByContact
+    })
+
+    watch(chatData, (newChat) => {
+
+      if (newChat.adminId) return
+
+      privateMemberId.value = newChat.users[0].id
+
+      console.log('memberData', isPrivateBanned.value)
+      if (isPrivateBanned.value !== null) return
+      store.dispatch('contact/getContactData', {
+        userId: userId.value,
+        contactId: privateMemberId.value
+      })
+    });
 
     // const chatData = computed(
     //   () =>
@@ -79,6 +103,7 @@ export default {
     return {
       deleteMessages,
       deleteMessagesMany,
+      isPrivateBanned,
       isShowMobileMessages,
       chatData,
     };

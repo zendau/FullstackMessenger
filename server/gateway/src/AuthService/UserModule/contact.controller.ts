@@ -241,7 +241,7 @@ export class ContactController {
   @UsePipes(ValidationPipe)
   //@UseGuards(JwtAuthGuard)
   @Delete('delete')
-  async deleteUserFromContact(@Body() requestData: IContact) {
+  async deleteUserFromContact(@Query() requestData: IContact) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/delete', requestData),
     );

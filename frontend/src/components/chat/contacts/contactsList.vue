@@ -82,7 +82,8 @@ export default {
     }
 
     function openChat(userData) {
-      emit("openChat", userData.chat ?? 'temp');
+      console.log("CHAT", userData)
+      emit("openChat", userData.chat ?? 'contact');
       store.commit("chat/setTempPrivateChat", {
         id: userData.id,
         title: userData.login,

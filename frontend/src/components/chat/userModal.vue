@@ -105,7 +105,7 @@ export default {
         contactId: contactId.value,
         userData: store.getters["auth/getUserContactData"],
       };
-
+      console.log("BLOCK WITHOUT SOCKET")
       chatSocket.emit("chatContactStatus", statusData);
       store.commit("contact/changeUserStatus", statusData);
     }
