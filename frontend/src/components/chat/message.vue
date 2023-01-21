@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isFirstUnread" style="color: red">New message</div>
+
 
   <div
     @contextmenu="openMessageCTXMenu"
@@ -44,6 +44,7 @@
       {{ messageTime }}
     </span>
   </div>
+   <div v-if="isFirstUnread" style="color: red">New message</div>
 </template>
 
 <script>

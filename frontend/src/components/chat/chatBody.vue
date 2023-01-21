@@ -101,8 +101,8 @@ export default {
       });
 
       //const roomData = currentTempChatData.value ?? roomsData.value[chatId.value];
-      const resCount = chatData.userUnread - messageReadCount;
-      chatData.userUnread = Math.max(0, resCount);
+      const resCount = chatData.value.userUnread - messageReadCount;
+      chatData.value.userUnread = Math.max(0, resCount);
       messageReadCount = 0;
     }, 1000);
 
@@ -176,9 +176,10 @@ export default {
     // });
 
     chatSocket.on("updateReadMessages", (newData) => {
+      console.log("NEW DATA", newData)
       store.commit("chat/updateReadMessages", {
-        chatId,
-        unreadCount,
+        chatId: chatId.value,
+        unreadCount: newData,
       });
     });
 
@@ -192,8 +193,8 @@ export default {
         console.log("last message", isLastMessage, el.$el.nextElementSibling);
         messageScrollObserver.observe(el.$el.nextElementSibling);
       }
-      if (chatData.userUnread === 0) return;
-      const isReadMessage = index - chatData.userUnread;
+      if (chatData.value.userUnread === 0) return;
+      const isReadMessage = index - chatData.value.userUnread;
       // console.log("EL!!!", el, index, roomData.value, res);
       if (isReadMessage < 0) {
         console.log(
@@ -206,11 +207,12 @@ export default {
     }
 
     function isReadMessage(index) {
-      return index - chatData.chatUnread >= 0;
+      return index - chatData.value.chatUnread >= 0;
     }
 
     function isFirstUnread(index) {
-      return index - chatData.userUnread === -1;
+      console.log('isFirstUnread', index, chatData.value.userUnread)
+      return index - chatData.value.userUnread === -1;
     }
 
     const ctxMenuData = ref({

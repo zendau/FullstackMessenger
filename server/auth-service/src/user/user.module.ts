@@ -4,11 +4,10 @@ import { User } from './user.entity';
 import { UserOnline } from './userOnline.entity';
 import { UserInfo } from './userInfo.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CacheModule, forwardRef, Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthService } from './auth.service';
 import { UsersController } from './user.controller';
-import * as redisStore from 'cache-manager-redis-store';
 import { ConfigService } from '@nestjs/config';
 import { UserInfoService } from './userInfo.service';
 import { ContactController } from 'src/contacts/contact.controller';
@@ -20,15 +19,6 @@ import { ContactService } from 'src/contacts/contact.service';
     TypeOrmModule.forFeature([User, UserInfo, UserOnline, Contact]),
     forwardRef(() => TokenModule),
     forwardRef(() => ConfirmModule),
-    CacheModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.get('REDIS_HOST'),
-        port: parseInt(configService.get('REDIS_PORT')),
-        ttl: 480,
-      }),
-    }),
   ],
   controllers: [UsersController, ContactController],
   providers: [

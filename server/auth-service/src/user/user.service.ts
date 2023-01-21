@@ -15,7 +15,6 @@ import { User } from './user.entity';
 import IUser from './interfaces/IUserData';
 import IRoleData from './interfaces/IRoleData';
 import { hashPassword } from './utils/passwordFactory';
-import { Cache } from 'cache-manager';
 
 import convertEditUserDTO from './dto/createEditUserDTO';
 import { sqlErrorCodes } from './utils/sqlErrorCodes';
@@ -26,6 +25,7 @@ import { DeviceService } from 'src/token/device.service';
 import { UserRole } from './user.entity';
 import { Contact } from 'src/contacts/contact.entity';
 import { UnionParameters } from 'src/utils/typeorm/union';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class UserService {
@@ -36,8 +36,7 @@ export class UserService {
     private usersRepository: Repository<User>,
     private confirmCodeService: ConfirmCodeService,
     private userInfoService: UserInfoService,
-    @Inject(CACHE_MANAGER)
-    private cacheManager: Cache,
+    @InjectRedis() private readonly redis: Redis,
   ) {}
 
   async editUserData(userData: IEditUser) {
@@ -172,10 +171,23 @@ export class UserService {
 
     console.log('userId', query.getQuery());
     const resQuery = await query.getRawMany();
-    const resList = resQuery.reduce(
-      (prev, curr) => ({ ...prev, [curr.id]: curr }),
-      {},
-    );
+    const resList = await resQuery.reduce(async (resDataPromise, user) => {
+      const onlineStatus: number = await this.redis.sismember(
+        'online',
+        user.id.toString(),
+      );
+
+      if (onlineStatus) {
+        user.lastOnline = 'online';
+      }
+
+      const resData = await resDataPromise
+
+      return {
+        ...resData,
+        [user.id]: user,
+      };
+    }, Promise.resolve({}));
     return {
       resList,
       hasMore: pattern ? true : resQuery.length === parseInt(limit),
@@ -215,9 +227,8 @@ export class UserService {
 
   async confirmEmail() {
     //const res = await this.nodeMailerService.send('te');
-    this.cacheManager.set('test', 'tet');
-
-    return this.cacheManager.get('test');
+    // this.cacheManager.set('test', 'tet');
+    // return this.cacheManager.get('test');
   }
 
   async setUserRole(userId: number, role: UserRole) {

@@ -1,12 +1,13 @@
 import { User } from '../../user/user.entity';
-import { CACHE_MANAGER, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import * as uuid from 'uuid';
 import { UserAccess } from '../access.entity';
 import { NodeMailerService } from '../nodemailer/nodemailer.service';
-import { Cache } from 'cache-manager';
+
 import IConfirmData from 'src/user/interfaces/IConfirmData';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class ConfirmCodeService {
@@ -14,8 +15,7 @@ export class ConfirmCodeService {
     @InjectRepository(UserAccess)
     private accessRepository: Repository<UserAccess>,
     private nodeMailerService: NodeMailerService,
-    @Inject(CACHE_MANAGER)
-    private cacheManager: Cache) { }
+    @InjectRedis() private readonly redis: Redis) { }
 
   async initAcceesNote(user: User, manager: EntityManager) {
 
@@ -46,7 +46,7 @@ export class ConfirmCodeService {
     try {
       const confirmCode = uuid.v4()
 
-      this.cacheManager.set(confirmData.email, confirmCode);
+      this.redis.set(confirmData.email, confirmCode);
       this.nodeMailerService.sendConfirmCode(confirmCode, confirmData.email);
       return true;
     } catch {
@@ -56,7 +56,7 @@ export class ConfirmCodeService {
 
   async checkConfirmCode(userConfrimCode: string, confirmId: string) {
 
-    const confirmCode = await this.cacheManager?.get(confirmId);
+    const confirmCode = await this.redis?.get(confirmId);
 
     if (confirmCode === userConfrimCode) {
       return {
@@ -72,7 +72,7 @@ export class ConfirmCodeService {
   }
 
   async deleteConfirmCode(confirmId: string) {
-    await this.cacheManager.del(confirmId)
+    await this.redis.del(confirmId)
   }
 
   async setUnblock(userId: number) {

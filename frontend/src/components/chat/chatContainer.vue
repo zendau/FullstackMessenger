@@ -50,6 +50,7 @@ export default {
 
     chatSocket.on("updateUserOnline", (userStatus) => {
       store.commit("chat/updateUserOnline", userStatus);
+      store.commit("contact/updateUserOnline", userStatus);
     });
 
     function deleteMessages(messagesList) {

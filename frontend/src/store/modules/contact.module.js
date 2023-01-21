@@ -161,7 +161,6 @@ export const contact = {
     },
     async getContactsList({ commit, state }, { pattern, userId }) {
       try {
-        ;
         let params = null;
 
         if (pattern) {
@@ -338,7 +337,6 @@ export const contact = {
       }
     },
     setOutgoingRequests(state, data) {
-      ;
       if (Object.keys(data.resList).length > 0) {
         Object.assign(state.outgoingRequests, data.resList);
       }
@@ -396,7 +394,6 @@ export const contact = {
 
         case "BlockUser": {
           let contactData = null;
-          ;
           if (state.contacts[statusData.contactId]) {
             contactData = state.contacts[statusData.contactId];
             delete state.contacts[statusData.contactId];
@@ -419,7 +416,6 @@ export const contact = {
         }
 
         case "UnBlockUser": {
-          ;
           if (!state.blockedUsers[statusData.contactId]) break;
           const contactData = state.blockedUsers[statusData.contactId];
           delete state.blockedUsers[statusData.contactId];
@@ -494,6 +490,32 @@ export const contact = {
 
         default:
           break;
+      }
+    },
+    updateUserOnline(state, userStatus) {
+      debugger;
+      if (state.contacts[userStatus.userId]) {
+        state.contacts[userStatus.userId].lastOnline = userStatus.status;
+      }
+
+      if (state.freeUsers[userStatus.userId]) {
+        state.freeUsers[userStatus.userId].lastOnline = userStatus.status;
+      }
+
+      if (state.pendingRequests[userStatus.userId]) {
+        state.pendingRequests[userStatus.userId].lastOnline = userStatus.status;
+      }
+
+      if (state.outgoingRequests[userStatus.userId]) {
+        state.outgoingRequests[userStatus.userId].lastOnline = userStatus.status;
+      }
+
+      if (state.blockedUsers[userStatus.userId]) {
+        state.blockedUsers[userStatus.userId].lastOnline = userStatus.status;
+      }
+
+      if (state.users[userStatus.userId]) {
+        state.users[userStatus.userId].lastOnline = userStatus.status;
       }
     },
   },

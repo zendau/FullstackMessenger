@@ -8,6 +8,8 @@ import { union } from 'src/utils/typeorm/union';
 import { User } from 'src/user/user.entity';
 import IGetContactList from './interfaces/IGetContactList';
 import IContact from './interfaces/IContact';
+import { Cache } from 'cache-manager';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class ContactService {
@@ -16,6 +18,7 @@ export class ContactService {
     private contactRepository: Repository<Contact>,
     private userService: UserService,
     private connection: Connection,
+    @InjectRedis() private readonly redis: Redis,
   ) {}
 
   async isVerifiedConctacts(veridiedData: IContact) {
@@ -369,6 +372,15 @@ export class ContactService {
       isConfirmRequest: false,
       isPendingRequest: false,
     });
+
+    const onlineStatus: number = await this.redis.sismember(
+      'online',
+      requestData.contactId.toString(),
+    );
+
+    if (onlineStatus) {
+      contactData.lastOnline = 'online';
+    }
 
     const userStatus = await this.contactRepository
       .createQueryBuilder()

@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ConfirmModule } from './access/access.module';
 import * as Joi from '@hapi/joi';
 import config from './ormconfig';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
@@ -36,6 +37,11 @@ import config from './ormconfig';
         })
       }
     ),
+    RedisModule.forRoot({
+      config: {
+        url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+      },
+    }),
     TypeOrmModule.forRoot(config),
     UsersModule,
     TokenModule,

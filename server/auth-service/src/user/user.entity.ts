@@ -27,7 +27,7 @@ export class User {
   access: UserAccess;
 
   @CreateDateColumn()
-  lastOnline: Date;
+  lastOnline: Date | string;
 
   @Column({
     type: 'enum',
