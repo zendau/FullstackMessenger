@@ -78,6 +78,7 @@ export class MessageService {
     //   'message',
     //   roomId,
     // );
+    debugger;
     let roomMessages: Message[] = [];
     const page = parseInt(scrollData.page);
 
@@ -118,7 +119,7 @@ export class MessageService {
       page: page + 1,
       limit: scrollData.limit,
       inMemory: false,
-      hasMore: roomDbMessages.length == scrollData.limit,
+      hasMore: roomDbMessages.length >= scrollData.limit,
     };
   }
 
@@ -170,8 +171,6 @@ export class MessageService {
   }
 
   async update(updateMessageData: IEditMessage) {
-
-
     const res = await this.messageRepository
       .createQueryBuilder()
       .update()

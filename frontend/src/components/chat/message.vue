@@ -44,11 +44,11 @@
       {{ messageTime }}
     </span>
   </div>
-   <div v-if="isFirstUnread" style="color: red">New message</div>
+   <div v-if="isFirstUnread"  style="color: red">New message</div>
 </template>
 
 <script>
-import { computed, ref, inject, reactive } from "vue";
+import { computed, ref, inject, reactive, } from "vue";
 import { isLink } from "./isLink";
 import MessageContexMenu from "./messageContextMenu.vue";
 
@@ -141,6 +141,7 @@ export default {
       selectedMessages,
       isSelectMessagesMode,
       isAuthor,
+
     };
   },
 };

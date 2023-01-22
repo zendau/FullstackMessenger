@@ -6,7 +6,7 @@ import IEditMessage from './interfaces/message/IEditMessage';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 
 type redisValue = 'user' | '' | 'room' | 'unread' | 'userContacts';
-type redisList = 'hotChats' | 'map-message';
+type redisList = 'hotChats' | 'map-message' | 'chatDate';
 type redisSet = 'userRooms' | 'userContacts' | 'online';
 type redisSortedSet = '';
 type redisHash = 'message';
@@ -239,7 +239,7 @@ export class SocketRedisAdapter {
 
   async isListValueExist(key: redisList, value: string | number) {
     const existStatus = await this.redis.lpos(key, value);
-    return !!existStatus;
+    return existStatus;
   }
 
   async deleteListValue(key: redisList, id: number, value: string | number) {

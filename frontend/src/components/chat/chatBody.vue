@@ -26,10 +26,11 @@
             padding: 10px;
             background-color: var(--messageColor);
             border-radius: 5px;
+            text-align: center;
           "
           v-else
         >
-          {{ message.text }}
+          {{getMessageAlert(message.type, message.text)}}
         </div>
       </template>
 
@@ -50,14 +51,19 @@ import {
   computed,
   onMounted,
   onUpdated,
+  onUnmounted,
   watch,
   provide,
+  nextTick,
+  onRenderTriggered,
+  onActivated,
 } from "vue";
 import { useStore } from "vuex";
 import FileUpload from "../fileUpload.vue";
 import MessageContexMenu from "./messageContextMenu.vue";
 
 import debounce from "../../utils/debounce";
+import dateFormat from '../../utils/dateFormat'
 
 export default {
   components: { Message, FileUpload, MessageContexMenu },
@@ -73,10 +79,14 @@ export default {
     const scrollEnd = ref(null);
     const chatData = inject("chatData");
 
-    const bodyRef = ref(null)
+    const isFirstMessageUnread = ref(null);
+
+    const bodyRef = ref(null);
 
     const isShowMessageCTX = ref(null);
     provide("isShowMessageCTX", isShowMessageCTX);
+
+    let isFirstScroll = true;
 
     const userData = computed(() => store.state.auth.user);
     let messageReadCount = 0;
@@ -134,6 +144,7 @@ export default {
       (entries) => {
         const messagePagination = chatData.value.loadMessagesPagination;
         debugger;
+        isFirstScroll = false;
         if (entries[0].isIntersecting && messagePagination?.hasMore) {
           console.log("load message scrool observer", {
             chatId: chatId.value,
@@ -155,7 +166,6 @@ export default {
       // }
     );
 
-
     // console.log("setup");
     //store.dispatch('chat/getMessges', chatId.value)
 
@@ -164,8 +174,11 @@ export default {
     // });
 
     watch(chatId, () => {
-      store.commit('chat/clearTempData')
-      bodyRef.value.scrollTop = 0
+      store.commit("chat/clearTempData");
+      isFirstScroll = true;
+      console.log("BODY REF", isFirstMessageUnread.value, isFirstScroll);
+
+      bodyRef.value.scrollTop = 0;
     });
 
     // onMounted(() => {
@@ -176,7 +189,7 @@ export default {
     // });
 
     chatSocket.on("updateReadMessages", (newData) => {
-      console.log("NEW DATA", newData)
+      console.log("NEW DATA", newData);
       store.commit("chat/updateReadMessages", {
         chatId: chatId.value,
         unreadCount: newData,
@@ -190,8 +203,18 @@ export default {
       const isLastMessage = index === messages.value?.length - 1;
 
       if (isLastMessage) {
-        console.log("last message", isLastMessage, el.$el.nextElementSibling);
+        debugger;
         messageScrollObserver.observe(el.$el.nextElementSibling);
+        console.log("SET", isFirstMessageUnread.value, isFirstScroll);
+        if (
+          messages.value?.length - 1 === 0 ||
+          !isFirstMessageUnread.value ||
+          !isFirstScroll
+        )
+          return;
+        console.log("isFirstMessageUnread scrollIntoView");
+
+        isFirstMessageUnread.value.scrollIntoView();
       }
       if (chatData.value.userUnread === 0) return;
       const isReadMessage = index - chatData.value.userUnread;
@@ -204,6 +227,11 @@ export default {
         );
         readMessageObserver.observe(el.$el.nextElementSibling);
       }
+
+      if (isFirstUnread(index)) {
+        isFirstMessageUnread.value = el.$el.nextElementSibling;
+        console.log("SETTTTTTTTTTTTT", isFirstMessageUnread.value);
+      }
     }
 
     function isReadMessage(index) {
@@ -211,7 +239,6 @@ export default {
     }
 
     function isFirstUnread(index) {
-      console.log('isFirstUnread', index, chatData.value.userUnread)
       return index - chatData.value.userUnread === -1;
     }
 
@@ -233,6 +260,22 @@ export default {
       selectedMessages.value = [];
     }
 
+    function getMessageAlert(messageType, messageText) {
+      if (messageType === "date") {
+        return  dateFormat(messageText, 'en');
+      } else if (messageType === "add") {
+        return `Added ${messageText}`;
+      } else if (messageType === "remove") {
+        return `Deleted ${messageText}`;
+      } else if (messageType === "exit") {
+        return `Exit ${messageText}`;
+      } else if (messageType === "created") {
+        return 'Created';
+      } else {
+        return;
+      }
+    }
+
     return {
       isReadMessage,
       isFirstUnread,
@@ -245,6 +288,7 @@ export default {
       messages,
       userData,
       bodyRef,
+      getMessageAlert,
     };
   },
 };

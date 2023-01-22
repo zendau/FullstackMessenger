@@ -1,5 +1,5 @@
 <template>
-  <chatNavbar />
+  <chatNavbar/>
   <section class="chat__container">
     <chats
       v-if="showChats"
@@ -170,10 +170,13 @@ export default {
         router.push(`/chat`);
         return;
       }
-      const roomMessages = store.state.chat.messages[roomId];
 
-      if (roomMessages === undefined || roomMessages?.length === 0) {
+      const chatData = store.state.chat.chats.get(roomId)
+      const paginationPage = chatData?.loadMessagesPagination?.page
+
+      if (!paginationPage) {
         console.log("!2");
+        store.commit("chat/clearChatMessages", roomId);
         store.dispatch("chat/getChatMessages", {
           chatId: roomId,
           userId: userId.value,

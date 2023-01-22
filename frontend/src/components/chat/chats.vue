@@ -24,7 +24,7 @@
         <div class="chats__info">
           <p>{{ chat[1].title }}</p>
           <p>{{ chat[1].lastMessage?.authorLogin }}</p>
-          <p>{{ chat[1].lastMessage?.text }}</p>
+          <p class="chat__last-message">{{ lastMessageHTMLConvert(chat[1].lastMessage?.text) }}</p>
           <p>{{ chat[1].userUnread }}</p>
         </div>
         <!-- </router-link> -->
@@ -100,6 +100,10 @@ export default {
       emit("setLastChatElement", el);
     }
 
+    function lastMessageHTMLConvert(text) {
+      return text?.replaceAll("<br>", " ").replace(/<\/?[^>]+(>|$)/g, "");
+    }
+
     return {
       isShowMobileMessages,
       chatsData,
@@ -107,6 +111,7 @@ export default {
       chatsList,
       openChat,
       setLastChatItem,
+      lastMessageHTMLConvert,
     };
   },
 };
@@ -182,6 +187,17 @@ export default {
     flex-direction: column;
     justify-content: center;
     width: 100%;
+  }
+}
+
+.chat {
+  &__last-message {
+    width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    text-align: center;
   }
 }
 

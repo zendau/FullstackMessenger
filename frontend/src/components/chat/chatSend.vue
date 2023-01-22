@@ -10,6 +10,7 @@
       contenteditable="true"
       data-placeholder="Type message"
       ref="message"
+      @keydown.enter.exact='sendMessage'
       @input="inputPress"
     ></div>
     <ul class="chat__files" v-if="files.length > 0">
@@ -183,8 +184,7 @@ export default {
         }
       }
 
-      const messageText = message.value.textContent;
-
+      const messageText = message.value.getInnerHTML();
       if (editMessageData.value) {
         // console.log({
         //   roomId: chatId.value,

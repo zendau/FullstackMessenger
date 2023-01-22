@@ -949,4 +949,18 @@ export class SocketService {
 
     return usersIdList;
   }
+
+  async isChatDateMessage(chatId: string) {
+    const isExist = await this.socketRedisAdapter.isListValueExist(
+      'chatDate',
+      chatId,
+    );
+
+    if (isExist !== null) return true;
+
+    const chatDate = new Date().toString();
+
+    this.socketRedisAdapter.setList('chatDate', chatId);
+    return chatDate;
+  }
 }

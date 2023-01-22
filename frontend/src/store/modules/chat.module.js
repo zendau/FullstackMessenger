@@ -10,7 +10,7 @@ const defaultLoadChatsPagination = {
 
 const defoultLoadMessagesPagination = {
   page: 0,
-  limit: 10,
+  limit: 20,
   hasMore: true,
   inMemory: true,
 };

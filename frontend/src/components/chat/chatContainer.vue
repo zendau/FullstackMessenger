@@ -83,7 +83,7 @@ export default {
 
     watch(chatData, (newChat) => {
 
-      if (newChat.adminId) return
+      if (newChat?.adminId) return
 
       privateMemberId.value = newChat.users[0].id
 

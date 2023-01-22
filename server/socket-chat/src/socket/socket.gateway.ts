@@ -137,7 +137,8 @@ export class SocketGateway {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
-      text: `Added ${inseredUserData.userData.login}`,
+      text: inseredUserData.userData.login,
+      type: 'add',
       files: null,
       users: inseredUserData.inseredData.users,
     });
@@ -179,7 +180,8 @@ export class SocketGateway {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
-      text: `Deleted ${userData.deletedUserInfo.login}`,
+      text: userData.deletedUserInfo.login,
+      type: 'remove',
       files: null,
       users: userData.chatUsers,
     });
@@ -207,7 +209,8 @@ export class SocketGateway {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
-      text: `Exit ${userData.deletedUserInfo.login}`,
+      text: userData.deletedUserInfo.login,
+      type: 'exit',
       files: null,
       users: userData.chatUsers,
     });
@@ -255,6 +258,23 @@ export class SocketGateway {
   async sendMessage(socket: Socket, payload: IMessageData) {
     debugger;
     console.log('new message', payload);
+
+    const isChatDateExist = await this.socketService.isChatDateMessage(
+      payload.roomId,
+    );
+
+    if (isChatDateExist !== true) {
+      await this.sendMessage(socket, {
+        roomId: payload.roomId,
+        authorId: null,
+        authorLogin: null,
+        type: 'date',
+        text: isChatDateExist,
+        files: null,
+        users: payload.users,
+      });
+    }
+
     // const res = await this.messageService.create(
     //   {
     //     authorLogin: payload.authorLogin,
@@ -277,6 +297,7 @@ export class SocketGateway {
     // }
 
     const message = this.socketService.addMessage(payload);
+    console.log('MESSAGE', message);
     this.server.to(payload.roomId).emit('newMessage', message);
   }
 
@@ -346,7 +367,8 @@ export class SocketGateway {
           roomId: chatData.id,
           authorId: null,
           authorLogin: null,
-          text: 'Created',
+          text: null,
+          type: 'created',
           files: null,
           users: chatData.users,
         });
