@@ -1,5 +1,5 @@
 <template>
-  <Modal
+  <ModalWindow
     :is-show-c-t-x="contactData"
     @closeCTX="closeCTX"
   >
@@ -59,25 +59,23 @@
         </div>
       </div>
     </div>
-  </Modal>
+  </ModalWindow>
 </template>
 
 <script>
-import Modal from "../UI/Modal.vue";
+import ModalWindow from "../UI/ModalWindow.vue";
 import { ref, inject, computed, watch, onUpdated, onMounted } from "vue";
 import { useStore } from "vuex";
 import $api from "../../axios";
 
 export default {
-  components: { Modal },
+  components: { ModalWindow },
   setup() {
     const store = useStore();
 
     const userId = computed(() => store.state.auth.user.id);
     const contactId = inject("modalUserId");
-    const contactData = computed(
-      () => store.state.contact.users[contactId.value]
-    );
+    const contactData = computed(() => store.state.contact.users[contactId.value]);
 
     const chatSocket = inject("chatSocket");
 
@@ -89,7 +87,6 @@ export default {
         });
       }
     });
-
 
     const listTypes = {
       AddContact: "AddContact",
@@ -128,7 +125,7 @@ export default {
         contactId: contactId.value,
         userData: store.getters["auth/getUserContactData"],
       };
-      console.log("BLOCK WITHOUT SOCKET")
+      console.log("BLOCK WITHOUT SOCKET");
       chatSocket.emit("chatContactStatus", statusData);
       store.commit("contact/changeUserStatus", statusData);
     }

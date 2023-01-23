@@ -1,5 +1,5 @@
 export const Layout = {
-  Chat: 'Chat',
-  Main: 'Main',
-  NoAuth: 'NoAuth'
-}
+  Chat: "Chat",
+  Main: "Main",
+  NoAuth: "NoAuth",
+};

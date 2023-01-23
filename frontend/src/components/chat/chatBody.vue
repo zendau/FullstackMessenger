@@ -65,7 +65,7 @@ import {
   onActivated,
 } from "vue";
 import { useStore } from "vuex";
-import FileUpload from "../fileUpload.vue";
+import FileUpload from "../FileUpload.vue";
 import MessageContexMenu from "./messageContextMenu.vue";
 
 import debounce from "../../utils/debounce";
@@ -133,12 +133,7 @@ export default {
           console.log("observer . Message 2", entries);
           entries.forEach((entrie) => {
             messageReadCount++;
-            console.log(
-              "unobserve",
-              entrie.target,
-              messageReadCount,
-              readMessageObserver
-            );
+            console.log("unobserve", entrie.target, messageReadCount, readMessageObserver);
             readMessageObserver.unobserve(entrie.target);
           });
 
@@ -216,12 +211,7 @@ export default {
         debugger;
         messageScrollObserver.observe(el.$el.nextElementSibling);
         console.log("SET", isFirstMessageUnread.value, isFirstScroll);
-        if (
-          messages.value?.length - 1 === 0 ||
-          !isFirstMessageUnread.value ||
-          !isFirstScroll
-        )
-          return;
+        if (messages.value?.length - 1 === 0 || !isFirstMessageUnread.value || !isFirstScroll) return;
         console.log("isFirstMessageUnread scrollIntoView");
 
         isFirstMessageUnread.value.scrollIntoView();
@@ -230,11 +220,7 @@ export default {
       const isReadMessage = index - chatData.value.userUnread;
       // console.log("EL!!!", el, index, roomData.value, res);
       if (isReadMessage < 0) {
-        console.log(
-          "SET OBSERVER",
-          readMessageObserver,
-          readMessageObserver.takeRecords()
-        );
+        console.log("SET OBSERVER", readMessageObserver, readMessageObserver.takeRecords());
         readMessageObserver.observe(el.$el.nextElementSibling);
       }
 

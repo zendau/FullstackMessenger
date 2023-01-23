@@ -38,8 +38,8 @@ import { useStore } from "vuex";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 
-import FormInput from "@/components/UI/input.vue";
-import AlertNotification from "@/components/UI/alertNotification.vue";
+import FormInput from "@/components/UI/FormInput.vue";
+import AlertNotification from "@/components/UI/AlertNotification.vue";
 export default {
   components: { AlertNotification, FormInput },
   setup() {

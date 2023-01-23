@@ -3,9 +3,7 @@
     <p>{{ deviceData.osName }}</p>
     <p>{{ deviceData.brand }} - {{ deviceData.model }}</p>
     <p>{{ deviceData.lastOnline }}</p>
-    <font-awesome-icon
-      :icon="getDeviceIcon(deviceData.brand, deviceData.osName)"
-    />
+    <font-awesome-icon :icon="getDeviceIcon(deviceData.brand, deviceData.osName)" />
     <button @click="showDeviceModal(true)">
       Open
     </button>
@@ -14,20 +12,29 @@
       :is-show-c-t-x="isOpenDeviceModal"
       :device-data="deviceData"
       :icon="getDeviceIcon(deviceData.brand, deviceData.osName)"
-      @deleteDevices="deleteDevices"
-      @closeCTX="showDeviceModal(false)"
+      @delete-devices="deleteDevices"
+      @close-context="showDeviceModal(false)"
     />
   </div>
 </template>
 
 <script>
 import { ref } from "vue";
-import deviceModal from "./deviceModal.vue";
+import deviceModal from "./DeviceModal.vue";
 
 export default {
   components: { deviceModal },
-  props: ["deviceData", "isCurrent"],
-  emit: ["deleteDevices"],
+  props: {
+    isCurrent: {
+      type: Boolean,
+      required: true,
+    },
+    deviceData: {
+      type: Object,
+      required: true,
+    },
+  },
+  emits: ["delete-devices"],
   setup(_, { emit }) {
     const isOpenDeviceModal = ref(false);
 
@@ -36,7 +43,7 @@ export default {
     }
 
     function deleteDevices(deviceId) {
-      emit("deleteDevices", deviceId);
+      emit("delete-devices", deviceId);
     }
 
     const getDeviceIcon = (deviceName, osName) => {

@@ -1,5 +1,5 @@
 <template>
-  <Modal
+  <ModalWindow
     :is-show-c-t-x="isOpenModal"
     @closeCTX="closeCTX"
   >
@@ -12,15 +12,15 @@
         Cancel
       </button>
     </div>
-  </Modal>
+  </ModalWindow>
 </template>
 
 <script>
-import Modal from "../UI/Modal.vue";
+import ModalWindow from "../UI/ModalWindow.vue";
 
 export default {
-  components: { Modal },
-  props: ["isOpenModal", 'actionHandler', 'title'],
+  components: { ModalWindow },
+  props: ["isOpenModal", "actionHandler", "title"],
   emits: ["closeConfirmModal"],
   setup(props, { emit }) {
     function closeCTX() {
@@ -28,7 +28,7 @@ export default {
     }
 
     function actionHandler() {
-      props.actionHandler()
+      props.actionHandler();
     }
 
     return {

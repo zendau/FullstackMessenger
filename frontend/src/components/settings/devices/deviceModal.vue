@@ -1,7 +1,7 @@
 <template>
-  <Modal
+  <ModalWindow
     :is-show-c-t-x="isOpenDeviceModal"
-    @closeCTX="closeCTX"
+    @close-context="closeCTX"
   >
     <div class="test">
       <a
@@ -23,25 +23,41 @@
         Cancel
       </button>
     </div>
-  </Modal>
+  </ModalWindow>
 </template>
 
 <script>
-import Modal from "../../UI/Modal.vue";
-import {} from "vue";
+import ModalWindow from "@/components/UI/ModalWindow.vue";
 
 export default {
-  components: { Modal },
-  props: ["deviceData", "isOpenDeviceModal", "icon", "isCurrent"],
-  emits: ["closeCTX", "deleteDevices"],
+  components: { ModalWindow },
+  props: {
+    isCurrent: {
+      type: Boolean,
+      required: true,
+    },
+    deviceData: {
+      type: Object,
+      required: true,
+    },
+    icon: {
+      type: String,
+      required: true,
+    },
+    isOpenDeviceModal: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  emits: ["close-context", "delete-devices"],
   setup(props, { emit }) {
     function closeCTX() {
-      emit("closeCTX");
+      emit("close-context");
     }
 
     function deleteDevices() {
-      closeCTX()
-      emit("deleteDevices", [props.deviceData.id]);
+      closeCTX();
+      emit("delete-devices", [props.deviceData.id]);
     }
 
     return {

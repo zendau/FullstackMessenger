@@ -37,7 +37,7 @@ import debounce from "../../utils/debounce";
 
 import { inject, computed } from "vue";
 import { useStore } from "vuex";
-import AlertNotification from "../UI/alertNotification.vue";
+import AlertNotification from "../UI/AlertNotification.vue";
 
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
@@ -105,9 +105,7 @@ export default {
       // });
     }, onInvalidSubmit);
 
-    const isValidGroupUsersLength = computed(
-      () => createGroupUsers.value.length < 3
-    );
+    const isValidGroupUsersLength = computed(() => createGroupUsers.value.length < 3);
 
     return {
       isValidGroupUsersLength,

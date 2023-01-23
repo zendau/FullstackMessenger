@@ -4,32 +4,32 @@ import store from "../store/index";
 import { Role } from "./roles";
 import { Layout } from "./layouts";
 
-const chatPage = () => import("../views/Chat/ChatPage.vue");
+const ChatPage = () => import("@/views/Chat/ChatPage.vue");
 
-const register = () => import("../views/Auth/RegisterPage.vue");
-const login = () => import("../views/Auth/LoginPage.vue");
-const forgot = () => import("../views/Auth/ForgotPage.vue");
+const Register = () => import("@/views/Auth/RegisterPage.vue");
+const Login = () => import("@/views/Auth/LoginPage.vue");
+const Forgot = () => import("@/views/Auth/ForgotPage.vue");
 
-const settings = () => import("../views/SettingsPage.vue");
+const Settings = () => import("@/views/SettingsPage.vue");
 
-const conferences = () => import("../views/Conference/СonferencesList.vue");
-const createConference = () =>
-  import("../views/Conference/createConference.vue");
-const editConference = () => import("../views/Conference/editConference.vue");
-const conference = () => import("../layout/auth.conferecnce.vue");
-const audioConference = () => import("../views/Conference/AudioConference.vue");
-const videoConference = () => import("../views/Conference/videoConference.vue");
+const Conferences = () => import("@/views/Conference/ConferencesList.vue");
+const CreateConference = () =>
+  import("@/views/Conference/CreateConference.vue");
+const EditConference = () => import("@/views/Conference/EditConference.vue");
+const Conference = () => import("@/layout/AuthConferecnce.vue");
+const AudioConference = () => import("@/views/Conference/AudioConference.vue");
+const VideoConference = () => import("@/views/Conference/VideoConference.vue");
 
-const adminView = () => import("../views/Admin/AdminPage.vue");
-const adminUsers = () => import("../views/Admin/UsersPage.vue");
+const AdminView = () => import("@/views/Admin/AdminPage.vue");
+const AdminUsers = () => import("@/views/Admin/UsersPage.vue");
 
-const pageNotFound = () => import("../views/PageNotFound.vue");
+const PageNotFound = () => import("@/views/PageNotFound.vue");
 
 const routes = [
   {
     path: "/conferences",
     name: "conferences",
-    component: conferences,
+    component: Conferences,
     meta: {
       requiresAuth: true,
       role: Role.USER,
@@ -39,12 +39,12 @@ const routes = [
   {
     path: "/conference",
     name: "conference",
-    component: conference,
+    component: Conference,
     children: [
       {
         path: "audio/:id",
         name: "audioRoom",
-        component: audioConference,
+        component: AudioConference,
         meta: {
           requiresAuth: true,
           role: Role.USER,
@@ -54,7 +54,7 @@ const routes = [
       {
         path: "video/:id",
         name: "videoRoom",
-        component: videoConference,
+        component: VideoConference,
         meta: {
           requiresAuth: true,
           role: Role.USER,
@@ -65,7 +65,7 @@ const routes = [
   },
   {
     path: "/chat/:id?",
-    component: chatPage,
+    component: ChatPage,
     name: "chat",
     meta: {
       requiresAuth: true,
@@ -75,7 +75,7 @@ const routes = [
   },
   {
     path: "/admin",
-    component: adminView,
+    component: AdminView,
     name: "adminLayout",
     meta: {
       requiresAuth: true,
@@ -84,7 +84,7 @@ const routes = [
     children: [
       {
         path: "users",
-        component: adminUsers,
+        component: AdminUsers,
         name: "adminUsers",
         meta: {
           requiresAuth: true,
@@ -96,7 +96,7 @@ const routes = [
   },
   {
     path: "/register",
-    component: register,
+    component: Register,
     name: "register",
     meta: {
       requiresAuth: false,
@@ -106,7 +106,7 @@ const routes = [
   },
   {
     path: "/login",
-    component: login,
+    component: Login,
     name: "login",
     meta: {
       requiresAuth: false,
@@ -116,7 +116,7 @@ const routes = [
   },
   {
     path: "/forgot",
-    component: forgot,
+    component: Forgot,
     name: "forgot",
     meta: {
       requiresAuth: false,
@@ -126,7 +126,7 @@ const routes = [
   },
   {
     path: "/settings",
-    component: settings,
+    component: Settings,
     name: "settings",
     meta: {
       requiresAuth: true,
@@ -136,7 +136,7 @@ const routes = [
   },
   {
     path: "/create",
-    component: createConference,
+    component: CreateConference,
     name: "createConference",
     meta: {
       requiresAuth: true,
@@ -146,7 +146,7 @@ const routes = [
   },
   {
     path: "/edit/:id",
-    component: editConference,
+    component: EditConference,
     name: "editConference",
     meta: {
       requiresAuth: true,
@@ -156,7 +156,7 @@ const routes = [
   },
   {
     path: "/404",
-    component: pageNotFound,
+    component: PageNotFound,
     meta: {
       requiresAuth: true,
       role: Role.GUEST,
@@ -165,7 +165,7 @@ const routes = [
   },
   {
     path: "/:pathMatch(.*)*",
-    component: pageNotFound,
+    component: PageNotFound,
     meta: {
       requiresAuth: false,
       role: Role.GUEST,

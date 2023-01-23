@@ -8,9 +8,9 @@
 import { useStore } from "vuex";
 import { computed, provide } from "vue";
 
-import AuthMainLayout from "./layout/auth.main.layout.vue";
-import AuthChatLayout from "./layout/auth.chat.layout.vue";
-import noAuthLayoutVue from "./layout/noAuth.layout.vue";
+import AuthMainLayout from "./layout/AuthMainLayout.vue";
+import AuthChatLayout from "./layout/AuthChatLayout.vue";
+import noAuthLayoutVue from "./layout/NoAuthLayout.vue";
 
 import { Layout } from "./router/layouts";
 import { useRoute } from "vue-router";

@@ -24,21 +24,16 @@
 
 <script>
 import { inject, ref } from "vue";
-//import { useStore } from 'vuex'
 export default {
   setup() {
-    //const store = useStore()
-
     const dragStatus = ref(false);
     const files = inject("files");
 
-    function dragStart(e) {
-      console.log("START", e);
+    function dragStart() {
       dragStatus.value = true;
     }
 
-    function dragLeave(e) {
-      console.log("LEAVE", e);
+    function dragLeave() {
       dragStatus.value = false;
     }
 
@@ -49,11 +44,11 @@ export default {
     }
 
     return {
+      files,
       dragStatus,
       dragStart,
       dragLeave,
       dataDrop,
-      files,
     };
   },
 };

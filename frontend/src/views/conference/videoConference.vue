@@ -15,12 +15,12 @@ import { useRoute } from "vue-router";
 import { onUnmounted, ref, inject, watch, onBeforeUpdate, reactive } from "vue";
 import Peer from "peerjs";
 
-import videoContainerVue from "../../components/conterence/videoContainer.vue";
+import videoContainerVue from "@/components/conterence/videoContainer.vue";
 import { useStore } from "vuex";
 
-import { startScreenRecorder, stopScreenRecorder } from "../../utils/screenRecorderenRecorder";
-import ScreenShare from "../../utils/screenShare";
-../../utils/screenShare
+import { startScreenRecorder, stopScreenRecorder } from "@/utils/screenRecorderenRecorder";
+import ScreenShare from "@/utils/screenShare";
+
 export default {
   components: { videoContainerVue },
   setup() {
@@ -49,7 +49,7 @@ export default {
     const childStream = [];
 
     const containersRefs = reactive([]);
-    const setItemRef = el => {
+    const setItemRef = (el) => {
       if (el) {
         containersRefs.push(el);
       }
@@ -94,7 +94,7 @@ export default {
     });
 
     // Change share screen status
-    watch(isShareScreen, status => {
+    watch(isShareScreen, (status) => {
       if (status) {
         screenShare.startShareScreen();
       } else {
@@ -103,7 +103,7 @@ export default {
     });
 
     // Change record screen status
-    watch(isRecordScreen, status => {
+    watch(isRecordScreen, (status) => {
       if (status) {
         startScreenRecorder(isRecordScreen);
       } else {
@@ -119,11 +119,11 @@ export default {
       });
       window.removeEventListener("keypress", muteEvent);
       socket.removeAllListeners("getUsers");
-      mainStream?.value.getTracks().forEach(t => {
+      mainStream?.value.getTracks().forEach((t) => {
         t.stop();
       });
-      childStream?.forEach(stream => {
-        stream.getTracks().forEach(track => {
+      childStream?.forEach((stream) => {
+        stream.getTracks().forEach((track) => {
           track.stop();
         });
       });
@@ -135,12 +135,12 @@ export default {
 
     // ==== socket ==== //
 
-    socket.on("getUsers", users => {
+    socket.on("getUsers", (users) => {
       console.log(users);
       roomUsers.value = users;
     });
 
-    socket.on("userJoinedRoom", userId => {
+    socket.on("userJoinedRoom", (userId) => {
       connectToNewUser(userId, mainStream.value);
     });
 
@@ -171,10 +171,10 @@ export default {
       audio: true,
       video: { aspectRatio: 16 / 9 },
     })
-      .then(stream => {
+      .then((stream) => {
         mediaError.value = false;
         mainStream.value = stream;
-        containersRefs.forEach(item => {
+        containersRefs.forEach((item) => {
           if (item.peerId === peerId.value) {
             item.setStream(stream);
             item.muteYourSelf();
@@ -187,7 +187,7 @@ export default {
       });
 
     // answer to call
-    peerConnect.on("call", async call => {
+    peerConnect.on("call", async (call) => {
       try {
         streams.push(call);
 
@@ -201,8 +201,8 @@ export default {
         call.answer(stream);
 
         // answer to  stream
-        call.on("stream", userVideoStream => {
-          containersRefs.forEach(item => {
+        call.on("stream", (userVideoStream) => {
+          containersRefs.forEach((item) => {
             if (item.peerId === call.peer) {
               item.setStream(userVideoStream);
             }
@@ -215,7 +215,7 @@ export default {
     });
 
     // join to peer server
-    peerConnect.on("open", id => {
+    peerConnect.on("open", (id) => {
       peerId.value = id;
       peerConnected.value = true;
     });
@@ -226,8 +226,8 @@ export default {
       streams.push(call);
 
       // connected user's stream
-      call.on("stream", userVideoStream => {
-        containersRefs.forEach(item => {
+      call.on("stream", (userVideoStream) => {
+        containersRefs.forEach((item) => {
           if (item.peerId === userId) {
             item.setStream(userVideoStream);
           }

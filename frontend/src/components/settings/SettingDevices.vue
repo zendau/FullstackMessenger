@@ -2,7 +2,7 @@
   <div style="color: gray">
     <h1>current</h1>
 
-    <device
+    <Device
       :device-data="currenteDevice"
       :is-current="true"
     />
@@ -18,26 +18,24 @@
       :key="device.id"
       style="color: white"
     >
-      <device
+      <Device
         :device-data="device"
         :is-current="false"
-        @deleteDevices="deleteDevices"
+        @delete-devices="deleteDevices"
       />
       <hr>
     </li>
   </ul>
-  <div>
-    No sessions
-  </div>
+  <div>No sessions</div>
 </template>
 
 <script>
 import { computed, reactive, watch, ref } from "vue";
 import { useStore } from "vuex";
-import device from "./devices/device.vue";
+import Device from "./devices/DeviceData.vue";
 
 export default {
-  components: { device },
+  components: { Device },
   setup() {
     const store = useStore();
 

@@ -42,34 +42,33 @@
 </template>
 
 <script>
+import FormInput from "../../components/UI/FormInput.vue";
+import AlertNotification from "../../components/UI/AlertNotification.vue";
 
-import FormInput from '../../components/UI/input.vue'
-import AlertNotification from '../../components/UI/alertNotification.vue'
+import { useStore } from "vuex";
 
-import { useStore } from 'vuex'
-
-import { useField, useForm } from 'vee-validate';
-import * as yup from 'yup';
-import { computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useField, useForm } from "vee-validate";
+import * as yup from "yup";
+import { computed, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 export default {
   components: { AlertNotification, FormInput },
   setup() {
-    const store = useStore()
-    const route = useRoute()
-    const router = useRouter()
+    const store = useStore();
+    const route = useRoute();
+    const router = useRouter();
 
-    const roomId = computed(() => route.params.id)
+    const roomId = computed(() => route.params.id);
 
-    const adminId = computed(() => store.state.conference.adminId)
-    const userId = computed(() => store.state.auth.user.id)
+    const adminId = computed(() => store.state.conference.adminId);
+    const userId = computed(() => store.state.auth.user.id);
 
-    let confirmedAdmin = null
+    let confirmedAdmin = null;
 
     const schema = yup.object({
       title: yup.string().required().min(6),
-      type: yup.boolean().required()
+      type: yup.boolean().required(),
     });
 
     const { handleSubmit } = useForm({
@@ -77,57 +76,57 @@ export default {
     });
 
     onMounted(() => {
-      store.dispatch('conference/getConferenceData', roomId.value)
-    })
+      store.dispatch("conference/getConferenceData", roomId.value);
+    });
 
-
-
-    const { value: title } = useField('title')
-    const { value: type } = useField('type')
-
+    const { value: title } = useField("title");
+    const { value: type } = useField("type");
 
     function onInvalidSubmit({ errors }) {
+      console.log("errors", errors);
 
-      console.log('errors', errors)
+      let message = "";
 
-      let message = ''
-
-      Object.keys(errors).forEach((item) => message += `<span>${errors[item]}</span>`)
-      console.log(message)
-      store.commit('alert/setErrorMessage', message)
+      Object.keys(errors).forEach((item) => (message += `<span>${errors[item]}</span>`));
+      console.log(message);
+      store.commit("alert/setErrorMessage", message);
     }
     const onSubmitForm = handleSubmit((value) => {
-      console.log(confirmedAdmin)
+      console.log(confirmedAdmin);
       if (confirmedAdmin) {
-        store.dispatch('conference/editConference', {
+        store.dispatch("conference/editConference", {
           title: value.title,
           type: value.type,
-          id: roomId.value
-        })
+          id: roomId.value,
+        });
       }
+    }, onInvalidSubmit);
 
-
-    }, onInvalidSubmit)
-
-    watch([adminId, userId], ([adminIdVal, userIdVal]) => {
-      if (adminIdVal === userIdVal) {
-        confirmedAdmin = true
-      } else {
-        router.push('/conferences')
-
+    watch(
+      [adminId, userId],
+      ([adminIdVal, userIdVal]) => {
+        if (adminIdVal === userIdVal) {
+          confirmedAdmin = true;
+        } else {
+          router.push("/conferences");
+        }
+      },
+      {
+        immediate: true,
       }
-    }, {
-      immediate: true
-    })
+    );
 
-
-    watch(() => store.state.conference, (roomData) => {
-      title.value = roomData.title
-      type.value = roomData.type
-    }, {
-      immediate: true,
-      deep: true
-    })
+    watch(
+      () => store.state.conference,
+      (roomData) => {
+        title.value = roomData.title;
+        type.value = roomData.type;
+      },
+      {
+        immediate: true,
+        deep: true,
+      }
+    );
 
     // watch(() => store.state.chat.chatData.id, (chatId) => {
     //    store.dispatch('conference/createConference', {
@@ -141,9 +140,8 @@ export default {
     return {
       onSubmitForm,
       title,
-      type
-    }
-
-  }
-}
+      type,
+    };
+  },
+};
 </script>

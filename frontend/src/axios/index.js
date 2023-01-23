@@ -1,5 +1,6 @@
 import axios from "axios";
-import store from "../store";
+// eslint-disable-next-line no-unused-vars
+import store from "@/store";
 
 const API_URL = import.meta.env.VITE_API;
 console.log("API_URL", API_URL);

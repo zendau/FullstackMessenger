@@ -43,15 +43,13 @@
 </template>
 
 <script>
-import FormInput from "../../components/UI/input.vue";
-import AlertNotification from "../../components/UI/alertNotification.vue";
-
 import { useStore } from "vuex";
-
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { computed, inject, watch } from "vue";
 
+import FormInput from "@/components/UI/FormInput.vue";
+import AlertNotification from "@/components/UI/AlertNotification.vue";
 export default {
   components: { AlertNotification, FormInput },
   setup() {
@@ -94,15 +92,18 @@ export default {
     }, onInvalidSubmit);
 
     // TODO: ????
-    // watch(() => store.state.chat.chatData.id, (chatId) => {
-    //    store.dispatch('conference/createConference', {
-    //     title: formData.title,
-    //     adminId: adminId.value,
-    //     chatId,
-    //     type: formData.type,
-    //     socket
-    //   })
-    // })
+    watch(
+      () => store.state.chat.chatData.id,
+      (chatId) => {
+        store.dispatch("conference/createConference", {
+          title: formData.title,
+          adminId: adminId.value,
+          chatId,
+          type: formData.type,
+          socket,
+        });
+      }
+    );
 
     return {
       onSubmitForm,

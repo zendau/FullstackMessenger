@@ -17,15 +17,20 @@
 </template>
 
 <script>
-import formInput from "./UI/input.vue";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { useStore } from "vuex";
 import { onMounted } from "vue";
 
+import FormInput from "./UI/FormInput.vue";
 export default {
-  components: { formInput },
-  props: ["email"],
+  components: { FormInput },
+  props: {
+    email: {
+      type: String,
+      required: true,
+    },
+  },
   emits: ["confirm-code-event"],
   setup(props, ctx) {
     const store = useStore();

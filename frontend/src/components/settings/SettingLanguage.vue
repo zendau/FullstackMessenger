@@ -1,12 +1,12 @@
 <template>
-  <h1 style="color: white;">
+  <h1 style="color: white">
     {{ t("chat.hello") }}
   </h1>
-  <ul style="color: white;">
+  <ul style="color: white">
     <li
       v-for="item in availableLocales"
       :key="item"
-      style="cursor: pointer;"
+      style="cursor: pointer"
       @click="changeLocale(item)"
     >
       {{ item }}

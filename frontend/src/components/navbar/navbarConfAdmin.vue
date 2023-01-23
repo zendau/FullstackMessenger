@@ -25,7 +25,7 @@
 import { computed, inject, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
-import FreeUsers from "../conterence/freeUsers.vue";
+import FreeUsers from "@/components/conterence/freeUsers.vue";
 
 export default {
   components: { FreeUsers },
@@ -43,11 +43,9 @@ export default {
 
     async function deleteConference() {
       console.log("delete ", roomId, socket);
-      store
-        .dispatch("conference/deleteConference", conferenceId.value)
-        .then(() => {
-          socket.emit("deleteRoom", roomId.value);
-        });
+      store.dispatch("conference/deleteConference", conferenceId.value).then(() => {
+        socket.emit("deleteRoom", roomId.value);
+      });
     }
 
     return {

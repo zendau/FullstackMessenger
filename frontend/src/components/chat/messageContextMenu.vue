@@ -1,5 +1,5 @@
 <template>
-  <Modal
+  <ModalWindow
     :is-show-c-t-x="isShowCTX"
     @closeCTX="closeCTX"
   >
@@ -42,15 +42,15 @@
         Delete
       </li>
     </ul>
-  </Modal>
+  </ModalWindow>
 </template>
 
 <script>
 import { inject, computed } from "vue";
-import Modal from "../UI/Modal.vue";
+import ModalWindow from "../UI/ModalWindow.vue";
 
 export default {
-  components: { Modal },
+  components: { ModalWindow },
   props: ["ctxMenuData"],
   emits: ["deleteMessages"],
   setup(props, { emit }) {
@@ -59,9 +59,7 @@ export default {
     const editMessageData = inject("editMessageData");
     const isShowMessageCTX = inject("isShowMessageCTX");
 
-    const isShowCTX = computed(
-      () => isShowMessageCTX.value === props.ctxMenuData?.message?.id
-    );
+    const isShowCTX = computed(() => isShowMessageCTX.value === props.ctxMenuData?.message?.id);
 
     const files = inject("files");
     function selectMessageHandler() {
@@ -77,20 +75,13 @@ export default {
 
     function editMessage() {
       editMessageData.value = props.ctxMenuData.message;
-      console.log(
-        "edit messaget id -",
-        props.ctxMenuData.message.id,
-        editMessageData.value,
-        props.ctxMenuData.message
-      );
+      console.log("edit messaget id -", props.ctxMenuData.message.id, editMessageData.value, props.ctxMenuData.message);
       isShowMessageCTX.value = null;
       files.value = [...props.ctxMenuData.message.files];
     }
     function deleteMessage() {
       console.log("test", props.ctxMenuData.message);
-      emit("deleteMessages", [
-        { id: props.ctxMenuData.message.id, isRead: props.ctxMenuData.isRead },
-      ]);
+      emit("deleteMessages", [{ id: props.ctxMenuData.message.id, isRead: props.ctxMenuData.isRead }]);
       isShowMessageCTX.value = null;
     }
 

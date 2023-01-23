@@ -6,14 +6,7 @@
     <div
       ref="modalRoot"
       tabindex="0"
-      style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        background: rgba(0, 0, 0, 0.5);
-        height: 100vh;
-        width: 100%;
-      "
+      style="position: fixed; top: 0; left: 0; background: rgba(0, 0, 0, 0.5); height: 100vh; width: 100%"
       @keydown="closeCTX"
       @contextmenu.prevent="closeCTX"
       @click="closeCTX"
@@ -25,11 +18,16 @@
 <script>
 import { onUpdated, ref } from "vue";
 export default {
-  props: ["isShowCTX"],
-  emits: ["closeCTX"],
+  props: {
+    isShowCTX: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  emits: ["close-context"],
   setup(_, { emit }) {
     function closeCTX() {
-      emit("closeCTX");
+      emit("close-context");
     }
 
     const modalRoot = ref(null);
@@ -39,8 +37,6 @@ export default {
         modalRoot.value.focus();
       }
     });
-
-
 
     return {
       modalRoot,

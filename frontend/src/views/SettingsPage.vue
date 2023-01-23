@@ -6,10 +6,10 @@
 </template>
 
 <script>
-import account from "@/components/settings/account.vue";
-import language from "@/components/settings/language.vue";
-import theme from "@/components/settings/theme.vue";
-import devices from "@/components/settings/devices.vue";
+import account from "@/components/settings/SettingAccount.vue";
+import language from "@/components/settings/SettingLanguage.vue";
+import theme from "@/components/settings/SettingTheme.vue";
+import devices from "@/components/settings/SettingDevices.vue";
 
 export default {
   components: { account, language, theme, devices },

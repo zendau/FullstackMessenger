@@ -69,7 +69,7 @@
         </button>
         <button
           class="menu__chat"
-          @click="$emit('showChat')"
+          @click="$emit('show-chat')"
         >
           <i class="bi bi-chat-dots" /> Chat
         </button>
@@ -84,6 +84,7 @@ import { useStore } from "vuex";
 
 export default {
   props: ["conferenceTitle", "conferenceAdmin"],
+  emits: ["show-chat"],
   setup() {
     const store = useStore();
     const type = computed(() => store.state.conference.type);

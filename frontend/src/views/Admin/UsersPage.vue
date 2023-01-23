@@ -49,7 +49,7 @@ import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import $api from "../../axios";
 
-import AlertNotification from "../../components/UI/alertNotification.vue";
+import AlertNotification from "../../components/UI/AlertNotification.vue";
 
 export default {
   components: { AlertNotification },

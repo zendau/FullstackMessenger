@@ -32,9 +32,9 @@ import { useField, useForm } from "vee-validate";
 import { useStore } from "vuex";
 import { onUnmounted, ref } from "vue";
 
-import AlertNotification from "@/components/UI/alertNotification.vue";
-import FormInput from "@/components/UI/input.vue";
-import ConfirmCode from "@/components/confirmCode.vue";
+import AlertNotification from "@/components/UI/AlertNotification.vue";
+import FormInput from "@/components/UI/FormInput.vue";
+import ConfirmCode from "@/components/ConfirmCode.vue";
 
 export default {
   components: { AlertNotification, FormInput, ConfirmCode },
