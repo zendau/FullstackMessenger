@@ -2,20 +2,23 @@
   <div class="chat__footer">
     <div class="chat__content">
       <div
+        ref="message"
         class="chat__input"
         contenteditable="true"
         data-placeholder="Type message"
-        ref="message"
         @keypress.enter="sendMessage"
-      ></div>
-      <ul class="chat__files" v-if="files.length > 0">
+      />
+      <ul
+        v-if="files.length > 0"
+        class="chat__files"
+      >
         <li
-          class="chat__file"
           v-for="(file, index) in files"
           :key="index"
+          class="chat__file"
           @click="removeFile(index)"
         >
-          <i class="bi bi-file-earmark-arrow-down"></i>{{ file.name }}
+          <i class="bi bi-file-earmark-arrow-down" />{{ file.name }}
         </li>
       </ul>
     </div>

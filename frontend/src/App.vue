@@ -27,9 +27,6 @@ export default {
 
     store.dispatch("auth/checkAuth");
 
-    //const router = useRouter()
-    //router.push('/room/all')
-
     const layouts = new Map();
 
     layouts.set(Layout.Chat, AuthChatLayout);
@@ -41,13 +38,7 @@ export default {
 
     const route = useRoute();
     const authLayout = computed(() => {
-      console.log("meta", route.meta);
-      console.log(
-        "authStatus",
-        authStatus.value,
-        layouts.get(route.meta.layout)
-      );
-      if (authStatus) {
+      if (authStatus.value) {
         return layouts.get(route.meta.layout);
       }
 
@@ -55,8 +46,6 @@ export default {
     });
 
     const chatSocket = io("http://localhost:80", { path: "/socketChat" });
-    console.log('chatSOCKET', chatSocket)
-
     provide("chatSocket", chatSocket);
 
     chatSocket.on("connect", () => {

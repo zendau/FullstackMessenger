@@ -1,5 +1,8 @@
 <template>
-  <Modal :isShowCTX="isShowCTX" @closeCTX="closeCTX">
+  <Modal
+    :is-show-c-t-x="isShowCTX"
+    @closeCTX="closeCTX"
+  >
     <ul
       style="
         position: absolute;
@@ -16,23 +19,25 @@
         top: ctxMenuData.position.y + 'px',
       }"
     >
-      <li style="width: 100%; padding: 5px; cursor: pointer">Copy text</li>
+      <li style="width: 100%; padding: 5px; cursor: pointer">
+        Copy text
+      </li>
       <li
         v-if="ctxMenuData.isAuthor"
-        @click="editMessage"
         style="width: 100%; padding: 5px; cursor: pointer"
+        @click="editMessage"
       >
         Edit
       </li>
       <li
-        @click="selectMessageHandler"
         style="width: 100%; padding: 5px; cursor: pointer"
+        @click="selectMessageHandler"
       >
         Select
       </li>
       <li
-        @click="deleteMessage"
         style="width: 100%; padding: 5px; cursor: pointer"
+        @click="deleteMessage"
       >
         Delete
       </li>
@@ -46,8 +51,8 @@ import Modal from "../UI/Modal.vue";
 
 export default {
   components: { Modal },
-  emits: ["deleteMessages"],
   props: ["ctxMenuData"],
+  emits: ["deleteMessages"],
   setup(props, { emit }) {
     const isSelectMessagesMode = inject("isSelectMessagesMode");
     const selectedMessages = inject("selectedMessages");

@@ -2,8 +2,12 @@
   <div class="chat__header">
     <div v-if="selectedMessages.length">
       <p>{{ selectedMessages.length }}</p>
-      <button @click="deleteMessages">Deleted</button>
-      <button @click="selectedMessages = []">Cancel</button>
+      <button @click="deleteMessages">
+        Deleted
+      </button>
+      <button @click="selectedMessages = []">
+        Cancel
+      </button>
     </div>
     <div class="chat__header-data">
       <div v-if="chatData?.adminId">
@@ -14,8 +18,13 @@
           Members - {{ chatGroupMembersCount }}
         </p>
       </div>
-      <div v-else @click="openUserInfo(chatData.users[0].id)">
-        <h1 class="chat__title">Chat - {{ chatData.title }}</h1>
+      <div
+        v-else
+        @click="openUserInfo(chatData.users[0].id)"
+      >
+        <h1 class="chat__title">
+          Chat - {{ chatData.title }}
+        </h1>
         <p>Status - {{ privateChatOnlineStatus }}</p>
       </div>
       <!-- <p class="chat__count" v-if="groupUsers" @click="showUsers = !showUsers">
@@ -26,15 +35,24 @@
 
     <div v-if="chatData?.adminId">
       <button
+        v-if="isChatAdmin"
         class="chat__exit"
         @click="isShowConfirmModal = true"
-        v-if="isChatAdmin"
       >
         Delete chat
       </button>
-      <button class="chat__exit" @click="exitFromChat" v-else>Exit chat</button>
+      <button
+        v-else
+        class="chat__exit"
+        @click="exitFromChat"
+      >
+        Exit chat
+      </button>
     </div>
-    <div class="chat__topbar" v-if="isChatAdmin">
+    <div
+      v-if="isChatAdmin"
+      class="chat__topbar"
+    >
       <!-- <div class="chat__user-group">
         <button class="btn" @click="showAddUsers = !showAddUsers">
           <i class="bi bi-person-plus-fill"></i>
@@ -66,19 +84,21 @@
   >
     <ul style="margin: 0">
       <li
-        style="margin: 0"
         v-for="userData in chatData.users"
         :key="userData.id"
+        style="margin: 0"
       >
         <div @click="openUserInfo(userData.id)">
           <div>{{ userData.id }}</div>
           <div>{{ userData.login }}</div>
           <div>{{ userData.lastOnline }}</div>
         </div>
-        <div v-if="chatData.adminId === userData.id">ADMIN</div>
+        <div v-if="chatData.adminId === userData.id">
+          ADMIN
+        </div>
         <button
-          @click="deleteChatMember(userData.id)"
           v-else-if="chatData.adminId === mainUserData.id"
+          @click="deleteChatMember(userData.id)"
         >
           Delete
         </button>
@@ -86,20 +106,27 @@
     </ul>
 
     <div v-if="chatData.adminId === mainUserData.id">
-      <button @click="getFreeChatUsersHandler">Load free contacts</button>
+      <button @click="getFreeChatUsersHandler">
+        Load free contacts
+      </button>
       <ul>
-        <li v-for="userData in freeUsersList" :key="userData.id">
+        <li
+          v-for="userData in freeUsersList"
+          :key="userData.id"
+        >
           <div>{{ userData.id }}</div>
           <div>{{ userData.login }}</div>
           <div>{{ userData.lastOnline }}</div>
-          <button @click="addChatMember(userData.id)">Add</button>
+          <button @click="addChatMember(userData.id)">
+            Add
+          </button>
         </li>
       </ul>
     </div>
   </div>
   <ConfirmModal
-    :isOpenModal="isShowConfirmModal"
-    :actionHandler="deleteChat"
+    :is-open-modal="isShowConfirmModal"
+    :action-handler="deleteChat"
     :title="'Delete selected chat ?'"
     @closeConfirmModal="isShowConfirmModal = false"
   />
@@ -114,8 +141,8 @@ import NavbarUserList from "./navbarUserList.vue";
 import ConfirmModal from "./confirmModal.vue";
 
 export default {
-  emits: ["deleteMessages"],
   components: { NavbarUserList, ConfirmModal },
+  emits: ["deleteMessages"],
   setup(_, { emit }) {
     const store = useStore();
     const route = useRoute();

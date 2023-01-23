@@ -1,15 +1,23 @@
 <template>
   <ul v-if="isConferenceAdmin">
     <li>
-      <router-link :to="`/edit/${roomId}`">Edit conference</router-link>
+      <router-link :to="`/edit/${roomId}`">
+        Edit conference
+      </router-link>
     </li>
     <li class="navbar__invaite">
-      <a @click="showInvaitedUsers = !showInvaitedUsers" href="#"
-        >Invite user</a
-      >
+      <a
+        href="#"
+        @click="showInvaitedUsers = !showInvaitedUsers"
+      >Invite user</a>
       <free-users v-show="showInvaitedUsers" />
     </li>
-    <li class="navbar__delete" @click="deleteConference">Delete conference</li>
+    <li
+      class="navbar__delete"
+      @click="deleteConference"
+    >
+      Delete conference
+    </li>
   </ul>
 </template>
 
@@ -20,6 +28,7 @@ import { useStore } from "vuex";
 import FreeUsers from "../conterence/freeUsers.vue";
 
 export default {
+  components: { FreeUsers },
   setup() {
     console.log("navbar admin conf");
     const isConferenceAdmin = inject("isConferenceAdmin", null);
@@ -48,7 +57,6 @@ export default {
       deleteConference,
     };
   },
-  components: { FreeUsers },
 };
 </script>
 

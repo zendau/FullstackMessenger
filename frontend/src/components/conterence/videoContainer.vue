@@ -1,18 +1,28 @@
 <template>
-  <div class="video__container" :class="{
-    'video__container--active': isActive,
-    'video__container--admin': isAdmin
-  }" @click="toFullScreen">
+  <div
+    class="video__container"
+    :class="{
+      'video__container--active': isActive,
+      'video__container--admin': isAdmin
+    }"
+    @click="toFullScreen"
+  >
     <div class="video__info">
       <span class="mute">
-        <i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'" />
+        <i
+          class="bi"
+          :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"
+        />
       </span>
       <p>{{ userName }}</p>
     </div>
-    <div v-if="isPauseVideo" class="video__placeholder">
+    <div
+      v-if="isPauseVideo"
+      class="video__placeholder"
+    >
       <i class="bi bi-camera-video-off" />
     </div>
-    <video ref="media"></video>
+    <video ref="media" />
   </div>
 </template>
 

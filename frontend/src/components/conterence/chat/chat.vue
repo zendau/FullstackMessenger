@@ -1,13 +1,19 @@
 <template>
-  <div class="chat__header">Chat</div>
+  <div class="chat__header">
+    Chat
+  </div>
   <file-upload>
     <ul class="chat__body">
-      <message v-for="message in messages" :key="message.id" :message="message" :author="userData.login" />
-      <div ref='scrollEnd'></div>
+      <message
+        v-for="message in messages"
+        :key="message.id"
+        :message="message"
+        :author="userData.login"
+      />
+      <div ref="scrollEnd" />
     </ul>
   </file-upload>
-  <chat-footer :roomId="roomId" />
-
+  <chat-footer :room-id="roomId" />
 </template>
 
 <script>

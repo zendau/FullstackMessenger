@@ -1,19 +1,34 @@
 <template>
-  <Modal :isShowCTX="contactData" @closeCTX="closeCTX">
+  <Modal
+    :is-show-c-t-x="contactData"
+    @closeCTX="closeCTX"
+  >
     <div class="test">
-      <a class="close-btn" @click="closeCTX"></a>
+      <a
+        class="close-btn"
+        @click="closeCTX"
+      />
 
-      <div v-if="contactData.isBannedByContact">BLOCKED BY THIS USER</div>
+      <div v-if="contactData.isBannedByContact">
+        BLOCKED BY THIS USER
+      </div>
       <div v-else>
         <p>{{ contactData.email }}</p>
         <p>{{ contactData.login }}</p>
         <p>{{ contactData.lastOnline }}</p>
         <div v-if="contactData.isConfirmRequest">
-          <button @click="confirmContactRequest">Accept request</button>
-          <button @click="cancelPendingRequest">Reject request</button>
+          <button @click="confirmContactRequest">
+            Accept request
+          </button>
+          <button @click="cancelPendingRequest">
+            Reject request
+          </button>
         </div>
         <div v-else>
-          <button v-if="contactData.isFriend" @click="deleteFromContacts">
+          <button
+            v-if="contactData.isFriend"
+            @click="deleteFromContacts"
+          >
             Remove from contacts
           </button>
           <button
@@ -29,10 +44,18 @@
           >
             Add to contact
           </button>
-          <button v-if="contactData.isBanned" @click="unblockUser">
+          <button
+            v-if="contactData.isBanned"
+            @click="unblockUser"
+          >
             Unblock user
           </button>
-          <button v-else @click="blockUser">Block user</button>
+          <button
+            v-else
+            @click="blockUser"
+          >
+            Block user
+          </button>
         </div>
       </div>
     </div>

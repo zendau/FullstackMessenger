@@ -1,14 +1,27 @@
 <template>
-  <Modal :isShowCTX="isOpenDeviceModal" @closeCTX="closeCTX">
+  <Modal
+    :is-show-c-t-x="isOpenDeviceModal"
+    @closeCTX="closeCTX"
+  >
     <div class="test">
-      <a class="close-btn" @click="closeCTX"></a>
+      <a
+        class="close-btn"
+        @click="closeCTX"
+      />
       <p>OS: {{ deviceData.osName }} - {{ deviceData.osVersion }}</p>
       <p>Device: {{ deviceData.brand }} - {{ deviceData.model }}</p>
       <p>Time: {{ deviceData.lastOnline }}</p>
       <p>IP: {{ deviceData.ipAdress }}</p>
       <font-awesome-icon :icon="icon" />
-      <button v-if="!isCurrent" @click="deleteDevices">Delete session</button>
-      <button @click="closeCTX">Cancel</button>
+      <button
+        v-if="!isCurrent"
+        @click="deleteDevices"
+      >
+        Delete session
+      </button>
+      <button @click="closeCTX">
+        Cancel
+      </button>
     </div>
   </Modal>
 </template>
@@ -18,9 +31,9 @@ import Modal from "../../UI/Modal.vue";
 import {} from "vue";
 
 export default {
+  components: { Modal },
   props: ["deviceData", "isOpenDeviceModal", "icon", "isCurrent"],
   emits: ["closeCTX", "deleteDevices"],
-  components: { Modal },
   setup(props, { emit }) {
     function closeCTX() {
       emit("closeCTX");

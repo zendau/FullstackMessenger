@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import $api from "../../axios";
+import $api from "@/axios";
 
 const defaultPatination = {
   page: 0,
@@ -26,7 +26,7 @@ export const contact = {
   actions: {
     async blockUser({ commit }, { userId, contactId }) {
       try {
-        const res = await $api.patch("/contact/block", {
+        await $api.patch("/contact/block", {
           userId,
           contactId,
         });
@@ -37,7 +37,7 @@ export const contact = {
     },
     async unblockUser({ commit }, { userId, contactId }) {
       try {
-        const res = await $api.patch("/contact/unBlock", {
+        await $api.patch("/contact/unBlock", {
           userId,
           contactId,
         });
@@ -53,7 +53,7 @@ export const contact = {
     },
     async deleteFromContacts({ commit }, { userId, contactId }) {
       try {
-        const res = await $api.delete("/contact/delete", {
+        await $api.delete("/contact/delete", {
           params: {
             userId,
             contactId,
@@ -75,7 +75,7 @@ export const contact = {
     },
     async addToContacts({ commit }, { userId, contactId }) {
       try {
-        const res = await $api.post("/contact/sendRequest", {
+        await $api.post("/contact/sendRequest", {
           userId,
           contactId,
         });
@@ -90,7 +90,7 @@ export const contact = {
     },
     async cancelOutgoingRequest({ commit }, { userId, contactId }) {
       try {
-        const res = await $api.post("/contact/reject", {
+        await $api.post("/contact/reject", {
           userId,
           contactId,
         });
@@ -105,7 +105,7 @@ export const contact = {
     },
     async confirmContactRequest({ commit }, { userId, contactId }) {
       try {
-        const res = await $api.post("/contact/confirm", {
+        await $api.post("/contact/confirm", {
           userId,
           contactId,
         });
@@ -125,7 +125,7 @@ export const contact = {
     },
     async cancelPendingRequest({ commit }, { userId, contactId }) {
       try {
-        const res = await $api.post("/contact/reject", {
+        await $api.post("/contact/reject", {
           userId,
           contactId,
         });
@@ -493,7 +493,6 @@ export const contact = {
       }
     },
     updateUserOnline(state, userStatus) {
-      debugger;
       if (state.contacts[userStatus.userId]) {
         state.contacts[userStatus.userId].lastOnline = userStatus.status;
       }
@@ -507,7 +506,8 @@ export const contact = {
       }
 
       if (state.outgoingRequests[userStatus.userId]) {
-        state.outgoingRequests[userStatus.userId].lastOnline = userStatus.status;
+        state.outgoingRequests[userStatus.userId].lastOnline =
+          userStatus.status;
       }
 
       if (state.blockedUsers[userStatus.userId]) {

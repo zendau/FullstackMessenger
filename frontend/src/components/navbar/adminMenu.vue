@@ -1,13 +1,26 @@
 <template>
   <div class="admin__menu">
-    <a class="admin__dropdown-toggle" href="#" role="button" @click="isShowSunMenu = !isShowSunMenu">
+    <a
+      class="admin__dropdown-toggle"
+      href="#"
+      role="button"
+      @click="isShowSunMenu = !isShowSunMenu"
+    >
       Admin menu
     </a>
 
-    <ul class="admin__dropdown-menu" :class="{ 'admin__dropdown-menu--show': isShowSunMenu }"
-      @click="isShowSunMenu = false">
+    <ul
+      class="admin__dropdown-menu"
+      :class="{ 'admin__dropdown-menu--show': isShowSunMenu }"
+      @click="isShowSunMenu = false"
+    >
       <li>
-        <router-link class="admin__dropdown-item" to="/admin/users">Users</router-link>
+        <router-link
+          class="admin__dropdown-item"
+          to="/admin/users"
+        >
+          Users
+        </router-link>
       </li>
     </ul>
   </div>

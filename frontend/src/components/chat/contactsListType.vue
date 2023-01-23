@@ -6,7 +6,9 @@
     @click="changeListType(key)"
   >
     {{ type }}
-    <div v-if="key !== 'freeUsers'">({{ contactsCount[key] }})</div>
+    <div v-if="key !== 'freeUsers'">
+      ({{ contactsCount[key] }})
+    </div>
   </button>
 </template>
 

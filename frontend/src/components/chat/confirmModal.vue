@@ -1,9 +1,16 @@
 <template>
-  <Modal :isShowCTX="isOpenModal" @closeCTX="closeCTX">
+  <Modal
+    :is-show-c-t-x="isOpenModal"
+    @closeCTX="closeCTX"
+  >
     <div class="test">
-      <h2>{{title}}</h2>
-      <button @click="actionHandler">Confirm</button>
-      <button @click="closeCTX">Cancel</button>
+      <h2>{{ title }}</h2>
+      <button @click="actionHandler">
+        Confirm
+      </button>
+      <button @click="closeCTX">
+        Cancel
+      </button>
     </div>
   </Modal>
 </template>
@@ -12,9 +19,9 @@
 import Modal from "../UI/Modal.vue";
 
 export default {
+  components: { Modal },
   props: ["isOpenModal", 'actionHandler', 'title'],
   emits: ["closeConfirmModal"],
-  components: { Modal },
   setup(props, { emit }) {
     function closeCTX() {
       emit("closeConfirmModal");

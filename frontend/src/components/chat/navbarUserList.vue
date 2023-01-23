@@ -1,14 +1,25 @@
 <template>
-  <ul v-if="users?.length > 0"  class="chat__users" :class="{ 'chat__users--active': show }">
+  <ul
+    v-if="users?.length > 0"
+    class="chat__users"
+    :class="{ 'chat__users--active': show }"
+  >
     <li
-      class="chat__user"
       v-for="user in users"
       :key="user.id"
-      @click="$emit('selectUser', user.id)">
+      class="chat__user"
+      @click="$emit('selectUser', user.id)"
+    >
       {{ user.login }}
     </li>
   </ul>
-  <p v-else class="chat__users chat__users--message" :class="{ 'chat__users--active': show }">No users</p>
+  <p
+    v-else
+    class="chat__users chat__users--message"
+    :class="{ 'chat__users--active': show }"
+  >
+    No users
+  </p>
 </template>
 
 

@@ -2,55 +2,97 @@
   <footer>
     <div class="conference__menu">
       <div class="menu__setting">
-        <button @click="isMuted = !isMuted"><i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"></i>{{
-            isMuted ? 'Unmute' : 'Mute'
-        }}</button>
-        <button v-if="type" @click="isPauseVideo = !isPauseVideo"><i class="bi"
-            :class="isPauseVideo ? 'bi-camera-video-off-fill' : 'bi-camera-video-fill'"></i>{{ isPauseVideo ? 'Off' :
-                'On'
-            }}</button>
-        <button v-if="!type" @click="isRecord = !isRecord"><i class="bi"
-            :class="isRecord ? 'bi-stop-circle' : 'bi-record-circle'"></i>{{ isRecord ? 'Stop' :
-                'Record'
-            }}</button>
-        <button v-if="type" class="mobile" @click="isRecordScreen = !isRecordScreen"><i class="bi"
-            :class="isRecordScreen ? 'bi-stop-circle' : 'bi-record-circle'"></i>{{ isRecordScreen ? 'Stop' :
-                'Record'
-            }}</button>
-        <button v-if="type" class="mobile" @click="isShareScreen = !isShareScreen"><i class="bi"
-            :class="isShareScreen ? 'bi-tv-fill' : 'bi-tv'"></i>{{ isShareScreen ? 'Stop' :
-                'Show'
-            }}</button>
+        <button @click="isMuted = !isMuted">
+          <i
+            class="bi"
+            :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"
+          />{{ isMuted ? "Unmute" : "Mute" }}
+        </button>
+        <button
+          v-if="type"
+          @click="isPauseVideo = !isPauseVideo"
+        >
+          <i
+            class="bi"
+            :class="isPauseVideo ? 'bi-camera-video-off-fill' : 'bi-camera-video-fill'"
+          />{{
+            isPauseVideo ? "Off" : "On"
+          }}
+        </button>
+        <button
+          v-if="!type"
+          @click="isRecord = !isRecord"
+        >
+          <i
+            class="bi"
+            :class="isRecord ? 'bi-stop-circle' : 'bi-record-circle'"
+          />{{ isRecord ? "Stop" : "Record" }}
+        </button>
+        <button
+          v-if="type"
+          class="mobile"
+          @click="isRecordScreen = !isRecordScreen"
+        >
+          <i
+            class="bi"
+            :class="isRecordScreen ? 'bi-stop-circle' : 'bi-record-circle'"
+          />{{
+            isRecordScreen ? "Stop" : "Record"
+          }}
+        </button>
+        <button
+          v-if="type"
+          class="mobile"
+          @click="isShareScreen = !isShareScreen"
+        >
+          <i
+            class="bi"
+            :class="isShareScreen ? 'bi-tv-fill' : 'bi-tv'"
+          />{{ isShareScreen ? "Stop" : "Show" }}
+        </button>
       </div>
       <div class="menu__conference-data">
-        <h3 class="menu__conference-title">{{ conferenceTitle }}</h3>
-        <p class="menu__conference-admin">{{ conferenceAdmin }}</p>
+        <h3 class="menu__conference-title">
+          {{ conferenceTitle }}
+        </h3>
+        <p class="menu__conference-admin">
+          {{ conferenceAdmin }}
+        </p>
       </div>
       <div>
-        <button class="menu__chat" @click="$router.push('/conferences')"><i class="bi bi-x-circle-fill"></i>
-          Interrupt</button>
-        <button class="menu__chat" @click="$emit('showChat')"><i class="bi bi-chat-dots"></i> Chat</button>
+        <button
+          class="menu__chat"
+          @click="$router.push('/conferences')"
+        >
+          <i class="bi bi-x-circle-fill" />
+          Interrupt
+        </button>
+        <button
+          class="menu__chat"
+          @click="$emit('showChat')"
+        >
+          <i class="bi bi-chat-dots" /> Chat
+        </button>
       </div>
     </div>
   </footer>
 </template>
 
 <script>
-import { computed, inject } from 'vue'
-import { useStore } from 'vuex'
+import { computed, inject } from "vue";
+import { useStore } from "vuex";
 
 export default {
-  props: ['conferenceTitle', 'conferenceAdmin'],
+  props: ["conferenceTitle", "conferenceAdmin"],
   setup() {
-    const store = useStore()
-    const type = computed(() => store.state.conference.type)
+    const store = useStore();
+    const type = computed(() => store.state.conference.type);
 
-    const isRecord = inject('isRecord')
-    const isMuted = inject('isMuted')
-    const isPauseVideo = inject('isPauseVideo')
-    const isShareScreen = inject('isShareScreen')
-    const isRecordScreen = inject('isRecordScreen')
-
+    const isRecord = inject("isRecord");
+    const isMuted = inject("isMuted");
+    const isPauseVideo = inject("isPauseVideo");
+    const isShareScreen = inject("isShareScreen");
+    const isRecordScreen = inject("isRecordScreen");
 
     return {
       isMuted,
@@ -58,11 +100,10 @@ export default {
       isPauseVideo,
       isShareScreen,
       isRecordScreen,
-      type
-    }
-
-  }
-}
+      type,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -72,9 +113,7 @@ footer {
   box-sizing: border-box;
 }
 
-
 .menu {
-
   &__setting button,
   &__chat {
     width: 50px;
@@ -83,7 +122,7 @@ footer {
     background-color: inherit;
     color: var(--textColor);
     cursor: pointer;
-    transition: .3s ease;
+    transition: 0.3s ease;
     display: inline-flex;
     flex-direction: column;
     justify-content: center;
@@ -111,7 +150,6 @@ footer {
   &__conference-title,
   &__conference-admin {
     text-align: center;
-
   }
 
   &__chat {
@@ -127,7 +165,6 @@ footer {
 }
 
 @media (max-width: 1140px) {
-
   .mobile {
     display: none !important;
   }

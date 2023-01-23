@@ -1,4 +1,4 @@
-import debounce from "../../utils/debounce";
+import debounce from "@/utils/debounce";
 
 const alertTypes = {
   success: "success",
@@ -21,9 +21,9 @@ export const alert = {
       if (typeof text === "string") {
         message = text;
       } else if (text.message) {
-        message = text.message;
+        [message] = text;
       } else {
-        message = text[0];
+        [message] = text;
       }
 
       state.text = message;

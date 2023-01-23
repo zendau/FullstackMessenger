@@ -2,14 +2,17 @@
   <li class="chat__message">
     <h4>{{ message.authorLogin }}</h4>
     <div class="message__body">
-      <p v-html="isLink(message.text)"></p>
+      <p v-html="isLink(message.text)" />
       <div class="message__files">
-        <a class="message__file" v-for="file in message.files" :key="file.id"
-          :href="`${import.meta.env.VUE_APP_API}/file/download/${file.id}`">
-          <i class="bi bi-file-earmark-arrow-down"></i>{{ file.fileName }}
+        <a
+          v-for="file in message.files"
+          :key="file.id"
+          class="message__file"
+          :href="`${import.meta.env.VUE_APP_API}/file/download/${file.id}`"
+        >
+          <i class="bi bi-file-earmark-arrow-down" />{{ file.fileName }}
         </a>
       </div>
-
     </div>
     <span>{{ messageTime }}</span>
   </li>

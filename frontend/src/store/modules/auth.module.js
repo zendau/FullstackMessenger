@@ -1,7 +1,7 @@
-import $api from "../../axios";
+import $api from "@/axios";
 import jwt_decode from "jwt-decode";
 
-import router from "../../router";
+import router from "@/router";
 
 export const auth = {
   namespaced: true,
@@ -25,13 +25,12 @@ export const auth = {
           password: loginData.password,
         });
 
-        const accessToken = resData.data.accessToken;
+        const { accessToken } = resData.data;
         const tokenDecode = jwt_decode(accessToken);
         commit("authSuccess", tokenDecode);
         localStorage.setItem("token", accessToken);
         router.push("/users");
       } catch (e) {
-        ;
         const message = e.response.data;
         commit("alert/setErrorMessage", message, {
           root: true,
@@ -53,7 +52,7 @@ export const auth = {
           }
         );
       } catch (e) {
-        const message = e.response.data.message;
+        const { message } = e.response.data;
         commit("alert/setErrorMessage", message, {
           root: true,
         });
@@ -76,7 +75,7 @@ export const auth = {
         });
         commit("updateData", userData);
       } catch (e) {
-        const message = e.response.data.message;
+        const { message } = e.response.data;
         commit("alert/setErrorMessage", message, {
           root: true,
         });
@@ -99,7 +98,7 @@ export const auth = {
           confirmCode: registerData.confirmCode,
         });
 
-        const accessToken = resData.data.accessToken;
+        const { accessToken } = resData.data;
         const tokenDecode = jwt_decode(accessToken);
         commit("authSuccess", tokenDecode);
         localStorage.setItem("token", accessToken);

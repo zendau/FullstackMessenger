@@ -1,6 +1,10 @@
 <template>
   <ul v-if="freeUsers?.length > 0">
-    <li v-for="user in freeUsers" :key='user.userId' @click="sendInvinteToRoom(user.userId)">
+    <li
+      v-for="user in freeUsers"
+      :key="user.userId"
+      @click="sendInvinteToRoom(user.userId)"
+    >
       {{ user.userLogin }}
     </li>
   </ul>
@@ -26,7 +30,7 @@ export default {
 
     const roomId = route.params.id
 
-    socket.on('getFreeUsers', users => {
+    socket.on('getFreeUsers', (users) => {
       console.log('room tpye', withVideo)
       console.log("free users 1", users)
       freeUsers.value = users

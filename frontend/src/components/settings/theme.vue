@@ -1,5 +1,7 @@
 <template>
-  <button @click="toggleTheme">Change theme</button>
+  <button @click="toggleTheme">
+    Change theme
+  </button>
 </template>
 
 <script>

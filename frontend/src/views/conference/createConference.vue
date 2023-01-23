@@ -1,21 +1,43 @@
 <template>
   <section class="user__container">
-    <h1 class="user__title">Create conference</h1>
+    <h1 class="user__title">
+      Create conference
+    </h1>
     <AlertNotification />
-    <form class="user__form" @submit="onSubmitForm">
+    <form
+      class="user__form"
+      @submit="onSubmitForm"
+    >
       <form-input
         id="title"
+        v-model="title"
         title="Conference title"
         type="text"
-        v-model="title"
       />
 
-      <select name="" id="conferenceType" v-model="type">
-        <option disabled selected :value="null">Select conference type</option>
-        <option :value="false">Audio</option>
-        <option :value="true">Video</option>
+      <select
+        id="conferenceType"
+        v-model="type"
+        name=""
+      >
+        <option
+          disabled
+          selected
+          :value="null"
+        >
+          Select conference type
+        </option>
+        <option :value="false">
+          Audio
+        </option>
+        <option :value="true">
+          Video
+        </option>
       </select>
-      <input type="submit" value="Create conference" />
+      <input
+        type="submit"
+        value="Create conference"
+      >
     </form>
   </section>
 </template>
@@ -56,9 +78,7 @@ export default {
 
       let message = "";
 
-      Object.keys(errors).forEach(
-        (item) => (message += `<span>${errors[item]}</span>`)
-      );
+      Object.keys(errors).forEach((item) => (message += `<span>${errors[item]}</span>`));
       console.log(message);
       store.commit("alert/setErrorMessage", message);
     }

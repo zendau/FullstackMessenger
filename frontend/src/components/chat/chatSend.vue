@@ -1,27 +1,36 @@
 <template>
-  <div class="chat__send" v-if="chatData.title">
+  <div
+    v-if="chatData.title"
+    class="chat__send"
+  >
     <div v-if="editMessageData">
       <p>{{ editMessageData.text }}</p>
-      <button @click="cancelMessage">Cancel</button>
+      <button @click="cancelMessage">
+        Cancel
+      </button>
     </div>
-    <p v-if="userPressing">{{ userPressing }} is pressing ...</p>
+    <p v-if="userPressing">
+      {{ userPressing }} is pressing ...
+    </p>
     <div
+      ref="message"
       class="chat__input"
       contenteditable="true"
       data-placeholder="Type message"
-      ref="message"
-      @keydown.enter.exact='sendMessage'
+      @keydown.enter.exact="sendMessage"
       @input="inputPress"
-    ></div>
-    <ul class="chat__files" v-if="files.length > 0">
+    />
+    <ul
+      v-if="files.length > 0"
+      class="chat__files"
+    >
       <li
-        class="chat__file"
         v-for="(file, index) in files"
         :key="index"
+        class="chat__file"
         @click="deleteFileById(index, file)"
       >
-        <i class="bi bi-file-earmark-arrow-down"></i
-        >{{ file?.name ?? file?.fileName }}
+        <i class="bi bi-file-earmark-arrow-down" />{{ file?.name ?? file?.fileName }}
       </li>
     </ul>
     <div
@@ -31,9 +40,11 @@
       <div
         style="background-color: #f7901e; height: 16px; border-radius: 10px"
         :style="{ width: fileUploadPercent + '%' }"
-      ></div>
+      />
     </div>
-    <button @click="sendMessage"><i class="bi bi-send"></i></button>
+    <button @click="sendMessage">
+      <i class="bi bi-send" />
+    </button>
   </div>
 </template>
 

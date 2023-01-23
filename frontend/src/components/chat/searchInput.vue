@@ -1,11 +1,15 @@
 <template>
   <input
     v-if="createGroupUsers.length > 0"
+    v-model="chatTitle"
     type="text"
     placeholder="Enter a chat name"
-    v-model="chatTitle"
-  />
-  <input placeholder="search" type="text" @input="searchByPattern" />
+  >
+  <input
+    placeholder="search"
+    type="text"
+    @input="searchByPattern"
+  >
   <AlertNotification />
   <font-awesome-icon
     v-if="createGroupUsers.length === 0"
@@ -16,10 +20,13 @@
   <div v-else>
     <font-awesome-icon
       icon="fa-solid fa-xmark"
-      @click="cancelCreateGroup"
       color="white"
+      @click="cancelCreateGroup"
     />
-    <button @click="onCreateChat" :disabled="isValidGroupUsersLength">
+    <button
+      :disabled="isValidGroupUsersLength"
+      @click="onCreateChat"
+    >
       create
     </button>
   </div>
@@ -82,7 +89,7 @@ export default {
 
     const onCreateChat = handleSubmit((data) => {
       console.log("CREATE GROUP");
-      if (isValidGroupUsersLength.data) return;
+      if (isValidGroupUsersLength.value.data) return;
 
       chatSocket.emit("createChat", {
         adminId: userId,

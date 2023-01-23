@@ -1,11 +1,11 @@
 <template>
-  <Teleport to="#app" v-if="isShowCTX">
+  <Teleport
+    v-if="isShowCTX"
+    to="#app"
+  >
     <div
       ref="modalRoot"
       tabindex="0"
-      @keydown="closeCTX"
-      @contextmenu.prevent="closeCTX"
-      @click="closeCTX"
       style="
         position: fixed;
         top: 0;
@@ -14,7 +14,10 @@
         height: 100vh;
         width: 100%;
       "
-    ></div>
+      @keydown="closeCTX"
+      @contextmenu.prevent="closeCTX"
+      @click="closeCTX"
+    />
     <slot />
   </Teleport>
 </template>
@@ -22,8 +25,8 @@
 <script>
 import { onUpdated, ref } from "vue";
 export default {
-  emits: ["closeCTX"],
   props: ["isShowCTX"],
+  emits: ["closeCTX"],
   setup(_, { emit }) {
     function closeCTX() {
       emit("closeCTX");

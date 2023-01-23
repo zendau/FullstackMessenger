@@ -6,7 +6,7 @@ export function isLink(text) {
     let restText = text
     const res = text.match(regex)
     if (res) {
-        res.forEach(link => {
+        res.forEach((link) => {
             // const testLink = link.split('.')
             // if (testLink[1] == '' || testLink[1].charAt(0) === testLink[1].charAt(0).toUpperCase()) {
             //     return link

@@ -1,50 +1,72 @@
 <template>
-
-
   <div
-    @contextmenu="openMessageCTXMenu"
     class="message__container"
     :class="isAuthor ? 'message__container--author' : ''"
+    @contextmenu="openMessageCTXMenu"
   >
     <input
+      v-if="isSelectMessagesMode"
       v-model="selectedMessages"
       :value="checboxData"
-      v-if="isSelectMessagesMode"
       type="checkbox"
       style="width: 25px; height: 25px"
-    />
-    <p class="message__author">{{ message.authorLogin }}</p>
+    >
+    <p class="message__author">
+      {{ message.authorLogin }}
+    </p>
     <div class="message__body">
-      <p class="message__text"><span v-html="isLink(message.text)" /></p>
-      <i v-if="isRead" class="bi bi-check-all"></i>
-      <i v-else class="bi bi-check"></i>
+      <p class="message__text">
+        <span v-html="isLink(message.text)" />
+      </p>
+      <i
+        v-if="isRead"
+        class="bi bi-check-all"
+      />
+      <i
+        v-else
+        class="bi bi-check"
+      />
       <p>is edit {{ message.isEdited }}</p>
       <!-- <a href="#" class="message__link">localhost.com</a> -->
-      <div v-for="file in message.files" :key="file.id">
+      <div
+        v-for="file in message.files"
+        :key="file.id"
+      >
         <p
-          style="display: flex; justify-content: center"
           v-if="file.mimetype.includes('image')"
+          style="display: flex; justify-content: center"
           @mousedown.right.prevent="null"
         >
           <img
             :src="`http://localhost:4000/storage/${file.foulder.path}/${file.fileTempName}`"
             height="200"
             alt=""
-          />
+          >
         </p>
         <div v-else>
-          <a class="message__file" :href="getDownloadLink(file.id)">
+          <a
+            class="message__file"
+            :href="getDownloadLink(file.id)"
+          >
             <i class="bi bi-file-earmark-arrow-down" />
             <p>{{ file.fileName }}</p>
           </a>
         </div>
       </div>
     </div>
-    <span class="message__time" :title="messageDate">
+    <span
+      class="message__time"
+      :title="messageDate"
+    >
       {{ messageTime }}
     </span>
   </div>
-   <div v-if="isFirstUnread"  style="color: red">New message</div>
+  <div
+    v-if="isFirstUnread"
+    style="color: red"
+  >
+    New message
+  </div>
 </template>
 
 <script>
@@ -53,9 +75,9 @@ import { isLink } from "./isLink";
 import MessageContexMenu from "./messageContextMenu.vue";
 
 export default {
-  emits: ["openCTXMenu"],
-  props: ["message", "author", "isRead", "isFirstUnread", "userId"],
   components: { MessageContexMenu },
+  props: ["message", "author", "isRead", "isFirstUnread", "userId"],
+  emits: ["openCTXMenu"],
   setup(props, { emit }) {
     const messageDate = ref(null);
     const messageTime = ref(null);

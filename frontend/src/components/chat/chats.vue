@@ -4,27 +4,39 @@
     :class="{ 'chats__container--active': !isShowMobileMessages }"
   >
     <searchInput @searchByPattern="searchChats" />
-    <p class="empty_message" style="color: red" v-if="chatsList.size === 0">
+    <p
+      v-if="chatsList.size === 0"
+      class="empty_message"
+      style="color: red"
+    >
       No chats
     </p>
     <ul class="chats__list">
       <li
-        class="chats__item"
         v-for="(chat, index) in chatsList"
         :key="chat[1].id"
-        :ref="(el) => setLastChatItem(el, index)"
+        :ref="el => setLastChatItem(el, index)"
+        class="chats__item"
         @click="openChat(chat[1].id)"
       >
         <!-- <router-link
           :to="`/chat/${chat.id}`"
           @click="isShowMobileMessages = true"
         > -->
-        <i class="bi bi-people" v-if="chat[1].adminId" />
-        <i class="bi bi-person" v-else />
+        <i
+          v-if="chat[1].adminId"
+          class="bi bi-people"
+        />
+        <i
+          v-else
+          class="bi bi-person"
+        />
         <div class="chats__info">
           <p>{{ chat[1].title }}</p>
           <p>{{ chat[1].lastMessage?.authorLogin }}</p>
-          <p class="chat__last-message">{{ lastMessageHTMLConvert(chat[1].lastMessage?.text) }}</p>
+          <p class="chat__last-message">
+            {{ lastMessageHTMLConvert(chat[1].lastMessage?.text) }}
+          </p>
           <p>{{ chat[1].userUnread }}</p>
         </div>
         <!-- </router-link> -->
@@ -41,6 +53,7 @@ import searchInput from "./searchInput.vue";
 
 export default {
   components: { searchInput },
+  emits: ["open-chat", "set-last-chat-element"],
   setup(_, { emit }) {
     const store = useStore();
     // store.dispatch('chat/getChats')
@@ -61,7 +74,7 @@ export default {
     const chatsData = computed(() => store.state.chat.chats);
     const userId = computed(() => store.state.auth.user.id);
     function openChat(chatId) {
-      emit("openChat", chatId);
+      emit("open-chat", chatId);
     }
 
     const chatsList = computed(() => store.getters["chat/chatList"]);
@@ -97,7 +110,7 @@ export default {
 
       if (chatsData.value.size - 1 !== index) return;
 
-      emit("setLastChatElement", el);
+      emit("set-last-chat-element", el);
     }
 
     function lastMessageHTMLConvert(text) {

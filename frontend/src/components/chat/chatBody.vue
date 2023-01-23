@@ -1,21 +1,28 @@
 <template>
   <file-upload>
-    <div class="chat__body" ref="bodyRef">
+    <div
+      ref="bodyRef"
+      class="chat__body"
+    >
       <MessageContexMenu
-        :ctxMenuData="ctxMenuData"
+        :ctx-menu-data="ctxMenuData"
         @deleteMessages="deleteMessages"
       />
-      <template v-for="(message, index) in messages" :key="message.id">
+      <template
+        v-for="(message, index) in messages"
+        :key="message.id"
+      >
         <message
           v-if="message.authorLogin"
-          :message="message"
-          :isFirstUnread="isFirstUnread(index)"
           :ref="(el) => setRefMessage(el, index)"
-          :isRead="isReadMessage(index)"
-          :userId="userData.id"
+          :message="message"
+          :is-first-unread="isFirstUnread(index)"
+          :is-read="isReadMessage(index)"
+          :user-id="userData.id"
           @openCTXMenu="openCTXMenu"
         />
         <div
+          v-else
           style="
             width: 100px;
             align-self: center;
@@ -28,13 +35,12 @@
             border-radius: 5px;
             text-align: center;
           "
-          v-else
         >
-          {{getMessageAlert(message.type, message.text)}}
+          {{ getMessageAlert(message.type, message.text) }}
         </div>
       </template>
 
-      <div ref="scrollEnd"></div>
+      <div ref="scrollEnd" />
     </div>
   </file-upload>
 </template>
@@ -63,7 +69,7 @@ import FileUpload from "../fileUpload.vue";
 import MessageContexMenu from "./messageContextMenu.vue";
 
 import debounce from "../../utils/debounce";
-import dateFormat from '../../utils/dateFormat'
+import dateFormat from "../../utils/dateFormat";
 
 export default {
   components: { Message, FileUpload, MessageContexMenu },
@@ -104,6 +110,9 @@ export default {
     const readChatMessage = debounce(() => {
       console.log("send ", messageReadCount);
 
+      const userUnread = chatData.value?.userUnread;
+      if (!userUnread) return;
+
       chatSocket.emit("readMessages", {
         userId: userData.value.id,
         chatId: chatId.value,
@@ -111,6 +120,7 @@ export default {
       });
 
       //const roomData = currentTempChatData.value ?? roomsData.value[chatId.value];
+
       const resCount = chatData.value.userUnread - messageReadCount;
       chatData.value.userUnread = Math.max(0, resCount);
       messageReadCount = 0;
@@ -142,7 +152,7 @@ export default {
 
     const messageScrollObserver = new IntersectionObserver(
       (entries) => {
-        const messagePagination = chatData.value.loadMessagesPagination;
+        const messagePagination = chatData.value?.loadMessagesPagination;
         debugger;
         isFirstScroll = false;
         if (entries[0].isIntersecting && messagePagination?.hasMore) {
@@ -262,7 +272,7 @@ export default {
 
     function getMessageAlert(messageType, messageText) {
       if (messageType === "date") {
-        return  dateFormat(messageText, 'en');
+        return dateFormat(messageText, "en");
       } else if (messageType === "add") {
         return `Added ${messageText}`;
       } else if (messageType === "remove") {
@@ -270,7 +280,7 @@ export default {
       } else if (messageType === "exit") {
         return `Exit ${messageText}`;
       } else if (messageType === "created") {
-        return 'Created';
+        return "Created";
       } else {
         return;
       }

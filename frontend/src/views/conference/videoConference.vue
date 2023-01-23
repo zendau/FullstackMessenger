@@ -1,241 +1,244 @@
 <template>
-  <video-container-vue v-for='user in roomUsers' :key='user.userId' :peerId="user.peerId" :isMuted="user.mute"
-    :userName='user.userLogin' :isPauseVideo="user.pause" :ref="setItemRef" />
+  <video-container-vue
+    v-for="user in roomUsers"
+    :key="user.userId"
+    :ref="setItemRef"
+    :peer-id="user.peerId"
+    :is-muted="user.mute"
+    :user-name="user.userLogin"
+    :is-pause-video="user.pause"
+  />
 </template>
 
 <script>
+import { useRoute } from "vue-router";
+import { onUnmounted, ref, inject, watch, onBeforeUpdate, reactive } from "vue";
+import Peer from "peerjs";
 
-import { useRoute } from 'vue-router'
-import { onUnmounted, ref, inject, watch, onBeforeUpdate, reactive } from 'vue'
-import Peer from 'peerjs'
+import videoContainerVue from "../../components/conterence/videoContainer.vue";
+import { useStore } from "vuex";
 
-import videoContainerVue from '../../components/conterence/videoContainer.vue'
-import { useStore } from 'vuex'
-
-import { startScreenRecorder, stopScreenRecorder } from './screenRecorder'
-import ScreenShare from './screenShare'
-
+import { startScreenRecorder, stopScreenRecorder } from "../../utils/screenRecorderenRecorder";
+import ScreenShare from "../../utils/screenShare";
+../../utils/screenShare
 export default {
   components: { videoContainerVue },
   setup() {
-
     // ==== state ==== //
 
-    const route = useRoute()
-    const store = useStore()
+    const route = useRoute();
+    const store = useStore();
 
-    const roomUsers = ref([])
-    const roomId = route.params.id
+    const roomUsers = ref([]);
+    const roomId = route.params.id;
 
-    const userId = ref(null)
-    const peerId = ref(null)
-    const peerConnected = ref(false)
+    const userId = ref(null);
+    const peerId = ref(null);
+    const peerConnected = ref(false);
 
-    const mediaError = inject('mediaError')
-    const socket = inject('socket', undefined)
-    const socketConnected = inject('peerSocketConnected', false)
-    const isMuted = inject('isMuted')
-    const isPauseVideo = inject('isPauseVideo')
-    const isShareScreen = inject('isShareScreen')
-    const isRecordScreen = inject('isRecordScreen')
+    const mediaError = inject("mediaError");
+    const socket = inject("socket", undefined);
+    const socketConnected = inject("peerSocketConnected", false);
+    const isMuted = inject("isMuted");
+    const isPauseVideo = inject("isPauseVideo");
+    const isShareScreen = inject("isShareScreen");
+    const isRecordScreen = inject("isRecordScreen");
 
-    const streams = reactive([])
-    const mainStream = ref(null)
-    const childStream = []
+    const streams = reactive([]);
+    const mainStream = ref(null);
+    const childStream = [];
 
-    const containersRefs = reactive([])
+    const containersRefs = reactive([]);
     const setItemRef = el => {
       if (el) {
-        containersRefs.push(el)
+        containersRefs.push(el);
       }
-    }
+    };
 
-    const screenShare = new ScreenShare(streams, containersRefs, peerId, mainStream, isShareScreen, store)
+    const screenShare = new ScreenShare(streams, containersRefs, peerId, mainStream, isShareScreen, store);
 
     // ==== hooks ==== //
 
     // Wait socket connected and join to room
-    watch([socketConnected, peerConnected], ([socketStatus, peerStatus]) => {
-      if (socketStatus && peerStatus) {
-        userId.value = socket.id
-        socket.emit('join-room', {
-          userId: userId.value,
-          peerId: peerId.value,
-          roomId: roomId
-        })
+    watch(
+      [socketConnected, peerConnected],
+      ([socketStatus, peerStatus]) => {
+        if (socketStatus && peerStatus) {
+          userId.value = socket.id;
+          socket.emit("join-room", {
+            userId: userId.value,
+            peerId: peerId.value,
+            roomId: roomId,
+          });
+        }
+      },
+      {
+        immediate: true,
       }
-    }, {
-      immediate: true
-    })
+    );
 
     // Change muted status
     watch(isMuted, () => {
-      socket.emit('userMute', {
+      socket.emit("userMute", {
         userId: userId.value,
-        roomId
-      })
-    })
+        roomId,
+      });
+    });
 
     // Change video pause status
     watch(isPauseVideo, () => {
-      socket.emit('videoPause', {
+      socket.emit("videoPause", {
         userId: userId.value,
-        roomId
-      })
-    })
+        roomId,
+      });
+    });
 
     // Change share screen status
-    watch(isShareScreen, (status) => {
+    watch(isShareScreen, status => {
       if (status) {
-        screenShare.startShareScreen()
+        screenShare.startShareScreen();
       } else {
-        screenShare.stopShareScreen()
+        screenShare.stopShareScreen();
       }
-    })
+    });
 
     // Change record screen status
-    watch(isRecordScreen, (status) => {
+    watch(isRecordScreen, status => {
       if (status) {
-        startScreenRecorder(isRecordScreen)
+        startScreenRecorder(isRecordScreen);
       } else {
-        stopScreenRecorder()
+        stopScreenRecorder();
       }
-    })
+    });
 
     // Exit from room and clear data
     onUnmounted(() => {
-      socket.emit('exit-room', {
+      socket.emit("exit-room", {
         userId: userId.value,
-        roomId: roomId
-      })
-      window.removeEventListener('keypress', muteEvent)
-      socket.removeAllListeners('getUsers')
+        roomId: roomId,
+      });
+      window.removeEventListener("keypress", muteEvent);
+      socket.removeAllListeners("getUsers");
       mainStream?.value.getTracks().forEach(t => {
-        t.stop()
-      })
+        t.stop();
+      });
       childStream?.forEach(stream => {
         stream.getTracks().forEach(track => {
-          track.stop()
-        })
-      })
-    })
+          track.stop();
+        });
+      });
+    });
 
     onBeforeUpdate(() => {
-      containersRefs.length = 0
-    })
+      containersRefs.length = 0;
+    });
 
     // ==== socket ==== //
 
-    socket.on('getUsers', (users) => {
-      console.log(users)
-      roomUsers.value = users
+    socket.on("getUsers", users => {
+      console.log(users);
+      roomUsers.value = users;
     });
 
-    socket.on('userJoinedRoom', (userId) => {
-      connectToNewUser(userId, mainStream.value)
-    })
-
+    socket.on("userJoinedRoom", userId => {
+      connectToNewUser(userId, mainStream.value);
+    });
 
     // ==== events ==== //
-    window.addEventListener('keypress', muteEvent)
+    window.addEventListener("keypress", muteEvent);
 
     function muteEvent(event) {
-      if (event.code === 'KeyM') {
-        isMuted.value = !isMuted.value
+      if (event.code === "KeyM") {
+        isMuted.value = !isMuted.value;
       }
     }
-
-
 
     // ==== peers ==== //
 
     const peerConnect = new Peer({
-      path: '/peer',
-      host: '/',
-      port: import.meta.env.VUE_APP_PEER_PORT
-    })
-
+      path: "/peer",
+      host: "/",
+      port: import.meta.env.VUE_APP_PEER_PORT,
+    });
 
     const getUserMedia =
       navigator.mediaDevices.getUserMedia ||
       navigator.mediaDevices.webkitGetUserMedia ||
       navigator.mediaDevices.mozGetUserMedia;
 
-
     // User media stream
     getUserMedia({
       audio: true,
-      video: { aspectRatio: 16 / 9 }
-    }).then(stream => {
-      mediaError.value = false
-      mainStream.value = stream
-      containersRefs.forEach(item => {
-        if (item.peerId === peerId.value) {
-          item.setStream(stream)
-          item.muteYourSelf()
-        }
-      })
-    }).catch(() => {
-      mediaError.value = true
-      store.commit('alert/setErrorMessage', 'Could not start video source')
+      video: { aspectRatio: 16 / 9 },
     })
-
+      .then(stream => {
+        mediaError.value = false;
+        mainStream.value = stream;
+        containersRefs.forEach(item => {
+          if (item.peerId === peerId.value) {
+            item.setStream(stream);
+            item.muteYourSelf();
+          }
+        });
+      })
+      .catch(() => {
+        mediaError.value = true;
+        store.commit("alert/setErrorMessage", "Could not start video source");
+      });
 
     // answer to call
-    peerConnect.on('call', async (call) => {
+    peerConnect.on("call", async call => {
       try {
-        streams.push(call)
+        streams.push(call);
 
         // Another user media stream
         const stream = await getUserMedia({
           audio: true,
-          video: { aspectRatio: 16 / 9 }
-        })
+          video: { aspectRatio: 16 / 9 },
+        });
 
-        childStream.push(stream)
-        call.answer(stream)
+        childStream.push(stream);
+        call.answer(stream);
 
         // answer to  stream
-        call.on('stream', userVideoStream => {
+        call.on("stream", userVideoStream => {
           containersRefs.forEach(item => {
             if (item.peerId === call.peer) {
-              item.setStream(userVideoStream)
+              item.setStream(userVideoStream);
             }
-          })
-        })
+          });
+        });
       } catch {
-        mediaError.value = true
-        store.commit('alert/setErrorMessage', 'Could not start video source')
+        mediaError.value = true;
+        store.commit("alert/setErrorMessage", "Could not start video source");
       }
-
-    })
+    });
 
     // join to peer server
-    peerConnect.on('open', id => {
-      peerId.value = id
-      peerConnected.value = true
-    })
+    peerConnect.on("open", id => {
+      peerId.value = id;
+      peerConnected.value = true;
+    });
 
     // connected to new user
     function connectToNewUser(userId, stream) {
-      const call = peerConnect.call(userId, stream)
+      const call = peerConnect.call(userId, stream);
       streams.push(call);
 
       // connected user's stream
-      call.on('stream', userVideoStream => {
+      call.on("stream", userVideoStream => {
         containersRefs.forEach(item => {
           if (item.peerId === userId) {
-            item.setStream(userVideoStream)
+            item.setStream(userVideoStream);
           }
-        })
-      })
+        });
+      });
     }
 
     return {
       roomUsers,
-      setItemRef
-    }
-  }
-}
-
+      setItemRef,
+    };
+  },
+};
 </script>

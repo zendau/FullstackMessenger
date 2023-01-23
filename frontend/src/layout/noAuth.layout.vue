@@ -1,8 +1,8 @@
 <template>
-    <navbar />
-    <section class="user__container">
-        <slot />
-    </section>
+  <navbar />
+  <section class="user__container">
+    <slot />
+  </section>
 </template>
 
 <script>

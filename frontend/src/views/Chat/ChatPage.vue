@@ -1,35 +1,33 @@
 <template>
-  <chatNavbar/>
+  <ChatNavbar />
   <section class="chat__container">
-    <chats
+    <Chats
       v-if="showChats"
-      @openChat="openChatRoom"
-      @setLastChatElement="setLastChatElement"
+      @open-chat="openChatRoom"
+      @set-last-chat-element="setLastChatElement"
     />
-    <contacts v-else @openChat="openChatRoom" />
-    <chatContainer />
+    <Contacts
+      v-else
+      @open-chat="openChatRoom"
+    />
+    <ChatContainer />
   </section>
   <UserModal />
 </template>
 
 <script>
-import { computed, provide, inject, reactive } from "vue";
-
+import { computed, provide, inject, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { ref, watch } from "vue";
 import { useStore } from "vuex";
 
-import chatNavbar from "../../components/chat/navbar.vue";
-import Contacts from "../../components/chat/contacts.vue";
-import ChatContainer from "../../components/chat/chatContainer.vue";
-import Chats from "../../components/chat/chats.vue";
-
-import UserModal from "../../components/chat/userModal.vue";
-
-import $api from "../../axios";
+import ChatNavbar from "@/components/chat/navbar.vue";
+import Contacts from "@/components/chat/contacts.vue";
+import ChatContainer from "@/components/chat/chatContainer.vue";
+import Chats from "@/components/chat/chats.vue";
+import UserModal from "@/components/chat/userModal.vue";
 
 export default {
-  components: { chatNavbar, Contacts, ChatContainer, Chats, UserModal },
+  components: { ChatNavbar, Contacts, ChatContainer, Chats, UserModal },
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -55,25 +53,17 @@ export default {
     const isCallSendAfterCreate = ref(false);
     provide("isCallSendAfterCreate", isCallSendAfterCreate);
 
-    // const socket = io(import.meta.env.VITE_SOCKET_HOST, { path: '/socketChat'});
-    // provide("socket", socket);
+    onMounted(() => {
+      window.addEventListener("keyup", closeActiveChat);
+    });
 
-    // const socketConnected = ref(false);
-    // provide("connected", socketConnected);
-    // socket.on("connect", () => {
-    //   console.log("connected gateway");
-    //   socketConnected.value = true;
-    //   socket.emit("connect-user", {
-    //     userLogin: userData.value.email,
-    //     userId: socket.id,
-    //   });
-    // });
+    onUnmounted(() => {
+      window.removeEventListener("keyup", closeActiveChat);
+    });
 
     const chatObserver = new IntersectionObserver(
       (entries) => {
-        console.log("entity test", entries);
         if (entries[0].isIntersecting) {
-          console.log("call in observer");
           store.dispatch("chat/getChats", {
             userId: userId.value,
           });
@@ -84,14 +74,12 @@ export default {
       }
     );
 
-    console.log("call in setup");
     store.dispatch("chat/getChats", {
       userId: userId.value,
       chatId: chatId.value,
     });
 
     chatSocket.on("newChat", (chatData) => {
-      console.log("NEW CHAT", chatData);
       store.commit("chat/saveChat", chatData);
       if (chatData.adminId === userId.value || isCallSendAfterCreate.value) {
         router.push(`/chat/${chatData.id}`);
@@ -106,8 +94,6 @@ export default {
     });
 
     chatSocket.on("inviteChatUser", (inseredUserData) => {
-      console.log("inseredUserData", inseredUserData);
-
       if (inseredUserData?.adminId === userId.value) {
         store.commit("chat/updateFreeChatUsers", inseredUserData.userData.id);
       }
@@ -123,17 +109,9 @@ export default {
           userData: inseredUserData.userData,
         });
       }
-
-      // if (freeUsersList.value.hasOwnProperty(inseredUserData[0].userId)) {
-      //   delete freeUsersList.value[inseredUserData[0].userId];
-      // }
-
-      // if (!roomsData.value.hasOwnProperty(inseredUserData.inseredData.chatId))
-      //   return;
     });
 
     chatSocket.on("removeChatUser", (removeUser) => {
-      console.log("REMOVE", removeUser);
       store.dispatch("chat/deleteFromChat", removeUser);
 
       if (removeUser?.adminId === userId.value) {
@@ -154,16 +132,8 @@ export default {
       store.commit("alert/setErrorMessage", errorData.message);
     });
 
-    // chatSocket.on("newChat", (chatData) => {
-    //   store.commit("chat/appendChatsData", chatData);
-    // });
-
-    //store.commit("chat/cleanChatData");
-
     function openChatRoom(roomId, isFirstLoad = false) {
-      debugger;
       if (!roomId || (chatId.value === roomId && !isFirstLoad)) return;
-      console.log("OPEN", roomId);
       router.push(`/chat/${roomId}`);
 
       if (roomId === "contact") {
@@ -171,11 +141,10 @@ export default {
         return;
       }
 
-      const chatData = store.state.chat.chats.get(roomId)
-      const paginationPage = chatData?.loadMessagesPagination?.page
+      const chatData = store.state.chat.chats.get(roomId);
+      const paginationPage = chatData?.loadMessagesPagination?.page;
 
       if (!paginationPage) {
-        console.log("!2");
         store.commit("chat/clearChatMessages", roomId);
         store.dispatch("chat/getChatMessages", {
           chatId: roomId,
@@ -186,105 +155,21 @@ export default {
 
     function setLastChatElement(el) {
       if (!el) return;
-      console.log("LAST ELEMENT", el);
       chatObserver.observe(el);
       if (chatId.value && isFirstChatsLoad) {
         isFirstChatsLoad = false;
-        console.log("open room", chatId.value);
         openChatRoom(chatId.value, true);
       }
     }
 
-    // chatSocket.on("appendRoomsData", (newRoomsData) => {
-    //   loadChatsPagination.hasMore = newRoomsData.hasMore;
-    //   loadChatsPagination.page = newRoomsData.page;
-    //   console.log("loadChatsPagination", loadChatsPagination);
-    //   store.commit("chat/appendChatsData", newRoomsData.roomsData);
-    // });
-
-    // chatSocket.on("appendRoomData", (newRoomData) => {
-    //   const chatId = newRoomData.chatId;
-    //   store.commit("chat/appendChatsData", { [chatId]: newRoomData.data });
-    // });
-
-    // if (
-    //   !roomMessages.hasOwnProperty(chatId.value) ||
-    //   roomMessages[chatId.value]?.length === 0
-    // ) {
-    //   const messagePagination =
-    //     roomsData.loadMessagesPagination ?? defoultLoadMessagesPagination;
-
-    //   socket.emit("getRoomMessages", {
-    //     chatId: roomId,
-    //     page: messagePagination.page,
-    //     limit: messagePagination.limit,
-    //     inMemory: messagePagination.inMemory,
-    //   });
-    // }
-
-    // function enterToChat(roomId) {
-    //   store.commit("chat/cleanMessages");
-    //   if (!roomId) return;
-
-    //   checkRoom(roomId);
-    // }
-
-    // async function checkRoom(roomId) {
-    //   const res = await $api.get(`/chat/checkId/${roomId}`);
-    //   if (res.data.status === false) {
-    //     router.push("/chat");
-    //   }
-    //   if (res.data.groupName === null) {
-    //     store.commit("chat/setChatTitle", {
-    //       users: res.data.users,
-    //       userId: userData.value.id,
-    //     });
-    //   } else {
-    //     store.commit("chat/setGroupData", {
-    //       users: res.data.users,
-    //       title: res.data.groupName,
-    //       adminId: res.data.adminId,
-    //     });
-    //     store.dispatch("chat/getInvaitedUsers");
-    //   }
-
-    //   console.log("join to the room");
-    //   chatSocket.emit("join-room", {
-    //     userId: chatSocket.id,
-    //     roomId,
-    //   });
-    // }
-
-    // onUnmounted(() => {
-    //   store.commit("chat/cleanAllData");
-    // });
-
-    // watch(
-    //   () => route.params.id,
-    //   (value) => {
-    //     if (value) {
-    //       enterToChat(value);
-    //     }
-    //   },
-    //   { immediate: true }
-    // );
-
-    // chatSocket.on("upload_messages", (uploadMessagesData) => {
-    //   console.log("messages", uploadMessagesData);
-
-    //   if (!uploadMessagesData) return;
-    //   store.commit("chat/saveMessages", {
-    //     chatId: chatId.value,
-    //     uploadMessagesData,
-    //   });
-    // });
+    function closeActiveChat() {
+      router.push("/chat");
+    }
 
     return {
-      // chatId,
-      openChatRoom,
       showChats,
+      openChatRoom,
       setLastChatElement,
-      // Chats,
     };
   },
 };

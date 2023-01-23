@@ -1,12 +1,12 @@
 <template>
   <ul class="contacts__list">
     <li
-      class="contact__item"
       v-for="user in listData"
       :key="user.id"
+      class="contact__item"
       @click="openUserModal(user.id)"
     >
-      <i class="bi bi-person"></i>
+      <i class="bi bi-person" />
       <!-- <input
         v-if="groupType"
         v-model="groupUsers"
@@ -17,7 +17,12 @@
       <p>{{ user.lastOnline }}</p>
     </li>
   </ul>
-  <p class="empty_message" v-if="listData.length === 0">No users</p>
+  <p
+    v-if="listData.length === 0"
+    class="empty_message"
+  >
+    No users
+  </p>
 </template>
 
 <script>

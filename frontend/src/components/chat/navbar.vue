@@ -12,7 +12,7 @@
             class="chat__list-item"
             :class="{ 'chat__list-item--active': showChats }"
           >
-            <i class="bi bi-chat-dots"></i>
+            <i class="bi bi-chat-dots" />
             <span>Chats</span>
           </a>
         </li>
@@ -26,25 +26,35 @@
             class="chat__list-item"
             :class="{ 'chat__list-item--active': !showChats }"
           >
-            <i class="bi bi-person-lines-fill"></i>
+            <i class="bi bi-person-lines-fill" />
             <span>Contacts</span>
           </a>
         </li>
         <li>
-          <router-link class="chat__list-item" to="/conferences">
-            <i class="bi bi-telephone"></i>
+          <router-link
+            class="chat__list-item"
+            to="/conferences"
+          >
+            <i class="bi bi-telephone" />
             <span>Calls</span>
           </router-link>
         </li>
         <li>
-          <router-link class="chat__list-item" to="/settings">
-            <i class="bi bi-gear"></i>
+          <router-link
+            class="chat__list-item"
+            to="/settings"
+          >
+            <i class="bi bi-gear" />
             <span>Settings</span>
           </router-link>
         </li>
       </ul>
-      <a class="chat__list-item chat__list-item--exit" href="#" @click="logout">
-        <i class="bi bi-box-arrow-right"></i>
+      <a
+        class="chat__list-item chat__list-item--exit"
+        href="#"
+        @click="logout"
+      >
+        <i class="bi bi-box-arrow-right" />
         <span>Exit</span>
       </a>
     </nav>

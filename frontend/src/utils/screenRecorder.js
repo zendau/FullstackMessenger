@@ -1,24 +1,22 @@
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 
-const mimeType = 'video/webm';
-let isRecordScreen = null
-let mediaScreenRecorder = null
-
+const mimeType = "video/webm";
+let isRecordScreen = null;
+let mediaScreenRecorder = null;
 
 export async function startScreenRecorder(isRecordProvide) {
   let stream = await navigator.mediaDevices.getDisplayMedia({
     audio: true,
-    video: true
+    video: true,
   });
 
-  
   mediaScreenRecorder = createRecorder(stream, mimeType);
-  isRecordScreen = isRecordProvide
+  isRecordScreen = isRecordProvide;
 }
 
 export function stopScreenRecorder() {
   if (mediaScreenRecorder.state !== "inactive") {
-      mediaScreenRecorder.stop();
+    mediaScreenRecorder.stop();
   }
 }
 
@@ -38,17 +36,16 @@ function createRecorder(stream) {
     mediaRecorder.stream.getTracks().forEach((track) => {
       track.stop();
     });
-    isRecordScreen.value = false
+    isRecordScreen.value = false;
   };
   mediaRecorder.start(200);
   return mediaRecorder;
 }
 
 function saveFile(recordedChunks) {
-
   const blob = new Blob(recordedChunks, {
-    type: mimeType
+    type: mimeType,
   });
-  let filename = window.prompt('Enter file name')
-  saveAs(blob, `${filename}.webm`)
+  let filename = window.prompt("Enter file name");
+  saveAs(blob, `${filename}.webm`);
 }

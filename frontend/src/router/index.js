@@ -6,24 +6,24 @@ import { Layout } from "./layouts";
 
 const chatPage = () => import("../views/Chat/ChatPage.vue");
 
-const register = () => import("../views/Auth/register.vue");
-const login = () => import("../views/Auth/login.vue");
-const forgot = () => import("../views/Auth/forgot.vue");
+const register = () => import("../views/Auth/RegisterPage.vue");
+const login = () => import("../views/Auth/LoginPage.vue");
+const forgot = () => import("../views/Auth/ForgotPage.vue");
 
-const settings = () => import("../views/settings.vue");
+const settings = () => import("../views/SettingsPage.vue");
 
-const conferences = () => import("../views/conference/conferences.vue");
+const conferences = () => import("../views/Conference/СonferencesList.vue");
 const createConference = () =>
-  import("../views/conference/createConference.vue");
-const editConference = () => import("../views/conference/editConference.vue");
+  import("../views/Conference/createConference.vue");
+const editConference = () => import("../views/Conference/editConference.vue");
 const conference = () => import("../layout/auth.conferecnce.vue");
-const audioConference = () => import("../views/conference/audioConference.vue");
-const videoConference = () => import("../views/conference/videoConference.vue");
+const audioConference = () => import("../views/Conference/AudioConference.vue");
+const videoConference = () => import("../views/Conference/videoConference.vue");
 
-const adminView = () => import("../views/Admin/admin.vue");
-const adminUsers = () => import("../views/Admin/users.vue");
+const adminView = () => import("../views/Admin/AdminPage.vue");
+const adminUsers = () => import("../views/Admin/UsersPage.vue");
 
-const pageNotFound = () => import("../views/404.vue");
+const pageNotFound = () => import("../views/PageNotFound.vue");
 
 const routes = [
   {
@@ -185,10 +185,10 @@ router.beforeEach((to, from, next) => {
     .VITE_ROUTER_REDIRECT_WRONG_ROLE_PATH;
   const startAuthPage = import.meta.env.VITE_ROUTER_START_AUTH_PAGE_PATH;
 
-  const authStatus = store.state.auth.authStatus;
+  const { authStatus } = store.state.auth;
   const userRole = store.state.auth.user.role;
-  const isBanned = store.state.auth.user.isBanned;
-  debugger;
+  const { isBanned } = store.state.auth.user;
+
   if (to.meta.requiresAuth) {
     if (authStatus) {
       if (isBanned) {

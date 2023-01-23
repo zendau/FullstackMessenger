@@ -1,6 +1,13 @@
 <template>
-  <div v-if="alert.text" class="alert" :class="'alert__' + alert.type">
-    <p class="alert__text" v-html="alert.text" />
+  <div
+    v-if="alert.text"
+    class="alert"
+    :class="'alert__' + alert.type"
+  >
+    <p
+      class="alert__text"
+      v-html="alert.text"
+    />
   </div>
 </template>
 

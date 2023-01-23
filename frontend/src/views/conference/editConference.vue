@@ -1,16 +1,42 @@
 <template>
   <section class="user__container">
-    <h1 class="user__title">Edit conference</h1>
+    <h1 class="user__title">
+      Edit conference
+    </h1>
     <AlertNotification />
-    <form class="user__form" @submit="onSubmitForm">
-      <form-input id="title" title="Conference title" type="text" v-model="title" />
+    <form
+      class="user__form"
+      @submit="onSubmitForm"
+    >
+      <form-input
+        id="title"
+        v-model="title"
+        title="Conference title"
+        type="text"
+      />
 
-      <select name="" id="conferenceType" v-model="type">
-        <option disabled selected>Select conference type</option>
-        <option :value="false">Audio</option>
-        <option :value="true">Video</option>
+      <select
+        id="conferenceType"
+        v-model="type"
+        name=""
+      >
+        <option
+          disabled
+          selected
+        >
+          Select conference type
+        </option>
+        <option :value="false">
+          Audio
+        </option>
+        <option :value="true">
+          Video
+        </option>
       </select>
-      <input type="submit" value="Edit conference data">
+      <input
+        type="submit"
+        value="Edit conference data"
+      >
     </form>
   </section>
 </template>
@@ -66,11 +92,11 @@ export default {
 
       let message = ''
 
-      Object.keys(errors).forEach(item => message += `<span>${errors[item]}</span>`)
+      Object.keys(errors).forEach((item) => message += `<span>${errors[item]}</span>`)
       console.log(message)
       store.commit('alert/setErrorMessage', message)
     }
-    const onSubmitForm = handleSubmit(value => {
+    const onSubmitForm = handleSubmit((value) => {
       console.log(confirmedAdmin)
       if (confirmedAdmin) {
         store.dispatch('conference/editConference', {

@@ -11,7 +11,7 @@
         @click.left="openChat(user)"
         @click.right="openUserModal(user.id)"
       >
-        <i class="bi bi-person"></i>
+        <i class="bi bi-person" />
 
         <p>{{ user.login }}</p>
         <p>{{ user.lastOnline }}</p>
@@ -21,10 +21,15 @@
         v-model="createGroupUsers"
         :value="user.id"
         type="checkbox"
-      />
+      >
     </li>
   </ul>
-  <p class="empty_message" v-if="listData.length === 0">No users</p>
+  <p
+    v-if="listData.length === 0"
+    class="empty_message"
+  >
+    No users
+  </p>
 </template>
 
 <script>
@@ -32,8 +37,8 @@ import { computed, inject, ref, watch } from "vue";
 import { useStore } from "vuex";
 
 export default {
-  emits: ["openChat"],
   props: ["count"],
+  emits: ["openChat"],
   setup(_, { emit }) {
     const store = useStore();
     const listData = computed(() => store.state.contact.contacts);

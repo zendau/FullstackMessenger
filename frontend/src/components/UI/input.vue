@@ -1,6 +1,13 @@
 <template>
   <label :for="id">{{ title }}</label>
-  <input :autocomplete="autocomplete" :type="type" :id="id" :placeholder="title" :value="modelValue" @input="updateValue">
+  <input
+    :id="id"
+    :autocomplete="autocomplete"
+    :type="type"
+    :placeholder="title"
+    :value="modelValue"
+    @input="updateValue"
+  >
 </template>
 
 <script>

@@ -1,30 +1,58 @@
 <template>
-    <header class="conference__navbar">
-        <nav class="nav__menu" :class="{ 'nav__menu--active': isShowMobileNavbar }">
-            <ul v-if="authStatus">
-                <li v-for='(item, index) in navbarAuthList.items' :key="index">
-                    <router-link :to="item.link" replace>{{ item.name }}</router-link>
-                </li>
-                <admin-menu v-if='isAdmin' />
-            </ul>
-            <ul v-else>
-                <li v-for='(item, index) in navbarNoAuthList.items' :key="index">
-                    <router-link :to="item.link">{{ item.name }}</router-link>
-                </li>
-            </ul>
+  <header class="conference__navbar">
+    <nav
+      class="nav__menu"
+      :class="{ 'nav__menu--active': isShowMobileNavbar }"
+    >
+      <ul v-if="authStatus">
+        <li
+          v-for="(item, index) in navbarAuthList.items"
+          :key="index"
+        >
+          <router-link
+            :to="item.link"
+            replace
+          >
+            {{ item.name }}
+          </router-link>
+        </li>
+        <admin-menu v-if="isAdmin" />
+      </ul>
+      <ul v-else>
+        <li
+          v-for="(item, index) in navbarNoAuthList.items"
+          :key="index"
+        >
+          <router-link :to="item.link">
+            {{ item.name }}
+          </router-link>
+        </li>
+      </ul>
 
-            <navbar-conf-admin v-if="authStatus" />
-            <a v-if="authStatus" @click="logout" href="#">Exit</a>
-        </nav>
-        <button class="nav__btn" @click="isShowMobileNavbar = !isShowMobileNavbar">
-            <input type="checkbox" name="" id="" :checked="isShowMobileNavbar" />
-            <div class="hamburger-lines">
-                <span class="line line1"></span>
-                <span class="line line2"></span>
-                <span class="line line3"></span>
-            </div>
-        </button>
-    </header>
+      <navbar-conf-admin v-if="authStatus" />
+      <a
+        v-if="authStatus"
+        href="#"
+        @click="logout"
+      >Exit</a>
+    </nav>
+    <button
+      class="nav__btn"
+      @click="isShowMobileNavbar = !isShowMobileNavbar"
+    >
+      <input
+        id=""
+        type="checkbox"
+        name=""
+        :checked="isShowMobileNavbar"
+      >
+      <div class="hamburger-lines">
+        <span class="line line1" />
+        <span class="line line2" />
+        <span class="line line3" />
+      </div>
+    </button>
+  </header>
 </template>
 
 <script>

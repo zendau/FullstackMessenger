@@ -1,14 +1,22 @@
-<template >
-  <div class="drag__container" @dragover.prevent @drop.prevent>
+<template>
+  <div
+    class="drag__container"
+    @dragover.prevent
+    @drop.prevent
+  >
     <div
-      class="area"
       v-if="dragStatus"
+      class="area"
       @dragleave.prevent="dragLeave"
       @drop="dataDrop"
     >
       Опустите файл(ы), для загрузки
     </div>
-    <div v-else class="area2" @dragenter.prevent="dragStart">
+    <div
+      v-else
+      class="area2"
+      @dragenter.prevent="dragStart"
+    >
       <slot />
     </div>
   </div>
@@ -19,11 +27,10 @@ import { inject, ref } from "vue";
 //import { useStore } from 'vuex'
 export default {
   setup() {
-
     //const store = useStore()
 
     const dragStatus = ref(false);
-    const files = inject('files')
+    const files = inject("files");
 
     function dragStart(e) {
       console.log("START", e);
@@ -52,7 +59,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .area {
   width: 100%;
   height: 100%;
@@ -63,14 +70,14 @@ export default {
   color: var(--activeColor);
   background-color: var(--activeBgcColor);
 }
+
 .drag__container {
   overflow: hidden;
   height: 100%;
 }
 
 .area2 {
-    overflow: hidden;
-    height: 100%;
+  overflow: hidden;
+  height: 100%;
 }
-
 </style>

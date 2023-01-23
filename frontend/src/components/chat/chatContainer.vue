@@ -3,11 +3,22 @@
     class="chat__messages"
     :class="{ 'chat__messages--active': isShowMobileMessages }"
   >
-    <chat-header v-if="chatData?.title" @deleteMessages="deleteMessagesMany" />
-    <chat-body v-if="chatData?.title" @deleteMessages="deleteMessages" />
+    <chat-header
+      v-if="chatData?.title"
+      @deleteMessages="deleteMessagesMany"
+    />
+    <chat-body
+      v-if="chatData?.title"
+      @deleteMessages="deleteMessages"
+    />
     <template v-if="chatData?.title">
-       <div v-if="isPrivateBanned" style="color: white;">BANNED</div>
-       <chat-send v-else  />
+      <div
+        v-if="isPrivateBanned"
+        style="color: white;"
+      >
+        BANNED
+      </div>
+      <chat-send v-else />
     </template>
   </div>
 </template>
@@ -83,7 +94,7 @@ export default {
 
     watch(chatData, (newChat) => {
 
-      if (newChat?.adminId) return
+      if (newChat?.adminId || newChat?.users === undefined) return
 
       privateMemberId.value = newChat.users[0].id
 

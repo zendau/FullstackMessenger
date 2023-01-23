@@ -1,18 +1,62 @@
 <template>
-  <section section class="user__container">
-    <h1 class="user__title">Hello {{ userData.login }}</h1>
-    <p class="user__text">Email: {{ userData.email }}</p>
-    <p class="user__text">Role: {{ userData.role.value }}</p>
+  <section
+    section
+    class="user__container"
+  >
+    <h1 class="user__title">
+      Hello {{ userData.login }}
+    </h1>
+    <p class="user__text">
+      Email: {{ userData.email }}
+    </p>
+    <p class="user__text">
+      Role: {{ userData.role.value }}
+    </p>
     <hr class="user__hr">
-    <h2 class="user__title">Change user data</h2>
+    <h2 class="user__title">
+      Change user data
+    </h2>
     <AlertNotification />
-    <confirm-code v-if="isConfirmCode" @confirmCode="confirmChangeData" :email="userData.email" />
-    <form v-else class="user__form" @submit="onSubmitForm">
-      <form-input id="email" title="Email" type="email" v-model="email" />
-      <form-input id="login" title="Login" type="text" v-model="login" />
-      <form-input  autocomplete="new-password" id="password" title="Password" type="password" v-model="password" />
-      <form-input id="confirmPassword" title="Confirm password" type="password" v-model="confirmPassword" />
-      <input type="submit" value="Change data" :disabled="enableChangeData">
+    <confirm-code
+      v-if="isConfirmCode"
+      :email="userData.email"
+      @confirmCode="confirmChangeData"
+    />
+    <form
+      v-else
+      class="user__form"
+      @submit="onSubmitForm"
+    >
+      <form-input
+        id="email"
+        v-model="email"
+        title="Email"
+        type="email"
+      />
+      <form-input
+        id="login"
+        v-model="login"
+        title="Login"
+        type="text"
+      />
+      <form-input
+        id="password"
+        v-model="password"
+        autocomplete="new-password"
+        title="Password"
+        type="password"
+      />
+      <form-input
+        id="confirmPassword"
+        v-model="confirmPassword"
+        title="Confirm password"
+        type="password"
+      />
+      <input
+        type="submit"
+        value="Change data"
+        :disabled="enableChangeData"
+      >
     </form>
   </section>
 </template>
@@ -63,11 +107,11 @@ export default {
 
 
     function onInvalidSubmit({ errors }) {
-      const errorMessage = Object.keys(errors).map(error => `<span>${errors[error]}</span>`).join('')
+      const errorMessage = Object.keys(errors).map((error) => `<span>${errors[error]}</span>`).join('')
       store.commit('alert/setErrorMessage', errorMessage)
     }
 
-    const onSubmitForm = handleSubmit(value => {
+    const onSubmitForm = handleSubmit((value) => {
       console.log('value', value)
       userData.value = value
       isConfirmCode.value = true

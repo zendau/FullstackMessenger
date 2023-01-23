@@ -2,19 +2,28 @@
   <div style="color: gray">
     <h1>current</h1>
 
-    <device :deviceData="currenteDevice" :isCurrent="true" />
+    <device
+      :device-data="currenteDevice"
+      :is-current="true"
+    />
 
-    <button @click="deleteDevices()">End all other sessions</button>
+    <button @click="deleteDevices()">
+      End all other sessions
+    </button>
   </div>
   <h1>OTHER SESSIONS</h1>
   <ul v-if="othersDevices.length > 0">
-    <li style="color: white" v-for="device in othersDevices" :key="device.id">
+    <li
+      v-for="device in othersDevices"
+      :key="device.id"
+      style="color: white"
+    >
       <device
-        :deviceData="device"
-        :isCurrent="false"
+        :device-data="device"
+        :is-current="false"
         @deleteDevices="deleteDevices"
       />
-      <hr />
+      <hr>
     </li>
   </ul>
   <div>

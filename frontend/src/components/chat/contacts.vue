@@ -8,9 +8,15 @@
     </button> -->
     <searchInput @searchByPattern="searchContacts" />
     <div style="display: flex">
-      <ContactsListType :listType="listType" @changeListType="changeListType" />
+      <ContactsListType
+        :list-type="listType"
+        @changeListType="changeListType"
+      />
     </div>
-    <ContactsList v-if="listType === 'contacts'" @openChat="openChat" />
+    <ContactsList
+      v-if="listType === 'contacts'"
+      @openChat="openChat"
+    />
     <FreeUsersList v-else-if="listType === 'freeUsers'" />
     <PendingList v-else-if="listType === 'pendingRequests'" />
     <OutgoingList v-else-if="listType === 'outgoingRequests'" />
@@ -51,7 +57,7 @@ export default {
     ContactsListType,
     searchInput,
   },
-  emits: ["openChat"],
+  emits: ["open-chat"],
   setup(_, { emit }) {
     const router = useRouter();
     const store = useStore();
@@ -67,7 +73,7 @@ export default {
 
     const groupUsers = ref([]);
 
-    const login = userData.value.login;
+    const { login } = userData.value;
 
     const scrollEnd = ref(null);
     const pattern = ref(null);
@@ -169,7 +175,7 @@ export default {
     }
 
     function openChat(chatId) {
-      emit("openChat", chatId);
+      emit("open-chat", chatId);
     }
 
     return {

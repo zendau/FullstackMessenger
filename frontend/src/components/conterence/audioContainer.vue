@@ -2,11 +2,14 @@
   <div class="audio__container">
     <div class="audio__info">
       <span class="mute">
-        <i class="bi" :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'" />
+        <i
+          class="bi"
+          :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"
+        />
       </span>
       <p>{{ userName }}</p>
     </div>
-    <audio ref="media"></audio>
+    <audio ref="media" />
   </div>
 </template>
 

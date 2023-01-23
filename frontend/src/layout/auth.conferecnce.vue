@@ -2,15 +2,25 @@
 <template>
   <section class="main-container">
     <AlertNotification v-if="mediaError" />
-    <div v-else class="conference-container" :class="{ 'conference-container--audio': !roomData.type }">
+    <div
+      v-else
+      class="conference-container"
+      :class="{ 'conference-container--audio': !roomData.type }"
+    >
       <router-view />
     </div>
-    <div v-if="showChat" class="conference-chat">
-      <conference-chat :roomId="roomData.chatId" />
+    <div
+      v-if="showChat"
+      class="conference-chat"
+    >
+      <conference-chat :room-id="roomData.chatId" />
     </div>
   </section>
-  <footer-component @showChat="showChat = !showChat" :conferenceTitle="roomData.title"
-    :conferenceAdmin="roomData.adminLogin" />
+  <footer-component
+    :conference-title="roomData.title"
+    :conference-admin="roomData.adminLogin"
+    @showChat="showChat = !showChat"
+  />
 </template>
 
 <script>
@@ -67,13 +77,13 @@ export default {
     })
 
 
-    watch(() => store.state.conference.adminId, adminId => {
+    watch(() => store.state.conference.adminId, (adminId) => {
       if (adminId === store.state.auth.user.id) {
         isConferenceAdmin.value = true
       }
       const userId = store.state.auth.user.id
 
-      const chatId = store.state.conference.chatId
+      const {chatId} = store.state.conference
 
       if (chatId) {
         store.dispatch('chat/invaiteUserToChat', {
