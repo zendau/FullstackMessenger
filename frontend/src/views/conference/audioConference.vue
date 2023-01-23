@@ -1,9 +1,8 @@
 <template>
-  <audio-container-vue
+  <AudioContainer
     v-for="user in roomUsers"
     :key="user.userId"
     :ref="setItemRef"
-    :peer-id="user.peerId"
     :is-muted="user.mute"
     :user-name="user.userLogin"
   />
@@ -16,10 +15,10 @@ import { useStore } from "vuex";
 import Peer from "peerjs";
 
 import { startRecordAudio } from "@/utils/audioRecorderioRecorder";
-import audioContainerVue from "@/components/conterence/audioContainer.vue";
+import AudioContainer from "@/components/conterence/AudioContainer.vue";
 
 export default {
-  components: { audioContainerVue },
+  components: { AudioContainer },
   setup() {
     // ==== state ==== //
 

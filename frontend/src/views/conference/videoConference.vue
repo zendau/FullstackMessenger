@@ -3,7 +3,6 @@
     v-for="user in roomUsers"
     :key="user.userId"
     :ref="setItemRef"
-    :peer-id="user.peerId"
     :is-muted="user.mute"
     :user-name="user.userLogin"
     :is-pause-video="user.pause"

@@ -42,9 +42,6 @@
 </template>
 
 <script>
-import FormInput from "../../components/UI/FormInput.vue";
-import AlertNotification from "../../components/UI/AlertNotification.vue";
-
 import { useStore } from "vuex";
 
 import { useField, useForm } from "vee-validate";
@@ -52,6 +49,8 @@ import * as yup from "yup";
 import { computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
+import FormInput from "@/components/UI/FormInput.vue";
+import AlertNotification from "@/components/UI/AlertNotification.vue";
 export default {
   components: { AlertNotification, FormInput },
   setup() {

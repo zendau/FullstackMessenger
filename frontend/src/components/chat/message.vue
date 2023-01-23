@@ -70,8 +70,8 @@
 </template>
 
 <script>
-import { computed, ref, inject, reactive, } from "vue";
-import { isLink } from "./isLink";
+import { computed, ref, inject, reactive } from "vue";
+import { isLink } from "@/utils/isLinkils/isLink";
 import MessageContexMenu from "./messageContextMenu.vue";
 
 export default {
@@ -82,7 +82,7 @@ export default {
     const messageDate = ref(null);
     const messageTime = ref(null);
 
-    const checboxData = reactive({id: props.message.id, isRead: props.isRead});
+    const checboxData = reactive({ id: props.message.id, isRead: props.isRead });
 
     function getDownloadLink(fileId) {
       return `${import.meta.env.VITE_STORAGE}/download/${fileId}`;
@@ -96,9 +96,7 @@ export default {
         hour: "numeric",
         minute: "numeric",
       };
-      const tempDate = new Intl.DateTimeFormat("ru-RU", options)
-        .format(Date.parse(date))
-        .split(",");
+      const tempDate = new Intl.DateTimeFormat("ru-RU", options).format(Date.parse(date)).split(",");
 
       messageDate.value = tempDate[0];
       messageTime.value = tempDate[1];
@@ -163,7 +161,6 @@ export default {
       selectedMessages,
       isSelectMessagesMode,
       isAuthor,
-
     };
   },
 };

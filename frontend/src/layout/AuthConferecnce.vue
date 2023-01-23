@@ -28,7 +28,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 import AlertNotification from "@/components/UI/AlertNotification.vue";
-import FooterComponent from "@/components/conterence/footer.vue";
+import FooterComponent from "@/components/conference/ConferenceFooter.vue";
 import ConferenceChat from "@/components/conterence/chat/chat.vue";
 export default {
   components: { FooterComponent, ConferenceChat, AlertNotification },
