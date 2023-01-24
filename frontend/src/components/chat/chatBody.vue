@@ -46,30 +46,15 @@
 </template>
 
 <script>
-import Message from "./message.vue";
-
-//import $api from '../../axios'
-
 import { useRoute } from "vue-router";
-import {
-  inject,
-  ref,
-  computed,
-  onMounted,
-  onUpdated,
-  onUnmounted,
-  watch,
-  provide,
-  nextTick,
-  onRenderTriggered,
-  onActivated,
-} from "vue";
+import { inject, ref, computed, watch, provide } from "vue";
 import { useStore } from "vuex";
-import FileUpload from "../FileUpload.vue";
-import MessageContexMenu from "./messageContextMenu.vue";
 
-import debounce from "../../utils/debounce";
-import dateFormat from "../../utils/dateFormat";
+import Message from "./message.vue";
+import MessageContexMenu from "./messageContextMenu.vue";
+import FileUpload from "@/components/FileUpload.vue";
+import debounce from "@/utils/debounce";
+import dateFormat from "@/utils/dateFormat";
 
 export default {
   components: { Message, FileUpload, MessageContexMenu },
@@ -148,7 +133,6 @@ export default {
     const messageScrollObserver = new IntersectionObserver(
       (entries) => {
         const messagePagination = chatData.value?.loadMessagesPagination;
-        debugger;
         isFirstScroll = false;
         if (entries[0].isIntersecting && messagePagination?.hasMore) {
           console.log("load message scrool observer", {
@@ -208,7 +192,6 @@ export default {
       const isLastMessage = index === messages.value?.length - 1;
 
       if (isLastMessage) {
-        debugger;
         messageScrollObserver.observe(el.$el.nextElementSibling);
         console.log("SET", isFirstMessageUnread.value, isFirstScroll);
         if (messages.value?.length - 1 === 0 || !isFirstMessageUnread.value || !isFirstScroll) return;

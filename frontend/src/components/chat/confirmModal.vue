@@ -1,7 +1,7 @@
 <template>
   <ModalWindow
     :is-show-c-t-x="isOpenModal"
-    @closeCTX="closeCTX"
+    @close-context="closeCTX"
   >
     <div class="test">
       <h2>{{ title }}</h2>
@@ -20,19 +20,27 @@ import ModalWindow from "../UI/ModalWindow.vue";
 
 export default {
   components: { ModalWindow },
-  props: ["isOpenModal", "actionHandler", "title"],
-  emits: ["closeConfirmModal"],
+  props: {
+    actionHandler: {
+      type: Function,
+      required: true,
+    },
+    isOpenModal: {
+      type: Boolean,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: ["close-confirm-modal"],
   setup(props, { emit }) {
     function closeCTX() {
-      emit("closeConfirmModal");
-    }
-
-    function actionHandler() {
-      props.actionHandler();
+      emit("close-confirm-modal");
     }
 
     return {
-      actionHandler,
       closeCTX,
     };
   },

@@ -14,7 +14,7 @@
     <template v-if="chatData?.title">
       <div
         v-if="isPrivateBanned"
-        style="color: white;"
+        style="color: white"
       >
         BANNED
       </div>
@@ -24,13 +24,13 @@
 </template>
 
 <script>
-import chatHeader from "./chatHeader.vue";
-import chatBody from "./chatBody.vue";
-import chatSend from "./chatSend.vue";
 import { computed, inject, provide, ref, watch } from "vue";
 import { useStore } from "vuex";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
+import chatHeader from "./chatHeader/ChatHeader.vue";
+import chatBody from "./chatBody.vue";
+import chatSend from "./chatSend.vue";
 export default {
   components: { chatHeader, chatBody, chatSend },
   setup() {
@@ -38,7 +38,7 @@ export default {
     const route = useRoute();
 
     const chatId = computed(() => route.params.id);
-    const userId = computed(() => store.state.auth.user.id)
+    const userId = computed(() => store.state.auth.user.id);
 
     const isShowMobileMessages = inject("isShowMobileMessages");
     const chatSocket = inject("chatSocket");
@@ -65,7 +65,6 @@ export default {
     });
 
     function deleteMessages(messagesList) {
-      console.log("delete messages2: - ", messagesList);
       chatSocket.emit("delete_messages", {
         roomId: chatId.value,
         deletedData: messagesList,
@@ -78,38 +77,31 @@ export default {
     }
 
     chatSocket.on("updateDeletedMessages", (payload) => {
-      console.log("delete messages", payload);
       store.dispatch("chat/deletedMessages", payload);
     });
 
-    const chatData = computed(() => store.getters["chat/selectedChat"](chatId.value))
+    const chatData = computed(() => store.getters["chat/selectedChat"](chatId.value));
 
-    const privateMemberId = ref(null)
+    const privateMemberId = ref(null);
     const isPrivateBanned = computed(() => {
-      const data = store.state.contact.users[privateMemberId.value]
+      const data = store.state.contact.users[privateMemberId.value];
 
-      if (!data) return null
-      return data.isBanned || data.isBannedByContact
-    })
-
-    watch(chatData, (newChat) => {
-
-      if (newChat?.adminId || newChat?.users === undefined) return
-
-      privateMemberId.value = newChat.users[0].id
-
-      console.log('memberData', isPrivateBanned.value)
-      if (isPrivateBanned.value !== null) return
-      store.dispatch('contact/getContactData', {
-        userId: userId.value,
-        contactId: privateMemberId.value
-      })
+      if (!data) return null;
+      return data.isBanned || data.isBannedByContact;
     });
 
-    // const chatData = computed(
-    //   () =>
-    //     store.state.chat.chats[chatId.value] ?? store.state.chat.tempPrivateChat
-    // );
+    watch(chatData, (newChat) => {
+      if (newChat?.adminId || newChat?.users === undefined) return;
+
+      privateMemberId.value = newChat.users[0].id;
+
+      console.log("memberData", isPrivateBanned.value);
+      if (isPrivateBanned.value !== null) return;
+      store.dispatch("contact/getContactData", {
+        userId: userId.value,
+        contactId: privateMemberId.value,
+      });
+    });
 
     provide("chatData", chatData);
     return {
