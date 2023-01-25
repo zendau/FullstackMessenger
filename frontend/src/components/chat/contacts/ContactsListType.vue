@@ -17,8 +17,13 @@ import { computed } from "vue";
 import { useStore } from "vuex";
 
 export default {
-  props: ["listType"],
-  emits: ["changeListType"],
+  props: {
+    listType: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: ["change-list-type"],
   setup(_, { emit }) {
     const store = useStore();
 
@@ -33,7 +38,7 @@ export default {
     };
 
     function changeListType(type) {
-      emit("changeListType", type);
+      emit("change-list-type", type);
     }
 
     return {

@@ -7,12 +7,6 @@
       @click="openUserModal(user.id)"
     >
       <i class="bi bi-person" />
-      <!-- <input
-        v-if="groupType"
-        v-model="groupUsers"
-        :value="user.id"
-        type="checkbox"
-      /> -->
       <p>{{ user.login }}</p>
       <p>{{ user.lastOnline }}</p>
     </li>
@@ -32,30 +26,29 @@ import { useStore } from "vuex";
 export default {
   setup() {
     const store = useStore();
-    const listData = computed(() => store.state.contact.outgoingRequests);
+    const listData = computed(() => store.state.contact.blockedUsers);
     const userId = computed(() => store.state.auth.user.id);
 
     const modalUserId = inject("modalUserId");
     const contactsPattern = inject("contactsPattern");
-
     watch(
       contactsPattern,
       (pattern, oldPattern) => {
         if (pattern) {
-          store.dispatch("contact/getOutgoingRequests", {
+          store.dispatch("contact/getBlockedUsers", {
             userId: userId.value,
             pattern: contactsPattern.value,
           });
           return;
         } else {
           if (oldPattern) {
-            store.commit("contact/clearListData", "outgoingRequests");
+            store.commit("contact/clearListData", "blockedUsers");
           }
         }
 
         if (listData.value.length > 0) return;
 
-        store.dispatch("contact/getOutgoingRequests", { userId: userId.value });
+        store.dispatch("contact/getBlockedUsers", { userId: userId.value });
       },
       {
         immediate: true,

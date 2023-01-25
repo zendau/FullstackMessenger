@@ -21,7 +21,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 import ChatNavbar from "@/components/chat/Navbar.vue";
-import Contacts from "@/components/chat/Contacts.vue";
+import Contacts from "@/components/chat/contacts/ContactsContainer.vue";
 import ChatContainer from "@/components/chat/ChatContainer.vue";
 import Chats from "@/components/chat/Chats.vue";
 import UserModal from "@/components/chat/UserModal.vue";

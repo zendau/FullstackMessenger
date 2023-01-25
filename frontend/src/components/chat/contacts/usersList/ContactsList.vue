@@ -33,12 +33,11 @@
 </template>
 
 <script>
-import { computed, inject, ref, watch } from "vue";
+import { computed, inject, watch } from "vue";
 import { useStore } from "vuex";
 
 export default {
-  props: ["count"],
-  emits: ["openChat"],
+  emits: ["open-chat"],
   setup(_, { emit }) {
     const store = useStore();
     const listData = computed(() => store.state.contact.contacts);
@@ -87,8 +86,8 @@ export default {
     }
 
     function openChat(userData) {
-      console.log("CHAT", userData)
-      emit("openChat", userData.chat ?? 'contact');
+      console.log("CHAT", userData);
+      emit("open-chat", userData.chat ?? "contact");
       store.commit("chat/setTempPrivateChat", {
         id: userData.id,
         title: userData.login,

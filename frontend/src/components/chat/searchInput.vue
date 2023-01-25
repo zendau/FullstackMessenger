@@ -33,18 +33,18 @@
 </template>
 
 <script>
-import debounce from "../../utils/debounce";
-
 import { inject, computed } from "vue";
 import { useStore } from "vuex";
-import AlertNotification from "../UI/AlertNotification.vue";
-
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 
+import debounce from "@/utils/debounce";
+
+import AlertNotification from "@/components/UI/AlertNotification.vu";
+
 export default {
   components: { AlertNotification },
-  emits: ["searchByPattern"],
+  emits: ["search-pattern"],
   setup(_, { emit }) {
     const store = useStore();
     const userId = store.state.auth.user.id;
@@ -56,7 +56,7 @@ export default {
 
     const searchByPattern = debounce((el) => {
       const pattern = el.target.value;
-      emit("searchByPattern", pattern);
+      emit("search-pattern", pattern);
     });
 
     function startCreateGroup() {
