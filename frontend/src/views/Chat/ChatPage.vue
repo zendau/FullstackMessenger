@@ -1,12 +1,12 @@
 <template>
   <ChatNavbar />
   <section class="chat__container">
-    <Chats
+    <ChatsList
       v-if="showChats"
       @open-chat="openChatRoom"
       @set-last-chat-element="setLastChatElement"
     />
-    <Contacts
+    <ContactsContainer
       v-else
       @open-chat="openChatRoom"
     />
@@ -21,13 +21,13 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 import ChatNavbar from "@/components/chat/Navbar.vue";
-import Contacts from "@/components/chat/contacts/ContactsContainer.vue";
+import ContactsContainer from "@/components/chat/contacts/ContactsContainer.vue";
 import ChatContainer from "@/components/chat/ChatContainer.vue";
-import Chats from "@/components/chat/Chats.vue";
+import ChatsList from "@/components/chat/chatsList/ChatsList.vue";
 import UserModal from "@/components/chat/UserModal.vue";
 
 export default {
-  components: { ChatNavbar, Contacts, ChatContainer, Chats, UserModal },
+  components: { ChatNavbar, ContactsContainer, ChatContainer, ChatsList, UserModal },
   setup() {
     const route = useRoute();
     const router = useRouter();

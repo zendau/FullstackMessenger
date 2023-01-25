@@ -6,7 +6,7 @@
     <!-- <button class="btn" @click="groupType = !groupType">
       {{ groupType ? "Close" : "Create group" }}
     </button> -->
-    <SearchInput @search-pattern="searchContacts" />
+    <SearchCreateGroup @search-pattern="searchContacts" />
     <div style="display: flex">
       <ContactsListType
         :list-type="listType"
@@ -36,7 +36,7 @@ import PendingList from "@/components/chat/contacts/usersList/PendingList.vue";
 import OutgoingList from "@/components/chat/contacts/usersList/OutgoingList.vue";
 import BlockedList from "@/components/chat/contacts/usersList/BlockedList.vue";
 import ContactsListType from "@/components/chat/contacts/ContactsListType.vue";
-import SearchInput from "@/components/chat/SearchInput.vue";
+import SearchCreateGroup from "@/components/chat/SearchCreateGroup.vue";
 
 export default {
   components: {
@@ -46,7 +46,7 @@ export default {
     OutgoingList,
     BlockedList,
     ContactsListType,
-    SearchInput,
+    SearchCreateGroup,
   },
   emits: ["open-chat"],
   setup(_, { emit }) {
