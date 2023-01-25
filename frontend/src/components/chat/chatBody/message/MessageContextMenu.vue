@@ -47,12 +47,17 @@
 
 <script>
 import { inject, computed } from "vue";
-import ModalWindow from "../UI/ModalWindow.vue";
+import ModalWindow from "@/components/UI/ModalWindow.vue";
 
 export default {
   components: { ModalWindow },
-  props: ["ctxMenuData"],
-  emits: ["deleteMessages"],
+  props: {
+    ctxMenuData: {
+      type: Object,
+      required: true,
+    },
+  },
+  emits: ["delete-messages"],
   setup(props, { emit }) {
     const isSelectMessagesMode = inject("isSelectMessagesMode");
     const selectedMessages = inject("selectedMessages");
@@ -81,7 +86,7 @@ export default {
     }
     function deleteMessage() {
       console.log("test", props.ctxMenuData.message);
-      emit("deleteMessages", [{ id: props.ctxMenuData.message.id, isRead: props.ctxMenuData.isRead }]);
+      emit("delete-messages", [{ id: props.ctxMenuData.message.id, isRead: props.ctxMenuData.isRead }]);
       isShowMessageCTX.value = null;
     }
 

@@ -21,7 +21,7 @@
 
 <script>
 import { ref } from "vue";
-import { isLink } from "@/utils/isLink";
+import isLink from "@/utils/isLink";
 
 export default {
   props: {

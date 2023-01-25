@@ -1,6 +1,12 @@
 <template>
   <div
-    v-if="chatData.title"
+    v-if="isPrivateBanned"
+    style="color: white"
+  >
+    BANNED
+  </div>
+  <div
+    else
     class="chat__send"
   >
     <ChatEditMessage
@@ -41,6 +47,12 @@ import ChatFileUpload from "@/components/chat/chatSend/ChatFileUpload.vue";
 
 export default {
   components: { ChatEditMessage, ChatPressing, ChatFiles, ChatFileUpload },
+  props: {
+    isPrivateBanned: {
+      type: Boolean,
+      required: true,
+    },
+  },
   setup() {
     const store = useStore();
     const chatId = computed(() => route.params.id);

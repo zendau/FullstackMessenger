@@ -1,25 +1,12 @@
 <template>
   <div
+    v-if="chatData?.title"
     class="chat__messages"
     :class="{ 'chat__messages--active': isShowMobileMessages }"
   >
-    <ChatHeader
-      v-if="chatData?.title"
-      @delete-messages="deleteMessagesMany"
-    />
-    <chat-body
-      v-if="chatData?.title"
-      @deleteMessages="deleteMessages"
-    />
-    <template v-if="chatData?.title">
-      <div
-        v-if="isPrivateBanned"
-        style="color: white"
-      >
-        BANNED
-      </div>
-      <chat-send v-else />
-    </template>
+    <ChatHeader @delete-messages="deleteMessagesMany" />
+    <ChatBody @delete-messages="deleteMessages" />
+    <ChatSend :is-private-banned="isPrivateBanned" />
   </div>
 </template>
 
@@ -29,7 +16,7 @@ import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 
 import ChatHeader from "@/components/chat/chatHeader/ChatHeader.vue";
-import ChatBody from "@/components/chat/ChatBody.vue";
+import ChatBody from "@/components/chat/chatBody/ChatBody.vue";
 import ChatSend from "@/components/chat/chatSend/ChatSend.vue";
 export default {
   components: { ChatHeader, ChatBody, ChatSend },
