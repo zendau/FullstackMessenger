@@ -50,7 +50,7 @@ import { useRoute } from "vue-router";
 import { inject, ref, computed, watch, provide } from "vue";
 import { useStore } from "vuex";
 
-import Message from "./message.vue";
+import Message from "./Message.vue";
 import MessageContexMenu from "./messageContextMenu.vue";
 import FileUpload from "@/components/FileUpload.vue";
 import debounce from "@/utils/debounce";

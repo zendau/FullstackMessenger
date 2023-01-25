@@ -3,9 +3,9 @@
     class="chat__messages"
     :class="{ 'chat__messages--active': isShowMobileMessages }"
   >
-    <chat-header
+    <ChatHeader
       v-if="chatData?.title"
-      @deleteMessages="deleteMessagesMany"
+      @delete-messages="deleteMessagesMany"
     />
     <chat-body
       v-if="chatData?.title"
@@ -28,11 +28,11 @@ import { computed, inject, provide, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 
-import chatHeader from "./chatHeader/ChatHeader.vue";
-import chatBody from "./chatBody.vue";
-import chatSend from "./chatSend.vue";
+import ChatHeader from "@/components/chat/chatHeader/ChatHeader.vue";
+import ChatBody from "@/components/chat/ChatBody.vue";
+import ChatSend from "@/components/chat/chatSend/ChatSend.vue";
 export default {
-  components: { chatHeader, chatBody, chatSend },
+  components: { ChatHeader, ChatBody, ChatSend },
   setup() {
     const store = useStore();
     const route = useRoute();

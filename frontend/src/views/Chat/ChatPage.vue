@@ -20,11 +20,11 @@ import { computed, provide, inject, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
-import ChatNavbar from "@/components/chat/navbar.vue";
-import Contacts from "@/components/chat/contacts.vue";
-import ChatContainer from "@/components/chat/chatContainer.vue";
-import Chats from "@/components/chat/chats.vue";
-import UserModal from "@/components/chat/userModal.vue";
+import ChatNavbar from "@/components/chat/Navbar.vue";
+import Contacts from "@/components/chat/Contacts.vue";
+import ChatContainer from "@/components/chat/ChatContainer.vue";
+import Chats from "@/components/chat/Chats.vue";
+import UserModal from "@/components/chat/UserModal.vue";
 
 export default {
   components: { ChatNavbar, Contacts, ChatContainer, Chats, UserModal },
