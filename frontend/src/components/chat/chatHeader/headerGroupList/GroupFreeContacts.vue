@@ -4,25 +4,25 @@
       Load free contacts
     </button>
     <ul>
-      <li
+      <GroupListItem
         v-for="userData in freeUsersList"
         :key="userData.id"
-      >
-        <div>{{ userData.id }}</div>
-        <div>{{ userData.login }}</div>
-        <div>{{ userData.lastOnline }}</div>
-        <button @click="addChatMember(userData.id)">
-          Add
-        </button>
-      </li>
+        :user-data="userData"
+        :chat-data="chatData"
+        :user-id="userId"
+      />
     </ul>
   </div>
 </template>
 
 <script>
-import { useStore, computed, inject } from "vuex";
+import { computed, inject } from "vue";
+import { useStore } from "vuex";
+
+import GroupListItem from "@/components/chat/chatHeader/headerGroupList/GroupListItem.vue";
 
 export default {
+  components: { GroupListItem },
   props: {
     chatData: {
       type: Object,

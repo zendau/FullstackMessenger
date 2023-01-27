@@ -296,7 +296,7 @@ export class SocketGateway {
     //   });
     // }
 
-    const message = this.socketService.addMessage(payload);
+    const message = await this.socketService.addMessage(payload);
     console.log('MESSAGE', message);
     this.server.to(payload.roomId).emit('newMessage', message);
   }

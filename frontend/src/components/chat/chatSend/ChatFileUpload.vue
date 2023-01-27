@@ -15,7 +15,8 @@ export default {
   props: {
     fileUploadPercent: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
   },
 };

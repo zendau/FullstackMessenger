@@ -170,7 +170,7 @@ export class SocketService {
   //   return !!userRoom;
   // }
 
-  addMessage(messageData: IMessageData) {
+  async addMessage(messageData: IMessageData) {
     // if (this.messages.hasOwnProperty(room)) {
     //   this.messages[room].push(message);
     // } else {
@@ -223,7 +223,10 @@ export class SocketService {
     });
 
     //this.redis.rpush(`message:${room}`, JSON.stringify(message));
-    this.addUnReadStatus(messageData.roomId, message.authorId);
+
+    if (message.type === 'date' || message.type === 'created') return message;
+
+    await this.addUnReadStatus(messageData.roomId, message.authorId);
     return message;
   }
 
@@ -445,6 +448,7 @@ export class SocketService {
     // const chatData = JSON.parse(
     //   JSON.stringify(this.getRoomDataWithOnlineStatus(this.rooms[chatId])),
     // );
+    debugger;
     const chatData = (await this.getChatById(chatId)) as IChatExtended;
     chatData.chatUnread = await this.getUnreadMessagesCount(
       chatId,
@@ -557,18 +561,18 @@ export class SocketService {
 
     //const readMessages = await this.socketRedisAdapter.getValue('unread');
     //const usersUnreadCount: number[] = [];
-    const usersUnreadCount = await Promise.all(
-      roomUsers.map(async (user) => {
-        const unreadCount: number = await this.socketRedisAdapter.getValue(
-          'unread',
-          null,
-          user.id,
-          roomId,
-        );
-        if (unreadCount > 0) return unreadCount;
-        return 0;
-      }),
-    );
+    const usersUnreadCount = [];
+
+    for (const user of roomUsers) {
+      const unreadCount: number = await this.socketRedisAdapter.getValue(
+        'unread',
+        null,
+        user.id,
+        roomId,
+      );
+      if (unreadCount > 0) usersUnreadCount.push(unreadCount);
+    }
+
     // roomUsers.forEach((user) => {
     //   if (this.readMessages[user]?.hasOwnProperty(roomId)) {
     //     usersUnreadCount.push(this.readMessages[user][roomId]);
@@ -576,6 +580,7 @@ export class SocketService {
     // });
 
     //if (usersUnreadCount.length === 0) return 0;
+    if (usersUnreadCount.length === 0) return 0;
     return Math.min(...usersUnreadCount);
   }
 

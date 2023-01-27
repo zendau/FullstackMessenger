@@ -36,7 +36,7 @@ import PendingList from "@/components/chat/contacts/usersList/PendingList.vue";
 import OutgoingList from "@/components/chat/contacts/usersList/OutgoingList.vue";
 import BlockedList from "@/components/chat/contacts/usersList/BlockedList.vue";
 import ContactsListType from "@/components/chat/contacts/ContactsListType.vue";
-import SearchCreateGroup from "@/components/chat/SearchCreateGroup.vue";
+import SearchCreateGroup from "@/components/chat/SearchCreateGroup/SearchCreateGroup.vue";
 
 export default {
   components: {
@@ -69,7 +69,7 @@ export default {
 
     const createGroupUsers = inject("createGroupUsers");
 
-    store.dispatch("contact/getContactCount", userId);
+    store.dispatch("contact/getContactCount", userId.value);
 
     chatSocket.on("changeContactStatus", (data) => {
       console.log("data", data);

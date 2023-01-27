@@ -34,8 +34,8 @@ import { useStore } from "vuex";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 
-import AlertNotification from "@/components/UI/AlertNotification.vu";
-import SearchInput from "@/components/chat/SearchInput.vue";
+import AlertNotification from "@/components/UI/AlertNotification.vue";
+import SearchInput from "@/components/chat/SearchCreateGroup/SearchInput.vue";
 
 export default {
   components: { AlertNotification, SearchInput },

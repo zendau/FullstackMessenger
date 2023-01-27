@@ -22,6 +22,7 @@
           @open-ctx-menu="openCTXMenu"
         />
         <MessageSystemInfo
+          v-else
           :message-type="message.type"
           :message-text="message.text"
         />
@@ -34,7 +35,7 @@
 
 <script>
 import { useRoute } from "vue-router";
-import { inject, ref, computed, watch, provide } from "vue";
+import { inject, ref, computed, watch, provide, onUpdated } from "vue";
 import { useStore } from "vuex";
 
 import debounce from "@/utils/debounce";
@@ -62,6 +63,10 @@ export default {
     const isFirstMessageUnread = ref(null);
 
     const bodyRef = ref(null);
+
+    onUpdated(() => {
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    });
 
     const isShowMessageCTX = ref(null);
     provide("isShowMessageCTX", isShowMessageCTX);
@@ -91,21 +96,21 @@ export default {
       const resCount = chatData.value.userUnread - messageReadCount;
       chatData.value.userUnread = Math.max(0, resCount);
       messageReadCount = 0;
-    }, 1000);
+    }, 500);
 
     const readMessageObserver = new IntersectionObserver(
       (entries) => {
         console.log("observer . Message 1", entries);
-        if (entries[0].isIntersecting) {
-          console.log("observer . Message 2", entries);
-          entries.forEach((entrie) => {
+
+        entries.forEach((entrie) => {
+          if (entrie.isIntersecting) {
             messageReadCount++;
             console.log("unobserve", entrie.target, messageReadCount, readMessageObserver);
             readMessageObserver.unobserve(entrie.target);
-          });
+          }
+        });
 
-          readChatMessage();
-        }
+        readChatMessage();
       },
       {
         rootMargin: "100px",
@@ -130,6 +135,7 @@ export default {
             chatId: chatId.value,
             userId: userId.value,
           });
+          readMessageObserver.disconnect();
         }
       },
       {
@@ -146,7 +152,9 @@ export default {
     });
 
     chatSocket.on("updateReadMessages", (newData) => {
-      console.log("NEW DATA", newData);
+      // eslint-disable-next-line no-debugger
+      debugger;
+      console.log("### NEW DATA ###", newData, route, chatId, typeof chatId.value);
       store.commit("chat/updateReadMessages", {
         chatId: chatId.value,
         unreadCount: newData,
@@ -161,7 +169,7 @@ export default {
         messageScrollObserver.observe(el.$el.nextElementSibling);
         console.log("SET", isFirstMessageUnread.value, isFirstScroll);
         if (messages.value?.length - 1 === 0 || !isFirstMessageUnread.value || !isFirstScroll) return;
-        console.log("isFirstMessageUnread scrollIntoView");
+        console.log("isFirstMessageUnread scrollIntoView", isFirstMessageUnread);
 
         isFirstMessageUnread.value.scrollIntoView();
       }
@@ -169,7 +177,7 @@ export default {
       const isReadMessage = index - chatData.value.userUnread;
       // console.log("EL!!!", el, index, roomData.value, res);
       if (isReadMessage < 0) {
-        console.log("SET OBSERVER", readMessageObserver, readMessageObserver.takeRecords());
+        console.log("++isReadMessage++", chatData.value.userUnread, el.$el.nextElementSibling);
         readMessageObserver.observe(el.$el.nextElementSibling);
       }
 
@@ -217,6 +225,7 @@ export default {
       messages,
       userData,
       bodyRef,
+      chatId,
     };
   },
 };

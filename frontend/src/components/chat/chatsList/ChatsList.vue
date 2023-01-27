@@ -15,8 +15,10 @@
       <ChatListItem
         v-for="(chat, index) in chatsList"
         :key="chat[1].id"
+        :ref="(el) => setLastChatItem(el, index)"
         :index="index"
         :chat-data="chat[1]"
+        @open-chat="openChat"
       />
     </ul>
   </div>
@@ -25,7 +27,7 @@
 <script>
 import { computed, inject, ref } from "vue";
 import { useStore } from "vuex";
-import SearchCreateGroup from "@/components/chat/SearchCreateGroup.vue";
+import SearchCreateGroup from "@/components/chat/SearchCreateGroup/SearchCreateGroup.vue";
 import ChatListItem from "@/components/chat/chatsList/ChatListItem.vue";
 
 export default {
@@ -58,11 +60,13 @@ export default {
       });
     };
 
-    function setLastChatItem(el, index) {
-      if (searchPattern.value) return;
+    function setLastChatItem(component, index) {
+      const el = component?.$el;
+      if (searchPattern.value || !el) return;
 
       if (chatsData.value.size - 1 !== index) return;
 
+      console.log("EMIT set-last-chat-element");
       emit("set-last-chat-element", el);
     }
 
@@ -83,7 +87,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .chats {
   &__list {
     overflow: auto;

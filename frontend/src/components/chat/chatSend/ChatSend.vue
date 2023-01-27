@@ -50,7 +50,8 @@ export default {
   props: {
     isPrivateBanned: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
     },
   },
   setup() {
@@ -150,7 +151,8 @@ export default {
         });
         cancelMessage();
       } else {
-        if (!messageText && inseredFilesData.length === 0) return;
+        console.log("messageText", messageText);
+        if (messageText.length === 0 && inseredFilesData.length === 0) return;
 
         const messageData = {
           roomId: chatId.value,

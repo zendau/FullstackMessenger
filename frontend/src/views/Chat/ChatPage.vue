@@ -20,11 +20,11 @@ import { computed, provide, inject, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
-import ChatNavbar from "@/components/chat/Navbar.vue";
+import ChatNavbar from "@/components/navbar/ChatNavbar.vue";
 import ContactsContainer from "@/components/chat/contacts/ContactsContainer.vue";
 import ChatContainer from "@/components/chat/ChatContainer.vue";
 import ChatsList from "@/components/chat/chatsList/ChatsList.vue";
-import UserModal from "@/components/chat/UserModal.vue";
+import UserModal from "@/components/chat/modals/UserModal.vue";
 
 export default {
   components: { ChatNavbar, ContactsContainer, ChatContainer, ChatsList, UserModal },
@@ -55,6 +55,7 @@ export default {
 
     onMounted(() => {
       window.addEventListener("keyup", closeActiveChat);
+      console.log(chatId.value);
     });
 
     onUnmounted(() => {
@@ -162,7 +163,8 @@ export default {
       }
     }
 
-    function closeActiveChat() {
+    function closeActiveChat(e) {
+      if (e.key !== "Escape") return;
       router.push("/chat");
     }
 

@@ -1,5 +1,5 @@
 <template>
-  <div @click="openUserInfo(chatData.users[0].id)">
+  <div @click="openUserInfo">
     <h1 class="chat__title">
       Chat - {{ chatTitle }}
     </h1>
@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import { inject } from "vue";
+
 export default {
   props: {
     chatTitle: {
@@ -18,11 +20,22 @@ export default {
       type: String,
       required: true,
     },
+    privateUserId: {
+      type: Number,
+      required: true,
+    },
+    userId: {
+      type: Number,
+      required: true,
+    },
   },
-  emits: ["open-user-info"],
-  setup(_, { emit }) {
-    function openUserInfo(userId) {
-      emit("open-user-info", userId);
+  setup(props) {
+    const modalUserId = inject("modalUserId");
+
+    function openUserInfo() {
+      if (props.privateUserId === props.userId) return;
+
+      modalUserId.value = props.privateUserId;
     }
 
     return {

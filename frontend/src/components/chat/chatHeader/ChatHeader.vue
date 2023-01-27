@@ -12,14 +12,14 @@
         v-else
         :chat-title="chatData.title"
         :private-chat-online-status="privateChatOnlineStatus"
-        @open-user-info="openUserInfo"
+        :private-user-id="chatData.users[0].id"
+        :user-id="userId"
       />
     </div>
     <HeaderChatMenu
       v-if="chatData?.adminId"
-      :user-id="userData.id"
+      :user-id="userId"
       :admin-id="chatData?.adminId"
-      :chat-id="chatId"
       :chat-users="chatData?.users"
     />
     <!-- TODO: Проверить что это, если не надо , удалить -->
@@ -31,7 +31,7 @@
   <HeaderGroupList
     v-if="isShowUsersList"
     :chat-data="chatData"
-    :user-id="mainUserData.id"
+    :user-id="userId"
   />
 </template>
 
@@ -51,11 +51,9 @@ export default {
   setup(_, { emit }) {
     const store = useStore();
     const chatData = inject("chatData");
-    const userData = computed(() => store.state.auth.user);
+    const userId = computed(() => store.state.auth.user.id);
 
     const showUsers = ref(false);
-
-    const modalUserId = inject("modalUserId");
 
     const privateChatOnlineStatus = computed(() => {
       if (!chatData.value?.users) return chatData.value.lastOnline;
@@ -76,21 +74,14 @@ export default {
       emit("delete-messages");
     }
 
-    function openUserInfo(userId) {
-      if (userData.value.id === userId) return;
-
-      modalUserId.value = userId;
-    }
-
     return {
       chatData,
-      openUserInfo,
       showUsers,
       privateChatOnlineStatus,
       isShowUsersList,
       chatGroupMembersCount,
       deleteMessages,
-      mainUserData: userData,
+      userId,
       toggleUsersList,
     };
   },

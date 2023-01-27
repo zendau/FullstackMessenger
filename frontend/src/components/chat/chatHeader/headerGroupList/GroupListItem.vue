@@ -35,12 +35,14 @@ export default {
       required: true,
     },
   },
-  emits: ["open-user-info"],
-  setup(props, { emit }) {
+  setup(props) {
     const chatSocket = inject("chatSocket");
+    const contactId = inject("modalUserId");
 
-    function openUserInfo(userId) {
-      emit("open-user-info", userId);
+    function openUserInfo() {
+      if (props.userData.id === props.userId) return;
+
+      contactId.value = props.userData.id;
     }
 
     function deleteChatMember(memberId) {

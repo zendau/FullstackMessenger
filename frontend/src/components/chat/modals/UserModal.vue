@@ -1,7 +1,7 @@
 <template>
   <ModalWindow
     :is-show-c-t-x="contactData"
-    @closeCTX="closeCTX"
+    @close-context="closeCTX"
   >
     <div class="test">
       <a
@@ -63,10 +63,9 @@
 </template>
 
 <script>
-import ModalWindow from "../UI/ModalWindow.vue";
-import { ref, inject, computed, watch, onUpdated, onMounted } from "vue";
+import ModalWindow from "@/components/UI/ModalWindow.vue";
+import { inject, computed, onUpdated } from "vue";
 import { useStore } from "vuex";
-import $api from "../../axios";
 
 export default {
   components: { ModalWindow },

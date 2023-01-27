@@ -280,7 +280,12 @@ export const chat = {
         state.messages[messagesData.roomId] = [messagesData];
       }
 
-      if (!roomData) return;
+      if (
+        !roomData ||
+        messagesData.type === "date" ||
+        messagesData.type === "created"
+      )
+        return;
 
       if (messagesData.authorId !== userId) {
         roomData.userUnread++;
@@ -351,9 +356,10 @@ export const chat = {
       }
     },
     updateReadMessages(state, { chatId, unreadCount }) {
+      console.log("QQWW", chatId, unreadCount);
       if (state.chats.has(chatId)) {
         state.chats.get(chatId).chatUnread = unreadCount;
-      } else if (state.currentTempChatData.id === chatId) {
+      } else if (state.currentTempChatData?.id === chatId) {
         state.currentTempChatData.chatUnread = unreadCount;
       }
     },

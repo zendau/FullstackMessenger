@@ -20,8 +20,9 @@ import { onUpdated, ref } from "vue";
 export default {
   props: {
     isShowCTX: {
-      type: Boolean,
-      required: true,
+      type: [Boolean, Object],
+      required: false,
+      default: null,
     },
   },
   emits: ["close-context"],

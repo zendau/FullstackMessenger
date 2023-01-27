@@ -25,7 +25,7 @@
 import { computed, inject, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
-import FreeUsers from "@/components/conterence/freeUsers.vue";
+import FreeUsers from "@/components/chat/contacts/usersList/FreeUsersList.vue";
 
 export default {
   components: { FreeUsers },

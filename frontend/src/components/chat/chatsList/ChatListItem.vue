@@ -1,6 +1,5 @@
 <template>
   <li
-    :ref="(el) => setLastChatItem(el, index)"
     class="chats__item"
     @click="openChat(chatData.id)"
   >
@@ -37,19 +36,14 @@ export default {
       required: true,
     },
   },
-  emits: ["set-last-chat-element", "open-chat"],
+  emits: ["open-chat"],
   setup(_, { emit }) {
-    function setLastChatItem(el, index) {
-      emit("set-last-chat-element", el, index);
-    }
-
     function openChat(chatId) {
       emit("open-chat", chatId);
     }
 
     return {
       lastMessageHTMLConvert,
-      setLastChatItem,
       openChat,
     };
   },

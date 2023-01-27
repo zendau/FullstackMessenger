@@ -23,18 +23,15 @@
 
 <script>
 import { ref, inject, computed } from "vue";
+import { useRoute } from "vue-router";
 
-import ConfirmModal from "@/components/chat/ConfirmModal.vue";
+import ConfirmModal from "@/components/chat/modals/ConfirmModal.vue";
 
 export default {
   components: { ConfirmModal },
   props: {
     adminId: {
       type: Number,
-      required: true,
-    },
-    chatId: {
-      type: String,
       required: true,
     },
     userId: {
@@ -49,12 +46,15 @@ export default {
   setup(props) {
     const isShowConfirmModal = ref(false);
     const chatSocket = inject("chatSocket");
+    const route = useRoute();
+
+    const chatId = computed(() => route.params.id);
 
     const isChatAdmin = computed(() => props.adminId === props.userId);
 
     function exitFromChat() {
       chatSocket.emit("exit-chat", {
-        chatId: props.chatId,
+        chatId: chatId.value,
         userId: props.userId,
         users: props.chatUsers,
         adminId: null,
@@ -63,7 +63,7 @@ export default {
 
     function deleteChat() {
       chatSocket.emit("deleteChat", {
-        chatId: props.chatId,
+        chatId: chatId.value,
         adminId: props.userId,
       });
     }

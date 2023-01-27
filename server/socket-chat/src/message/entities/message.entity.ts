@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Media } from './media.entity';
+import { MessageTypes } from '../interfaces/MessageTypes';
 
 @Entity()
 export class Message {
@@ -22,10 +23,10 @@ export class Message {
   })
   chat: Chat;
 
-  @Column()
+  @Column({ nullable: true })
   authorLogin: string;
 
-  @Column()
+  @Column({ nullable: true })
   authorId: number;
 
   @Column({
@@ -40,4 +41,11 @@ export class Message {
 
   @Column()
   isEdited: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: MessageTypes,
+    default: MessageTypes.Text,
+  })
+  type: MessageTypes;
 }

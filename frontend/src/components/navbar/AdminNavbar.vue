@@ -5,9 +5,7 @@
       href="#"
       role="button"
       @click="isShowSunMenu = !isShowSunMenu"
-    >
-      Admin menu
-    </a>
+    > Admin menu </a>
 
     <ul
       class="admin__dropdown-menu"
@@ -27,22 +25,21 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref } from "vue";
 
 export default {
   setup() {
-    const isShowSunMenu = ref(false)
+    const isShowSunMenu = ref(false);
 
     return {
-      isShowSunMenu
-    }
-  }
-}
+      isShowSunMenu,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
 .admin {
-
   &__menu {
     position: relative;
   }
@@ -80,7 +77,6 @@ export default {
 
 @media (max-width: 960px) {
   .admin {
-
     &__menu {
       position: relative;
     }

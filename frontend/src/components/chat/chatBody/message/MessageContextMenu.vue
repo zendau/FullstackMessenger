@@ -1,7 +1,7 @@
 <template>
   <ModalWindow
     :is-show-c-t-x="isShowCTX"
-    @closeCTX="closeCTX"
+    @close-context="closeCTX"
   >
     <ul
       style="

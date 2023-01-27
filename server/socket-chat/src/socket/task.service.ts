@@ -47,6 +47,7 @@ export class TasksService {
     const inseredData = [];
 
     for (const roomMessages of messagesData) {
+      debugger;
       console.log('roomMessages', roomMessages);
       if (roomMessages[0]) return;
 
@@ -58,7 +59,7 @@ export class TasksService {
 
         const filesData = [];
 
-        message.files.forEach((file) => {
+        message.files?.forEach((file) => {
           const media = new Media();
           media.fileId = file.id;
           filesData.push(media);
@@ -72,6 +73,7 @@ export class TasksService {
         messageEntiry.isEdited = message.isEdited;
         messageEntiry.files = filesData;
         messageEntiry.text = message.text;
+        messageEntiry.type = message.type;
 
         inseredData.push(messageEntiry);
       });
