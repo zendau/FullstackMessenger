@@ -3,6 +3,7 @@
     <div
       ref="bodyRef"
       class="chat__body"
+      :class="{ 'chat__body--mini': isConferenceChat }"
     >
       <MessageContexMenu
         :ctx-menu-data="ctxMenuData"
@@ -54,11 +55,12 @@ export default {
 
     const chatSocket = inject("chatSocket");
     const selectedMessages = inject("selectedMessages");
-    const chatId = computed(() => route.params.id);
+    const chatId = inject("chatId");
     const messages = computed(() => store.state.chat.messages[chatId.value]);
     const userId = computed(() => store.state.auth.user.id);
     const scrollEnd = ref(null);
     const chatData = inject("chatData");
+    const isConferenceChat = inject("isConferenceChat", false);
 
     const isFirstMessageUnread = ref(null);
 
@@ -89,7 +91,7 @@ export default {
 
       chatSocket.emit("readMessages", {
         userId: userData.value.id,
-        chatId: chatId.value,
+        chatData: chatData.value,
         count: messageReadCount,
       });
 
@@ -98,24 +100,19 @@ export default {
       messageReadCount = 0;
     }, 500);
 
-    const readMessageObserver = new IntersectionObserver(
-      (entries) => {
-        console.log("observer . Message 1", entries);
+    const readMessageObserver = new IntersectionObserver((entries) => {
+      console.log("observer . Message 1", entries);
 
-        entries.forEach((entrie) => {
-          if (entrie.isIntersecting) {
-            messageReadCount++;
-            console.log("unobserve", entrie.target, messageReadCount, readMessageObserver);
-            readMessageObserver.unobserve(entrie.target);
-          }
-        });
+      entries.forEach((entrie) => {
+        if (entrie.isIntersecting) {
+          messageReadCount++;
+          console.log("unobserve", entrie.target, messageReadCount, readMessageObserver);
+          readMessageObserver.unobserve(entrie.target);
+        }
+      });
 
-        readChatMessage();
-      },
-      {
-        rootMargin: "100px",
-      }
-    );
+      readChatMessage();
+    });
 
     const messageScrollObserver = new IntersectionObserver(
       (entries) => {
@@ -214,6 +211,7 @@ export default {
     }
 
     return {
+      isConferenceChat,
       isReadMessage,
       isFirstUnread,
       setRefMessage,
@@ -239,6 +237,7 @@ export default {
     overflow: auto;
     background-color: var(--menuColor);
     padding: 1px 0;
+    box-sizing: border-box;
 
     height: 100%;
 
@@ -255,6 +254,10 @@ export default {
       background-color: #9b9fa4;
       box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
       border-radius: 10px;
+    }
+
+    &--mini {
+      padding: 10px;
     }
   }
 }

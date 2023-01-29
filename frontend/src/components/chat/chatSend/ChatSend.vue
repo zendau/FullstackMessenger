@@ -34,7 +34,6 @@
 <script>
 import { inject, ref, computed, watch } from "vue";
 import { useStore } from "vuex";
-import { useRoute } from "vue-router";
 
 import $api from "@/axios";
 import debounce from "@/utils/debounce";
@@ -56,13 +55,11 @@ export default {
   },
   setup() {
     const store = useStore();
-    const chatId = computed(() => route.params.id);
+    const chatId = inject("chatId");
     const chatData = inject("chatData");
 
     const editMessageData = inject("editMessageData");
     const chatSocket = inject("chatSocket");
-
-    const route = useRoute();
     const message = ref(null);
 
     const files = inject("files");
@@ -77,7 +74,7 @@ export default {
 
     const deletedFiles = [];
 
-    const isCallSendAfterCreate = inject("isCallSendAfterCreate");
+    const isCallSendAfterCreate = inject("isCallSendAfterCreate", false);
 
     function deleteFileById(fileId, file) {
       files.value = files.value.filter((_, index) => index !== fileId);
@@ -88,18 +85,17 @@ export default {
       }
     }
 
-    watch(
-      () => route.params.id,
-      () => {
-        if (route.params.id && isCallSendAfterCreate.value) {
-          isCallSendAfterCreate.value = false;
-          sendMessage();
-        }
+    watch(chatId, () => {
+      console.log("change 1");
+      if (chatId.value && isCallSendAfterCreate.value) {
+        isCallSendAfterCreate.value = false;
+        sendMessage();
       }
-    );
+    });
 
     async function sendMessage() {
-      if (!route.params.id && store.state.chat.tempPrivateChat) {
+      console.log("change 2");
+      if (!chatId.value && store.state.chat.tempPrivateChat) {
         chatSocket.emit("createChat", {
           users: [store.state.chat.tempPrivateChat.id, store.state.auth.user.id],
         });
@@ -190,7 +186,7 @@ export default {
 
     const inputStartPress = throttle(() => {
       chatSocket.emit("message_pressing", {
-        userName: userId,
+        userName: userLogin,
         roomId: chatId.value,
       });
       console.log("press_start");

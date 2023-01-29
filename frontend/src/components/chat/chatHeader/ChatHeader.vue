@@ -1,6 +1,5 @@
 <template>
   <div class="chat__header">
-    <HeaderMessages @delete-messages="deleteMessages" />
     <div class="chat__header-data">
       <HeaderGroup
         v-if="chatData?.adminId"
@@ -16,6 +15,7 @@
         :user-id="userId"
       />
     </div>
+    <HeaderMessages @delete-messages="deleteMessages" />
     <HeaderChatMenu
       v-if="chatData?.adminId"
       :user-id="userId"

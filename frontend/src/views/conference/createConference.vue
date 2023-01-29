@@ -46,7 +46,7 @@
 import { useStore } from "vuex";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
-import { computed, inject, watch } from "vue";
+import { computed } from "vue";
 
 import FormInput from "@/components/UI/FormInput.vue";
 import AlertNotification from "@/components/UI/AlertNotification.vue";
@@ -66,7 +66,7 @@ export default {
       validationSchema: schema,
     });
 
-    const socket = inject("socket");
+    // const socket = inject("socket");
 
     const { value: title } = useField("title");
     const { value: type } = useField("type", {}, { initialValue: null });
@@ -80,7 +80,7 @@ export default {
       console.log(message);
       store.commit("alert/setErrorMessage", message);
     }
-    let formData = null;
+    // let formData = null;
 
     const onSubmitForm = handleSubmit((value) => {
       store.dispatch("chat/createChat", {
@@ -88,22 +88,22 @@ export default {
         users: [],
         groupName: `[Conference] - ${value.title}`,
       });
-      formData = value;
+      // formData = value;
     }, onInvalidSubmit);
 
     // TODO: ????
-    watch(
-      () => store.state.chat.chatData.id,
-      (chatId) => {
-        store.dispatch("conference/createConference", {
-          title: formData.title,
-          adminId: adminId.value,
-          chatId,
-          type: formData.type,
-          socket,
-        });
-      }
-    );
+    // watch(
+    //   () => store.state.chat.chatData.id,
+    //   (chatId) => {
+    //     store.dispatch("conference/createConference", {
+    //       title: formData.title,
+    //       adminId: adminId.value,
+    //       chatId,
+    //       type: formData.type,
+    //       socket,
+    //     });
+    //   }
+    // );
 
     return {
       onSubmitForm,

@@ -2,7 +2,7 @@
 <template>
   <div
     class="message__container"
-    :class="isAuthor ? 'message__container--author' : ''"
+    :class="{ 'message__container--author': isAuthor, 'message__container--mini': isConferenceChat }"
     @contextmenu="openMessageCTXMenu"
   >
     <input
@@ -101,8 +101,10 @@ export default {
 
     const checboxData = reactive({ id: props.message.id, isRead: props.isRead });
 
+    const isConferenceChat = inject("isConferenceChat", false);
+
     function getDownloadLink(fileId) {
-      return `${import.meta.env.VITE_STORAGE}/download/${fileId}`;
+      return `${import.meta.env.VITE_STORAGE}/file/download/${fileId}`;
     }
 
     function convertDate(date) {
@@ -155,6 +157,7 @@ export default {
     const isAuthor = computed(() => props.message.authorId === props.userId);
 
     return {
+      isConferenceChat,
       checboxData,
       ctxPosition,
       isLink,
@@ -171,6 +174,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@mixin message__container--mini {
+  width: 100%;
+  margin: 6px 0;
+  box-sizing: border-box;
+}
 .message {
   &__container {
     width: 500px;
@@ -185,6 +193,10 @@ export default {
 
     &--author {
       align-self: flex-end;
+    }
+
+    &--mini {
+      @include message__container--mini;
     }
   }
 
@@ -223,10 +235,7 @@ export default {
 @media (max-width: 960px) {
   .message {
     &__container {
-      width: 100%;
-      margin: 6px 0;
-      box-sizing: border-box;
-
+      @include message__container--mini;
       &--author {
         align-self: center;
       }

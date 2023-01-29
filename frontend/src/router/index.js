@@ -16,7 +16,7 @@ const Conferences = () => import("@/views/Conference/ConferencesList.vue");
 const CreateConference = () =>
   import("@/views/Conference/CreateConference.vue");
 const EditConference = () => import("@/views/Conference/EditConference.vue");
-const Conference = () => import("@/layout/AuthConferecnce.vue");
+const Conference = () => import("@/layout/AuthConference.vue");
 const AudioConference = () => import("@/views/Conference/AudioConference.vue");
 const VideoConference = () => import("@/views/Conference/VideoConference.vue");
 

@@ -173,7 +173,7 @@ export class FileController {
     @Param('id', ParseIntPipe) fileId: number,
   ) {
     const fileData = await this.fileService.isFileExist(fileId);
-
+    console.log('!!!', fileId, fileData);
     if (fileData) {
       const filePath = `${process.env.STORE_PATH}/${fileData.foulder.path}/${fileData.fileTempName}`;
       response.download(filePath, fileData.fileName);

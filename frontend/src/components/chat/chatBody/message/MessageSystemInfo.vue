@@ -28,7 +28,7 @@ export default {
     },
     messageText: {
       type: String,
-      required: true,
+      default: "",
     },
   },
   setup() {

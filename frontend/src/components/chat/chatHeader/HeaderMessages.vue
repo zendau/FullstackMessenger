@@ -1,6 +1,11 @@
 <template>
-  <div v-if="selectedMessages.length">
-    <p>{{ selectedMessages.length }}</p>
+  <div
+    v-if="selectedMessages.length"
+    style="display: flex"
+  >
+    <p style="color: white">
+      {{ selectedMessages.length }}
+    </p>
     <button @click="deleteMessages">
       Deleted
     </button>

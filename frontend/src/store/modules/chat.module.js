@@ -282,8 +282,7 @@ export const chat = {
 
       if (
         !roomData ||
-        messagesData.type === "date" ||
-        messagesData.type === "created"
+        (messagesData.type !== undefined && messagesData.type !== "text")
       )
         return;
 
@@ -394,6 +393,8 @@ export const chat = {
   },
   getters: {
     selectedChat: (state) => (chatId) => {
+      // eslint-disable-next-line no-debugger
+      debugger;
       if (state.chats.has(chatId)) return state.chats.get(chatId);
       else if (state.currentTempChatData?.id === chatId)
         return state.currentTempChatData;

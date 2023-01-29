@@ -1,5 +1,6 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
-  <p>{{ editTextMessage }}</p>
+  <p v-html="editTextMessage" />
   <button @click="cancelMessageHandler">
     Cancel
   </button>

@@ -31,6 +31,7 @@ export class Message {
 
   @Column({
     type: 'text',
+    nullable: true,
   })
   text: string;
 

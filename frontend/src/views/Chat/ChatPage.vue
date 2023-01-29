@@ -10,7 +10,7 @@
       v-else
       @open-chat="openChatRoom"
     />
-    <ChatContainer />
+    <ChatContainer :chat-id="chatId" />
   </section>
   <UserModal />
 </template>
@@ -41,6 +41,7 @@ export default {
     const chatSocket = inject("chatSocket");
 
     const chatId = computed(() => route.params.id);
+    provide("chatId", chatId);
     const userId = computed(() => store.state.auth.user.id);
     const modalUserId = ref(null);
     provide("modalUserId", modalUserId);
@@ -87,48 +88,6 @@ export default {
       }
     });
 
-    chatSocket.on("newMessage", (messagesData) => {
-      store.dispatch("chat/newChatMessage", {
-        messagesData,
-        userId: userId.value,
-      });
-    });
-
-    chatSocket.on("inviteChatUser", (inseredUserData) => {
-      if (inseredUserData?.adminId === userId.value) {
-        store.commit("chat/updateFreeChatUsers", inseredUserData.userData.id);
-      }
-
-      if (inseredUserData.userData.id === userId.value) {
-        store.dispatch("chat/getChatMessages", {
-          chatId: inseredUserData.inseredData.chatId,
-          userId: userId.value,
-        });
-      } else {
-        store.commit("chat/addUserToGroup", {
-          chatId: inseredUserData.inseredData.chatId,
-          userData: inseredUserData.userData,
-        });
-      }
-    });
-
-    chatSocket.on("removeChatUser", (removeUser) => {
-      store.dispatch("chat/deleteFromChat", removeUser);
-
-      if (removeUser?.adminId === userId.value) {
-        store.commit("chat/pushFreeChatUsers", removeUser.deletedUserInfo);
-      }
-    });
-
-    chatSocket.on("deletedChatGroup", (removeData) => {
-      if (removeData.chatId === chatId.value) {
-        router.push("/chat");
-      }
-
-      store.commit("chat/deleteChatData", removeData.chatId);
-      store.commit("chat/clearChatMessages", removeData.chatId);
-    });
-
     chatSocket.on("chatSocketError", (errorData) => {
       store.commit("alert/setErrorMessage", errorData.message);
     });
@@ -169,6 +128,7 @@ export default {
     }
 
     return {
+      chatId,
       showChats,
       openChatRoom,
       setLastChatElement,

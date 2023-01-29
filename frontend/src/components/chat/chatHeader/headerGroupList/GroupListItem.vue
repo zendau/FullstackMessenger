@@ -8,12 +8,20 @@
     <div v-if="chatData.adminId === userData.id">
       ADMIN
     </div>
-    <button
-      v-else-if="chatData.adminId === userId"
-      @click="deleteChatMember(userData.id)"
-    >
-      Delete
-    </button>
+    <div v-else-if="chatData.adminId === userId">
+      <button
+        v-if="isAddedType"
+        @click="addChatMember(userData.id)"
+      >
+        Add
+      </button>
+      <button
+        v-else
+        @click="deleteChatMember(userData.id)"
+      >
+        Delete
+      </button>
+    </div>
   </li>
 </template>
 
@@ -34,6 +42,10 @@ export default {
       type: Number,
       required: true,
     },
+    isAddedType: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const chatSocket = inject("chatSocket");
@@ -50,13 +62,23 @@ export default {
         chatId: props.chatData.id,
         userId: memberId,
         users: props.chatData.users,
-        adminId: props.userData.id,
+        adminId: props.userId,
+      });
+    }
+
+    function addChatMember(memberId) {
+      chatSocket.emit("invite-user", {
+        chatId: props.chatData.id,
+        userId: memberId,
+        users: props.chatData.users,
+        adminId: props.userId,
       });
     }
 
     return {
       deleteChatMember,
       openUserInfo,
+      addChatMember,
     };
   },
 };

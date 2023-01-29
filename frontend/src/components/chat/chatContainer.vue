@@ -2,9 +2,12 @@
   <div
     v-if="chatData?.title"
     class="chat__messages"
-    :class="{ 'chat__messages--active': isShowMobileMessages }"
+    :class="{ 'chat__messages--active': isShowMobileMessages, 'chat__messages--conference': isConferenceChat }"
   >
-    <ChatHeader @delete-messages="deleteMessagesMany" />
+    <ChatHeader
+      v-if="!isConferenceChat"
+      @delete-messages="deleteMessagesMany"
+    />
     <ChatBody @delete-messages="deleteMessages" />
     <ChatSend :is-private-banned="isPrivateBanned" />
   </div>
@@ -13,7 +16,7 @@
 <script>
 import { computed, inject, provide, ref, watch } from "vue";
 import { useStore } from "vuex";
-import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 
 import ChatHeader from "@/components/chat/chatHeader/ChatHeader.vue";
 import ChatBody from "@/components/chat/chatBody/ChatBody.vue";
@@ -22,13 +25,14 @@ export default {
   components: { ChatHeader, ChatBody, ChatSend },
   setup() {
     const store = useStore();
-    const route = useRoute();
-
-    const chatId = computed(() => route.params.id);
     const userId = computed(() => store.state.auth.user.id);
 
-    const isShowMobileMessages = inject("isShowMobileMessages");
+    const router = useRouter();
+
+    const isShowMobileMessages = inject("isShowMobileMessages", false);
     const chatSocket = inject("chatSocket");
+
+    const chatId = inject("chatId");
 
     const files = ref([]);
     provide("files", files);
@@ -41,6 +45,8 @@ export default {
 
     const isSelectMessagesMode = ref(false);
     provide("isSelectMessagesMode", isSelectMessagesMode);
+
+    const isConferenceChat = inject("isConferenceChat", false);
 
     watch(selectedMessages, (value) => {
       if (value.length === 0) isSelectMessagesMode.value = false;
@@ -67,8 +73,51 @@ export default {
       store.dispatch("chat/deletedMessages", payload);
     });
 
-    const chatData = computed(() => store.getters["chat/selectedChat"](chatId.value));
+    chatSocket.on("newMessage", (messagesData) => {
+      store.dispatch("chat/newChatMessage", {
+        messagesData,
+        userId: userId.value,
+      });
+    });
 
+    chatSocket.on("inviteChatUser", (inseredUserData) => {
+      console.log("inseredUserData", inseredUserData);
+      if (inseredUserData?.adminId === userId.value) {
+        store.commit("chat/updateFreeChatUsers", inseredUserData.userData.id);
+      }
+
+      if (inseredUserData.userData.id === userId.value) {
+        store.dispatch("chat/getChatMessages", {
+          chatId: inseredUserData.inseredData.chatId,
+          userId: userId.value,
+        });
+      } else {
+        store.commit("chat/addUserToGroup", {
+          chatId: inseredUserData.inseredData.chatId,
+          userData: inseredUserData.userData,
+        });
+      }
+    });
+
+    chatSocket.on("removeChatUser", (removeUser) => {
+      store.dispatch("chat/deleteFromChat", removeUser);
+
+      if (removeUser?.adminId === userId.value) {
+        store.commit("chat/pushFreeChatUsers", removeUser.deletedUserInfo);
+      }
+    });
+
+    chatSocket.on("deletedChatGroup", (removeData) => {
+      if (removeData.chatId === chatId.value) {
+        router.push("/chat");
+      }
+
+      store.commit("chat/deleteChatData", removeData.chatId);
+      store.commit("chat/clearChatMessages", removeData.chatId);
+    });
+
+    const chatData = computed(() => store.getters["chat/selectedChat"](chatId.value));
+    provide("chatData", chatData);
     const privateMemberId = ref(null);
     const isPrivateBanned = computed(() => {
       const data = store.state.contact.users[privateMemberId.value];
@@ -90,13 +139,13 @@ export default {
       });
     });
 
-    provide("chatData", chatData);
     return {
       deleteMessages,
       deleteMessagesMany,
       isPrivateBanned,
       isShowMobileMessages,
       chatData,
+      isConferenceChat,
     };
   },
 };
@@ -109,5 +158,9 @@ export default {
   overflow: hidden;
   grid-template-rows: 58px 1fr;
   background-color: var(--menuColor);
+
+  &--conference {
+    grid-template-rows: 1fr;
+  }
 }
 </style>

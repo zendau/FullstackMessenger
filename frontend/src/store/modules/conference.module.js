@@ -96,6 +96,7 @@ export const conference = {
   },
   mutations: {
     saveConferenceData(state, conferenceData) {
+      console.log("SAVE CONFERENCE");
       state.adminLogin = conferenceData.adminLogin;
       state.chatId = conferenceData.chatId;
       state.title = conferenceData.roomTitle;

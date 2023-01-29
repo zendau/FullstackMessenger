@@ -23,7 +23,6 @@
 
 <script>
 import { ref, inject, computed } from "vue";
-import { useRoute } from "vue-router";
 
 import ConfirmModal from "@/components/chat/modals/ConfirmModal.vue";
 
@@ -46,9 +45,8 @@ export default {
   setup(props) {
     const isShowConfirmModal = ref(false);
     const chatSocket = inject("chatSocket");
-    const route = useRoute();
 
-    const chatId = computed(() => route.params.id);
+    const chatId = inject("chatId");
 
     const isChatAdmin = computed(() => props.adminId === props.userId);
 

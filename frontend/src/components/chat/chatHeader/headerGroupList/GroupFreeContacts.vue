@@ -10,13 +10,14 @@
         :user-data="userData"
         :chat-data="chatData"
         :user-id="userId"
+        :is-added-type="true"
       />
     </ul>
   </div>
 </template>
 
 <script>
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
 
 import GroupListItem from "@/components/chat/chatHeader/headerGroupList/GroupListItem.vue";
@@ -36,7 +37,6 @@ export default {
   setup(props) {
     const store = useStore();
 
-    const chatSocket = inject("chatSocket");
     const freeUsersList = computed(() => store.state.chat.freeChatUsers);
 
     function getFreeChatUsersHandler() {
@@ -47,17 +47,7 @@ export default {
       });
     }
 
-    function addChatMember(memberId) {
-      chatSocket.emit("invite-user", {
-        chatId: props.chatData.id,
-        userId: memberId,
-        users: props.chatData.users,
-        adminId: props.chatData.adminId,
-      });
-    }
-
     return {
-      addChatMember,
       freeUsersList,
       getFreeChatUsersHandler,
     };

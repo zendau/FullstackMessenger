@@ -223,10 +223,10 @@ export class SocketService {
     });
 
     //this.redis.rpush(`message:${room}`, JSON.stringify(message));
+    if (message.type === undefined || message.type === 'text') {
+      await this.addUnReadStatus(messageData.roomId, message.authorId);
+    }
 
-    if (message.type === 'date' || message.type === 'created') return message;
-
-    await this.addUnReadStatus(messageData.roomId, message.authorId);
     return message;
   }
 
@@ -450,10 +450,8 @@ export class SocketService {
     // );
     debugger;
     const chatData = (await this.getChatById(chatId)) as IChatExtended;
-    chatData.chatUnread = await this.getUnreadMessagesCount(
-      chatId,
-      chatData.users,
-    );
+    chatData.lastMessage = await this.getLastChatMessage(chatId);
+    chatData.chatUnread = await this.getUnreadMessagesCount(chatData);
 
     chatData.users = await this.setUserOnlineStatus(chatData.users);
 
@@ -469,7 +467,6 @@ export class SocketService {
 
       chatData.users = chatData.users.filter((user) => user.id != userId);
     }
-    chatData.lastMessage = await this.getLastChatMessage(chatId);
 
     const unreadCount: number = await this.socketRedisAdapter.getValue(
       'unread',
@@ -552,25 +549,27 @@ export class SocketService {
   //   return resChatData;
   // }
 
-  async getUnreadMessagesCount(roomId: string, roomUsers?: IUser[]) {
+  async getUnreadMessagesCount(chatData: IChatExtended) {
     //const roomUsers = Object.keys(this.rooms[roomId].users);
-
-    if (!roomUsers) {
-      roomUsers = await this.getChatUsers(roomId);
-    }
 
     //const readMessages = await this.socketRedisAdapter.getValue('unread');
     //const usersUnreadCount: number[] = [];
+    debugger;
     const usersUnreadCount = [];
 
-    for (const user of roomUsers) {
+    if (!chatData.lastMessage) return 0;
+
+    for (const user of chatData.users) {
       const unreadCount: number = await this.socketRedisAdapter.getValue(
         'unread',
         null,
         user.id,
-        roomId,
+        chatData.id,
       );
-      if (unreadCount > 0) usersUnreadCount.push(unreadCount);
+
+      if (chatData.lastMessage.authorId === user.id) continue;
+
+      usersUnreadCount.push(unreadCount);
     }
 
     // roomUsers.forEach((user) => {
@@ -749,11 +748,11 @@ export class SocketService {
     // }
   }
 
-  async unReadMessages({ userId, chatId, count }: IReadMessage) {
+  async unReadMessages({ userId, chatData, count }: IReadMessage) {
     // if (!this.readMessages[userId]) {
     //   this.readMessages[userId] = {};
     // }
-    this.socketRedisAdapter.decValue('unread', userId, chatId, count);
+    this.socketRedisAdapter.decValue('unread', userId, chatData.id, count);
 
     // if (!this.readMessages[userId][chatId]) {
     //   this.readMessages[userId][chatId] = 0;
@@ -761,7 +760,7 @@ export class SocketService {
     //   this.readMessages[userId][chatId] -= count;
     // }
 
-    return await this.getUnreadMessagesCount(chatId);
+    return await this.getUnreadMessagesCount(chatData);
   }
 
   async getFreeChatUsers(chatData: IUserChat) {
@@ -965,7 +964,7 @@ export class SocketService {
 
     const chatDate = new Date().toString();
 
-    this.socketRedisAdapter.setList('chatDate', chatId);
+    this.socketRedisAdapter.setList('chatDate', chatId, false);
     return chatDate;
   }
 }

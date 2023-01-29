@@ -6,7 +6,7 @@ export default interface IMessageData {
   authorId: number;
   authorLogin: string;
   text: string;
-  type?: 'date' | 'add' | 'remove' | 'exit' | 'created';
+  type?: 'date' | 'add' | 'remove' | 'exit' | 'created' | 'text';
   files?: IFile[];
   users: IUser[];
 }

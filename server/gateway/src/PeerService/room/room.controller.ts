@@ -50,7 +50,7 @@ export class RoomController {
   // @Roles(UserRole.Admin)
   // @UseGuards(RolesGuard)
   //@UseGuards(RoleGuard(UserRole.Admin))
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('getAll')
   async findAll() {
     const res = await firstValueFrom(

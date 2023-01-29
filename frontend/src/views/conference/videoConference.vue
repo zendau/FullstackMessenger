@@ -12,12 +12,12 @@
 <script>
 import { useRoute } from "vue-router";
 import { onUnmounted, ref, inject, watch, onBeforeUpdate, reactive } from "vue";
-import Peer from "peerjs";
-
-import videoContainerVue from "@/components/conterence/videoContainer.vue";
 import { useStore } from "vuex";
 
-import { startScreenRecorder, stopScreenRecorder } from "@/utils/screenRecorderenRecorder";
+import Peer from "peerjs";
+
+import videoContainerVue from "@/components/conference/VideoContainer.vue";
+import { startScreenRecorder, stopScreenRecorder } from "@/utils/screenRecorder";
 import ScreenShare from "@/utils/screenShare";
 
 export default {

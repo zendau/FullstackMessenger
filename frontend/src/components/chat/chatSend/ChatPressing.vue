@@ -1,6 +1,6 @@
 <template>
   <p v-if="userLogin">
-    {{}} is pressing ...
+    {{ userLogin }} is pressing ...
   </p>
 </template>
 

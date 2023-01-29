@@ -133,7 +133,7 @@ export class SocketGateway {
       return;
     }
 
-    this.sendMessage(socket, {
+    await this.sendMessage(socket, {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
@@ -176,7 +176,7 @@ export class SocketGateway {
       }
     }
 
-    this.sendMessage(socket, {
+    await this.sendMessage(socket, {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
@@ -205,7 +205,7 @@ export class SocketGateway {
 
     socket.leave(payload.chatId);
 
-    this.sendMessage(socket, {
+    await this.sendMessage(socket, {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
@@ -247,11 +247,11 @@ export class SocketGateway {
   async readMessagesHandler(socket: Socket, payload: IReadMessage) {
     const unreadCount = await this.socketService.unReadMessages({
       userId: payload.userId,
-      chatId: payload.chatId,
+      chatData: payload.chatData,
       count: payload.count,
     });
 
-    this.server.to(payload.chatId).emit('updateReadMessages', unreadCount);
+    this.server.to(payload.chatData.id).emit('updateReadMessages', unreadCount);
   }
 
   @SubscribeMessage('sendMessage')
@@ -363,7 +363,7 @@ export class SocketGateway {
       }
 
       if (chatData.adminId) {
-        this.sendMessage(socket, {
+        await this.sendMessage(socket, {
           roomId: chatData.id,
           authorId: null,
           authorLogin: null,

@@ -12,10 +12,12 @@
       v-if="showChat"
       class="conference-chat"
     >
-      <ConferenceChat :room-id="roomData.chatId" />
+      <ConferenceChat />
+      <!-- <ConferenceChat :room-id="roomData.chatId" /> -->
     </div>
   </section>
   <FooterComponent
+    v-if="roomData.id"
     :conference-title="roomData.title"
     :conference-admin="roomData.adminLogin"
     @show-chat="showChat = !showChat"
@@ -23,15 +25,18 @@
 </template>
 
 <script>
-import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "vue";
+import { computed, inject, onMounted, onUnmounted, provide, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 import AlertNotification from "@/components/UI/AlertNotification.vue";
 import FooterComponent from "@/components/conference/ConferenceFooter.vue";
-import ConferenceChat from "@/components/conterence/chat/chat.vue";
+import ConferenceChat from "@/components/conference/ConferenceChat.vue";
+
+// import ChatContainer from "@/components/chat/ChatContainer.vue";
+
 export default {
-  components: { FooterComponent, ConferenceChat, AlertNotification },
+  components: { FooterComponent, AlertNotification, ConferenceChat },
   setup() {
     const showChat = ref(false);
     const store = useStore();
@@ -62,7 +67,7 @@ export default {
     const isConferenceAdmin = inject("isConferenceAdmin");
     const socket = inject("socket");
 
-    onMounted(async () => {
+    onMounted(() => {
       store.dispatch("conference/getConferenceData", roomId);
       document.querySelector("#app").classList.add("conference-grid");
     });
@@ -72,27 +77,28 @@ export default {
       document.querySelector("#app").classList.remove("conference-grid");
     });
 
-    watch(
-      () => store.state.conference.adminId,
-      (adminId) => {
-        if (adminId === store.state.auth.user.id) {
-          isConferenceAdmin.value = true;
-        }
-        const userId = store.state.auth.user.id;
+    // TODO: ПОЧИНИТЬ ПОСЛЕ ЧАТА
+    // watch(
+    //   () => store.state.conference.adminId,
+    //   (adminId) => {
+    //     if (adminId === store.state.auth.user.id) {
+    //       isConferenceAdmin.value = true;
+    //     }
+    //     const userId = store.state.auth.user.id;
 
-        const { chatId } = store.state.conference;
+    //     const { chatId } = store.state.conference;
 
-        if (chatId) {
-          store.dispatch("chat/invaiteUserToChat", {
-            userId,
-            chatId,
-          });
-        }
-      },
-      {
-        immediate: true,
-      }
-    );
+    //     if (chatId) {
+    //       store.dispatch("chat/invaiteUserToChat", {
+    //         userId,
+    //         chatId,
+    //       });
+    //     }
+    //   },
+    //   {
+    //     immediate: true,
+    //   }
+    // );
 
     socket.on("redirectUsers", () => {
       store.dispatch("conference/getConferesRooms");
@@ -137,10 +143,8 @@ export default {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 10px;
-    overflow-y: auto;
+    overflow-y: scroll;
     justify-items: center;
-    margin: 3px;
-
     &--audio {
       grid-template-rows: repeat(auto-fit, 50px);
       align-content: center;
