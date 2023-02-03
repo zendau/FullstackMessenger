@@ -350,6 +350,7 @@ export const chat = {
         chat.users.forEach((user) => {
           if (user.id === userStatus.userId) {
             user.lastOnline = userStatus.status;
+            user.peerId = userStatus.peerId;
           }
         });
       }

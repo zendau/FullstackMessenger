@@ -5,43 +5,43 @@
 
 <script>
 import { provide, ref } from "vue";
-import { useStore } from "vuex";
-import { io } from "socket.io-client";
-import { useRouter } from "vue-router";
+// import { useStore } from "vuex";
+// import { io } from "socket.io-client";
+// import { useRouter } from "vue-router";
 
 import Navbar from "@/components/navbar/MainNavbar.vue";
 export default {
   components: { Navbar },
   setup() {
-    const store = useStore();
-    const router = useRouter();
+    // const store = useStore();
+    // const router = useRouter();
 
-    const socket = io(import.meta.env.VITE_SOCKET_PEER_HOST, { path: "/peerChat" });
-    provide("socket", socket);
+    // const socket = io(import.meta.env.VITE_SOCKET_PEER_HOST, { path: "/peerChat" });
+    // provide("socket", socket);
 
     const isConferenceAdmin = ref(false);
     provide("isConferenceAdmin", isConferenceAdmin);
 
-    const peerSocketConnected = ref(false);
-    provide("peerSocketConnected", peerSocketConnected);
-    socket.on("connect", () => {
-      console.log("connected gateway");
-      peerSocketConnected.value = true;
-      socket.emit("connect-user", {
-        userLogin: store.state.auth.user.login,
-        userId: socket.id,
-      });
-    });
+    // const peerSocketConnected = ref(false);
+    // provide("peerSocketConnected", peerSocketConnected);
+    // socket.on("connect", () => {
+    //   console.log("connected gateway");
+    //   peerSocketConnected.value = true;
+    //   socket.emit("connect-user", {
+    //     userLogin: store.state.auth.user.login,
+    //     userId: socket.id,
+    //   });
+    // });
 
-    socket.on("userInviteRoom", (userData) => {
-      if (userData.userId === socket.id) {
-        console.log("if");
-        const type = userData.type ? "video" : "audio";
-        console.log(`/conference/${type}/${userData.roomId}`);
-        router.push(`/conference/${type}/${userData.roomId}`);
-      }
-      console.log("invite room", userData);
-    });
+    // socket.on("userInviteRoom", (userData) => {
+    //   if (userData.userId === socket.id) {
+    //     console.log("if");
+    //     const type = userData.type ? "video" : "audio";
+    //     console.log(`/conference/${type}/${userData.roomId}`);
+    //     router.push(`/conference/${type}/${userData.roomId}`);
+    //   }
+    //   console.log("invite room", userData);
+    // });
   },
 };
 </script>

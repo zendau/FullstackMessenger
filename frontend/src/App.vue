@@ -2,15 +2,18 @@
   <component :is="authLayout">
     <router-view />
   </component>
+  <ConferenceCall />
 </template>
 
 <script>
 import { useStore } from "vuex";
-import { computed, provide } from "vue";
+import { computed, provide, ref } from "vue";
 
 import AuthMainLayout from "./layout/AuthMainLayout.vue";
 import AuthChatLayout from "./layout/AuthChatLayout.vue";
 import noAuthLayoutVue from "./layout/NoAuthLayout.vue";
+
+import ConferenceCall from "@/components/conference/ConfrenceCall.vue";
 
 import { Layout } from "./router/layouts";
 import { useRoute } from "vue-router";
@@ -18,7 +21,7 @@ import { useRoute } from "vue-router";
 import { io } from "socket.io-client";
 
 export default {
-  components: {},
+  components: { ConferenceCall },
   setup() {
     // TODO: TEMP
     document.documentElement.dataset.theme = "dark";
@@ -32,6 +35,9 @@ export default {
     layouts.set(Layout.Chat, AuthChatLayout);
     layouts.set(Layout.Main, AuthMainLayout);
     layouts.set(Layout.NoAuth, noAuthLayoutVue);
+
+    const callingData = ref(null);
+    provide("callingData", callingData);
 
     const authStatus = computed(() => store.state.auth.authStatus);
     const userId = computed(() => store.state.auth.user.id);
@@ -48,8 +54,32 @@ export default {
     const chatSocket = io("http://localhost:80", { path: "/socketChat" });
     provide("chatSocket", chatSocket);
 
-    chatSocket.on("connect", () => {
-      chatSocket.emit("connect-user", userId.value);
+    const peerSocket = io(import.meta.env.VITE_SOCKET_PEER_HOST, { path: "/peerChat" });
+    provide("peerSocket", peerSocket);
+    const peerSocketConnected = ref(false);
+    provide("peerSocketConnected", peerSocketConnected);
+
+    const peerIdPromise = new Promise((res, rej) => {
+      try {
+        peerSocket.on("connect", () => {
+          peerSocket.emit("connect-user", userId.value);
+          peerSocketConnected.value = true;
+
+          res(peerSocket.id);
+        });
+      } catch {
+        rej(null);
+      }
+    });
+
+    chatSocket.on("connect", async () => {
+      const peerId = await peerIdPromise;
+      store.state.auth.user.peerId = peerId;
+
+      chatSocket.emit("connect-user", {
+        userId: userId.value,
+        peerId,
+      });
     });
 
     return {

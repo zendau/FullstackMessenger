@@ -1,18 +1,24 @@
 <template>
-  <button
-    v-if="isChatAdmin"
-    class="chat__exit"
-    @click="isShowConfirmModal = true"
-  >
-    Delete chat
-  </button>
-  <button
-    v-else
-    class="chat__exit"
-    @click="exitFromChat"
-  >
-    Exit chat
-  </button>
+  <div style="justify-self: end">
+    <button @click="initCallConference">
+      Call
+    </button>
+    <button
+      v-if="isChatAdmin"
+      class="chat__exit"
+      @click="isShowConfirmModal = true"
+    >
+      Delete chat
+    </button>
+    <button
+      v-else
+      class="chat__exit"
+      @click="exitFromChat"
+    >
+      Exit chat
+    </button>
+  </div>
+
   <ConfirmModal
     :is-open-modal="isShowConfirmModal"
     :action-handler="deleteChat"
@@ -37,6 +43,18 @@ export default {
       type: Number,
       required: true,
     },
+    userLogin: {
+      type: String,
+      required: true,
+    },
+    peerId: {
+      type: String,
+      required: true,
+    },
+    chatTitle: {
+      type: String,
+      required: true,
+    },
     chatUsers: {
       type: Array,
       required: true,
@@ -47,8 +65,30 @@ export default {
     const chatSocket = inject("chatSocket");
 
     const chatId = inject("chatId");
+    const callingData = inject("callingData");
 
     const isChatAdmin = computed(() => props.adminId === props.userId);
+
+    function initCallConference() {
+      const onlineUsersPeers = props.chatUsers.reduce((prev, curr) => {
+        if (curr.lastOnline === "online" && curr.id !== props.adminId) {
+          prev.push(curr.peerId);
+        }
+
+        return prev;
+      }, []);
+
+      // TODO: confrence id from chat data
+      callingData.value = {
+        from: {
+          peerId: props.peerId,
+          login: props.userLogin,
+        },
+        chatTitle: props.chatTitle,
+        users: onlineUsersPeers,
+        confrenceId: "b4927900-1763-4f73-8a9c-8389fe4f8b29",
+      };
+    }
 
     function exitFromChat() {
       chatSocket.emit("exit-chat", {
@@ -67,6 +107,7 @@ export default {
     }
 
     return {
+      initCallConference,
       exitFromChat,
       deleteChat,
       isChatAdmin,

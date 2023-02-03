@@ -154,6 +154,7 @@ export default {
 <style lang="scss" scoped>
 .chat__messages {
   display: grid;
+  height: 100%;
   max-height: 100vh;
   overflow: hidden;
   grid-template-rows: 58px 1fr;

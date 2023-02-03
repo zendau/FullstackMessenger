@@ -1,17 +1,19 @@
 <template>
   <video-container-vue
     v-for="user in roomUsers"
-    :key="user.userId"
+    :key="user[1].userId"
     :ref="setItemRef"
-    :is-muted="user.mute"
-    :user-name="user.userLogin"
-    :is-pause-video="user.pause"
+    :is-muted="user[1].mute"
+    :user-name="user[1].userLogin"
+    :is-pause-video="user[1].pause"
+    :is-admin="false"
+    :peer-id="user[1].peerId"
   />
 </template>
 
 <script>
 import { useRoute } from "vue-router";
-import { onUnmounted, ref, inject, watch, onBeforeUpdate, reactive } from "vue";
+import { onUnmounted, ref, inject, watch, onBeforeUpdate, reactive, computed } from "vue";
 import { useStore } from "vuex";
 
 import Peer from "peerjs";
@@ -31,12 +33,12 @@ export default {
     const roomUsers = ref([]);
     const roomId = route.params.id;
 
-    const userId = ref(null);
+    const userData = computed(() => store.state.auth.user);
     const peerId = ref(null);
     const peerConnected = ref(false);
 
     const mediaError = inject("mediaError");
-    const socket = inject("socket", undefined);
+    const peerSocket = inject("peerSocket");
     const socketConnected = inject("peerSocketConnected", false);
     const isMuted = inject("isMuted");
     const isPauseVideo = inject("isPauseVideo");
@@ -63,11 +65,11 @@ export default {
       [socketConnected, peerConnected],
       ([socketStatus, peerStatus]) => {
         if (socketStatus && peerStatus) {
-          userId.value = socket.id;
-          socket.emit("join-room", {
-            userId: userId.value,
+          peerSocket.emit("join-room", {
+            userId: userData.value.id,
+            userLogin: userData.value.login,
             peerId: peerId.value,
-            roomId: roomId,
+            roomId,
           });
         }
       },
@@ -78,16 +80,16 @@ export default {
 
     // Change muted status
     watch(isMuted, () => {
-      socket.emit("userMute", {
-        userId: userId.value,
+      peerSocket.emit("userMute", {
+        userId: userData.value.id,
         roomId,
       });
     });
 
     // Change video pause status
     watch(isPauseVideo, () => {
-      socket.emit("videoPause", {
-        userId: userId.value,
+      peerSocket.emit("videoPause", {
+        userId: userData.value.id,
         roomId,
       });
     });
@@ -112,12 +114,12 @@ export default {
 
     // Exit from room and clear data
     onUnmounted(() => {
-      socket.emit("exit-room", {
-        userId: userId.value,
+      peerSocket.emit("exit-room", {
+        userId: userData.value.id,
         roomId: roomId,
       });
       window.removeEventListener("keypress", muteEvent);
-      socket.removeAllListeners("getUsers");
+      peerSocket.removeAllListeners("getUsers");
       mainStream?.value.getTracks().forEach((t) => {
         t.stop();
       });
@@ -134,12 +136,12 @@ export default {
 
     // ==== socket ==== //
 
-    socket.on("getUsers", (users) => {
-      console.log(users);
-      roomUsers.value = users;
+    peerSocket.on("getUsers", (users) => {
+      roomUsers.value = new Map(JSON.parse(users));
+      console.log("ROOM USERS", roomUsers.value, JSON.parse(users));
     });
 
-    socket.on("userJoinedRoom", (userId) => {
+    peerSocket.on("userJoinedRoom", (userId) => {
       connectToNewUser(userId, mainStream.value);
     });
 
@@ -157,7 +159,7 @@ export default {
     const peerConnect = new Peer({
       path: "/peer",
       host: "/",
-      port: import.meta.env.VUE_APP_PEER_PORT,
+      port: import.meta.env.VITE_PEER_PORT,
     });
 
     const getUserMedia =
@@ -187,6 +189,7 @@ export default {
 
     // answer to call
     peerConnect.on("call", async (call) => {
+      console.log("CALL FROM USER", call);
       try {
         streams.push(call);
 
@@ -202,6 +205,7 @@ export default {
         // answer to  stream
         call.on("stream", (userVideoStream) => {
           containersRefs.forEach((item) => {
+            console.log("item.peerId === call.peer", item, item.peerId, call.peer);
             if (item.peerId === call.peer) {
               item.setStream(userVideoStream);
             }
@@ -217,15 +221,18 @@ export default {
     peerConnect.on("open", (id) => {
       peerId.value = id;
       peerConnected.value = true;
+      console.log("OPEN", peerConnected.value, peerId.value);
     });
 
     // connected to new user
     function connectToNewUser(userId, stream) {
+      console.log("CALL TO USER", userId, stream);
       const call = peerConnect.call(userId, stream);
       streams.push(call);
 
       // connected user's stream
       call.on("stream", (userVideoStream) => {
+        console.log("STREAM");
         containersRefs.forEach((item) => {
           if (item.peerId === userId) {
             item.setStream(userVideoStream);

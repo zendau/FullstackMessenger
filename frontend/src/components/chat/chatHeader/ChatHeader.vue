@@ -12,15 +12,18 @@
         :chat-title="chatData.title"
         :private-chat-online-status="privateChatOnlineStatus"
         :private-user-id="chatData.users[0].id"
-        :user-id="userId"
+        :user-id="userData.id"
       />
     </div>
     <HeaderMessages @delete-messages="deleteMessages" />
     <HeaderChatMenu
       v-if="chatData?.adminId"
-      :user-id="userId"
+      :user-id="userData.id"
+      :peer-id="userData.peerId"
+      :user-login="userData.login"
       :admin-id="chatData?.adminId"
       :chat-users="chatData?.users"
+      :chat-title="chatData.title"
     />
     <!-- TODO: Проверить что это, если не надо , удалить -->
     <!-- <div
@@ -51,7 +54,7 @@ export default {
   setup(_, { emit }) {
     const store = useStore();
     const chatData = inject("chatData");
-    const userId = computed(() => store.state.auth.user.id);
+    const userData = computed(() => store.state.auth.user);
 
     const showUsers = ref(false);
 
@@ -81,7 +84,7 @@ export default {
       isShowUsersList,
       chatGroupMembersCount,
       deleteMessages,
-      userId,
+      userData,
       toggleUsersList,
     };
   },

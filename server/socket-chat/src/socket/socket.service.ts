@@ -402,12 +402,13 @@ export class SocketService {
     // return true;
   }
 
-  addUser(userId: number) {
-    this.socketRedisAdapter.setSetValue('online', null, userId, false);
+  addUser(userId: number, peerId: string) {
+    this.socketRedisAdapter.setValue('online', peerId, false, userId);
     //this.onlineUsers[user.userId] = socketId;
     return {
       userId: userId,
       status: 'online',
+      peerId,
     };
   }
 
@@ -668,14 +669,15 @@ export class SocketService {
 
   async setUserOnlineStatus(roomUsers: IUser[]) {
     for (const user of roomUsers) {
-      const onlineStatus = await this.socketRedisAdapter.isSetValueExist(
+      const onlineUserData = await this.socketRedisAdapter.getValue(
         'online',
         null,
         user.id,
       );
-      console.log('ONLINE', onlineStatus, user);
-      if (onlineStatus) {
+      console.log('ONLINE', onlineUserData, user);
+      if (onlineUserData) {
         user.lastOnline = 'online';
+        user.peerId = onlineUserData;
       }
     }
 
@@ -712,7 +714,7 @@ export class SocketService {
     const lastOnline = new Date();
 
     this.userService.updateLastOnline(userId, lastOnline);
-    this.socketRedisAdapter.deleteSetValue('online', null, userId);
+    this.socketRedisAdapter.deleteValue('online', userId);
     this.clientLeaveRoom(userId, lastOnline);
 
     return {

@@ -5,68 +5,70 @@ import IUser from './interfaces/IUser';
 export class SocketService {
   public users: IUser[] = [];
 
-  addUser(user: IUser) {
-    console.log('user', user);
-    this.users.push(user);
+  private rooms = new Map<string, Map<string, IUser>>();
+
+  getRoomUsers(roomId: string) {
+    return this.roomDTO(this.rooms.get(roomId));
   }
 
-  getRoomUsers(room) {
-    return this.users.filter((item) => item.roomId === room);
+  clientLeaveRoom(roomId: string, userId: string) {
+    const room = this.rooms.get(roomId);
+
+    if (!room) return null;
+
+    room.delete(userId);
+
+    return this.roomDTO(room);
   }
 
-  getFreeUsers() {
-    console.log(
-      '```',
-      this.users,
-      this.users.filter(
-        (user) => user.roomId === null || user.roomId === undefined,
-      ),
-    );
-    return this.users.filter(
-      (user) => user.roomId === null || user.roomId === undefined,
-    );
+  clientJoinRoom(
+    userId: string,
+    userLogin: string,
+    roomId: string,
+    peerId: string,
+  ) {
+    const isRoomExist = this.rooms.has(roomId);
+
+    const userRoomData = {
+      userLogin,
+      roomId,
+      peerId,
+      mute: false,
+      pause: false,
+    };
+
+    if (isRoomExist) {
+      this.rooms.get(roomId).set(userId, userRoomData);
+    } else {
+      const usersMap = new Map([[userId, userRoomData]]);
+
+      this.rooms.set(roomId, usersMap);
+    }
+
+    return this.roomDTO(this.rooms.get(roomId));
   }
 
-  getUserById(id) {
-    return this.users.find((user) => user.userId === id);
+  changeMuteStatus(roomId: string, userId: string) {
+    const room = this.rooms.get(roomId);
+
+    if (room.has(userId)) {
+      room.get(userId).mute = !room.get(userId).mute;
+    }
+
+    return this.roomDTO(room);
   }
 
-  clientLeaveRoom(id) {
-    this.users.forEach((user) => {
-      if (user.userId === id) user.roomId = null;
-    });
+  changeVideoPause(roomId: string, userId: string) {
+    const room = this.rooms.get(roomId);
+
+    if (room.has(userId)) {
+      room.get(userId).pause = !room.get(userId).pause;
+    }
+
+    return this.roomDTO(room);
   }
 
-  clientDisconnect(id) {
-    this.users = this.users.filter((user) => user.userId !== id);
-  }
-
-  clientJoinRoom(id, roomId, peerId) {
-    this.users.forEach((user) => {
-      if (user.userId === id) {
-        user.roomId = roomId;
-        user.peerId = peerId;
-        user.mute = false;
-        user.pause = false;
-      }
-    });
-  }
-
-  changeMuteStatus(id) {
-    this.users = this.users.map((item) => {
-      if (item.userId === id) {
-        item.mute = !item.mute;
-      }
-      return item;
-    });
-  }
-
-  changeVideoPause(id) {
-    this.users = this.users.map((item) => {
-      if (item.userId === id) {
-        item.pause = !item.pause;
-      }
-      return item;
-    });
+  roomDTO(roomData) {
+    return JSON.stringify([...roomData]);
   }
 }

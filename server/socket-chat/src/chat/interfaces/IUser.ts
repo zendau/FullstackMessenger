@@ -3,4 +3,5 @@ export default interface IUser {
   email: string;
   login: string;
   lastOnline: Date | string;
+  peerId?: string;
 }

@@ -2,7 +2,6 @@
   <div
     class="video__container"
     :class="{
-      'video__container--active': isActive,
       'video__container--admin': isAdmin,
     }"
     @click="toFullScreen"
@@ -31,10 +30,6 @@ import { onUpdated, ref, watch } from "vue";
 
 export default {
   props: {
-    isActive: {
-      type: Boolean,
-      required: true,
-    },
     isAdmin: {
       type: Boolean,
       required: true,
@@ -48,6 +43,10 @@ export default {
       required: true,
     },
     userName: {
+      type: String,
+      required: true,
+    },
+    peerId: {
       type: String,
       required: true,
     },

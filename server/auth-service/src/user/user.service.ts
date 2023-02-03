@@ -172,16 +172,16 @@ export class UserService {
     console.log('userId', query.getQuery());
     const resQuery = await query.getRawMany();
     const resList = await resQuery.reduce(async (resDataPromise, user) => {
-      const onlineStatus: number = await this.redis.sismember(
-        'online',
-        user.id.toString(),
+      const onlineUserData: string = await this.redis.get(
+        `online:${user.id.toString()}`,
       );
 
-      if (onlineStatus) {
+      if (onlineUserData) {
         user.lastOnline = 'online';
+        user.peerId = JSON.parse(onlineUserData);
       }
 
-      const resData = await resDataPromise
+      const resData = await resDataPromise;
 
       return {
         ...resData,

@@ -5,9 +5,9 @@ import IFile from './interfaces/message/IFile';
 import IEditMessage from './interfaces/message/IEditMessage';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 
-type redisValue = 'user' | '' | 'room' | 'unread' | 'userContacts';
+type redisValue = 'user' | 'online' | 'room' | 'unread' | 'userContacts';
 type redisList = 'hotChats' | 'map-message' | 'chatDate';
-type redisSet = 'userRooms' | 'userContacts' | 'online';
+type redisSet = 'userRooms' | 'userContacts';
 type redisSortedSet = '';
 type redisHash = 'message';
 type valueData = object | string | number;
@@ -184,8 +184,8 @@ export class SocketRedisAdapter {
     decValue: number,
   ) {
     const valueKey = `${key}:${id}:${valueId}`;
-    const status = await this.redis.exists(valueKey);
-    if (status) {
+    const status = await this.redis.get(valueKey);
+    if (status && parseInt(status) > 0) {
       this.redis.decrby(valueKey, decValue);
     } else {
       this.redis.set(valueKey, 0);

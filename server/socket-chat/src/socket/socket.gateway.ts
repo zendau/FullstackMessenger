@@ -56,8 +56,11 @@ export class SocketGateway {
   }
 
   @SubscribeMessage('connect-user')
-  async connectUser(socket: Socket, userId: number) {
-    const userStatus = this.socketService.addUser(userId);
+  async connectUser(
+    socket: Socket,
+    { userId, peerId }: { userId: number; peerId: string },
+  ) {
+    const userStatus = this.socketService.addUser(userId, peerId);
     const rooms = await this.socketService.getUserRoomsIds(userId);
     console.log('joined rooms', rooms);
     socket.data.userId = userId;

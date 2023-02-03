@@ -49,19 +49,19 @@ export default {
 
     const socketConnected = ref(false);
     provide("connected", socketConnected);
-    // socket.on("connect", () => {
-    //   console.log("connected gateway");
-    //   socketConnected.value = true;
-    //   userId = socket.id
-    //   socket.emit("connect-user", {
-    //     userLogin: userData.value.login,
-    //     userId
-    //   });
-    //   socket.emit("join-room", {
-    //     userId,
-    //     roomId: props.roomId,
-    //   });
-    // });
+    socket.on("connect", () => {
+      console.log("connected gateway");
+      socketConnected.value = true;
+      userId = socket.id;
+      socket.emit("connect-user", {
+        userLogin: userData.value.login,
+        userId,
+      });
+      socket.emit("join-room", {
+        userId,
+        roomId: props.roomId,
+      });
+    });
 
     console.log("join to the room");
 

@@ -65,7 +65,7 @@ export default {
     provide("isRecordScreen", isRecordScreen);
 
     const isConferenceAdmin = inject("isConferenceAdmin");
-    const socket = inject("socket");
+    const peerSocket = inject("peerSocket");
 
     onMounted(() => {
       store.dispatch("conference/getConferenceData", roomId);
@@ -100,7 +100,7 @@ export default {
     //   }
     // );
 
-    socket.on("redirectUsers", () => {
+    peerSocket.on("redirectUsers", () => {
       store.dispatch("conference/getConferesRooms");
       router.push("/conferences");
     });

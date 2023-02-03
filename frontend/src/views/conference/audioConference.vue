@@ -131,7 +131,7 @@ export default {
     const peerConnect = new Peer({
       path: "/peer",
       host: "/",
-      port: import.meta.env.VUE_APP_PEER_PORT,
+      port: import.meta.env.VITE_PEER_PORT,
     });
 
     const getUserMedia =

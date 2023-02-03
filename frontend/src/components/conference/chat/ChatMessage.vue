@@ -9,7 +9,7 @@
           v-for="file in message.files"
           :key="file.id"
           class="message__file"
-          :href="`${import.meta.env.VUE_APP_API}/file/download/${file.id}`"
+          :href="`${import.meta.env.VITE_API}/file/download/${file.id}`"
         >
           <i class="bi bi-file-earmark-arrow-down" />{{ file.fileName }}
         </a>

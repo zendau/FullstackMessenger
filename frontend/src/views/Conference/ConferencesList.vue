@@ -48,17 +48,17 @@ export default {
   setup() {
     const store = useStore();
     const rooms = computed(() => store.state.conference.rooms);
-    const socket = inject("socket");
+    const peerSocket = inject("peerSocket");
 
     onMounted(() => {
       store.dispatch("conference/getConferesRooms");
     });
 
     onUnmounted(() => {
-      socket.removeAllListeners("updateListOfRooms");
+      peerSocket.removeAllListeners("updateListOfRooms");
     });
 
-    socket.on("updateListOfRooms", (newRoom) => {
+    peerSocket.on("updateListOfRooms", (newRoom) => {
       store.commit("conference/insertNewConferenceRoom", newRoom);
     });
 
