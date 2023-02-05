@@ -150,6 +150,7 @@ export const chat = {
           inMemory: res.data.inMemory,
         });
         commit("saveChats", res.data.roomsData);
+        commit("sortByMessageDate");
 
         if (res.data.currentTempChatData) {
           commit("saveCurrentTempChat", res.data.currentTempChatData);

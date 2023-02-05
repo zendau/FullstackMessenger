@@ -88,6 +88,7 @@ export default {
       if (searchPattern.value || !el) return;
       if (chatsList.value.size - 1 !== index) return;
 
+      chatObserver.disconnect();
       chatObserver.observe(el);
     }
 

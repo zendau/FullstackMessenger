@@ -82,6 +82,7 @@ export default {
       if (index !== listData.value.length - 1) return;
       if (!el) return;
       console.log("set last contacts");
+      observer.disconnect();
       observer.observe(el);
     }
 
@@ -97,6 +98,7 @@ export default {
     }
 
     function openUserModal(userId) {
+      console.log("userId", userId);
       modalUserId.value = userId;
     }
 

@@ -54,7 +54,7 @@ export default {
 
     const listType = ref("contacts");
 
-    const isShowMobileMessages = inject("isShowMobileMessages");
+    const isShowMobileMessages = inject("isShowMobileMessages", false);
 
     const contacts = computed(() => store.state.chat.constacts);
 

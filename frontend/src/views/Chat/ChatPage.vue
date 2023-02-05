@@ -65,6 +65,7 @@ export default {
 
     const chatObserver = new IntersectionObserver(
       (entries) => {
+        console.log("OBSERVER CHAT", entries);
         if (entries[0].isIntersecting) {
           store.dispatch("chat/getChats", {
             userId: userId.value,
@@ -93,7 +94,9 @@ export default {
     });
 
     function openChatRoom(roomId, isFirstLoad = false) {
+      console.log("OOOPEN");
       if (!roomId || (chatId.value === roomId && !isFirstLoad)) return;
+      console.log("OOOPEN", "PUSH", isFirstLoad, roomId);
       router.push(`/chat/${roomId}`);
 
       if (roomId === "contact") {
@@ -115,9 +118,13 @@ export default {
 
     function setLastChatElement(el) {
       if (!el) return;
+      console.log("set observer", el);
+      chatObserver.disconnect();
       chatObserver.observe(el);
       if (chatId.value && isFirstChatsLoad) {
         isFirstChatsLoad = false;
+
+        console.log("OPEN HERE");
         openChatRoom(chatId.value, true);
       }
     }

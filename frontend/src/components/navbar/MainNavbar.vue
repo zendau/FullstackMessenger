@@ -82,6 +82,10 @@ export default {
           link: "/conferences",
         },
         {
+          name: "Users",
+          link: "/users",
+        },
+        {
           name: "Create conference",
           link: "/create",
         },

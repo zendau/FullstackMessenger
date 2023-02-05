@@ -67,6 +67,7 @@ export default {
     function setObserver(el, index) {
       if (index !== listData.value.length - 1) return;
       if (!el) return;
+      observer.disconnect();
       observer.observe(el);
     }
 

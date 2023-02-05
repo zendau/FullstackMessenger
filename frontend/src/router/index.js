@@ -12,6 +12,8 @@ const Forgot = () => import("@/views/Auth/ForgotPage.vue");
 
 const Settings = () => import("@/views/SettingsPage.vue");
 
+const UsersPage = () => import("@/views/Users/UsersPage.vue");
+
 const Conferences = () => import("@/views/Conference/ConferencesList.vue");
 const CreateConference = () =>
   import("@/views/Conference/CreateConference.vue");
@@ -30,6 +32,16 @@ const routes = [
     path: "/conferences",
     name: "conferences",
     component: Conferences,
+    meta: {
+      requiresAuth: true,
+      role: Role.USER,
+      layout: Layout.Main,
+    },
+  },
+  {
+    path: "/users",
+    name: "UsersContacts",
+    component: UsersPage,
     meta: {
       requiresAuth: true,
       role: Role.USER,

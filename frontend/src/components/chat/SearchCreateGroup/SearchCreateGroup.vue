@@ -1,10 +1,27 @@
 <template>
-  <input
-    v-if="createGroupUsers.length > 0"
-    v-model="chatTitle"
-    type="text"
-    placeholder="Enter a chat name"
-  >
+  <div v-if="createGroupUsers.length > 0">
+    <input
+      v-model="chatTitle"
+      type="text"
+      placeholder="Enter a chat name"
+    >
+    <select v-model="conferenceType">
+      <option
+        disabled
+        selected
+        :value="null"
+      >
+        Select conference type
+      </option>
+      <option :value="false">
+        Audio
+      </option>
+      <option :value="true">
+        Video
+      </option>
+    </select>
+  </div>
+
   <SearchInput @search-pattern="searchByPattern" />
   <AlertNotification />
   <font-awesome-icon
@@ -47,7 +64,7 @@ export default {
     const chatSocket = inject("chatSocket");
 
     const createGroupUsers = inject("createGroupUsers");
-    const showChats = inject("showChats");
+    const showChats = inject("showChats", false);
 
     function searchByPattern(pattern) {
       emit("search-pattern", pattern);
@@ -65,12 +82,14 @@ export default {
     const schema = yup.object({
       chatTitle: yup.string().required().min(4),
       groupUsers: yup.string().min(2),
+      conferenceType: yup.boolean().required().typeError("type must be selected"),
     });
 
     const { handleSubmit } = useForm({
       validationSchema: schema,
     });
 
+    const { value: conferenceType } = useField("conferenceType", {}, { initialValue: null });
     const { value: chatTitle } = useField("chatTitle");
 
     function onInvalidSubmit({ errors }) {
@@ -81,14 +100,15 @@ export default {
       console.log("ERRORS", errors);
     }
 
-    const onCreateChat = handleSubmit((data) => {
+    const onCreateChat = handleSubmit((formData) => {
       console.log("CREATE GROUP");
       if (isValidGroupUsersLength.value.data) return;
 
       chatSocket.emit("createChat", {
         adminId: userId,
         users: createGroupUsers.value,
-        groupName: data.chatTitle,
+        groupName: formData.chatTitle,
+        conferenceType: formData.conferenceType,
       });
       cancelCreateGroup();
     }, onInvalidSubmit);
@@ -103,6 +123,7 @@ export default {
       createGroupUsers,
       startCreateGroup,
       cancelCreateGroup,
+      conferenceType,
     };
   },
 };

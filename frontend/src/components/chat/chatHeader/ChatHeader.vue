@@ -8,7 +8,7 @@
         @toggle-list="toggleUsersList"
       />
       <HeaderPrivate
-        v-else
+        v-else-if="chatData?.users?.length > 0"
         :chat-title="chatData.title"
         :private-chat-online-status="privateChatOnlineStatus"
         :private-user-id="chatData.users[0].id"
