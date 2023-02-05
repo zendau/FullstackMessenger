@@ -23,6 +23,8 @@ import IReadMessage from './interfaces/message/IReadMessage';
 import IMessageCreated from './interfaces/message/IMessageCreated';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 import IChatCreate from 'src/chat/interfaces/IChatCreate';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 // interface userData {
 //   login: string;
@@ -39,6 +41,7 @@ export class SocketService {
     private messageService: MessageService,
     private userService: UserService,
     private socketRedisAdapter: SocketRedisAdapter,
+    @Inject('PEER_SERVICE') private peerServiceClient: ClientProxy,
   ) {
     // this.getUsers();
     //this.socketRedisAdapter.setValues('user', this.users);
@@ -920,8 +923,34 @@ export class SocketService {
     createdChatData.lastMessage = null;
     createdChatData.userUnread = 0;
 
+    const conferenceCreated = await firstValueFrom(
+      this.peerServiceClient.send('room/add', {
+        id: res.id,
+        withVideo: chatData.conferenceType,
+      }),
+    );
+
+    if ('status' in conferenceCreated) return conferenceCreated;
+
+    createdChatData.conferenceWithVideo = conferenceCreated.withVideo;
+
     const groupUsers = await this.chatService.getUsersListData(chatData.users);
     createdChatData.users = await this.setUserOnlineStatus(groupUsers);
+
+    createdChatData.users.forEach((user) => {
+      this.socketRedisAdapter.setSetValue(
+        'userRooms',
+        user.id,
+        createdChatData.id,
+      );
+    });
+
+    this.socketRedisAdapter.setValue(
+      'room',
+      createdChatData,
+      true,
+      createdChatData.id,
+    );
 
     return createdChatData;
   }

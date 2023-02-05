@@ -56,6 +56,7 @@ export class ContactController {
     const resData = await firstValueFrom(
       this.chatServiceClient.send('chat/contacts', listData),
     );
+    console.log('resData', resData);
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
     }

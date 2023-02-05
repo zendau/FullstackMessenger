@@ -34,6 +34,26 @@ import { ChatService } from 'src/chat/chat.service';
           },
         }),
       },
+      {
+        name: 'PEER_SERVICE',
+        inject: [ConfigService],
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.RMQ,
+          options: {
+            urls: [
+              `amqp://${configService.get(
+                'RABBITMQ_LOGIN',
+              )}:${configService.get('RABBITMQ_PASSWORD')}@${configService.get(
+                'RABBITMQ_HOST',
+              )}:${configService.get('RABBITMQ_PORT')}`,
+            ],
+            queue: 'peer_queue',
+            queueOptions: {
+              durable: false,
+            },
+          },
+        }),
+      },
     ]),
   ],
   providers: [SocketGateway, SocketService, SocketRedisAdapter],

@@ -82,7 +82,7 @@ export default {
     const schema = yup.object({
       chatTitle: yup.string().required().min(4),
       groupUsers: yup.string().min(2),
-      conferenceType: yup.boolean().required().typeError("type must be selected"),
+      conferenceType: yup.boolean().required().typeError("Confrence type must be selected"),
     });
 
     const { handleSubmit } = useForm({

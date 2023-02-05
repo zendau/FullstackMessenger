@@ -19,7 +19,7 @@
           <span v-else>Private</span>
         </p>
         <small
-          v-if="room[1].conferenceWithVideo === 1"
+          v-if="room[1].conferenceWithVideo"
           class="room__type"
         ><i class="bi bi-camera-video-fill" /> Video conference</small>
         <small
@@ -28,7 +28,7 @@
         ><i class="bi bi-mic-fill" /> Audio conference</small>
         <router-link
           class="room__link"
-          :to="`/conference/${room[1].conferenceWithVideo === 1 ? 'video' : 'audio'}/${room[1].id}`"
+          :to="`/conference/${room[1].conferenceWithVideo ? 'video' : 'audio'}/${room[1].id}`"
         >
           Enter
         </router-link>

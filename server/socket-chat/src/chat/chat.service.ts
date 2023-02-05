@@ -301,6 +301,8 @@ export class ChatService {
     debugger;
     const contactList = await this.userService.getContactList(listData);
 
+    if (Object.keys(contactList.resList).length === 0) return contactList;
+
     const contactListId = Object.keys(contactList.resList).map((contactId) =>
       parseInt(contactId),
     );

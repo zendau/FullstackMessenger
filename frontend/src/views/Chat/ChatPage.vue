@@ -94,15 +94,18 @@ export default {
     });
 
     function openChatRoom(roomId, isFirstLoad = false) {
-      console.log("OOOPEN");
-      if (!roomId || (chatId.value === roomId && !isFirstLoad)) return;
-      console.log("OOOPEN", "PUSH", isFirstLoad, roomId);
-      router.push(`/chat/${roomId}`);
+      const { isPushed } = route.query;
 
-      if (roomId === "contact") {
-        router.push(`/chat`);
-        return;
+      if (!roomId || (chatId.value === roomId && !isFirstLoad)) return;
+      if (!isPushed) {
+        router.push(`/chat/${roomId}`);
+
+        if (roomId === "contact") {
+          router.push(`/chat`);
+          return;
+        }
       }
+      route.query.isPushed = false;
 
       const chatData = store.state.chat.chats.get(roomId);
       const paginationPage = chatData?.loadMessagesPagination?.page;

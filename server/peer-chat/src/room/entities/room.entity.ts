@@ -6,8 +6,5 @@ export class Room {
   id: string;
 
   @Column()
-  title: string;
-
-  @Column()
   withVideo: boolean;
 }

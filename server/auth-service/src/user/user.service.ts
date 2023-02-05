@@ -157,6 +157,7 @@ export class UserService {
       .where(`id ${isNot ? 'NOT' : ''} IN (${subQuery.getQuery()})`)
       .andWhere('id != :userId', { userId });
 
+
     if (!Number.isNaN(start)) {
       console.log('setOffset');
       query = query.offset(start).limit(parseInt(limit));
@@ -170,7 +171,11 @@ export class UserService {
     }
 
     console.log('userId', query.getQuery());
+    debugger;
     const resQuery = await query.getRawMany();
+
+    console.log('resQuery', resQuery)
+
     const resList = await resQuery.reduce(async (resDataPromise, user) => {
       const onlineUserData: string = await this.redis.get(
         `online:${user.id.toString()}`,

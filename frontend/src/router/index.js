@@ -15,9 +15,6 @@ const Settings = () => import("@/views/SettingsPage.vue");
 const UsersPage = () => import("@/views/Users/UsersPage.vue");
 
 const Conferences = () => import("@/views/Conference/ConferencesList.vue");
-const CreateConference = () =>
-  import("@/views/Conference/CreateConference.vue");
-const EditConference = () => import("@/views/Conference/EditConference.vue");
 const Conference = () => import("@/layout/AuthConference.vue");
 const AudioConference = () => import("@/views/Conference/AudioConference.vue");
 const VideoConference = () => import("@/views/Conference/VideoConference.vue");
@@ -140,26 +137,6 @@ const routes = [
     path: "/settings",
     component: Settings,
     name: "settings",
-    meta: {
-      requiresAuth: true,
-      role: Role.USER,
-      layout: Layout.Main,
-    },
-  },
-  {
-    path: "/create",
-    component: CreateConference,
-    name: "createConference",
-    meta: {
-      requiresAuth: true,
-      role: Role.USER,
-      layout: Layout.Main,
-    },
-  },
-  {
-    path: "/edit/:id",
-    component: EditConference,
-    name: "editConference",
     meta: {
       requiresAuth: true,
       role: Role.USER,

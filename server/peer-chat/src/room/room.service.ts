@@ -23,7 +23,7 @@ export class RoomService {
       .getRawOne();
 
     console.log('chatData', chatData);
-    return chatData?.withVideo ?? null;
+    return chatData?.withVideo === 1 ?? null;
   }
 
   async getByList(idList: string[]) {
