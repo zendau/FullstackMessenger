@@ -1,66 +1,48 @@
-import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm/repository/Repository';
-import { editRoomDTO } from './dto/editRoom.dto';
-import { roomDTO } from './dto/room.dto';
 import { Room } from './entities/room.entity';
-import { v4 as uuidv4 } from 'uuid';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class RoomService {
   constructor(
     @InjectRepository(Room)
     private roomRepository: Repository<Room>,
-    @Inject('AUTH_SERVICE') private authServiceClient: ClientProxy,
   ) {}
 
-  async create(createRoomDTO: roomDTO) {
-    const resInsered = await this.roomRepository.save(createRoomDTO);
+  async create(createRoomData: Room) {
+    const resInsered = await this.roomRepository.save(createRoomData);
     return resInsered;
   }
 
-  async getAll() {
-    return await this.roomRepository.createQueryBuilder().getMany();
-  }
-
-  async getById(roomId: string) {
+  async getByChatId(chatId: string) {
     const chatData = await this.roomRepository
       .createQueryBuilder()
-      .where('id = :roomId', { roomId })
-      .getOne();
+      .select('withVideo')
+      .where('id = :chatId', { chatId })
+      .getRawOne();
 
-    if (chatData === undefined)
-      return {
-        status: false,
-        message: `roomId ${roomId} is not valid`,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-
-    const userData = await firstValueFrom(
-      this.authServiceClient.send('user/id', chatData.adminId),
-    );
-    if (userData.status === false) {
-      return {
-        status: false,
-        message: `adminId ${chatData.adminId} is not found`,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    }
-
-    return Object.assign(chatData, { adminLogin: userData.login });
+    console.log('chatData', chatData);
+    return chatData?.withVideo ?? null;
   }
 
-  async update(updateRoomDTO: editRoomDTO) {
+  async getByList(idList: string[]) {
+    const chatData = await this.roomRepository
+      .createQueryBuilder()
+      .where('id IN (:idList)', { idList })
+      .getMany();
+
+    return chatData;
+  }
+
+  async update(updateRoomData: Room) {
     const res = await this.roomRepository
       .createQueryBuilder()
       .update()
       .set({
-        roomTitle: updateRoomDTO.roomTitle,
-        roomWithVideo: updateRoomDTO.roomWithVideo,
+        withVideo: updateRoomData.withVideo,
       })
-      .where(`id = :id`, { id: updateRoomDTO.id })
+      .where('id = :id', { id: updateRoomData.id })
       .execute();
 
     return !!res.affected;

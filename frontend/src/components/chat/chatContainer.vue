@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { computed, inject, provide, ref, watch } from "vue";
+import { computed, inject, provide, ref, watch, onUnmounted, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 
@@ -52,6 +52,19 @@ export default {
       if (value.length === 0) isSelectMessagesMode.value = false;
     });
 
+    onMounted(() => {
+      chatSocket.on("newMessage", (messagesData) => {
+        store.dispatch("chat/newChatMessage", {
+          messagesData,
+          userId: userId.value,
+        });
+      });
+    });
+
+    onUnmounted(() => {
+      chatSocket.removeAllListeners("newMessage");
+    });
+
     chatSocket.on("updateUserOnline", (userStatus) => {
       store.commit("chat/updateUserOnline", userStatus);
       store.commit("contact/updateUserOnline", userStatus);
@@ -71,13 +84,6 @@ export default {
 
     chatSocket.on("updateDeletedMessages", (payload) => {
       store.dispatch("chat/deletedMessages", payload);
-    });
-
-    chatSocket.on("newMessage", (messagesData) => {
-      store.dispatch("chat/newChatMessage", {
-        messagesData,
-        userId: userId.value,
-      });
     });
 
     chatSocket.on("inviteChatUser", (inseredUserData) => {

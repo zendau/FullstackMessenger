@@ -1,10 +1,10 @@
 <template>
   <section class="main-container">
-    <AlertNotification v-if="mediaError" />
+    <AlertNotification />
     <div
-      v-else
+      v-if="roomData"
       class="conference-container"
-      :class="{ 'conference-container--audio': !roomData.type }"
+      :class="{ 'conference-container--audio': roomData.conferenceWithVideo === 0 }"
     >
       <router-view />
     </div>
@@ -17,16 +17,16 @@
     </div>
   </section>
   <FooterComponent
-    v-if="roomData.id"
+    v-if="roomData"
     :conference-title="roomData.title"
-    :conference-admin="roomData.adminLogin"
+    :conference-type="roomData.conferenceWithVideo === 1"
     @show-chat="showChat = !showChat"
   />
 </template>
 
 <script>
 import { computed, inject, onMounted, onUnmounted, provide, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
 import AlertNotification from "@/components/UI/AlertNotification.vue";
@@ -40,14 +40,19 @@ export default {
   setup() {
     const showChat = ref(false);
     const store = useStore();
-
-    const mediaError = ref(false);
-    provide("mediaError", mediaError);
-    const roomData = computed(() => store.state.conference);
-
     const route = useRoute();
-    const router = useRouter();
+
     const roomId = route.params.id;
+    const roomData = computed(() => store.getters["chat/selectedChat"](roomId));
+    const userId = store.state.auth.user.id;
+
+    if (!roomData.value) {
+      console.log("GET NEW");
+      store.dispatch("chat/getChatById", {
+        userId,
+        chatId: roomId,
+      });
+    }
 
     const isMuted = ref(false);
     provide("isMuted", isMuted);
@@ -65,10 +70,10 @@ export default {
     provide("isRecordScreen", isRecordScreen);
 
     const isConferenceAdmin = inject("isConferenceAdmin");
-    const peerSocket = inject("peerSocket");
+    // const peerSocket = inject("peerSocket");
 
     onMounted(() => {
-      store.dispatch("conference/getConferenceData", roomId);
+      // store.dispatch("conference/getConferenceData", roomId);
       document.querySelector("#app").classList.add("conference-grid");
     });
 
@@ -100,16 +105,15 @@ export default {
     //   }
     // );
 
-    peerSocket.on("redirectUsers", () => {
-      store.dispatch("conference/getConferesRooms");
-      router.push("/conferences");
-    });
+    // peerSocket.on("redirectUsers", () => {
+    //   store.dispatch("conference/getConferesRooms");
+    //   router.push("/conferences");
+    // });
 
     return {
       showChat,
       roomData,
       isMuted,
-      mediaError,
     };
   },
 };
@@ -218,6 +222,11 @@ export default {
 }
 
 @media (max-width: 1140px) {
+  .conference {
+    &-container {
+      overflow-x: hidden;
+    }
+  }
 }
 
 @media (max-width: 960px) {

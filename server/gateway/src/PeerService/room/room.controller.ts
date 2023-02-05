@@ -13,13 +13,19 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { RoomDTO } from './dto/room.dto';
 import { EditRoomDTO } from './dto/editRoom.dto';
 import { JwtAuthGuard } from '../../AuthService/guards/jwt-auth.guard';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserRole } from 'src/AuthService/enum/userRole.enum';
 
 @ApiBearerAuth()
@@ -27,7 +33,10 @@ import { UserRole } from 'src/AuthService/enum/userRole.enum';
 //@UseGuards(JwtAuthGuard)
 @Controller('room')
 export class RoomController {
-  constructor(@Inject('PEER_SERVICE') private peerServiceClient: ClientProxy) {}
+  constructor(
+    @Inject('PEER_SERVICE') private peerServiceClient: ClientProxy,
+    @Inject('CHAT_SERVICE') private chatServiceClient: ClientProxy,
+  ) {}
 
   @ApiOperation({ summary: 'Register new conference room' })
   @ApiResponse({ status: 200, type: EditRoomDTO })
@@ -51,15 +60,26 @@ export class RoomController {
   // @UseGuards(RolesGuard)
   //@UseGuards(RoleGuard(UserRole.Admin))
   // @UseGuards(JwtAuthGuard)
-  @Get('getAll')
-  async findAll() {
-    const res = await firstValueFrom(
-      this.peerServiceClient.send('room/getAll', ''),
+  @Get('list')
+  async findAll(@Query() requestData: { userId: number }) {
+    const chatIdList = await firstValueFrom(
+      this.chatServiceClient.send('chat/idList', 5),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
+
+    console.log('chatList', chatIdList);
+
+    if (chatIdList.status === false) {
+      throw new HttpException(chatIdList.message, chatIdList.httpCode);
     }
-    return res;
+
+    const roomsList = await firstValueFrom(
+      this.peerServiceClient.send('room/list', chatIdList),
+    );
+
+    if (roomsList.status === false) {
+      throw new HttpException(roomsList.message, roomsList.httpCode);
+    }
+    return roomsList;
   }
 
   @ApiOperation({ summary: 'Get conference room by roomId' })

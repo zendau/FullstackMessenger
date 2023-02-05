@@ -34,7 +34,7 @@
   <HeaderGroupList
     v-if="isShowUsersList"
     :chat-data="chatData"
-    :user-id="userId"
+    :user-id="userData.id"
   />
 </template>
 

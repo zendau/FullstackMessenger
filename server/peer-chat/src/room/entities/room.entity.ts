@@ -1,19 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Room {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   id: string;
 
   @Column()
-  chatId: string;
+  title: string;
 
   @Column()
-  roomTitle: string;
-
-  @Column()
-  adminId: number;
-
-  @Column()
-  roomWithVideo: boolean;
+  withVideo: boolean;
 }

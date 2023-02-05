@@ -218,6 +218,22 @@ export const chat = {
         });
       }
     },
+    async getChatById({ commit }, { userId, chatId }) {
+      const chatData = await $api.get("/chat/byId", {
+        params: {
+          userId,
+          chatId,
+        },
+      });
+
+      if (chatData.data) {
+        commit("saveChat", chatData.data);
+      } else {
+        commit("alert/setErrorMessage", `Not fount chat - ${chatId}`, {
+          root: true,
+        });
+      }
+    },
   },
   mutations: {
     saveChat(state, chat) {

@@ -131,6 +131,10 @@ export default {
     max-width: 100%;
     top: 50%;
     transform: translateY(-50%);
+
+    &--admin {
+      border: 1px solid red;
+    }
   }
 
   &__info {

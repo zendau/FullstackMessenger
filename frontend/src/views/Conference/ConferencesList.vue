@@ -1,22 +1,25 @@
 <template>
+  <SearchInput @search-pattern="searchChats" />
   <section class="rooms__container">
     <ul
-      v-if="rooms?.length > 0"
+      v-if="chatsList?.size > 0"
       class="rooms__list"
     >
       <li
-        v-for="room in rooms"
+        v-for="(room, index) in chatsList"
         :key="room.id"
+        :ref="(el) => setLastRoomElement(el, index)"
         class="rooms__item"
       >
         <h3 class="room__title">
-          {{ room.roomTitle }}
+          {{ room[1].title }}
         </h3>
         <p class="room__author">
-          {{ room.adminLogin }}
+          <span v-if="room[1].adminId">Group</span>
+          <span v-else>Private</span>
         </p>
         <small
-          v-if="room.roomWithVideo"
+          v-if="room[1].conferenceWithVideo === 1"
           class="room__type"
         ><i class="bi bi-camera-video-fill" /> Video conference</small>
         <small
@@ -25,7 +28,7 @@
         ><i class="bi bi-mic-fill" /> Audio conference</small>
         <router-link
           class="room__link"
-          :to="`/conference/${room.roomWithVideo ? 'video' : 'audio'}/${room.id}`"
+          :to="`/conference/${room[1].conferenceWithVideo === 1 ? 'video' : 'audio'}/${room[1].id}`"
         >
           Enter
         </router-link>
@@ -41,29 +44,61 @@
 </template>
 
 <script>
-import { computed, inject, onMounted, onUnmounted } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import SearchInput from "@/components/chat/SearchCreateGroup/SearchInput.vue";
 
 export default {
+  components: { SearchInput },
   setup() {
     const store = useStore();
-    const rooms = computed(() => store.state.conference.rooms);
-    const peerSocket = inject("peerSocket");
 
-    onMounted(() => {
-      store.dispatch("conference/getConferesRooms");
+    const userId = computed(() => store.state.auth.user.id);
+
+    const chatsList = computed(() => store.getters["chat/chatList"]);
+
+    const searchPattern = ref(null);
+
+    const chatObserver = new IntersectionObserver((entries) => {
+      for (let entry of entries) {
+        if (entry.isIntersecting) {
+          store.dispatch("chat/getChats", {
+            userId: userId.value,
+          });
+          break;
+        }
+      }
     });
 
-    onUnmounted(() => {
-      peerSocket.removeAllListeners("updateListOfRooms");
-    });
+    const searchChats = (pattern) => {
+      searchPattern.value = pattern;
 
-    peerSocket.on("updateListOfRooms", (newRoom) => {
-      store.commit("conference/insertNewConferenceRoom", newRoom);
+      if (searchPattern.value.length === 0) {
+        store.commit("chat/clearChatsByPattern");
+        return;
+      }
+
+      store.dispatch("chat/getChatsByPattern", {
+        userId: userId.value,
+        pattern,
+      });
+    };
+
+    function setLastRoomElement(el, index) {
+      if (searchPattern.value || !el) return;
+      if (chatsList.value.size - 1 !== index) return;
+
+      chatObserver.observe(el);
+    }
+
+    store.dispatch("chat/getChats", {
+      userId: userId.value,
     });
 
     return {
-      rooms,
+      setLastRoomElement,
+      searchChats,
+      chatsList,
     };
   },
 };

@@ -6,7 +6,7 @@
     :is-muted="user[1].mute"
     :user-name="user[1].userLogin"
     :is-pause-video="user[1].pause"
-    :is-admin="false"
+    :is-admin="roomData.adminId === user[0]"
     :peer-id="user[1].peerId"
   />
 </template>
@@ -33,11 +33,12 @@ export default {
     const roomUsers = ref([]);
     const roomId = route.params.id;
 
+    const roomData = computed(() => store.getters["chat/selectedChat"](roomId));
+
     const userData = computed(() => store.state.auth.user);
     const peerId = ref(null);
     const peerConnected = ref(false);
 
-    const mediaError = inject("mediaError");
     const peerSocket = inject("peerSocket");
     const socketConnected = inject("peerSocketConnected", false);
     const isMuted = inject("isMuted");
@@ -173,7 +174,6 @@ export default {
       video: { aspectRatio: 16 / 9 },
     })
       .then((stream) => {
-        mediaError.value = false;
         mainStream.value = stream;
         containersRefs.forEach((item) => {
           if (item.peerId === peerId.value) {
@@ -183,7 +183,6 @@ export default {
         });
       })
       .catch(() => {
-        mediaError.value = true;
         store.commit("alert/setErrorMessage", "Could not start video source");
       });
 
@@ -212,7 +211,6 @@ export default {
           });
         });
       } catch {
-        mediaError.value = true;
         store.commit("alert/setErrorMessage", "Could not start video source");
       }
     });
@@ -244,6 +242,7 @@ export default {
     return {
       roomUsers,
       setItemRef,
+      roomData,
     };
   },
 };

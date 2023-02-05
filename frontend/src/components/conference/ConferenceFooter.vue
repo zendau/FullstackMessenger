@@ -9,7 +9,7 @@
           />{{ isMuted ? "Unmute" : "Mute" }}
         </button>
         <button
-          v-if="type"
+          v-if="conferenceType"
           @click="isPauseVideo = !isPauseVideo"
         >
           <i
@@ -20,7 +20,7 @@
           }}
         </button>
         <button
-          v-if="!type"
+          v-if="!conferenceType"
           @click="isRecord = !isRecord"
         >
           <i
@@ -29,7 +29,7 @@
           />{{ isRecord ? "Stop" : "Record" }}
         </button>
         <button
-          v-if="type"
+          v-if="conferenceType"
           class="mobile"
           @click="isRecordScreen = !isRecordScreen"
         >
@@ -41,7 +41,7 @@
           }}
         </button>
         <button
-          v-if="type"
+          v-if="conferenceType"
           class="mobile"
           @click="isShareScreen = !isShareScreen"
         >
@@ -56,7 +56,8 @@
           {{ conferenceTitle }}
         </h3>
         <p class="menu__conference-admin">
-          {{ conferenceAdmin }}
+          <span v-if="conferenceType">Group</span>
+          <span v-else>Private</span>
         </p>
       </div>
       <div>
@@ -79,8 +80,7 @@
 </template>
 
 <script>
-import { computed, inject } from "vue";
-import { useStore } from "vuex";
+import { inject } from "vue";
 
 export default {
   props: {
@@ -88,16 +88,13 @@ export default {
       type: String,
       required: true,
     },
-    conferenceAdmin: {
-      type: String,
+    conferenceType: {
+      type: Boolean,
       required: true,
     },
   },
   emits: ["show-chat"],
   setup() {
-    const store = useStore();
-    const type = computed(() => store.state.conference.type);
-
     const isRecord = inject("isRecord");
     const isMuted = inject("isMuted");
     const isPauseVideo = inject("isPauseVideo");
@@ -110,7 +107,6 @@ export default {
       isPauseVideo,
       isShareScreen,
       isRecordScreen,
-      type,
     };
   },
 };

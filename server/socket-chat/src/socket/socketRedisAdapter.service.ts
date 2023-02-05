@@ -185,8 +185,11 @@ export class SocketRedisAdapter {
   ) {
     const valueKey = `${key}:${id}:${valueId}`;
     const status = await this.redis.get(valueKey);
-    if (status && parseInt(status) > 0) {
-      this.redis.decrby(valueKey, decValue);
+
+    const decRes = parseInt(status) - decValue;
+
+    if (decRes > 0) {
+      this.redis.set(valueKey, decRes);
     } else {
       this.redis.set(valueKey, 0);
     }

@@ -162,4 +162,19 @@ export class ChatController {
       });
     return userRoomsData;
   }
+
+  @MessagePattern('chat/idList')
+  async getChatsIdList(@Payload() userId: number) {
+    const userRoomsData = await this.socketService
+      .getUserRoomsIds(userId)
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: false,
+          message: err.sqlMessage,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return userRoomsData;
+  }
 }

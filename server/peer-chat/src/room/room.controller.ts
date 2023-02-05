@@ -1,17 +1,15 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { RoomService } from './room.service';
-import { roomDTO } from './dto/room.dto';
-import { editRoomDTO } from './dto/editRoom.dto';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Room } from './entities/room.entity';
 
 @Controller('room')
 export class RoomController {
   constructor(private readonly roomService: RoomService) {}
 
   @MessagePattern('room/add')
-  async create(@Payload() createRoomDto: roomDTO) {
-    console.log(createRoomDto);
-    const res = await this.roomService.create(createRoomDto).catch((err) => {
+  async create(@Payload() createRoomData: Room) {
+    const res = await this.roomService.create(createRoomData).catch((err) => {
       return {
         status: false,
         message: err.sqlMessage,
@@ -21,9 +19,10 @@ export class RoomController {
     return res;
   }
 
-  @MessagePattern('room/getAll')
-  async findAll() {
-    const res = await this.roomService.getAll().catch((err) => {
+  @MessagePattern('room/getByChat')
+  async getByChatId(@Payload() chatId: string) {
+    console.log(chatId);
+    const res = await this.roomService.getByChatId(chatId).catch((err) => {
       return {
         status: false,
         message: err.sqlMessage,
@@ -33,10 +32,9 @@ export class RoomController {
     return res;
   }
 
-  @MessagePattern('room/get')
-  async findOne(@Payload() roomId: string) {
-    console.log(roomId);
-    const res = await this.roomService.getById(roomId).catch((err) => {
+  @MessagePattern('room/list')
+  async findOne(@Payload() idList: string[]) {
+    const res = await this.roomService.getByList(idList).catch((err) => {
       return {
         status: false,
         message: err.sqlMessage,
@@ -47,10 +45,8 @@ export class RoomController {
   }
 
   @MessagePattern('room/edit')
-  async update(@Payload() updateRoomDto: editRoomDTO) {
-    console.log(updateRoomDto);
-    const res = await this.roomService.update(updateRoomDto).catch((err) => {
-      console.log('err', err);
+  async update(@Payload() updateRoomData: Room) {
+    const res = await this.roomService.update(updateRoomData).catch((err) => {
       return {
         status: false,
         message: err.sqlMessage,

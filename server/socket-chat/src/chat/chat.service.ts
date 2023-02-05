@@ -22,6 +22,7 @@ import IUserChat from 'src/socket/interfaces/user/IUserChat';
 import IChatCreate from './interfaces/IChatCreate';
 import IGetContactList from './interfaces/IGetContactList';
 import { SocketService } from 'src/socket/socket.service';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class ChatService {
@@ -34,6 +35,7 @@ export class ChatService {
     @Inject(forwardRef(() => SocketService))
     private socketService: SocketService,
     private socketRedisAdapter: SocketRedisAdapter,
+    @Inject('PEER_SERVICE') private peerServiceClient: ClientProxy,
   ) {}
 
   async getChatsIdList(userId: number) {
@@ -57,7 +59,7 @@ export class ChatService {
     debugger;
 
     const chatIdList = new Set<string>();
-
+    debugger;
     let paginationPage = parseInt(page);
     const paginationLimit = parseInt(limit);
     let inMemoryData: boolean = JSON.parse(inMemory);
@@ -83,7 +85,6 @@ export class ChatService {
       const start = paginationPage * paginationLimit;
       const listPaginationData = await this.chatRepository
         .createQueryBuilder('chat')
-        .select('chat.id')
         .addSelect(
           (qb) =>
             qb
@@ -97,9 +98,9 @@ export class ChatService {
         .orderBy('ord', 'DESC')
         .skip(start)
         .take(paginationLimit)
-        .getRawMany();
+        .getMany();
 
-      listPaginationData.forEach((item) => chatIdList.add(item.chat_id));
+      listPaginationData.forEach((item) => chatIdList.add(item.id));
     }
 
     const chatsData = await this.socketService.getUserRoomsData(
@@ -138,6 +139,10 @@ export class ChatService {
     try {
       const resGetGroupUsers = await this.getGroupUsers(res.id);
       res.users = resGetGroupUsers;
+
+      res.conferenceWithVideo = await firstValueFrom(
+        this.peerServiceClient.send('room/getByChat', id),
+      );
       return res;
     } catch (e) {
       return {

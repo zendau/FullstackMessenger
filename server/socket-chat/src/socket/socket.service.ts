@@ -206,8 +206,6 @@ export class SocketService {
         false,
       );
     }
-
-    debugger;
     messageData.users.forEach((user) => {
       this.socketRedisAdapter.deleteListValue(
         'hotChats',
