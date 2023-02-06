@@ -17,10 +17,6 @@ export default {
     provide("createGroupUsers", createGroupUsers);
 
     const router = useRouter();
-
-    const modalUserId = ref(null);
-    provide("modalUserId", modalUserId);
-
     function openChatRoom(roomId) {
       if (!roomId) return;
 

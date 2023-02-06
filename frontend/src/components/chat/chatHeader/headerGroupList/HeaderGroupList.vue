@@ -1,5 +1,5 @@
 <template>
-  <div style="color: white; height: 400px; overflow: auto">
+  <div class="chat-group__container">
     <ul style="margin: 0">
       <GroupListItem
         v-for="userData in chatData.users"
@@ -36,4 +36,19 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.chat-group {
+  &__container {
+    height: min-content;
+    padding: 10px;
+    max-height: 400px;
+    color: white;
+    overflow: auto;
+    background-color: gray;
+    box-sizing: border-box;
+    width: 100%;
+    display: grid;
+    justify-content: center;
+  }
+}
+</style>

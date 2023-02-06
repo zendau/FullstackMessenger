@@ -22,6 +22,9 @@ export default {
     const isConferenceAdmin = ref(false);
     provide("isConferenceAdmin", isConferenceAdmin);
 
+    const modalUserId = ref(null);
+    provide("modalUserId", modalUserId);
+
     // const peerSocketConnected = ref(false);
     // provide("peerSocketConnected", peerSocketConnected);
     // socket.on("connect", () => {

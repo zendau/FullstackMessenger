@@ -9,7 +9,7 @@
       <router-view />
     </div>
     <div
-      v-if="showChat"
+      v-show="showChat"
       class="conference-chat"
     >
       <ConferenceChat />
@@ -19,7 +19,7 @@
   <FooterComponent
     v-if="roomData"
     :conference-title="roomData.title"
-    :conference-type="roomData.conferenceWithVideo === 1"
+    :conference-type="roomData.adminId"
     @show-chat="showChat = !showChat"
   />
 </template>
@@ -44,6 +44,9 @@ export default {
 
     const roomId = route.params.id;
     const roomData = computed(() => store.getters["chat/selectedChat"](roomId));
+
+    provide("roomData", roomData);
+
     const userId = store.state.auth.user.id;
 
     if (!roomData.value) {

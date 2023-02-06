@@ -56,7 +56,11 @@
           {{ conferenceTitle }}
         </h3>
         <p class="menu__conference-admin">
-          <span v-if="conferenceType">Group</span>
+          <span
+            v-if="conferenceType"
+            class="menu__conference-admin--group"
+            @click="toggleUsersList"
+          >Group</span>
           <span v-else>Private</span>
         </p>
       </div>
@@ -76,37 +80,60 @@
         </button>
       </div>
     </div>
+    <HeaderGroupList
+      v-if="isShowUsersList"
+      :chat-data="roomData"
+      :user-id="userId"
+    />
   </footer>
 </template>
 
 <script>
-import { inject } from "vue";
+import { inject, ref } from "vue";
+import { useStore } from "vuex";
 
+import HeaderGroupList from "@/components/chat/chatHeader/headerGroupList/HeaderGroupList.vue";
 export default {
+  components: { HeaderGroupList },
   props: {
     conferenceTitle: {
       type: String,
       required: true,
     },
     conferenceType: {
-      type: Boolean,
+      type: Number,
       required: true,
     },
   },
   emits: ["show-chat"],
   setup() {
+    const store = useStore();
+
+    const roomData = inject("roomData");
+    const userId = store.state.auth.user.id;
+
     const isRecord = inject("isRecord");
     const isMuted = inject("isMuted");
     const isPauseVideo = inject("isPauseVideo");
     const isShareScreen = inject("isShareScreen");
     const isRecordScreen = inject("isRecordScreen");
 
+    const isShowUsersList = ref(false);
+
+    function toggleUsersList() {
+      isShowUsersList.value = !isShowUsersList.value;
+    }
+
     return {
+      toggleUsersList,
+      isShowUsersList,
       isMuted,
       isRecord,
       isPauseVideo,
       isShareScreen,
       isRecordScreen,
+      roomData,
+      userId,
     };
   },
 };
@@ -117,6 +144,11 @@ footer {
   height: 60px;
   background-color: var(--bgcColor);
   box-sizing: border-box;
+
+  .chat-group__container {
+    position: absolute;
+    bottom: 60px;
+  }
 }
 
 .menu {
@@ -151,6 +183,11 @@ footer {
 
   &__conference-admin {
     color: var(--secondTextColor);
+
+    &--group {
+      user-select: none;
+      cursor: pointer;
+    }
   }
 
   &__conference-title,
