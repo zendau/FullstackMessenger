@@ -28,8 +28,9 @@ export class UserInfoService {
   async findByUserId(userId: number) {
     const userInfoData: IUserInfo = await this.userInfoRepository
       .createQueryBuilder()
+      .select(['phone', 'details'])
       .where('userId = :userId', { userId })
-      .getOne();
+      .getRawOne();
 
     return userInfoData;
   }

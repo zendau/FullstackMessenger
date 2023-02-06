@@ -37,13 +37,13 @@ export default {
     },
     modelValue: {
       type: String,
-      required: true,
+      default: null,
     },
   },
   emits: ["update:modelValue"],
-  setup(props, context) {
+  setup(props, { emit }) {
     function updateValue(event) {
-      context.emit("update:modelValue", event.target.value.trim());
+      emit("update:modelValue", event.target.value.trim());
     }
 
     return {

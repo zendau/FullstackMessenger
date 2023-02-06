@@ -10,7 +10,7 @@
       Email: {{ userData.email }}
     </p>
     <p class="user__text">
-      Role: {{ userData.role.value }}
+      Role: {{ userData.role }}
     </p>
     <hr class="user__hr">
     <h2 class="user__title">
@@ -40,6 +40,18 @@
         type="text"
       />
       <form-input
+        id="phoneNumber"
+        v-model="phoneNumber"
+        title="Phone Number"
+        type="text"
+      />
+      <form-input
+        id="userDetails"
+        v-model="userDetails"
+        title="User Details"
+        type="text"
+      />
+      <form-input
         id="password"
         v-model="password"
         autocomplete="new-password"
@@ -52,6 +64,7 @@
         title="Confirm password"
         type="password"
       />
+
       <input
         type="submit"
         value="Change data"
@@ -81,13 +94,19 @@ export default {
     const userId = store.state.auth.user.id;
     const userEmail = store.state.auth.user.email;
 
-    const userData = ref(null);
+    const userData = computed(() => store.state.auth.user);
+    const updatedUserData = ref(null);
     const isConfirmCode = ref(false);
+
+    const phoneRegExp =
+      /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/;
 
     const schema = yup.lazy((value) =>
       yup.object().shape({
         email: value.email?.length > 0 && yup.string().email(),
         login: value.login?.length > 0 && yup.string().nullable().notRequired().min(6),
+        userDetails: value.userDetails?.length > 0 && yup.string().nullable().notRequired().min(6),
+        phoneNumber: value.phoneNumber?.length > 0 && yup.string().matches(phoneRegExp, "Phone number is not valid"),
         password: value.password?.length > 0 && yup.string().nullable().notRequired().min(6),
         confirmPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords must match"),
       })
@@ -97,10 +116,12 @@ export default {
       validationSchema: schema,
     });
 
-    const { value: email } = useField("email");
-    const { value: login } = useField("login");
-    const { value: password } = useField("password");
-    const { value: confirmPassword } = useField("confirmPassword");
+    const { value: email } = useField("email", {}, { initialValue: userData.value.email });
+    const { value: login } = useField("login", {}, { initialValue: userData.value.login });
+    const { value: password } = useField("password", {}, { initialValue: "" });
+    const { value: confirmPassword } = useField("confirmPassword", {}, { initialValue: "" });
+    const { value: phoneNumber } = useField("phoneNumber", {}, { initialValue: userData.value.info.phone });
+    const { value: userDetails } = useField("userDetails", {}, { initialValue: userData.value.info.details });
 
     function onInvalidSubmit({ errors }) {
       const errorMessage = Object.keys(errors)
@@ -111,7 +132,7 @@ export default {
 
     const onSubmitForm = handleSubmit((value) => {
       console.log("value", value);
-      userData.value = value;
+      updatedUserData.value = value;
       isConfirmCode.value = true;
       store.commit("alert/clearAlert");
     }, onInvalidSubmit);
@@ -119,16 +140,16 @@ export default {
     function confirmChangeData(confirmCode) {
       console.log({
         id: userId,
-        ...userData.value,
+        ...updatedUserData.value,
         email: userEmail,
-        newEmail: userData.value.email,
+        newEmail: updatedUserData.value.email,
         confirmCode,
       });
       store.dispatch("auth/changeUserData", {
         id: userId,
-        ...userData.value,
+        ...updatedUserData.value,
         email: userEmail,
-        newEmail: userData.value.email,
+        newEmail: updatedUserData.value.email,
         confirmCode,
       });
     }
@@ -146,7 +167,7 @@ export default {
     });
 
     return {
-      userData: computed(() => store.state.auth.user),
+      userData,
       email,
       login,
       password,
@@ -155,6 +176,8 @@ export default {
       enableChangeData,
       isConfirmCode,
       confirmChangeData,
+      phoneNumber,
+      userDetails,
     };
   },
 };

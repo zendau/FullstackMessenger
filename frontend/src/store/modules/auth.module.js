@@ -152,6 +152,7 @@ export const auth = {
         role: userData.role,
         isBanned: userData.isBanned,
         deviceId: userData.deviceId,
+        info: userData.info,
       });
     },
     async getUserDevices({ commit, state }) {
@@ -193,6 +194,7 @@ export const auth = {
         role: userData.role,
         isBanned: userData.isBanned,
         deviceId: userData.deviceId,
+        info: userData.info,
       };
       state.authStatus = true;
     },

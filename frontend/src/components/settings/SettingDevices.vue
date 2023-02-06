@@ -26,7 +26,9 @@
       <hr>
     </li>
   </ul>
-  <div>No sessions</div>
+  <div v-else>
+    No sessions
+  </div>
 </template>
 
 <script>
@@ -42,7 +44,7 @@ export default {
     const deviceId = computed(() => store.state.auth.user.deviceId);
 
     const othersDevices = reactive([]);
-    const currenteDevice = ref(null);
+    const currenteDevice = ref({});
 
     watch(
       () => store.state.auth.devices,
@@ -50,6 +52,7 @@ export default {
         console.log("watch", devices);
         othersDevices.length = 0;
         devices.forEach((device) => {
+          console.log("device.id ", device.id, deviceId.value, deviceId.value === device.id);
           if (device.id === deviceId.value) currenteDevice.value = device;
           else othersDevices.push(device);
         });

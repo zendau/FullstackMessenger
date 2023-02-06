@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import account from "@/components/settings/SettingAccount.vue";
+import account from "@/components/settings/settingAccount/SettingAccount.vue";
 import language from "@/components/settings/SettingLanguage.vue";
 import theme from "@/components/settings/SettingTheme.vue";
 import devices from "@/components/settings/SettingDevices.vue";

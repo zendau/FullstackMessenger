@@ -9,7 +9,7 @@
     </button>
     <device-modal
       :is-current="isCurrent"
-      :is-show-c-t-x="isOpenDeviceModal"
+      :is-open-device-modal="isOpenDeviceModal"
       :device-data="deviceData"
       :icon="getDeviceIcon(deviceData.brand, deviceData.osName)"
       @delete-devices="deleteDevices"
