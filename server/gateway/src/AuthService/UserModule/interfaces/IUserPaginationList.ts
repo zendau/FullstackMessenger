@@ -1,4 +1,4 @@
-export default interface IGetContactList {
+export default interface IUserPaginationList {
   userId: number;
   page: number | null;
   limit: number | null;

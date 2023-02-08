@@ -151,22 +151,6 @@ export class UserController {
     return true;
   }
 
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'get all users' })
-  @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
-  @ApiResponse({ status: 400, type: HttpErrorDTO })
-  //@UseGuards(JwtRefreshGuard)
-  @Get('all')
-  async getAllUsers() {
-    const resData = await firstValueFrom(
-      this.authServiceClient.send('user/all', ''),
-    );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
-
-    return resData;
-  }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -191,51 +175,7 @@ export class UserController {
     return resData;
   }
 
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(HttpClearCacheInterceptor)
-  @ApiOperation({ summary: 'set banned status for user by id' })
-  @ApiResponse({ status: 200, description: 'Success operation' })
-  @ApiResponse({
-    status: 400,
-    description: 'user not found',
-    type: HttpErrorDTO,
-  })
-  //@UseGuards(RoleGuard(UserRole.Admin))
-  //@UseGuards(JwtRefreshGuard)
-  @Patch('blockUser/:id')
-  async blockUser(@Param('id', ParseIntPipe) userId: number) {
-    const resData = await firstValueFrom(
-      this.authServiceClient.send('user/blockUser', userId),
-    );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
-    return resData;
-  }
-
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'set activate status for user by id' })
-  @ApiResponse({ status: 200, description: 'Success operation' })
-  @ApiResponse({
-    status: 400,
-    description: 'user not found',
-    type: HttpErrorDTO,
-  })
-  //@UseGuards(RoleGuard(UserRole.Admin))
-  //@UseGuards(JwtRefreshGuard)
-  @Patch('unblockUser')
-  async unBlockUser(@Param('id', ParseIntPipe) userId: number) {
-    const resData = await firstValueFrom(
-      this.authServiceClient.send('user/unblockUser', userId),
-    );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
-
-    return resData;
-  }
 
   @ApiOperation({ summary: 'register confirm code' })
   @ApiResponse({ status: 200, description: 'true register confirm code' })
@@ -300,33 +240,6 @@ export class UserController {
     }
 
     res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true });
-    return resData;
-  }
-
-  @ApiOperation({ summary: 'Set user role' })
-  @ApiResponse({
-    status: 200,
-    description: 'success setting user role',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'user not found',
-    type: HttpErrorDTO,
-  })
-  //@UseGuards(JwtRefreshGuard)
-  @UsePipes(ValidationPipe)
-  @Patch('setRole')
-  async setUserRole(
-    @Body()
-    roleData: RoleDTO,
-  ) {
-    const resData = await firstValueFrom(
-      this.authServiceClient.send('user/setRole', roleData),
-    );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
-
     return resData;
   }
 

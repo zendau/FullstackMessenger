@@ -7,9 +7,10 @@
         <th>Email</th>
         <th>Login</th>
         <th>Role</th>
+        <th>Phone</th>
+        <th>Details</th>
+        <th>Last online</th>
         <th>Status</th>
-        <th>Block user</th>
-        <th>UnBlock user</th>
       </tr>
     </thead>
     <tbody>
@@ -20,9 +21,17 @@
         <td>{{ user.id }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.login }}</td>
-        <td>{{ user.role }}</td>
-        <td>{{ getStatus(user.isBanned) }}</td>
         <td>
+          <SelectUserRole
+            :user-id="user.id"
+            :user-role="user.role"
+          />
+        </td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.details }}</td>
+        <td>{{ user.lastOnline }}</td>
+        <!-- <td>{{ getStatus(user.isBanned) }}</td> -->
+        <td v-if="!user.isBanned">
           <button
             class="btn"
             @click="banUser(user.id)"
@@ -30,10 +39,10 @@
             Block
           </button>
         </td>
-        <td>
+        <td v-else>
           <button
             class="btn"
-            @click="unBanUser(user.id)"
+            @click="unBlockUser(user.id)"
           >
             UnBlock
           </button>
@@ -45,65 +54,41 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
-import $api from "../../axios";
 
-import AlertNotification from "../../components/UI/AlertNotification.vue";
+import SelectUserRole from "@/components/admin/SelectUserRole.vue";
+import AlertNotification from "@/components/UI/AlertNotification.vue";
 
 export default {
-  components: { AlertNotification },
+  components: { AlertNotification, SelectUserRole },
   setup() {
     const store = useStore();
 
-    const users = ref(null);
+    const userId = store.state.auth.user.id;
 
-    onMounted(async () => {
-      const res = await $api.get("/user/all");
-      users.value = res.data;
-      console.log(users.value);
-    });
+    store.dispatch("admin/getRolesList");
+    store.dispatch("admin/getUsersListPagination", userId);
+
+    const users = computed(() => store.state.admin.userList);
+
+    // onMounted(async () => {
+    //   const res = await $api.get("/user/all");
+    //   users.value = res.data;
+    //   console.log(users.value);
+    // });
 
     async function banUser(userId) {
-      try {
-        await $api.patch("user/blockUser", {
-          userId,
-        });
-        users.value.forEach((user) => {
-          if (user.id === userId) {
-            user.isBanned = 1;
-          }
-          return user;
-        });
-      } catch {
-        store.commit("alert/setErrorMessage", "error connection");
-      }
+      store.dispatch("admin/blockUser", userId);
     }
 
-    async function unBanUser(userId) {
-      try {
-        await $api.patch("user/unBlockUser", {
-          userId,
-        });
-        users.value.forEach((user) => {
-          if (user.id === userId) {
-            user.isBanned = 0;
-          }
-          return user;
-        });
-      } catch {
-        store.commit("alert/setErrorMessage", "error connection");
-      }
-    }
-
-    function getStatus(id) {
-      return id ? "banned" : "active";
+    async function unBlockUser(userId) {
+      store.dispatch("admin/unBlockUser", userId);
     }
 
     return {
       banUser,
-      unBanUser,
-      getStatus,
+      unBlockUser,
       users,
     };
   },

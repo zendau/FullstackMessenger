@@ -6,7 +6,7 @@ import { Contact } from './contact.entity';
 import { UserService } from 'src/user/user.service';
 import { union } from 'src/utils/typeorm/union';
 import { User } from 'src/user/user.entity';
-import IGetContactList from './interfaces/IGetContactList';
+import IGetContactList from './interfaces/IUserPaginationList';
 import IContact from './interfaces/IContact';
 import { Cache } from 'cache-manager';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';

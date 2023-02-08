@@ -13,6 +13,7 @@ import { ClientOpts } from '@nestjs/microservices/external/redis.interface';
 
 import * as redisStore from 'cache-manager-redis-store';
 import { ContactController } from './AuthService/UserModule/contact.controller';
+import { AdminController } from './AuthService/UserModule/admin.controller';
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { ContactController } from './AuthService/UserModule/contact.controller';
     RoomController,
     UserController,
     ContactController,
+    AdminController
   ],
   providers: [JwtStrategy, RefreshStrategy],
 })

@@ -26,6 +26,7 @@ import { UserRole } from './user.entity';
 import { Contact } from 'src/contacts/contact.entity';
 import { UnionParameters } from 'src/utils/typeorm/union';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+import IUserPaginationList from 'src/contacts/interfaces/IUserPaginationList';
 
 @Injectable()
 export class UserService {
@@ -123,19 +124,6 @@ export class UserService {
     };
   }
 
-  async getAllUsers() {
-    const users = await this.usersRepository
-      .createQueryBuilder('user')
-      .innerJoinAndSelect('user.access', 'access')
-      .select('user.id', 'id')
-      .addSelect('user.email', 'email')
-      .addSelect('user.login', 'login')
-      .addSelect('access.isBanned', 'isBanned')
-      .orderBy('id')
-      .getRawMany();
-    return users;
-  }
-
   async getOtherUsersList(
     subQuery: SelectQueryBuilder<Contact> | UnionParameters,
     userId: number,
@@ -152,11 +140,16 @@ export class UserService {
     console.log('start', start, page, limit);
 
     let query = this.usersRepository
-      .createQueryBuilder()
-      .select('id, email, login, lastOnline')
-      .where(`id ${isNot ? 'NOT' : ''} IN (${subQuery.getQuery()})`)
-      .andWhere('id != :userId', { userId });
-
+      .createQueryBuilder('user')
+      .select('user.id, user.email, user.login, user.lastOnline')
+      .addSelect('user.role', 'role')
+      .addSelect('userInfo.phone', 'phone')
+      .addSelect('userInfo.details', 'details')
+      .leftJoin('user.info', 'userInfo')
+      .leftJoin('user.access', 'access')
+      .addSelect('access.isBanned', 'isBanned')
+      .where(`user.id ${isNot ? 'NOT' : ''} IN (${subQuery.getQuery()})`)
+      .andWhere('user.id != :userId', { userId });
 
     if (!Number.isNaN(start)) {
       console.log('setOffset');
@@ -174,7 +167,7 @@ export class UserService {
     debugger;
     const resQuery = await query.getRawMany();
 
-    console.log('resQuery', resQuery)
+    console.log('resQuery', resQuery);
 
     const resList = await resQuery.reduce(async (resDataPromise, user) => {
       const onlineUserData: string = await this.redis.get(
@@ -234,36 +227,6 @@ export class UserService {
     //const res = await this.nodeMailerService.send('te');
     // this.cacheManager.set('test', 'tet');
     // return this.cacheManager.get('test');
-  }
-
-  async setUserRole(userId: number, role: UserRole) {
-    const roleObject = Object.values(UserRole);
-    if (!roleObject.includes(role)) {
-      return {
-        status: false,
-        message: `Undefined role - ${role}`,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    }
-
-    const resSetRole = await this.usersRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        role,
-      })
-      .where('id = :userId', { userId: userId })
-      .execute();
-
-    if (resSetRole.affected) {
-      return true;
-    } else {
-      return {
-        status: false,
-        message: `Undefined user with id - ${userId}`,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    }
   }
 
   async setLastOnline(userId: number, lastOnline: Date) {

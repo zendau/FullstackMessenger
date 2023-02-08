@@ -3,14 +3,14 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ParseIntPipe } from 'src/pipes/parse-int.pipe';
 import { ContactService } from './contact.service';
 import IContact from './interfaces/IContact';
-import IGetContactList from './interfaces/IGetContactList';
+import IUserPaginationList from './interfaces/IUserPaginationList';
 
 @Controller()
 export class ContactController {
   constructor(private contactService: ContactService) {}
 
   @MessagePattern('contact/list')
-  async getUserContactList(listData: IGetContactList) {
+  async getUserContactList(listData: IUserPaginationList) {
     const res = await this.contactService
       .getContactList(listData)
       .catch((err) => {
@@ -24,7 +24,7 @@ export class ContactController {
   }
 
   @MessagePattern('contact/freeList')
-  async getFreeUserList(listData: IGetContactList) {
+  async getFreeUserList(listData: IUserPaginationList) {
     debugger;
     const res = await this.contactService
       .getFreeUsers(listData)
@@ -56,7 +56,7 @@ export class ContactController {
   }
 
   @MessagePattern('contact/pending')
-  async getContactsRequestPending(listData: IGetContactList) {
+  async getContactsRequestPending(listData: IUserPaginationList) {
     const res = await this.contactService
       .getContactsPending(listData)
       .catch((err) => {
@@ -70,7 +70,7 @@ export class ContactController {
   }
 
   @MessagePattern('contact/outgoing')
-  async getContactsRequestOutgoing(@Payload() listData: IGetContactList) {
+  async getContactsRequestOutgoing(@Payload() listData: IUserPaginationList) {
     const res = await this.contactService
       .getContactsOutgoing(listData)
       .catch((err) => {
@@ -135,7 +135,7 @@ export class ContactController {
   }
 
   @MessagePattern('contact/blockedUsers')
-  async getBlockedUsers(listData: IGetContactList) {
+  async getBlockedUsers(listData: IUserPaginationList) {
     const res = await this.contactService
       .getBlockedUsers(listData)
       .catch((err) => {

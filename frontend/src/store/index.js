@@ -3,6 +3,7 @@ import { auth } from "./modules/auth.module";
 import { chat } from "./modules/chat.module";
 import { contact } from "./modules/contact.module";
 import { alert } from "./modules/alert.module";
+import { admin } from "./modules/admin.module";
 
 export default createStore({
   modules: {
@@ -10,5 +11,6 @@ export default createStore({
     chat,
     contact,
     alert,
+    admin,
   },
 });

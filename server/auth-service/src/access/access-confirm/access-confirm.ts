@@ -75,29 +75,6 @@ export class ConfirmCodeService {
     await this.redis.del(confirmId)
   }
 
-  async setUnblock(userId: number) {
-    const res = await this.accessRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        isBanned: false
-      })
-      .where('userId = :userId', { userId })
-      .execute();
-    return !!res.affected;
-  }
 
-  async setBlock(userId: number) {
-    console.log(userId);
-    const res = await this.accessRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        isBanned: true
-      })
-      .where('userId = :userId', { userId })
-      .execute();
-    return !!res.affected;
-  }
 
 }

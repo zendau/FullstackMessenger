@@ -109,7 +109,7 @@ export default {
     const authStatus = computed(() => store.state.auth.authStatus);
     console.log("auth", authStatus.value);
 
-    const isAdmin = computed(() => store.state.auth.user.role.accessLevel === Role.Admin);
+    const isAdmin = computed(() => Role[store.state.auth.user.role] >= 2);
     console.log("isAdmin", isAdmin.value);
 
     watch(

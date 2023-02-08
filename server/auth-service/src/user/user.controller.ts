@@ -76,33 +76,6 @@ export class UsersController {
     return res;
   }
 
-  @MessagePattern('user/unblockUser')
-  async unblockUser(@Payload() userId: number) {
-    const res = await this.confirmCodeService
-      .setUnblock(userId)
-      .catch((err) => {
-        return {
-          status: false,
-          message: err.sqlMessage,
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      });
-    console.log(res);
-    return res;
-  }
-
-  @MessagePattern('user/blockUser')
-  async blockUser(@Payload() userId: number) {
-    const res = await this.confirmCodeService.setBlock(userId).catch((err) => {
-      return {
-        status: false,
-        message: err.sqlMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
-    console.log(res);
-    return res;
-  }
 
   @MessagePattern('user/setConfirmCode')
   async getCodeEditData(@Payload() confirmData: IConfirmData) {
@@ -139,11 +112,7 @@ export class UsersController {
     return res;
   }
 
-  @MessagePattern('user/all')
-  async getAllUsers() {
-    const res = await this.userService.getAllUsers();
-    return res;
-  }
+
 
   @MessagePattern('user/idList')
   async getManyUserById(@Payload() idList: number[]) {
@@ -168,20 +137,6 @@ export class UsersController {
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
-    return res;
-  }
-
-  @MessagePattern('user/setRole')
-  async setUserRole(@Payload() roleData: { userId: number; role: UserRole }) {
-    const res = await this.userService
-      .setUserRole(roleData.userId, roleData.role)
-      .catch((err) => {
-        return {
-          status: false,
-          message: err.sqlMessage,
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      });
     return res;
   }
 
@@ -216,9 +171,4 @@ export class UsersController {
     return res;
   }
 
-  @MessagePattern('user/test')
-  async test() {
-    const res = await this.userService.confirmEmail();
-    return res;
-  }
 }

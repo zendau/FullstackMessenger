@@ -5,34 +5,12 @@
       v-if="chatsList?.size > 0"
       class="rooms__list"
     >
-      <li
+      <ConferenceItem
         v-for="(room, index) in chatsList"
         :key="room.id"
         :ref="(el) => setLastRoomElement(el, index)"
-        class="rooms__item"
-      >
-        <h3 class="room__title">
-          {{ room[1].title }}
-        </h3>
-        <p class="room__author">
-          <span v-if="room[1].adminId">Group</span>
-          <span v-else>Private</span>
-        </p>
-        <small
-          v-if="room[1].conferenceWithVideo"
-          class="room__type"
-        ><i class="bi bi-camera-video-fill" /> Video conference</small>
-        <small
-          v-else
-          class="room__type"
-        ><i class="bi bi-mic-fill" /> Audio conference</small>
-        <router-link
-          class="room__link"
-          :to="`/conference/${room[1].conferenceWithVideo ? 'video' : 'audio'}/${room[1].id}`"
-        >
-          Enter
-        </router-link>
-      </li>
+        :room-data="room[1]"
+      />
     </ul>
     <p
       v-else
@@ -47,9 +25,10 @@
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import SearchInput from "@/components/chat/SearchCreateGroup/SearchInput.vue";
+import ConferenceItem from "@/components/conference/ConfrenceItem.vue";
 
 export default {
-  components: { SearchInput },
+  components: { SearchInput, ConferenceItem },
   setup() {
     const store = useStore();
 
@@ -84,7 +63,11 @@ export default {
       });
     };
 
-    function setLastRoomElement(el, index) {
+    function setLastRoomElement(component, index) {
+      const el = component?.$el;
+
+      if (!el) return;
+
       if (searchPattern.value || !el) return;
       if (chatsList.value.size - 1 !== index) return;
 
@@ -105,7 +88,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .rooms {
   &__container {
     width: 1200px;

@@ -25,6 +25,6 @@ import { ConfigService } from '@nestjs/config';
     }),
   ],
   providers: [ConfirmCodeService, NodeMailerService, ConfigService],
-  exports: [ConfirmCodeService, NodeMailerService],
+  exports: [ConfirmCodeService, NodeMailerService, TypeOrmModule],
 })
 export class ConfirmModule { }

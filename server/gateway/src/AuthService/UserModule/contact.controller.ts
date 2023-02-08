@@ -26,7 +26,7 @@ import {
 import { HttpErrorDTO } from '../ResponseDTO/httpError.dto';
 import { ContactDTO } from '../ResponseDTO/contact.dto';
 import { ParseIntPipe } from '@nestjs/common/pipes';
-import IGetContactList from './interfaces/IGetContactList';
+import IUserPaginationList from './interfaces/IUserPaginationList';
 import IContact from './interfaces/IContact';
 import IUserChat from 'src/ChatService/interfaces/IUserChat';
 
@@ -51,7 +51,7 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('list')
-  async getUserContactList(@Query() listData: IGetContactList) {
+  async getUserContactList(@Query() listData: IUserPaginationList) {
     console.log('test', listData);
     const resData = await firstValueFrom(
       this.chatServiceClient.send('chat/contacts', listData),
@@ -76,7 +76,7 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('freeList')
-  async getFreeUserList(@Query() listData: IGetContactList) {
+  async getFreeUserList(@Query() listData: IUserPaginationList) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/freeList', listData),
     );
@@ -147,7 +147,7 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('pending')
-  async getContactsRequestPending(@Query() listData: IGetContactList) {
+  async getContactsRequestPending(@Query() listData: IUserPaginationList) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/pending', listData),
     );
@@ -170,7 +170,7 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('outgoing')
-  async getContactsRequestOutgoing(@Query() listData: IGetContactList) {
+  async getContactsRequestOutgoing(@Query() listData: IUserPaginationList) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/outgoing', listData),
     );
@@ -265,7 +265,7 @@ export class ContactController {
   })
   //@UseGuards(JwtAuthGuard)
   @Get('blockedUsers')
-  async getBlockedUsers(@Query() listData: IGetContactList) {
+  async getBlockedUsers(@Query() listData: IUserPaginationList) {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/blockedUsers', listData),
     );

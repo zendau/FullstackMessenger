@@ -19,8 +19,8 @@ const Conference = () => import("@/layout/AuthConference.vue");
 const AudioConference = () => import("@/views/Conference/AudioConference.vue");
 const VideoConference = () => import("@/views/Conference/VideoConference.vue");
 
-const AdminView = () => import("@/views/Admin/AdminPage.vue");
-const AdminUsers = () => import("@/views/Admin/UsersPage.vue");
+const AdminView = () => import("@/layout/AdminLayout.vue");
+const AdminUsersPage = () => import("@/views/Admin/UsersPage.vue");
 
 const PageNotFound = () => import("@/views/PageNotFound.vue");
 
@@ -93,7 +93,7 @@ const routes = [
     children: [
       {
         path: "users",
-        component: AdminUsers,
+        component: AdminUsersPage,
         name: "adminUsers",
         meta: {
           requiresAuth: true,
