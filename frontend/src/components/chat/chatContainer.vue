@@ -66,9 +66,8 @@ export default {
     });
 
     chatSocket.on("updateUserOnline", (userStatus) => {
-      store.commit("users/updateUserOnline", userStatus);
-      // store.commit("chat/updateUserOnline", userStatus);
-      // store.commit("contact/updateUserOnline", userStatus);
+      store.commit("chat/updateUserOnline", userStatus);
+      store.commit("contact/updateUserOnline", userStatus);
     });
 
     function deleteMessages(messagesList) {
@@ -135,7 +134,8 @@ export default {
 
     watch(chatData, (newChat) => {
       if (newChat?.adminId || newChat?.users === undefined) return;
-      privateMemberId.value = Object.values(newChat.users)[0].id;
+
+      privateMemberId.value = newChat.users[0].id;
 
       console.log("memberData", isPrivateBanned.value);
       if (isPrivateBanned.value !== null) return;

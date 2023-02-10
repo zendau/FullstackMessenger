@@ -228,17 +228,12 @@ export class ChatService {
   }
 
   async getUsersListData(userList: number[]) {
-    const usersData = {};
-
-    for (const userId of userList) {
-      const res = await this.userService.getUserById(userId);
-      usersData[res.id] = res;
-    }
-    // await Promise.all(
-    //   userList.map(async (userId) => {
-
-    //   }),
-    // );
+    const usersData = await Promise.all(
+      userList.map(async (userId) => {
+        const res = await this.userService.getUserById(userId);
+        return res;
+      }),
+    );
     return usersData;
   }
 
