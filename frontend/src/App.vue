@@ -86,6 +86,8 @@ export default {
       store.commit("users/updateUserOnline", userStatus);
     });
 
+    setInterval(() => store.commit("users/updateUsersDateOnline"), 30000);
+
     return {
       authLayout,
     };

@@ -223,8 +223,9 @@ export class ChatService {
       .getRawMany();
 
     const usersIdList = res.map((item) => item.userId);
-    const usersData = await this.getUsersListData(usersIdList);
-    return usersData;
+    // const usersData = await this.getUsersListData(usersIdList);
+    // return usersData;
+    return usersIdList;
   }
 
   async getUsersListData(userList: number[]) {

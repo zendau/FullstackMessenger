@@ -3,7 +3,9 @@
     <h1 class="chat__title">
       Chat - {{ chatTitle }}
     </h1>
-    <p>Status - {{ privateChatOnlineStatus }}</p>
+    <p style="color: gray">
+      {{ privateChatOnlineStatus }}
+    </p>
   </div>
 </template>
 

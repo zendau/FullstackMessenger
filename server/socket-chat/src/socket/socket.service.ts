@@ -700,6 +700,7 @@ export class SocketService {
 
   async clientLeaveRoom(userId: number, lastOnline: Date) {
     const userData = await this.userService.getUserById(userId);
+    console.log('userData', userData);
     if (!userData) return;
     userData.lastOnline = lastOnline;
     this.socketRedisAdapter.setValue('user', userData, true, userId);
@@ -720,7 +721,7 @@ export class SocketService {
 
     return {
       userId,
-      status: `offilen - ${lastOnline}`,
+      status: lastOnline,
     };
 
     //this.rooms = this.rooms.filter((user) => user.userId !== id);
