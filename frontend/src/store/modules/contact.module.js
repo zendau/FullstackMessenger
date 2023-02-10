@@ -492,37 +492,37 @@ export const contact = {
           break;
       }
     },
-    updateUserOnline(state, userStatus) {
-      if (state.contacts[userStatus.userId]) {
-        state.contacts[userStatus.userId].lastOnline = userStatus.status;
-        state.contacts[userStatus.userId].peerId = userStatus.peerId;
-      }
+    // updateUserOnline(state, userStatus) {
+    //   if (state.contacts[userStatus.userId]) {
+    //     state.contacts[userStatus.userId].lastOnline = userStatus.status;
+    //     state.contacts[userStatus.userId].peerId = userStatus.peerId;
+    //   }
 
-      if (state.freeUsers[userStatus.userId]) {
-        state.freeUsers[userStatus.userId].lastOnline = userStatus.status;
-        state.freeUsers[userStatus.userId].peerId = userStatus.peerId;
-      }
+    //   if (state.freeUsers[userStatus.userId]) {
+    //     state.freeUsers[userStatus.userId].lastOnline = userStatus.status;
+    //     state.freeUsers[userStatus.userId].peerId = userStatus.peerId;
+    //   }
 
-      if (state.pendingRequests[userStatus.userId]) {
-        state.pendingRequests[userStatus.userId].lastOnline = userStatus.status;
-        state.pendingRequests[userStatus.userId].peerId = userStatus.peerId;
-      }
+    //   if (state.pendingRequests[userStatus.userId]) {
+    //     state.pendingRequests[userStatus.userId].lastOnline = userStatus.status;
+    //     state.pendingRequests[userStatus.userId].peerId = userStatus.peerId;
+    //   }
 
-      if (state.outgoingRequests[userStatus.userId]) {
-        state.outgoingRequests[userStatus.userId].lastOnline =
-          userStatus.status;
-        state.outgoingRequests[userStatus.userId].peerId = userStatus.peerId;
-      }
+    //   if (state.outgoingRequests[userStatus.userId]) {
+    //     state.outgoingRequests[userStatus.userId].lastOnline =
+    //       userStatus.status;
+    //     state.outgoingRequests[userStatus.userId].peerId = userStatus.peerId;
+    //   }
 
-      if (state.blockedUsers[userStatus.userId]) {
-        state.blockedUsers[userStatus.userId].lastOnline = userStatus.status;
-        state.blockedUsers[userStatus.userId].peerId = userStatus.peerId;
-      }
+    //   if (state.blockedUsers[userStatus.userId]) {
+    //     state.blockedUsers[userStatus.userId].lastOnline = userStatus.status;
+    //     state.blockedUsers[userStatus.userId].peerId = userStatus.peerId;
+    //   }
 
-      if (state.users[userStatus.userId]) {
-        state.users[userStatus.userId].lastOnline = userStatus.status;
-        state.users[userStatus.userId].peerId = userStatus.peerId;
-      }
-    },
+    //   if (state.users[userStatus.userId]) {
+    //     state.users[userStatus.userId].lastOnline = userStatus.status;
+    //     state.users[userStatus.userId].peerId = userStatus.peerId;
+    //   }
+    // },
   },
 };

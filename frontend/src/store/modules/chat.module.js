@@ -129,7 +129,7 @@ export const chat = {
         }
       }
     },
-    async getChats({ commit, state }, paginationData) {
+    async getChats({ commit, state, rootState }, paginationData) {
       if (!state.loadChatsPagination.hasMore) return;
       console.log("call", { ...state.loadChatsPagination });
       try {
@@ -142,14 +142,30 @@ export const chat = {
             ...(paginationData.chatId && { chatId: paginationData.chatId }),
           },
         });
-        console.log("RES", res);
+        const chatsList = JSON.parse(res.data.roomsData);
+
+        const { usersList } = rootState.users;
+
+        for (const chat of chatsList) {
+          // console.log("chat", chat[1]);
+          const chatUsers = chat[1].users;
+          for (const user of Object.values(chatUsers)) {
+            // console.log("user", user, usersList);
+
+            if (!usersList.has(user.id)) {
+              usersList.set(user.id, user);
+            }
+            chatUsers[user.id] = usersList.get(user.id);
+          }
+          // chat[1].users = chatUsers;
+        }
 
         commit("saveNewChatsPagination", {
           page: res.data.page,
           hasMore: res.data.hasMore,
           inMemory: res.data.inMemory,
         });
-        commit("saveChats", res.data.roomsData);
+        commit("saveChats", chatsList);
         commit("sortByMessageDate");
 
         if (res.data.currentTempChatData) {
@@ -241,7 +257,7 @@ export const chat = {
       state.chats.set(chat.id, chat);
     },
     saveChats(state, chats) {
-      const newChats = new Map(JSON.parse(chats));
+      const newChats = new Map(chats);
       state.chats = new Map([...state.chats, ...newChats]);
     },
     saveCurrentTempChat(state, chatData) {
@@ -362,16 +378,16 @@ export const chat = {
         state.currentTempChatData = null;
       }
     },
-    updateUserOnline(state, userStatus) {
-      for (const chat of state.chats.values()) {
-        chat.users.forEach((user) => {
-          if (user.id === userStatus.userId) {
-            user.lastOnline = userStatus.status;
-            user.peerId = userStatus.peerId;
-          }
-        });
-      }
-    },
+    // updateUserOnline(state, userStatus) {
+    //   for (const chat of state.chats.values()) {
+    //     chat.users.forEach((user) => {
+    //       if (user.id === userStatus.userId) {
+    //         user.lastOnline = userStatus.status;
+    //         user.peerId = userStatus.peerId;
+    //       }
+    //     });
+    //   }
+    // },
     updateReadMessages(state, { chatId, unreadCount }) {
       console.log("QQWW", chatId, unreadCount);
       if (state.chats.has(chatId)) {
