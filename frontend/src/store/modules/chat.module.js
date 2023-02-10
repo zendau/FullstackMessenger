@@ -1,5 +1,6 @@
 import $api from "@/axios";
 import router from "@/router";
+import { insertUsersList } from "./users.module";
 
 const defaultLoadChatsPagination = {
   page: 0,
@@ -144,12 +145,18 @@ export const chat = {
         });
         console.log("RES", res);
 
+        const chatsList = JSON.parse(res.data.roomsData);
+
+        for (const chat of chatsList) {
+          chat[1].users = insertUsersList(chat[1].users);
+        }
+
         commit("saveNewChatsPagination", {
           page: res.data.page,
           hasMore: res.data.hasMore,
           inMemory: res.data.inMemory,
         });
-        commit("saveChats", res.data.roomsData);
+        commit("saveChats", chatsList);
         commit("sortByMessageDate");
 
         if (res.data.currentTempChatData) {
@@ -241,7 +248,7 @@ export const chat = {
       state.chats.set(chat.id, chat);
     },
     saveChats(state, chats) {
-      const newChats = new Map(JSON.parse(chats));
+      const newChats = new Map(chats);
       state.chats = new Map([...state.chats, ...newChats]);
     },
     saveCurrentTempChat(state, chatData) {
@@ -360,16 +367,6 @@ export const chat = {
         state.chats.delete(chatId);
       } else if (state.currentTempChatData.id === chatId) {
         state.currentTempChatData = null;
-      }
-    },
-    updateUserOnline(state, userStatus) {
-      for (const chat of state.chats.values()) {
-        chat.users.forEach((user) => {
-          if (user.id === userStatus.userId) {
-            user.lastOnline = userStatus.status;
-            user.peerId = userStatus.peerId;
-          }
-        });
       }
     },
     updateReadMessages(state, { chatId, unreadCount }) {

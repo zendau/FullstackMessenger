@@ -56,7 +56,7 @@ export default {
       required: true,
     },
     chatUsers: {
-      type: Array,
+      type: Object,
       required: true,
     },
   },
@@ -70,7 +70,7 @@ export default {
     const isChatAdmin = computed(() => props.adminId === props.userId);
 
     function initCallConference() {
-      const onlineUsersPeers = props.chatUsers.reduce((prev, curr) => {
+      const onlineUsersPeers = Object.values(props.chatUsers).reduce((prev, curr) => {
         if (curr.lastOnline === "online" && curr.id !== props.adminId) {
           prev.push(curr.peerId);
         }
@@ -94,7 +94,7 @@ export default {
       chatSocket.emit("exit-chat", {
         chatId: chatId.value,
         userId: props.userId,
-        users: props.chatUsers,
+        users: Object.values(props.chatUsers),
         adminId: null,
       });
     }

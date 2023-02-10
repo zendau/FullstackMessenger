@@ -1,5 +1,5 @@
-// eslint-disable-next-line no-unused-vars
 import $api from "@/axios";
+import { insertUsersList } from "./users.module";
 
 const defaultPatination = {
   page: 0,
@@ -182,8 +182,12 @@ export const contact = {
         const res = await $api.get("/contact/list", {
           params,
         });
+
+        res.data.resList = insertUsersList(Object.values(res.data.resList));
+
         commit("setContacts", res.data);
       } catch (e) {
+        console.log("e", e);
         commit("setError", e.response.data.message);
       }
     },
@@ -210,6 +214,9 @@ export const contact = {
         const res = await $api.get("/contact/freeList", {
           params,
         });
+
+        res.data.resList = insertUsersList(Object.values(res.data.resList));
+
         commit("setFreeUsers", res.data);
       } catch (e) {
         console.log("e", e);
@@ -235,6 +242,8 @@ export const contact = {
         const res = await $api.get("/contact/pending", {
           params,
         });
+
+        res.data.resList = insertUsersList(Object.values(res.data.resList));
         commit("setPendingRequests", res.data);
       } catch (e) {
         commit("setError", e.response.data.message);
@@ -259,6 +268,8 @@ export const contact = {
         const res = await $api.get("/contact/outgoing", {
           params,
         });
+
+        res.data.resList = insertUsersList(Object.values(res.data.resList));
         commit("setOutgoingRequests", res.data);
       } catch (e) {
         commit("setError", e.response.data.message);
@@ -283,6 +294,8 @@ export const contact = {
         const res = await $api.get("/contact/blockedUsers", {
           params,
         });
+
+        res.data.resList = insertUsersList(Object.values(res.data.resList));
         commit("setBannedUsersList", res.data);
       } catch (e) {
         commit("setError", e.response.data.message);

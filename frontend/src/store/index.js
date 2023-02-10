@@ -4,6 +4,7 @@ import { chat } from "./modules/chat.module";
 import { contact } from "./modules/contact.module";
 import { alert } from "./modules/alert.module";
 import { admin } from "./modules/admin.module";
+import { users } from "./modules/users.module";
 
 export default createStore({
   modules: {
@@ -12,5 +13,6 @@ export default createStore({
     contact,
     alert,
     admin,
+    users,
   },
 });

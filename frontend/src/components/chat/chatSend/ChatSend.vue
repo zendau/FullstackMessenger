@@ -156,7 +156,7 @@ export default {
           authorLogin: userLogin,
           text: messageText,
           files: inseredFilesData,
-          users: chatData.value.users,
+          users: Object.values(chatData.value.users),
         };
         chatSocket.emit("sendMessage", messageData);
       }

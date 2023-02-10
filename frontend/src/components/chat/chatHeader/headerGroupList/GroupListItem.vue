@@ -61,7 +61,7 @@ export default {
       chatSocket.emit("remove-user", {
         chatId: props.chatData.id,
         userId: memberId,
-        users: props.chatData.users,
+        users: Object.values(props.chatData.users),
         adminId: props.userId,
       });
     }
@@ -70,7 +70,7 @@ export default {
       chatSocket.emit("invite-user", {
         chatId: props.chatData.id,
         userId: memberId,
-        users: props.chatData.users,
+        users: Object.values(props.chatData.users),
         adminId: props.userId,
       });
     }

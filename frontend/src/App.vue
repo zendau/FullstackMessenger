@@ -82,6 +82,10 @@ export default {
       });
     });
 
+    chatSocket.on("updateUserOnline", (userStatus) => {
+      store.commit("users/updateUserOnline", userStatus);
+    });
+
     return {
       authLayout,
     };

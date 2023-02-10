@@ -1,4 +1,5 @@
 import $api from "@/axios";
+import { insertUsersList } from "./users.module";
 
 const defaultLoadUsersPagination = {
   page: 0,
@@ -35,12 +36,15 @@ export const admin = {
             userId: userId,
           },
         });
+        // eslint-disable-next-line no-debugger
+        debugger;
+        res.data.resList = insertUsersList(Object.values(res.data.resList));
 
+        commit("saveUsers", res.data.resList);
         commit("saveNewUsersPagination", {
           page: res.data.page,
           hasMore: res.data.hasMore,
         });
-        commit("saveUsers", res.data.resList);
       } catch (e) {
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
