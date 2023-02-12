@@ -450,12 +450,11 @@ export class SocketService {
     // const chatData = JSON.parse(
     //   JSON.stringify(this.getRoomDataWithOnlineStatus(this.rooms[chatId])),
     // );
-    debugger;
     const chatData = (await this.getChatById(chatId)) as IChatExtended;
     chatData.lastMessage = await this.getLastChatMessage(chatId);
-    chatData.chatUnread = await this.getUnreadMessagesCount(chatData);
 
-    chatData.users = await this.setUserOnlineStatus(chatData.users);
+    chatData.users = await this.setUserOnlineStatus(chatData.users as number[]);
+    chatData.chatUnread = await this.getUnreadMessagesCount(chatData);
 
     // chatData.users = await this.socketRedisAdapter.getManyValues(
     //   'user',
@@ -556,12 +555,12 @@ export class SocketService {
 
     //const readMessages = await this.socketRedisAdapter.getValue('unread');
     //const usersUnreadCount: number[] = [];
-    debugger;
+
     const usersUnreadCount = [];
 
     if (!chatData.lastMessage) return 0;
 
-    for (const user of chatData.users) {
+    for (const user of Object.values(chatData.users) as IUser[]) {
       const unreadCount: number = await this.socketRedisAdapter.getValue(
         'unread',
         null,
@@ -668,14 +667,16 @@ export class SocketService {
     return userRooms;
   }
 
-  async setUserOnlineStatus(roomUsers: IUser[]) {
-    for (const user of roomUsers) {
+  async setUserOnlineStatus(roomUsers: number[]) {
+    const groupUsers = await this.chatService.getUsersListData(roomUsers);
+
+    for (const user of groupUsers) {
       const onlineUserData = await this.socketRedisAdapter.getValue(
         'online',
         null,
         user.id,
       );
-      console.log('ONLINE', onlineUserData, user);
+
       if (onlineUserData) {
         user.lastOnline = 'online';
         user.peerId = onlineUserData;
@@ -683,7 +684,7 @@ export class SocketService {
     }
 
     //console.log('test', rooms);
-    return roomUsers;
+    return groupUsers;
   }
 
   async getChatById(chatId: string) {
@@ -729,10 +730,10 @@ export class SocketService {
 
   async addUnReadStatus(chatId: string, authorId: number) {
     const users = await this.getChatUsers(chatId);
-    users.forEach((user) => {
+    users.forEach((userId) => {
       // TODO: добавить строгуй проверку !== при переходе на jwt id
-      if (user.id != authorId) {
-        this.readMessageInc(user.id, chatId);
+      if (userId != authorId) {
+        this.readMessageInc(userId, chatId);
       }
     });
   }
@@ -774,7 +775,7 @@ export class SocketService {
     // ) {
     //   return [];
     // }
-    debugger;
+
     const userContacts: { [key: number]: IUser } =
       await this.socketRedisAdapter.getManyValues(
         'userContacts',
@@ -795,10 +796,9 @@ export class SocketService {
 
     const freeChatUsers: IUser[] = Object.keys(userContacts).reduce(
       (freeUsers, userId) => {
-        const isChatUserExist = chatData.users.some(
-          (user) =>
-            JSON.parse(user as unknown as string)?.id === parseInt(userId),
-        );
+        const isChatUserExist = (
+          chatData.users as undefined as string[]
+        ).includes(userId);
 
         if (!isChatUserExist) {
           freeUsers.push(userContacts[userId]);
@@ -834,13 +834,9 @@ export class SocketService {
 
     const roomData = await this.getChatById(inseredData.chatId);
 
-    const userData = await this.userService.getUserById(inseredData.userId);
+    if (!roomData) return;
 
-    if (!roomData || !userData) return;
-
-    roomData.users.push(userData);
-
-    debugger;
+    (roomData.users as number[]).push(inseredData.userId);
 
     this.socketRedisAdapter.setValue(
       'room',
@@ -864,7 +860,6 @@ export class SocketService {
 
     return {
       inseredData,
-      userData,
     };
   }
 
@@ -876,18 +871,16 @@ export class SocketService {
     const roomData = await this.getChatById(userData.chatId);
     if (!roomData) return;
 
-    let deletedUserInfo: IUser = null;
+    let deletedUserInfo: number = null;
 
-    roomData.users = roomData.users.filter((user) => {
-      if (user.id === userData.userId) {
-        deletedUserInfo = user;
+    roomData.users = (roomData.users as number[]).filter((userId) => {
+      if (userId === userData.userId) {
+        deletedUserInfo = userId;
 
         return false;
       }
       return true;
     });
-
-    debugger;
 
     this.socketRedisAdapter.setValue('room', roomData, true, userData.chatId);
 
@@ -897,7 +890,6 @@ export class SocketService {
       userData.chatId,
     );
 
-    console.log('DELETE', userData);
     this.socketRedisAdapter.deleteListValue(
       'hotChats',
       userData.userId,
@@ -927,16 +919,14 @@ export class SocketService {
     const conferenceCreated = await firstValueFrom(
       this.peerServiceClient.send('room/add', {
         id: res.id,
-        withVideo: chatData.conferenceType,
+        withVideo: chatData.conferenceType ?? true,
       }),
     );
 
     if ('status' in conferenceCreated) return conferenceCreated;
 
     createdChatData.conferenceWithVideo = conferenceCreated.withVideo;
-
-    const groupUsers = await this.chatService.getUsersListData(chatData.users);
-    createdChatData.users = await this.setUserOnlineStatus(groupUsers);
+    createdChatData.users = await this.setUserOnlineStatus(chatData.users);
 
     createdChatData.users.forEach((user) => {
       this.socketRedisAdapter.setSetValue(
@@ -968,11 +958,11 @@ export class SocketService {
 
     const usersIdList = [];
 
-    chatData.users.forEach((user) => {
-      this.socketRedisAdapter.deleteListValue('hotChats', user.id, chatId);
-      this.socketRedisAdapter.deleteSetValue('userRooms', user.id, chatId);
-      this.socketRedisAdapter.deleteValue('unread', user.id, chatId);
-      usersIdList.push(user.id);
+    chatData.users.forEach((userId) => {
+      this.socketRedisAdapter.deleteListValue('hotChats', userId, chatId);
+      this.socketRedisAdapter.deleteSetValue('userRooms', userId, chatId);
+      this.socketRedisAdapter.deleteValue('unread', userId, chatId);
+      usersIdList.push(userId);
     });
 
     this.socketRedisAdapter.deleteValue('room', chatId);

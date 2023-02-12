@@ -16,7 +16,7 @@
         <p>{{ contactData.email }}</p>
         <p>{{ contactData.login }}</p>
         <p>{{ contactData.lastOnline }}</p>
-        <div v-if="contactData.isConfirmRequest">
+        <div v-if="contactStatus?.isConfirmRequest">
           <button @click="confirmContactRequest">
             Accept request
           </button>
@@ -26,26 +26,26 @@
         </div>
         <div v-else>
           <button
-            v-if="contactData.isFriend"
+            v-if="contactStatus?.isFriend"
             @click="deleteFromContacts"
           >
             Remove from contacts
           </button>
           <button
-            v-else-if="contactData.isPendingRequest"
+            v-else-if="contactStatus?.isPendingRequest"
             @click="cancelOutgoingRequest"
           >
             Cancel contact request
           </button>
           <button
             v-else
-            :disabled="contactData.isBanned"
+            :disabled="contactStatus?.isBanned"
             @click="addToContacts"
           >
             Add to contact
           </button>
           <button
-            v-if="contactData.isBanned"
+            v-if="contactStatus?.isBanned"
             @click="unblockUser"
           >
             Unblock user
@@ -74,13 +74,14 @@ export default {
 
     const userId = computed(() => store.state.auth.user.id);
     const contactId = inject("modalUserId");
-    const contactData = computed(() => store.state.contact.users[contactId.value]);
+    const contactData = computed(() => store.state.users.usersList.get(contactId.value));
+    const contactStatus = computed(() => store.state.contact.contactStatutes[contactId.value]);
 
     const chatSocket = inject("chatSocket");
 
     onUpdated(() => {
-      if (!contactData.value && contactId.value) {
-        store.dispatch("contact/getContactData", {
+      if (!contactStatus.value && contactId.value) {
+        store.dispatch("contact/getContactStatutesData", {
           userId: userId.value,
           contactId: contactId.value,
         });
@@ -221,6 +222,7 @@ export default {
     return {
       contactId,
       contactData,
+      contactStatus,
       closeCTX,
       blockUser,
       unblockUser,

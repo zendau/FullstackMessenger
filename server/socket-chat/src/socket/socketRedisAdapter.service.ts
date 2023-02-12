@@ -5,7 +5,13 @@ import IFile from './interfaces/message/IFile';
 import IEditMessage from './interfaces/message/IEditMessage';
 import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
 
-type redisValue = 'user' | 'online' | 'room' | 'unread' | 'userContacts';
+type redisValue =
+  | 'user'
+  | 'online'
+  | 'room'
+  | 'unread'
+  | 'userContacts'
+  | 'privateChat';
 type redisList = 'hotChats' | 'map-message' | 'chatDate';
 type redisSet = 'userRooms' | 'userContacts';
 type redisSortedSet = '';
@@ -104,10 +110,13 @@ export class SocketRedisAdapter {
     if (!setQuery) return null;
 
     const resDB = await setQuery.getValuesFromDB();
+    console.log('RESDB', resDB);
+    if (!resDB) return null;
 
-    if (!resDB || 'status' in resDB) throw new Error(resDB.message);
+    if (typeof resDB === 'object' && 'status' in resDB)
+      throw new Error(resDB?.message ?? 'No found value');
 
-    this.setValue(key, resDB, setQuery.isExpire, mainId);
+    this.setValue(key, resDB, setQuery.isExpire, mainId, subId);
     return resDB;
   }
 

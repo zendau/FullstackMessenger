@@ -126,7 +126,6 @@ export class SocketGateway {
 
   @SubscribeMessage('invite-user')
   async inviteUserToChat(socket: Socket, payload: IChatGroupMember) {
-    debugger;
     const inseredUserData = await this.socketService.inviteUserToChat(payload);
 
     if (!inseredUserData) {
@@ -140,7 +139,7 @@ export class SocketGateway {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
-      text: inseredUserData.userData.login,
+      text: payload.userLogin,
       type: 'add',
       files: null,
       users: inseredUserData.inseredData.users,
@@ -183,7 +182,7 @@ export class SocketGateway {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
-      text: userData.deletedUserInfo.login,
+      text: payload.userLogin,
       type: 'remove',
       files: null,
       users: userData.chatUsers,
@@ -212,7 +211,7 @@ export class SocketGateway {
       roomId: payload.chatId,
       authorId: null,
       authorLogin: null,
-      text: userData.deletedUserInfo.login,
+      text: payload.userLogin,
       type: 'exit',
       files: null,
       users: userData.chatUsers,
@@ -248,18 +247,19 @@ export class SocketGateway {
 
   @SubscribeMessage('readMessages')
   async readMessagesHandler(socket: Socket, payload: IReadMessage) {
+    debugger;
     const unreadCount = await this.socketService.unReadMessages({
       userId: payload.userId,
       chatData: payload.chatData,
       count: payload.count,
     });
+    console.log('unreadCount', unreadCount);
 
     this.server.to(payload.chatData.id).emit('updateReadMessages', unreadCount);
   }
 
   @SubscribeMessage('sendMessage')
   async sendMessage(socket: Socket, payload: IMessageData) {
-    debugger;
     console.log('new message', payload);
 
     const isChatDateExist = await this.socketService.isChatDateMessage(

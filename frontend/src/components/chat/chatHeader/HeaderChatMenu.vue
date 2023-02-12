@@ -70,15 +70,15 @@ export default {
     const isChatAdmin = computed(() => props.adminId === props.userId);
 
     function initCallConference() {
+      console.log("TEST", props.chatUsers);
       const onlineUsersPeers = Object.values(props.chatUsers).reduce((prev, curr) => {
-        if (curr.lastOnline === "online" && curr.id !== props.adminId) {
+        if (curr.lastOnline === "online" && curr.id !== props.userId) {
           prev.push(curr.peerId);
         }
 
         return prev;
       }, []);
 
-      // TODO: confrence id from chat data
       callingData.value = {
         from: {
           peerId: props.peerId,
@@ -86,7 +86,7 @@ export default {
         },
         chatTitle: props.chatTitle,
         users: onlineUsersPeers,
-        confrenceId: "b4927900-1763-4f73-8a9c-8389fe4f8b29",
+        confrenceId: chatId.value,
       };
     }
 
@@ -94,6 +94,7 @@ export default {
       chatSocket.emit("exit-chat", {
         chatId: chatId.value,
         userId: props.userId,
+        userLogin: props.userLogin,
         users: Object.values(props.chatUsers),
         adminId: null,
       });

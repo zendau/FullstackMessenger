@@ -20,7 +20,7 @@ export const contact = {
     outgoingRequests: {},
     blockedUsers: {},
     contactsCount: {},
-    users: {},
+    contactStatutes: {},
     error: null,
   },
   actions: {
@@ -146,7 +146,7 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async getContactData({ commit }, { userId, contactId }) {
+    async getContactStatutesData({ commit }, { userId, contactId }) {
       try {
         const res = await $api.get(`/contact/contactData`, {
           params: {
@@ -154,7 +154,7 @@ export const contact = {
             contactId,
           },
         });
-        commit("setContactData", res.data);
+        commit("setContactStatutesData", res.data);
       } catch (e) {
         commit("setError", e.response.data.message);
       }
@@ -308,17 +308,17 @@ export const contact = {
 
       state[field] = {};
     },
-    setContactData(state, data) {
-      state.users[data.id] = data;
+    setContactStatutesData(state, data) {
+      state.contactStatutes[data.id] = data;
     },
     setNewContactStatus(state, { contactId, status, value }) {
       console.log("setNewContactStatus", contactId, status, value);
-      if (!state.users[contactId]) return;
-      state.users[contactId][status] = value;
+      if (!state.contactStatutes[contactId]) return;
+      state.contactStatutes[contactId][status] = value;
     },
     blockUser(state, contactId) {
-      if (!state.users[contactId]) return;
-      const contactData = state.users[contactId];
+      if (!state.contactStatutes[contactId]) return;
+      const contactData = state.contactStatutes[contactId];
       contactData.isBanned = true;
       contactData.isConfirmRequest = false;
       contactData.isConfirmRequest = false;
@@ -449,35 +449,41 @@ export const contact = {
           delete state.freeUsers[statusData.userData.id];
           state.pendingRequests[statusData.userData.id] = statusData.userData;
           state.contactsCount.pendingRequests++;
-          state.users[statusData.userData.id].isConfirmRequest = true;
+          state.contactStatutes[statusData.userData.id].isConfirmRequest = true;
           break;
         case "PendingAccept":
           delete state.outgoingRequests[statusData.userData.id];
           state.contacts[statusData.userData.id] = statusData.userData;
           state.contactsCount.contacts++;
           state.contactsCount.outgoingRequests--;
-          state.users[statusData.userData.id].isPendingRequest = false;
-          state.users[statusData.userData.id].isFriend = true;
+          state.contactStatutes[
+            statusData.userData.id
+          ].isPendingRequest = false;
+          state.contactStatutes[statusData.userData.id].isFriend = true;
           break;
         case "PendingReject":
           delete state.outgoingRequests[statusData.userData.id];
           state.freeUsers[statusData.userData.id] = statusData.userData;
           state.contactsCount.outgoingRequests--;
-          state.users[statusData.userData.id].isPendingRequest = false;
+          state.contactStatutes[
+            statusData.userData.id
+          ].isPendingRequest = false;
           break;
         case "OutgointCancel":
           delete state.pendingRequests[statusData.userData.id];
           state.freeUsers[statusData.userData.id] = statusData.userData;
           state.contactsCount.pendingRequests--;
-          state.users[statusData.userData.id].isConfirmRequest = false;
+          state.contactStatutes[
+            statusData.userData.id
+          ].isConfirmRequest = false;
           break;
         case "DeleteContact":
           delete state.contacts[statusData.userData.id];
           state.outgoingRequests[statusData.userData.id] = statusData.userData;
           state.contactsCount.contacts--;
           state.contactsCount.outgoingRequests++;
-          state.users[statusData.userData.id].isPendingRequest = true;
-          state.users[statusData.userData.id].isFriend = false;
+          state.contactStatutes[statusData.userData.id].isPendingRequest = true;
+          state.contactStatutes[statusData.userData.id].isFriend = false;
           break;
         case "BlockUser":
           if (state.contacts[statusData.userData.id]) {
@@ -492,49 +498,21 @@ export const contact = {
             delete state.outgoingRequests[statusData.userData.id];
             state.contactsCount.outgoingRequests--;
           }
-          state.users[statusData.userData.id].isBannedByContact = true;
+          state.contactStatutes[
+            statusData.userData.id
+          ].isBannedByContact = true;
 
           break;
 
         case "UnBlockUser":
           state.freeUsers[statusData.userData.id] = statusData.userData;
-          state.users[statusData.userData.id].isBannedByContact = false;
+          state.contactStatutes[
+            statusData.userData.id
+          ].isBannedByContact = false;
           break;
 
         default:
           break;
-      }
-    },
-    updateUserOnline(state, userStatus) {
-      if (state.contacts[userStatus.userId]) {
-        state.contacts[userStatus.userId].lastOnline = userStatus.status;
-        state.contacts[userStatus.userId].peerId = userStatus.peerId;
-      }
-
-      if (state.freeUsers[userStatus.userId]) {
-        state.freeUsers[userStatus.userId].lastOnline = userStatus.status;
-        state.freeUsers[userStatus.userId].peerId = userStatus.peerId;
-      }
-
-      if (state.pendingRequests[userStatus.userId]) {
-        state.pendingRequests[userStatus.userId].lastOnline = userStatus.status;
-        state.pendingRequests[userStatus.userId].peerId = userStatus.peerId;
-      }
-
-      if (state.outgoingRequests[userStatus.userId]) {
-        state.outgoingRequests[userStatus.userId].lastOnline =
-          userStatus.status;
-        state.outgoingRequests[userStatus.userId].peerId = userStatus.peerId;
-      }
-
-      if (state.blockedUsers[userStatus.userId]) {
-        state.blockedUsers[userStatus.userId].lastOnline = userStatus.status;
-        state.blockedUsers[userStatus.userId].peerId = userStatus.peerId;
-      }
-
-      if (state.users[userStatus.userId]) {
-        state.users[userStatus.userId].lastOnline = userStatus.status;
-        state.users[userStatus.userId].peerId = userStatus.peerId;
       }
     },
   },

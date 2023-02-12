@@ -11,13 +11,13 @@
     <div v-else-if="chatData.adminId === userId">
       <button
         v-if="isAddedType"
-        @click="addChatMember(userData.id)"
+        @click="addChatMember(userData.id, userData.login)"
       >
         Add
       </button>
       <button
         v-else
-        @click="deleteChatMember(userData.id)"
+        @click="deleteChatMember(userData.id, userData.login)"
       >
         Delete
       </button>
@@ -57,19 +57,21 @@ export default {
       contactId.value = props.userData.id;
     }
 
-    function deleteChatMember(memberId) {
+    function deleteChatMember(memberId, memberLogin) {
       chatSocket.emit("remove-user", {
         chatId: props.chatData.id,
         userId: memberId,
+        userLogin: memberLogin,
         users: Object.values(props.chatData.users),
         adminId: props.userId,
       });
     }
 
-    function addChatMember(memberId) {
+    function addChatMember(memberId, memberLogin) {
       chatSocket.emit("invite-user", {
         chatId: props.chatData.id,
         userId: memberId,
+        userLogin: memberLogin,
         users: Object.values(props.chatData.users),
         adminId: props.userId,
       });

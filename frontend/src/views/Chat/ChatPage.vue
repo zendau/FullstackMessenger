@@ -94,6 +94,9 @@ export default {
     });
 
     function openChatRoom(roomId, isFirstLoad = false) {
+      isFirstChatsLoad = false;
+      console.log("OPEN CHAT ROOM");
+
       const { isPushed } = route.query;
 
       if (!roomId || (chatId.value === roomId && !isFirstLoad)) return;
@@ -101,6 +104,7 @@ export default {
         router.push(`/chat/${roomId}`);
 
         if (roomId === "contact") {
+          console.log("PUSH TO CHAT");
           router.push(`/chat`);
           return;
         }
@@ -112,6 +116,7 @@ export default {
 
       if (!paginationPage) {
         store.commit("chat/clearChatMessages", roomId);
+        console.log("GET CHAT MESSGES");
         store.dispatch("chat/getChatMessages", {
           chatId: roomId,
           userId: userId.value,
@@ -125,8 +130,6 @@ export default {
       chatObserver.disconnect();
       chatObserver.observe(el);
       if (chatId.value && isFirstChatsLoad) {
-        isFirstChatsLoad = false;
-
         console.log("OPEN HERE");
         openChatRoom(chatId.value, true);
       }
@@ -135,6 +138,7 @@ export default {
     function closeActiveChat(e) {
       if (e.key !== "Escape") return;
       router.push("/chat");
+      store.commit("chat/clearTempData");
     }
 
     return {

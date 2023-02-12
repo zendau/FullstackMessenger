@@ -19,7 +19,6 @@ export class TasksService {
     // LRANGE key_processing 0 -1
     // DEL key_processing
     //const messageKeys = await this.redis.keys('message:*');
-    // debugger;
     const messagesData: [Error, Message][] = [];
     let scanPos = 0;
     while (true) {
@@ -47,7 +46,6 @@ export class TasksService {
     const inseredData = [];
 
     for (const roomMessages of messagesData) {
-      debugger;
       console.log('roomMessages', roomMessages);
       if (roomMessages[0]) return;
 

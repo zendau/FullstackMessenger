@@ -56,10 +56,7 @@ export class ChatService {
     chatId,
     inMemory,
   }: IChatPagination) {
-    debugger;
-
     const chatIdList = new Set<string>();
-    debugger;
     let paginationPage = parseInt(page);
     const paginationLimit = parseInt(limit);
     let inMemoryData: boolean = JSON.parse(inMemory);
@@ -299,7 +296,6 @@ export class ChatService {
   }
 
   async getContactList(listData: IGetContactList) {
-    debugger;
     const contactList = await this.userService.getContactList(listData);
 
     if (Object.keys(contactList.resList).length === 0) return contactList;
@@ -345,5 +341,41 @@ export class ChatService {
       .getMany();
 
     return privateChats;
+  }
+
+  async checkPrivateChat(userId: number, contactId: number) {
+    console.log('!!@13', userId, contactId);
+    const chatId = await this.socketRedisAdapter.getValue(
+      'privateChat',
+      {
+        getValuesFromDB: async () =>
+          await this.getPrivateChatId(userId, contactId),
+        isExpire: true,
+      },
+      userId,
+      contactId,
+    );
+    return chatId;
+  }
+
+  async getPrivateChatId(userId: number, contactId: number) {
+    const privateChat = await this.chatUserRepository
+      .createQueryBuilder('chatUsers')
+      .select('chat.id')
+      .innerJoin('chatUsers.chat', 'chat')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('chatSQ.chatId')
+          .where('chatSQ.userId = :userId', { userId })
+          .from(ChatUsers, 'chatSQ')
+          .getQuery();
+        return 'chatUsers.chatId IN ' + subQuery;
+      })
+      .andWhere('userId = :contactId', { contactId })
+      .andWhere('chat.adminId IS NULL')
+      .getRawOne();
+
+    return privateChat?.['chat_id'];
   }
 }

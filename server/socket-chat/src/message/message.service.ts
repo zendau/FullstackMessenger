@@ -78,7 +78,6 @@ export class MessageService {
     //   'message',
     //   roomId,
     // );
-    debugger;
     let roomMessages: Message[] = [];
     const page = parseInt(scrollData.page);
 

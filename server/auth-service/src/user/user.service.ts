@@ -31,6 +31,7 @@ import IUserPaginationList from 'src/contacts/interfaces/IUserPaginationList';
 @Injectable()
 export class UserService {
   private queryRunner: QueryRunner;
+  private getUserQuery: SelectQueryBuilder<User>;
 
   constructor(
     @InjectRepository(User)
@@ -38,7 +39,21 @@ export class UserService {
     private confirmCodeService: ConfirmCodeService,
     private userInfoService: UserInfoService,
     @InjectRedis() private readonly redis: Redis,
-  ) {}
+  ) {
+    this.getUserQuery = this.usersRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.email',
+        'user.login',
+        'user.lastOnline',
+        'user.role',
+        'userInfo.phone',
+        'userInfo.details',
+      ])
+      .leftJoin('user.info', 'userInfo')
+      .leftJoin('user.access', 'access');
+  }
 
   async editUserData(userData: IEditUser) {
     try {
@@ -139,15 +154,9 @@ export class UserService {
 
     console.log('start', start, page, limit);
 
-    let query = this.usersRepository
-      .createQueryBuilder('user')
-      .select('user.id, user.email, user.login, user.lastOnline')
-      .addSelect('user.role', 'role')
-      .addSelect('userInfo.phone', 'phone')
-      .addSelect('userInfo.details', 'details')
-      .leftJoin('user.info', 'userInfo')
-      .leftJoin('user.access', 'access')
-      .addSelect('access.isBanned', 'isBanned')
+    let query = this.getUserQuery;
+
+    query = query
       .where(`user.id ${isNot ? 'NOT' : ''} IN (${subQuery.getQuery()})`)
       .andWhere('user.id != :userId', { userId });
 
@@ -165,7 +174,7 @@ export class UserService {
 
     console.log('userId', query.getQuery());
     debugger;
-    const resQuery = await query.getRawMany();
+    const resQuery: any = await query.getMany();
 
     console.log('resQuery', resQuery);
 
@@ -206,11 +215,11 @@ export class UserService {
   }
 
   async getUserById(id: number) {
-    const user = await this.usersRepository
-      .createQueryBuilder('user')
-      .select(['user.id', 'user.email', 'user.login', 'user.lastOnline'])
+    const user = await this.getUserQuery
       .where('user.id = :id', { id })
       .getOne();
+
+    console.log('GET', user);
 
     if (user === undefined) {
       return {

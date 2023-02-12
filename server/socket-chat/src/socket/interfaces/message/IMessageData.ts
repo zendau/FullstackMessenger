@@ -8,5 +8,5 @@ export default interface IMessageData {
   text: string;
   type?: 'date' | 'add' | 'remove' | 'exit' | 'created' | 'text';
   files?: IFile[];
-  users: IUser[];
+  users: IUser[] | number[];
 }

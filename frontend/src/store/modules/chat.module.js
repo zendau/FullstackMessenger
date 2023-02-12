@@ -25,7 +25,7 @@ export const chat = {
     messages: {},
     tempPrivateChat: null,
     loadChatsPagination: { ...defaultLoadChatsPagination },
-    freeChatUsers: [],
+    freeChatUsers: {},
   },
   actions: {
     async newChatMessage({ commit, state, getters }, { messagesData, userId }) {
@@ -196,6 +196,8 @@ export const chat = {
           },
         });
 
+        res.data = insertUsersList(Object.values(res.data));
+
         commit("saveFreeChatUsers", res.data);
       } catch (e) {
         commit("alert/setErrorMessage", e.response.data.message, {
@@ -214,8 +216,8 @@ export const chat = {
           return;
         }
 
-        chatData.users = deleteData.chatUsers;
-        if (deleteData.deletedUserInfo.id !== rootState.auth.user.id) return;
+        delete chatData.users[deleteData.deletedUserInfo];
+        if (deleteData.deletedUserInfo !== rootState.auth.user.id) return;
 
         commit("deleteChatData", deleteData.userData.chatId);
         commit("clearChatMessages", deleteData.userData.chatId);
@@ -238,6 +240,32 @@ export const chat = {
         commit("saveChat", chatData.data);
       } else {
         commit("alert/setErrorMessage", `Not fount chat - ${chatId}`, {
+          root: true,
+        });
+      }
+    },
+    async getPrivateChatId({ commit }, { userId, contactData, openChat }) {
+      try {
+        const res = await $api.get("/chat/checkPrivate", {
+          params: {
+            userId,
+            contactId: contactData.id,
+          },
+        });
+        if (res.data) {
+          console.log("res", res.data);
+          openChat(res.data);
+        } else {
+          openChat("contact");
+          commit("setTempPrivateChat", {
+            id: contactData.id,
+            title: contactData.login,
+            lastOnline: contactData.lastOnline,
+          });
+        }
+      } catch (e) {
+        console.log("e", e);
+        commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });
       }
@@ -270,9 +298,10 @@ export const chat = {
       };
     },
     clearTempData(state) {
+      console.log("CLEART TEMP");
       state.currentTempChatData = null;
       state.tempPrivateChat = null;
-      state.freeChatUsers = [];
+      state.freeChatUsers = {};
     },
     clearChatMessages(state, chatId) {
       state.messages[chatId] = [];
@@ -360,7 +389,7 @@ export const chat = {
     },
     addUserToGroup(state, { chatId, userData }) {
       if (!state.chats.has(chatId)) return;
-      state.chats.get(chatId).users.push(userData);
+      state.chats.get(chatId).users[userData.id] = userData;
     },
     deleteChatData(state, chatId) {
       if (state.chats.has(chatId)) {
@@ -378,6 +407,7 @@ export const chat = {
       }
     },
     setTempPrivateChat(state, chatData) {
+      console.log("SET TEMP DATA");
       state.tempPrivateChat = chatData;
     },
     saveNewChatsPagination(state, { page, hasMore, inMemory }) {
@@ -398,12 +428,15 @@ export const chat = {
       state.freeChatUsers = freeUsers;
     },
     updateFreeChatUsers(state, withoutId) {
-      state.freeChatUsers = state.freeChatUsers.filter(
-        (user) => user.id !== withoutId
-      );
+      console.log("CAASD");
+      const a = Object.entries(state.freeChatUsers);
+      const b = a.filter((userData) => userData[1].id !== withoutId);
+
+      const c = Object.fromEntries(b);
+      state.freeChatUsers = c;
     },
     pushFreeChatUsers(state, userData) {
-      state.freeChatUsers.push(userData);
+      state.freeChatUsers[userData.id] = userData;
     },
   },
   getters: {

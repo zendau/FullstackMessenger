@@ -11,7 +11,7 @@
         v-else
         :chat-title="chatData.title"
         :private-chat-online-status="privateChatOnlineStatus"
-        :private-user-id="Object.values(chatData.users)[0].id"
+        :private-user-id="privateUserId"
         :user-id="userData.id"
       />
     </div>
@@ -25,11 +25,6 @@
       :chat-users="chatData?.users"
       :chat-title="chatData.title"
     />
-    <!-- TODO: Проверить что это, если не надо , удалить -->
-    <!-- <div
-      v-if="isChatAdmin"
-      class="chat__topbar"
-    /> -->
   </div>
   <HeaderGroupList
     v-if="isShowUsersList"
@@ -39,8 +34,9 @@
 </template>
 
 <script>
-import { computed, inject, ref } from "vue";
+import { computed, inject, watch, ref } from "vue";
 import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 
 import HeaderMessages from "@/components/chat/chatHeader/HeaderMessages.vue";
 import HeaderGroup from "@/components/chat/chatHeader/HeaderGroup.vue";
@@ -55,14 +51,19 @@ export default {
     const store = useStore();
     const chatData = inject("chatData");
     const userData = computed(() => store.state.auth.user);
-
-    const showUsers = ref(false);
+    const router = useRoute();
+    const chatId = computed(() => router.params.id);
 
     const privateChatOnlineStatus = computed(() => {
       if (!chatData.value?.users) return chatData.value.lastOnline;
 
       const [userId] = Object.keys(chatData.value.users);
       return chatData.value.users[userId].lastOnline;
+    });
+
+    const privateUserId = computed(() => {
+      if (!chatData.value?.users) return chatData.value.id;
+      return Object.values(chatData.value.users)[0]?.id;
     });
 
     const chatGroupMembersCount = computed(() => Object.keys(chatData.value.users).length);
@@ -73,13 +74,17 @@ export default {
       isShowUsersList.value = !isShowUsersList.value;
     }
 
+    watch(chatId, () => {
+      if (isShowUsersList.value) toggleUsersList();
+    });
+
     function deleteMessages() {
       emit("delete-messages");
     }
 
     return {
+      privateUserId,
       chatData,
-      showUsers,
       privateChatOnlineStatus,
       isShowUsersList,
       chatGroupMembersCount,

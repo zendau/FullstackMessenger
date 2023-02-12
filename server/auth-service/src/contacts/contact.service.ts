@@ -359,28 +359,13 @@ export class ContactService {
   }
 
   async getContactData(requestData: IContact) {
-    const contactData = await this.userService.getUserById(
-      requestData.contactId,
-    );
-
-    if (!(contactData instanceof User)) return contactData;
-    debugger;
-    const resStatus = Object.assign(contactData, {
+    const resStatus = {
       isBanned: false,
       isBannedByContact: false,
       isFriend: false,
       isConfirmRequest: false,
       isPendingRequest: false,
-    });
-
-    const onlineStatus: number = await this.redis.sismember(
-      'online',
-      requestData.contactId.toString(),
-    );
-
-    if (onlineStatus) {
-      contactData.lastOnline = 'online';
-    }
+    };
 
     const userStatus = await this.contactRepository
       .createQueryBuilder()

@@ -8,7 +8,7 @@
       <div
         class="contact__item"
         @contextmenu.prevent
-        @click.left="openChat(user)"
+        @click.left="checkPrivateContact(user)"
         @click.right="openUserModal(user.id)"
       >
         <i class="bi bi-person" />
@@ -86,15 +86,14 @@ export default {
       observer.observe(el);
     }
 
-    function openChat(userData) {
-      console.log("CHAT", userData);
-      emit("open-chat", userData.chat ?? "contact");
-      store.commit("chat/setTempPrivateChat", {
-        id: userData.id,
-        title: userData.login,
-        lastOnline: userData.lastOnline,
-      });
-      console.log("open chat", userData.chat);
+    function checkPrivateContact(contactData) {
+      console.log("CHAT", contactData);
+      store.dispatch("chat/getPrivateChatId", { userId: userId.value, contactData, openChat });
+    }
+
+    function openChat(chatId) {
+      emit("open-chat", chatId);
+      // console.log("open chat", userData.chat);
     }
 
     function openUserModal(userId) {
@@ -103,6 +102,7 @@ export default {
     }
 
     return {
+      checkPrivateContact,
       openChat,
       createGroupUsers,
       contactsPattern,

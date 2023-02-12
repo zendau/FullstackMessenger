@@ -84,27 +84,32 @@ export default {
     chatSocket.on("inviteChatUser", (inseredUserData) => {
       console.log("inseredUserData", inseredUserData);
       if (inseredUserData?.adminId === userId.value) {
-        store.commit("chat/updateFreeChatUsers", inseredUserData.userData.id);
+        store.commit("chat/updateFreeChatUsers", inseredUserData.inseredData.userId);
       }
 
-      if (inseredUserData.userData.id === userId.value) {
+      if (inseredUserData.inseredData.userId === userId.value) {
         store.dispatch("chat/getChatMessages", {
           chatId: inseredUserData.inseredData.chatId,
           userId: userId.value,
         });
       } else {
+        const userData = store.state.users.usersList.get(inseredUserData.inseredData.userId);
+
         store.commit("chat/addUserToGroup", {
           chatId: inseredUserData.inseredData.chatId,
-          userData: inseredUserData.userData,
+          userData,
         });
       }
     });
 
     chatSocket.on("removeChatUser", (removeUser) => {
+      console.log("removeUser", removeUser);
       store.dispatch("chat/deleteFromChat", removeUser);
 
       if (removeUser?.adminId === userId.value) {
-        store.commit("chat/pushFreeChatUsers", removeUser.deletedUserInfo);
+        const deletedUserData = store.state.users.usersList.get(removeUser.deletedUserInfo);
+
+        store.commit("chat/pushFreeChatUsers", deletedUserData);
       }
     });
 
@@ -118,10 +123,11 @@ export default {
     });
 
     const chatData = computed(() => store.getters["chat/selectedChat"](chatId.value));
+    console.log("CHATDATA", chatData);
     provide("chatData", chatData);
     const privateMemberId = ref(null);
     const isPrivateBanned = computed(() => {
-      const data = store.state.contact.users[privateMemberId.value];
+      const data = store.state.contact.contactStatutes[privateMemberId.value];
 
       if (!data) return null;
       return data.isBanned || data.isBannedByContact;
@@ -134,7 +140,7 @@ export default {
 
       console.log("memberData", isPrivateBanned.value);
       if (isPrivateBanned.value !== null) return;
-      store.dispatch("contact/getContactData", {
+      store.dispatch("contact/getContactStatutesData", {
         userId: userId.value,
         contactId: privateMemberId.value,
       });

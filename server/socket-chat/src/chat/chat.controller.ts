@@ -85,6 +85,22 @@ export class ChatController {
     return res;
   }
 
+  @MessagePattern('chat/checkPrivate')
+  async checkPrivateChat(
+    @Payload() privateData: { userId: number; contactId: number },
+  ) {
+    const res = await this.chatService
+      .checkPrivateChat(privateData.userId, privateData.contactId)
+      .catch((err) => {
+        return {
+          status: false,
+          message: err?.sqlMessage ?? err.message,
+          httpCode: HttpStatus.BAD_REQUEST,
+        };
+      });
+    return res;
+  }
+
   @MessagePattern('chat/usersPrivateChats')
   async getUsersPrivateChats(
     @Payload() privateData: { userId: number; userIdList: number[] },

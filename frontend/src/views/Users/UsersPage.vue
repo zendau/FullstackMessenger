@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import { ref, provide } from "vue";
+import { provide, ref } from "vue";
 
 import ContactsContainer from "@/components/chat/contacts/ContactsContainer.vue";
 import UserModal from "@/components/chat/modals/UserModal.vue";

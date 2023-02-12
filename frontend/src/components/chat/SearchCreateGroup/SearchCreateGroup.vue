@@ -106,7 +106,7 @@ export default {
 
       chatSocket.emit("createChat", {
         adminId: userId,
-        users: Object.values(createGroupUsers.value),
+        users: createGroupUsers.value,
         groupName: formData.chatTitle,
         conferenceType: formData.conferenceType,
       });

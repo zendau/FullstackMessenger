@@ -140,17 +140,15 @@ export default {
       }
     );
 
-    watch(chatId, () => {
-      store.commit("chat/clearTempData");
+    watch(chatId, (curId) => {
       isFirstScroll = true;
-      console.log("BODY REF", isFirstMessageUnread.value, isFirstScroll);
-
       bodyRef.value.scrollTop = 0;
+
+      if (!curId) return;
+      store.commit("chat/clearTempData");
     });
 
     chatSocket.on("updateReadMessages", (newData) => {
-      // eslint-disable-next-line no-debugger
-      debugger;
       console.log("### NEW DATA ###", newData, route, chatId, typeof chatId.value);
       store.commit("chat/updateReadMessages", {
         chatId: chatId.value,

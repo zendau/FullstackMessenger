@@ -1,7 +1,6 @@
-import IUser from 'src/chat/interfaces/IUser';
-
 export default interface IUserChat {
   userId: number;
+  userLogin: string;
   chatId: string;
-  users: IUser[];
+  users: number[];
 }

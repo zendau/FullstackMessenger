@@ -3,8 +3,6 @@ import IUser from './interfaces/IUser';
 
 @Injectable()
 export class SocketService {
-  public users: IUser[] = [];
-
   private rooms = new Map<string, Map<string, IUser>>();
 
   getRoomUsers(roomId: string) {

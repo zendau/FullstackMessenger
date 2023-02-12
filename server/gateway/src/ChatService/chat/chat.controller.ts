@@ -147,7 +147,7 @@ export class ChatController {
 
   @Get('listPagination')
   async getChatsPagination(@Query() paginationData: IChatPagination) {
-    console.log('paginationData', paginationData)
+    console.log('paginationData', paginationData);
     const res = await firstValueFrom(
       this.chatServiceClient.send('chat/listPagination', paginationData),
     );
@@ -247,5 +247,20 @@ export class ChatController {
       throw new HttpException(res.message, res.httpCode);
     }
     return res;
+  }
+
+  @Get('checkPrivate')
+  async checkPrivateChat(
+    @Query() privateData: { userId: number; contactId: number },
+  ) {
+    const resData = await firstValueFrom(
+      this.chatServiceClient.send('chat/checkPrivate', privateData),
+    );
+    console.log('RES d', resData);
+    if (resData?.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+
+    return resData ?? false;
   }
 }

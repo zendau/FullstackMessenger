@@ -41,7 +41,7 @@
           <img
             :src="`http://localhost:4000/storage/${file.foulder.path}/${file.fileTempName}`"
             height="200"
-            alt=""
+            :alt="file.fileName"
           >
         </p>
         <div v-else>

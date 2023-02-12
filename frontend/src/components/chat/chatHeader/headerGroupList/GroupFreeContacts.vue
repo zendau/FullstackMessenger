@@ -43,7 +43,7 @@ export default {
       store.dispatch("chat/getFreeChatUsers", {
         userId: props.userId,
         chatId: props.chatData.id,
-        users: props.chatData.users,
+        users: Object.keys(props.chatData.users),
       });
     }
 

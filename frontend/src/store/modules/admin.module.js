@@ -36,8 +36,6 @@ export const admin = {
             userId: userId,
           },
         });
-        // eslint-disable-next-line no-debugger
-        debugger;
         res.data.resList = insertUsersList(Object.values(res.data.resList));
 
         commit("saveUsers", res.data.resList);

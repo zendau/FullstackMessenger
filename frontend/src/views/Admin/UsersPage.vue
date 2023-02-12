@@ -27,8 +27,8 @@
             :user-role="user.role"
           />
         </td>
-        <td>{{ user.phone }}</td>
-        <td>{{ user.details }}</td>
+        <td>{{ user.info?.phone }}</td>
+        <td>{{ user.info?.details }}</td>
         <td>{{ user.lastOnline }}</td>
         <!-- <td>{{ getStatus(user.isBanned) }}</td> -->
         <td v-if="!user.isBanned">
