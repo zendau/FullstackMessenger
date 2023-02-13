@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import dateFormat from "@/utils/dateFormat";
 import { useI18n } from "vue-i18n";
 
 export default {
@@ -33,11 +32,12 @@ export default {
     },
   },
   setup() {
-    const { t } = useI18n();
+    const { t, d } = useI18n();
+    console.log("useI18n", useI18n());
 
     function getMessageAlert(messageType, messageText) {
       if (messageType === "date") {
-        return dateFormat(messageText, "en");
+        return d(new Date(messageText), "short");
       } else if (messageType === "add") {
         return `${t("chat.messageSystemInfo.added")} ${messageText}`;
       } else if (messageType === "remove") {

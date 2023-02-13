@@ -5,29 +5,36 @@
       :class="{ 'nav__menu--active': isShowMobileNavbar }"
     >
       <ul v-if="authStatus">
-        <li
-          v-for="(item, index) in navbarAuthList.items"
-          :key="index"
-        >
-          <router-link
-            :to="item.link"
-            replace
-          >
-            {{ item.name }}
+        <li>
+          <router-link to="/chat">
+            {{ $t("navbar.mainNavbar.chat") }}
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/conferences">
+            {{ $t("navbar.mainNavbar.conferences") }}
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/users">
+            {{ $t("navbar.mainNavbar.users") }}
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/settings">
+            {{ $t("navbar.mainNavbar.settings") }}
           </router-link>
         </li>
         <admin-menu v-if="isAdmin" />
       </ul>
-      <ul v-else>
-        <li
-          v-for="(item, index) in navbarNoAuthList.items"
-          :key="index"
-        >
-          <router-link :to="item.link">
-            {{ item.name }}
-          </router-link>
-        </li>
-      </ul>
+      <div v-else>
+        <router-link to="/login">
+          {{ $t("navbar.mainNavbar.login") }}
+        </router-link>
+        <router-link to="/register">
+          {{ $t("navbar.mainNavbar.register") }}
+        </router-link>
+      </div>
       <a
         v-if="authStatus"
         href="#"
@@ -63,47 +70,11 @@ import { useRoute } from "vue-router";
 
 import AdminMenu from "./AdminNavbar.vue";
 
-import { useI18n } from "vue-i18n";
-
 export default {
   components: { AdminMenu },
   setup() {
     const store = useStore();
     const route = useRoute();
-    const { t } = useI18n();
-
-    const navbarAuthList = {
-      items: [
-        {
-          name: t("navbar.mainNavbar.chat"),
-          link: "/chat",
-        },
-        {
-          name: t("navbar.mainNavbar.conferences"),
-          link: "/conferences",
-        },
-        {
-          name: t("navbar.mainNavbar.users"),
-          link: "/users",
-        },
-        {
-          name: t("navbar.mainNavbar.settings"),
-          link: "/settings",
-        },
-      ],
-    };
-    const navbarNoAuthList = {
-      items: [
-        {
-          name: t("navbar.mainNavbar.login"),
-          link: "/login",
-        },
-        {
-          name: t("navbar.mainNavbar.register"),
-          link: "/register",
-        },
-      ],
-    };
 
     const isShowMobileNavbar = ref(false);
 
@@ -129,8 +100,6 @@ export default {
       logout,
       isAdmin,
       authStatus,
-      navbarAuthList,
-      navbarNoAuthList,
       isShowMobileNavbar,
     };
   },
@@ -156,6 +125,7 @@ header {
     ul {
       list-style: none;
       display: flex;
+      align-items: center;
 
       li {
         margin-right: 15px;

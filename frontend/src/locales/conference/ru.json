@@ -20,5 +20,8 @@
     "callFrom": "Звонок от",
     "accept": "Принять",
     "reject": "Отклонить"
+  },
+  "recorder": {
+    "promptSave": "Введите имя файла"
   }
 }

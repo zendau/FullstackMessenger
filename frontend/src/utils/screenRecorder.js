@@ -1,4 +1,5 @@
 import { saveAs } from "file-saver";
+import i18n from "@/locales/index";
 
 const mimeType = "video/webm";
 let isRecordScreen = null;
@@ -46,6 +47,6 @@ function saveFile(recordedChunks) {
   const blob = new Blob(recordedChunks, {
     type: mimeType,
   });
-  let filename = window.prompt("Enter file name");
+  let filename = window.prompt(i18n.global.t("conference.recorder.promptSave"));
   saveAs(blob, `${filename}.webm`);
 }

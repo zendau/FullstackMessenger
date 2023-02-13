@@ -20,5 +20,8 @@
     "callFrom": "Call from",
     "accept": "Accept",
     "reject": "Reject"
+  },
+  "recorder": {
+    "promptSave": "Enter file name"
   }
 }

@@ -1,5 +1,8 @@
 import { createI18n } from "vue-i18n";
 
+import slavicPluralization from "./pluralization/slavic.pluralization";
+import datetimeFormats from "./datetimeFormats/index";
+
 import chat_en from "./chat/en.json";
 import chat_ru from "./chat/ru.json";
 
@@ -18,6 +21,9 @@ import setting_ru from "./setting/ru.json";
 import view_en from "./view/en.json";
 import view_ru from "./view/ru.json";
 
+import store_en from "./store/en.json";
+import store_ru from "./store/ru.json";
+
 const messages = {
   en: {
     chat: chat_en,
@@ -26,6 +32,7 @@ const messages = {
     conference: conference_en,
     setting: setting_en,
     view: view_en,
+    store: store_en,
   },
   ru: {
     chat: chat_ru,
@@ -34,6 +41,7 @@ const messages = {
     conference: conference_ru,
     setting: setting_ru,
     view: view_ru,
+    store: store_ru,
   },
 };
 
@@ -42,6 +50,10 @@ const i18n = createI18n({
   globalInjection: true,
   locale: "ru",
   fallbackLocale: "en",
+  datetimeFormats,
+  pluralRules: {
+    ru: slavicPluralization,
+  },
   messages,
 });
 

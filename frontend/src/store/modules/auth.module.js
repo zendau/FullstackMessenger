@@ -3,6 +3,9 @@ import jwt_decode from "jwt-decode";
 
 import router from "@/router";
 
+import i18n from "@/locales/index";
+const { t: $t } = i18n.global;
+
 export const auth = {
   namespaced: true,
   state: {
@@ -46,7 +49,7 @@ export const auth = {
 
         commit(
           "alert/setSuccessMessage",
-          "New password was send to your email",
+          $t("store.auth.newPassword", resetData.email),
           {
             root: true,
           }
@@ -70,7 +73,7 @@ export const auth = {
           confirmCode: userData.confirmCode,
         });
 
-        commit("alert/setSuccessMessage", "Your data was updated", {
+        commit("alert/setSuccessMessage", $t("store.auth.updatedData"), {
           root: true,
         });
         commit("updateData", userData);

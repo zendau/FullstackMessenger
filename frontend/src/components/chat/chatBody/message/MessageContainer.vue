@@ -75,7 +75,7 @@
 <script>
 import { computed, ref, inject, reactive } from "vue";
 import isLink from "@/utils/isLink";
-import dateFormat from "@/utils/dateFormat";
+import { useI18n } from "vue-i18n";
 
 export default {
   props: {
@@ -101,6 +101,8 @@ export default {
     const messageDate = ref(null);
     const messageTime = ref(null);
 
+    const { d } = useI18n();
+
     const checboxData = reactive({ id: props.message.id, isRead: props.isRead });
 
     const isConferenceChat = inject("isConferenceChat", false);
@@ -110,8 +112,14 @@ export default {
     }
 
     function convertDate(date) {
-      const tempDate = dateFormat(date, "ru", true).split(",");
-      [messageDate.value, messageTime.value] = tempDate;
+      const tempDate = d(date, "long").split(",");
+
+      if (tempDate.length === 3) {
+        messageDate.value = `${tempDate[0]}, ${tempDate[1]}`;
+      } else {
+        [messageDate.value] = tempDate;
+      }
+      messageTime.value = tempDate.at(-1);
     }
 
     convertDate(props.message.created_at);

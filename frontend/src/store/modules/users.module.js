@@ -1,3 +1,6 @@
+import i18n from "@/locales/index";
+const { t: $t, d: $d } = i18n.global;
+
 export function insertUsersList(usersList) {
   const chatUsers = {};
 
@@ -28,20 +31,13 @@ function dateTransformer(time) {
   delta -= minutes * 60;
 
   if (days > 0) {
-    var options = {
-      minute: "numeric",
-      hour: "numeric",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return new Intl.DateTimeFormat("en-US", options).format(new Date(time));
+    return $d(new Date(time), "long");
   } else if (hours > 0) {
-    return `${hours} hours ago`;
+    return $t("store.user.hour", hours);
   } else if (minutes > 0) {
-    return `${minutes} minutes ago`;
+    return $t("store.user.minute", minutes);
   } else {
-    return "recently";
+    return $t("store.user.recently");
   }
 }
 
@@ -66,7 +62,7 @@ export const users = {
       userData.lastOnline = userStatus.status;
 
       if (userStatus.status === "online") {
-        userData.lastOnline = userStatus.status;
+        userData.lastOnline = $t("store.user.online");
         return;
       }
 

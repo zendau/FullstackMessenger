@@ -2,6 +2,9 @@ import $api from "@/axios";
 import router from "@/router";
 import { insertUsersList } from "./users.module";
 
+import i18n from "@/locales/index";
+const { t: $t } = i18n.global;
+
 const defaultLoadChatsPagination = {
   page: 0,
   limit: 6,
@@ -72,9 +75,13 @@ export const chat = {
           if (chatData.data) {
             commit("saveChat", chatData.data);
           } else {
-            commit("alert/setErrorMessage", `Not fount chat - ${chatId}`, {
-              root: true,
-            });
+            commit(
+              "alert/setErrorMessage",
+              $t("store.chat.notFoundChat", chatId),
+              {
+                root: true,
+              }
+            );
           }
         }
 
@@ -210,7 +217,7 @@ export const chat = {
         const chatData = getters.selectedChat(deleteData.userData.chatId);
 
         if (!chatData) {
-          commit("alert/setErrorMessage", "Error when deleting a user", {
+          commit("alert/setErrorMessage", $t("store.chat.deleteError"), {
             root: true,
           });
           return;
@@ -239,7 +246,7 @@ export const chat = {
       if (chatData.data) {
         commit("saveChat", chatData.data);
       } else {
-        commit("alert/setErrorMessage", `Not fount chat - ${chatId}`, {
+        commit("alert/setErrorMessage", $t("store.chat.notFoundChat", chatId), {
           root: true,
         });
       }
@@ -441,8 +448,6 @@ export const chat = {
   },
   getters: {
     selectedChat: (state) => (chatId) => {
-      // eslint-disable-next-line no-debugger
-      debugger;
       if (state.chats.has(chatId)) return state.chats.get(chatId);
       else if (state.currentTempChatData?.id === chatId)
         return state.currentTempChatData;
