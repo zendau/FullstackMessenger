@@ -1,3 +1,99 @@
 {
-  "hello": "привет мир"
+  "header": {
+    "chats": "Чаты",
+    "contacts": "Контакты",
+    "calls": "Звонки",
+    "settings": "Настройки",
+    "exit": "Выход"
+  },
+  "list": {
+    "empty": "Нет чатов"
+  },
+  "searchCreateGroup": {
+    "inputPlaceholder": "Введите имя чата",
+    "selectType": "Выберите тип конференции",
+    "type": {
+      "audio": "Аудио",
+      "video": "Видео"
+    },
+    "create": "Создать",
+    "typeError": "Тип конференции должен быть выбран"
+  },
+  "searchInput": {
+    "placeholder": "Найти"
+  },
+  "contactType": {
+    "freeUsers": "Добавить",
+    "contacts": "Контакты",
+    "pendingRequests": "В ожидании",
+    "outgoingRequests": "Исходящие",
+    "blockedUsers": "Заблокированные"
+  },
+  "headerGroup": {
+    "members": "участника"
+  },
+  "headerMessages": {
+    "deleted": "Удалить",
+    "cancel": "Отменить"
+  },
+  "headerChatMenu": {
+    "call": "Позвонить",
+    "deleteChat": "Удалить чат",
+    "exit": "Выйти из чата",
+    "confirmTitle": "Удалить выбранный чат ?"
+  },
+  "confirmModal": {
+    "confirm": "Подтвердить",
+    "cancel": "Отменить"
+  },
+  "groupListItem": {
+    "admin": "Владелец",
+    "add": "Добавить",
+    "delete": "Удалить"
+  },
+  "groupFreeContacts": {
+    "invite": "Пригласить контактов"
+  },
+  "messageContextMenu": {
+    "copy": "Копировать текст",
+    "edit": "Изменить",
+    "select": "Выбрать",
+    "delete": "Удалить"
+  },
+  "messageContainer": {
+    "edited": "изменено",
+    "newMessage": "Новое сообщение"
+  },
+  "messageSystemInfo": {
+    "added": "Добавлен:",
+    "deleted": "Удален:",
+    "exit": "Вышел:",
+    "created": "Создан"
+  },
+  "fileUpload": {
+    "message": "Опустите файл(ы), для загрузки"
+  },
+  "chatSend": {
+    "banned": "Пользователь вас заблокировал",
+    "placeholder": "Написать сообщение..."
+  },
+  "chatEditMessage": {
+    "cancel": "Отменить"
+  },
+  "chatPressing": {
+    "pressing": "набирает сообщение ..."
+  },
+  "contactsList": {
+    "noUsers": "No users"
+  },
+  "userModal": {
+    "blockedByUsers": "Данный пользователь вас заблокировал",
+    "accept": "Принять запрос",
+    "reject": "Отклонить запрос",
+    "remove": "Удалить с контактов",
+    "cancel": "Отменить запрос на добавление в контакты",
+    "add": "Добавить в контакты",
+    "unBlock": "Разблокировать",
+    "block": "Заблокировать"
+  }
 }

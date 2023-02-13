@@ -1,28 +1,28 @@
 <template>
   <div style="justify-self: end">
     <button @click="initCallConference">
-      Call
+      {{ $t("chat.headerChatMenu.call") }}
     </button>
     <button
       v-if="isChatAdmin"
       class="chat__exit"
       @click="isShowConfirmModal = true"
     >
-      Delete chat
+      {{ $t("chat.headerChatMenu.deleteChat") }}
     </button>
     <button
       v-else
       class="chat__exit"
       @click="exitFromChat"
     >
-      Exit chat
+      {{ $t("chat.headerChatMenu.exit") }}
     </button>
   </div>
 
   <ConfirmModal
     :is-open-modal="isShowConfirmModal"
     :action-handler="deleteChat"
-    :title="'Delete selected chat ?'"
+    :title="$t('chat.headerChatMenu.confirmTitle')"
     @close-confirm-modal="isShowConfirmModal = false"
   />
 </template>

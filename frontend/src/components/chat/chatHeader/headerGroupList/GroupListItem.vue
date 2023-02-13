@@ -6,20 +6,20 @@
       <div>{{ userData.lastOnline }}</div>
     </div>
     <div v-if="chatData.adminId === userData.id">
-      ADMIN
+      {{ $t("chat.groupListItem.admin") }}
     </div>
     <div v-else-if="chatData.adminId === userId">
       <button
         v-if="isAddedType"
         @click="addChatMember(userData.id, userData.login)"
       >
-        Add
+        {{ $t("chat.groupListItem.add") }}
       </button>
       <button
         v-else
         @click="deleteChatMember(userData.id, userData.login)"
       >
-        Delete
+        {{ $t("chat.groupListItem.delete") }}
       </button>
     </div>
   </li>

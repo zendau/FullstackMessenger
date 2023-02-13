@@ -9,7 +9,7 @@
       class="empty_message"
       style="color: red"
     >
-      No chats
+      {{ $t("chat.list.empty") }}
     </p>
     <ul class="chats__list">
       <ChatListItem

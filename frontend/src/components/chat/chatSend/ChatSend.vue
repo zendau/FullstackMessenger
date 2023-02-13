@@ -3,7 +3,7 @@
     v-if="isPrivateBanned"
     style="color: white"
   >
-    BANNED
+    {{ $t("chat.chatSend.banned") }}
   </div>
   <div
     else
@@ -19,7 +19,7 @@
       ref="message"
       class="chat__input"
       contenteditable="true"
-      data-placeholder="Type message"
+      :data-placeholder="$t('chat.chatSend.placeholder')"
       @keydown.enter.exact="sendMessage"
       @input="inputPress"
     />

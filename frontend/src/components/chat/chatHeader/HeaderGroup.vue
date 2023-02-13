@@ -1,9 +1,10 @@
 <template>
   <h1 class="chat__title chat__title--private">
-    Group - {{ chatTitle }}
+    <!-- TODO: добавить иконку -->
+    [Group icon] - {{ chatTitle }}
   </h1>
   <p @click="toggleUsersList">
-    Members - {{ membersCount }}
+    {{ membersCount }} {{ $t("chat.headerGroup.members") }}
   </p>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <input
-    placeholder="search"
+    :placeholder="$t('chat.searchInput.placeholder')"
     type="text"
     @input="searchByPattern"
   >

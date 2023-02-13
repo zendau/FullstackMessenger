@@ -19,6 +19,7 @@
 
 <script>
 import dateFormat from "@/utils/dateFormat";
+import { useI18n } from "vue-i18n";
 
 export default {
   props: {
@@ -32,17 +33,19 @@ export default {
     },
   },
   setup() {
+    const { t } = useI18n();
+
     function getMessageAlert(messageType, messageText) {
       if (messageType === "date") {
         return dateFormat(messageText, "en");
       } else if (messageType === "add") {
-        return `Added ${messageText}`;
+        return `${t("chat.messageSystemInfo.added")} ${messageText}`;
       } else if (messageType === "remove") {
-        return `Deleted ${messageText}`;
+        return `${t("chat.messageSystemInfo.deleted")} ${messageText}`;
       } else if (messageType === "exit") {
-        return `Exit ${messageText}`;
+        return `${t("chat.messageSystemInfo.exit")} ${messageText}`;
       } else if (messageType === "created") {
-        return "Created";
+        return t("chat.messageSystemInfo.created");
       } else {
         return;
       }

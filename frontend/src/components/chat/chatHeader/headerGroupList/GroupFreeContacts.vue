@@ -1,7 +1,7 @@
 <template>
   <div>
     <button @click="getFreeChatUsersHandler">
-      Load free contacts
+      {{ $t("chat.groupFreeContacts.invite") }}
     </button>
     <ul>
       <GroupListItem

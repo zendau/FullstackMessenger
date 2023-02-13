@@ -1,3 +1,99 @@
 {
-  "hello": "hello world"
+  "header": {
+    "chats": "Chats",
+    "contacts": "Contacts",
+    "calls": "Calls",
+    "settings": "Settings",
+    "exit": "Exit"
+  },
+  "list": {
+    "empty": "No chats"
+  },
+  "searchCreateGroup": {
+    "inputPlaceholder": "Enter a chat name",
+    "selectType": "Select conference type",
+    "type": {
+      "audio": "Audio",
+      "video": "Video"
+    },
+    "create": "Create",
+    "typeError": "Confrence type must be selected"
+  },
+  "searchInput": {
+    "placeholder": "Search"
+  },
+  "contactType": {
+    "freeUsers": "Add",
+    "contacts": "Contacts",
+    "pendingRequests": "Pending",
+    "outgoingRequests": "Outgoing",
+    "blockedUsers": "Blocked"
+  },
+  "headerGroup": {
+    "members": "members"
+  },
+  "headerMessages": {
+    "deleted": "Deleted",
+    "cancel": "Cancel"
+  },
+  "headerChatMenu": {
+    "call": "Call",
+    "deleteChat": "Delete chat",
+    "exit": "Exit chat",
+    "confirmTitle": "Delete selected chat ?"
+  },
+  "confirmModal": {
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "groupListItem": {
+    "admin": "Admin",
+    "add": "Add",
+    "delete": "Delete"
+  },
+  "groupFreeContacts": {
+    "invite": "Invite contacts"
+  },
+  "messageContextMenu": {
+    "copy": "Copy text",
+    "edit": "Edit",
+    "select": "Select",
+    "delete": "Delete"
+  },
+  "messageContainer": {
+    "edited": "edited",
+    "newMessage": "New message"
+  },
+  "messageSystemInfo": {
+    "added": "Added:",
+    "deleted": "Deleted:",
+    "exit": "Exit:",
+    "created": "Created"
+  },
+  "fileUpload": {
+    "message": "Put file(s) to download"
+  },
+  "chatSend": {
+    "banned": "Banned by user",
+    "placeholder": "Type message..."
+  },
+  "chatEditMessage": {
+    "cancel": "Cancel"
+  },
+  "chatPressing": {
+    "pressing": "is pressing ..."
+  },
+  "contactsList": {
+    "noUsers": "No users"
+  },
+  "userModal": {
+    "blockedByUsers": "Blocked by this user",
+    "accept": "Accept request",
+    "reject": "Reject request",
+    "remove": "Remove from contacts",
+    "cancel": "Cancel contact request",
+    "add": "Add to contact",
+    "unBlock": "Unblock user",
+    "block": "Block user"
+  }
 }

@@ -7,10 +7,10 @@
       {{ selectedMessages.length }}
     </p>
     <button @click="deleteMessages">
-      Deleted
+      {{ $t("chat.headerMessages.deleted") }}
     </button>
     <button @click="selectedMessages = []">
-      Cancel
+      {{ $t("chat.headerMessages.cancel") }}
     </button>
   </div>
 </template>

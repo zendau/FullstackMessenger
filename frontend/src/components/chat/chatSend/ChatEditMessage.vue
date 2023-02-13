@@ -2,7 +2,7 @@
 <template>
   <p v-html="editTextMessage" />
   <button @click="cancelMessageHandler">
-    Cancel
+    {{ $t("chat.chatEditMessage.cancel") }}
   </button>
 </template>
 

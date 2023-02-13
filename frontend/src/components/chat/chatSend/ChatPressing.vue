@@ -1,6 +1,6 @@
 <template>
   <p v-if="userLogin">
-    {{ userLogin }} is pressing ...
+    {{ userLogin }} {{ $t("chat.chatPressing.pressing") }}
   </p>
 </template>
 

@@ -10,7 +10,7 @@
       />
 
       <div v-if="contactData.isBannedByContact">
-        BLOCKED BY THIS USER
+        {{ $t("chat.userModal.blockedByUsers") }}
       </div>
       <div v-else>
         <p>{{ contactData.email }}</p>
@@ -18,10 +18,10 @@
         <p>{{ contactData.lastOnline }}</p>
         <div v-if="contactStatus?.isConfirmRequest">
           <button @click="confirmContactRequest">
-            Accept request
+            {{ $t("chat.userModal.accept") }}
           </button>
           <button @click="cancelPendingRequest">
-            Reject request
+            {{ $t("chat.userModal.reject") }}
           </button>
         </div>
         <div v-else>
@@ -29,32 +29,32 @@
             v-if="contactStatus?.isFriend"
             @click="deleteFromContacts"
           >
-            Remove from contacts
+            {{ $t("chat.userModal.remove") }}
           </button>
           <button
             v-else-if="contactStatus?.isPendingRequest"
             @click="cancelOutgoingRequest"
           >
-            Cancel contact request
+            {{ $t("chat.userModal.cancel") }}
           </button>
           <button
             v-else
             :disabled="contactStatus?.isBanned"
             @click="addToContacts"
           >
-            Add to contact
+            {{ $t("chat.userModal.add") }}
           </button>
           <button
             v-if="contactStatus?.isBanned"
             @click="unblockUser"
           >
-            Unblock user
+            {{ $t("chat.userModal.unBlock") }}
           </button>
           <button
             v-else
             @click="blockUser"
           >
-            Block user
+            {{ $t("chat.userModal.block") }}
           </button>
         </div>
       </div>

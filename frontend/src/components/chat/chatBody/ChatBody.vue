@@ -36,7 +36,7 @@
 
 <script>
 import { useRoute } from "vue-router";
-import { inject, ref, computed, watch, provide, onUpdated } from "vue";
+import { inject, ref, computed, watch, provide } from "vue";
 import { useStore } from "vuex";
 
 import debounce from "@/utils/debounce";
@@ -65,10 +65,6 @@ export default {
     const isFirstMessageUnread = ref(null);
 
     const bodyRef = ref(null);
-
-    onUpdated(() => {
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    });
 
     const isShowMessageCTX = ref(null);
     provide("isShowMessageCTX", isShowMessageCTX);

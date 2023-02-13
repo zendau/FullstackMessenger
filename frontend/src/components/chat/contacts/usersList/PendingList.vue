@@ -15,7 +15,7 @@
     v-if="listData.length === 0"
     class="empty_message"
   >
-    No users
+    {{ $t("chat.contactsList.noUsers") }}
   </p>
 </template>
 

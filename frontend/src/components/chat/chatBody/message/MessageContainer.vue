@@ -27,7 +27,9 @@
         v-else
         class="bi bi-check"
       />
-      <p>is edit {{ message.isEdited }}</p>
+      <p v-if="message.isEdited">
+        {{ $t("chat.messageContainer.edited") }}
+      </p>
       <!-- <a href="#" class="message__link">localhost.com</a> -->
       <div
         v-for="file in message.files"
@@ -66,7 +68,7 @@
     v-if="isFirstUnread"
     style="color: red"
   >
-    New message
+    {{ $t("chat.messageContainer.newMessage") }}
   </div>
 </template>
 

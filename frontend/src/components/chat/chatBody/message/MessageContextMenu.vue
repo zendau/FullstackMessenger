@@ -20,26 +20,26 @@
       }"
     >
       <li style="width: 100%; padding: 5px; cursor: pointer">
-        Copy text
+        {{ $t("chat.messageContextMenu.copy") }}
       </li>
       <li
         v-if="ctxMenuData.isAuthor"
         style="width: 100%; padding: 5px; cursor: pointer"
         @click="editMessage"
       >
-        Edit
+        {{ $t("chat.messageContextMenu.edit") }}
       </li>
       <li
         style="width: 100%; padding: 5px; cursor: pointer"
         @click="selectMessageHandler"
       >
-        Select
+        {{ $t("chat.messageContextMenu.select") }}
       </li>
       <li
         style="width: 100%; padding: 5px; cursor: pointer"
         @click="deleteMessage"
       >
-        Delete
+        {{ $t("chat.messageContextMenu.delete") }}
       </li>
     </ul>
   </ModalWindow>

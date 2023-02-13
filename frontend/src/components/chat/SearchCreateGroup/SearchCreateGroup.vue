@@ -3,7 +3,7 @@
     <input
       v-model="chatTitle"
       type="text"
-      placeholder="Enter a chat name"
+      :placeholder="$t('chat.searchCreateGroup.inputPlaceholder')"
     >
     <select v-model="conferenceType">
       <option
@@ -11,13 +11,13 @@
         selected
         :value="null"
       >
-        Select conference type
+        {{ $t("chat.searchCreateGroup.selectType") }}
       </option>
       <option :value="false">
-        Audio
+        {{ $t("chat.searchCreateGroup.type.audio") }}
       </option>
       <option :value="true">
-        Video
+        {{ $t("chat.searchCreateGroup.type.video") }}
       </option>
     </select>
   </div>
@@ -40,7 +40,7 @@
       :disabled="isValidGroupUsersLength"
       @click="onCreateChat"
     >
-      create
+      {{ $t("chat.searchCreateGroup.create") }}
     </button>
   </div>
 </template>
@@ -54,12 +54,16 @@ import * as yup from "yup";
 import AlertNotification from "@/components/UI/AlertNotification.vue";
 import SearchInput from "@/components/chat/SearchCreateGroup/SearchInput.vue";
 
+import { useI18n } from "vue-i18n";
+
 export default {
   components: { AlertNotification, SearchInput },
   emits: ["search-pattern"],
   setup(_, { emit }) {
     const store = useStore();
     const userId = store.state.auth.user.id;
+
+    const { t } = useI18n();
 
     const chatSocket = inject("chatSocket");
 
@@ -82,7 +86,7 @@ export default {
     const schema = yup.object({
       chatTitle: yup.string().required().min(4),
       groupUsers: yup.string().min(2),
-      conferenceType: yup.boolean().required().typeError("Confrence type must be selected"),
+      conferenceType: yup.boolean().required().typeError(t("chat.searchCreateGroup.typeError")),
     });
 
     const { handleSubmit } = useForm({

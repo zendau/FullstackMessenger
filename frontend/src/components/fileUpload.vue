@@ -10,7 +10,7 @@
       @dragleave.prevent="dragLeave"
       @drop="dataDrop"
     >
-      Опустите файл(ы), для загрузки
+      {{ $t("chat.fileUpload.message") }}
     </div>
     <div
       v-else

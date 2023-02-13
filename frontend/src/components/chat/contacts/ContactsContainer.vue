@@ -7,7 +7,7 @@
       {{ groupType ? "Close" : "Create group" }}
     </button> -->
     <SearchCreateGroup @search-pattern="searchContacts" />
-    <div style="display: flex">
+    <div style="display: grid">
       <ContactsListType
         :list-type="listType"
         @change-list-type="changeListType"

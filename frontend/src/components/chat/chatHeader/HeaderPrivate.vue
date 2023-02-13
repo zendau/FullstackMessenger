@@ -1,7 +1,8 @@
 <template>
   <div @click="openUserInfo">
     <h1 class="chat__title">
-      Chat - {{ chatTitle }}
+      <!-- TODO: добавить иконку -->
+      [Chat icon] - {{ chatTitle }}
     </h1>
     <p style="color: gray">
       {{ privateChatOnlineStatus }}

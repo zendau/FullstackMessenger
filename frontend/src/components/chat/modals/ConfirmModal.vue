@@ -6,10 +6,10 @@
     <div class="test">
       <h2>{{ title }}</h2>
       <button @click="actionHandler">
-        Confirm
+        {{ $t("chat.confirmModal.confirm") }}
       </button>
       <button @click="closeCTX">
-        Cancel
+        {{ $t("chat.confirmModal.cancel") }}
       </button>
     </div>
   </ModalWindow>

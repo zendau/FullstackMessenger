@@ -16,6 +16,8 @@
 import { computed } from "vue";
 import { useStore } from "vuex";
 
+import { useI18n } from "vue-i18n";
+
 export default {
   props: {
     listType: {
@@ -27,14 +29,16 @@ export default {
   setup(_, { emit }) {
     const store = useStore();
 
+    const { t } = useI18n();
+
     const contactsCount = computed(() => store.state.contact.contactsCount);
 
     const listTypes = {
-      freeUsers: "Add",
-      contacts: "Contacts",
-      pendingRequests: "Pending",
-      outgoingRequests: "Outgoing",
-      blockedUsers: "Blocked",
+      freeUsers: t("chat.contactType.freeUsers"),
+      contacts: t("chat.contactType.contacts"),
+      pendingRequests: t("chat.contactType.pendingRequests"),
+      outgoingRequests: t("chat.contactType.outgoingRequests"),
+      blockedUsers: t("chat.contactType.blockedUsers"),
     };
 
     function changeListType(type) {
