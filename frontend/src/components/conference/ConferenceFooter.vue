@@ -60,8 +60,9 @@
             v-if="conferenceType"
             class="menu__conference-admin--group"
             @click="toggleUsersList"
-          >Group</span>
-          <span v-else>Private</span>
+          >
+            {{ $t("conference.conferenceFoouter.group") }}</span>
+          <span v-else>{{ $t("conference.conferenceFoouter.private") }}</span>
         </p>
       </div>
       <div>
@@ -70,13 +71,13 @@
           @click="$router.push('/conferences')"
         >
           <i class="bi bi-x-circle-fill" />
-          Interrupt
+          {{ $t("conference.conferenceFoouter.interrupt") }}
         </button>
         <button
           class="menu__chat"
           @click="$emit('show-chat')"
         >
-          <i class="bi bi-chat-dots" /> Chat
+          <i class="bi bi-chat-dots" /> {{ $t("conference.conferenceFoouter.chat") }}
         </button>
       </div>
     </div>

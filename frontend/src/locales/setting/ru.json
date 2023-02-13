@@ -1,0 +1,35 @@
+{
+  "deviceModal": {
+    "os": "ОС:",
+    "device": "Устройство:",
+    "time": "Время:",
+    "delete": "Удалить сессию",
+    "cancel": "Отмена"
+  },
+  "accountForm": {
+    "email": "Почта",
+    "login": "Логин",
+    "phone": "Телефон",
+    "details": "Доп. информация",
+    "password": "Пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "changeBtn": "Изменить данные"
+  },
+  "settingAccount": {
+    "hello": "Привет",
+    "role": "Роль:",
+    "change": "Изменить пользовательские данные"
+  },
+  "settingTheme": {
+    "change": "Изменить тему"
+  },
+  "settingDevices": {
+    "current": "Текущая",
+    "endOther": "Завершить все остальные сессии",
+    "other": "Остальные сессии",
+    "noSessions": "Остальные сессии отсутствуют"
+  },
+  "deviceData": {
+    "open": "Открыть"
+  }
+}

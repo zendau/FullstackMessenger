@@ -28,13 +28,11 @@
           </router-link>
         </li>
       </ul>
-
-      <navbar-conf-admin v-if="authStatus" />
       <a
         v-if="authStatus"
         href="#"
         @click="logout"
-      >Exit</a>
+      >{{ $t("navbar.mainNavbar.exit") }}</a>
     </nav>
     <button
       class="nav__btn"
@@ -64,29 +62,32 @@ import { Role } from "@/router/roles";
 import { useRoute } from "vue-router";
 
 import AdminMenu from "./AdminNavbar.vue";
-import NavbarConfAdmin from "./NavbarConfAdmin.vue";
+
+import { useI18n } from "vue-i18n";
+
 export default {
-  components: { NavbarConfAdmin, AdminMenu },
+  components: { AdminMenu },
   setup() {
     const store = useStore();
     const route = useRoute();
+    const { t } = useI18n();
 
     const navbarAuthList = {
       items: [
         {
-          name: "Chat",
+          name: t("navbar.mainNavbar.chat"),
           link: "/chat",
         },
         {
-          name: "Conferences",
+          name: t("navbar.mainNavbar.conferences"),
           link: "/conferences",
         },
         {
-          name: "Users",
+          name: t("navbar.mainNavbar.users"),
           link: "/users",
         },
         {
-          name: "Settings",
+          name: t("navbar.mainNavbar.settings"),
           link: "/settings",
         },
       ],
@@ -94,11 +95,11 @@ export default {
     const navbarNoAuthList = {
       items: [
         {
-          name: "Login",
+          name: t("navbar.mainNavbar.login"),
           link: "/login",
         },
         {
-          name: "Register",
+          name: t("navbar.mainNavbar.register"),
           link: "/register",
         },
       ],

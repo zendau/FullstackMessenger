@@ -1,0 +1,24 @@
+{
+  "conferenceFoouter": {
+    "group": "Беседа",
+    "private": "Приватный",
+    "interrupt": "Прервать",
+    "chat": "Чат"
+  },
+  "conferenceItem": {
+    "group": "Группа",
+    "private": "Приватный",
+    "video": "Видео звонок",
+    "audio": "Аудио звонок",
+    "enter": "Присоединиться"
+  },
+  "initCall": {
+    "callTo": "Звонок",
+    "cancel": "Отменить"
+  },
+  "receiveCall": {
+    "callFrom": "Звонок от",
+    "accept": "Принять",
+    "reject": "Отклонить"
+  }
+}

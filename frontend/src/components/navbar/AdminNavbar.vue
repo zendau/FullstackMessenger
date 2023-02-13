@@ -5,7 +5,9 @@
       href="#"
       role="button"
       @click="isShowSunMenu = !isShowSunMenu"
-    > Admin menu </a>
+    >
+      {{ $t("navbar.adminNavbar.submenu") }}
+    </a>
 
     <ul
       class="admin__dropdown-menu"
@@ -17,7 +19,7 @@
           class="admin__dropdown-item"
           to="/admin/users"
         >
-          Users
+          {{ $t("navbar.adminNavbar.users") }}
         </router-link>
       </li>
     </ul>

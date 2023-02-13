@@ -1,6 +1,6 @@
 <template>
   <div style="color: gray">
-    <h1>current</h1>
+    <h1>{{ $t("setting.settingDevices.current") }}</h1>
 
     <Device
       :device-data="currenteDevice"
@@ -8,10 +8,10 @@
     />
 
     <button @click="deleteDevices()">
-      End all other sessions
+      {{ $t("setting.settingDevices.endOther") }}
     </button>
   </div>
-  <h1>OTHER SESSIONS</h1>
+  <h1>{{ $t("setting.settingDevices.other") }}</h1>
   <ul v-if="othersDevices.length > 0">
     <li
       v-for="device in othersDevices"
@@ -27,7 +27,7 @@
     </li>
   </ul>
   <div v-else>
-    No sessions
+    {{ $t("setting.settingDevices.noSessions") }}
   </div>
 </template>
 

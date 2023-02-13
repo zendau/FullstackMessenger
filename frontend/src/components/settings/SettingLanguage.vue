@@ -1,12 +1,9 @@
 <template>
-  <h1 style="color: white">
-    {{ t("chat.hello") }}
-  </h1>
   <ul style="color: white">
     <li
       v-for="item in availableLocales"
       :key="item"
-      style="cursor: pointer"
+      style="cursor: pointer; width: 40px; height: 40px; background-color: gray; margin: 5px"
       @click="changeLocale(item)"
     >
       {{ item }}
@@ -19,14 +16,13 @@ import { useI18n } from "vue-i18n";
 
 export default {
   setup() {
-    const { t, locale, availableLocales } = useI18n();
+    const { locale, availableLocales } = useI18n();
 
     const changeLocale = (lang) => {
       locale.value = lang;
     };
 
     return {
-      t,
       locale,
       availableLocales,
       changeLocale,

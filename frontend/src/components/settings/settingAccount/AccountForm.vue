@@ -6,45 +6,44 @@
     <form-input
       id="email"
       v-model="email"
-      name="email"
-      title="Email"
+      :title="$t('setting.accountForm.email')"
       type="email"
     />
     <form-input
       id="login"
       v-model="login"
-      title="Login"
+      :title="$t('setting.accountForm.login')"
       type="text"
     />
     <form-input
       id="phoneNumber"
       v-model="phoneNumber"
-      title="Phone Number"
+      :title="$t('setting.accountForm.phone')"
       type="text"
     />
     <form-input
       id="userDetails"
       v-model="userDetails"
-      title="User Details"
+      :title="$t('setting.accountForm.details')"
       type="text"
     />
     <form-input
       id="password"
       v-model="password"
       autocomplete="new-password"
-      title="Password"
+      :title="$t('setting.accountForm.password')"
       type="password"
     />
     <form-input
       id="confirmPassword"
       v-model="confirmPassword"
-      title="Confirm password"
+      :title="$t('setting.accountForm.confirmPassword')"
       type="password"
     />
 
     <input
       type="submit"
-      value="Change data"
+      :value="$t('setting.accountForm.changeBtn')"
     >
   </form>
 </template>

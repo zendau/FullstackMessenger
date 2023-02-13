@@ -5,9 +5,9 @@
         class="close-btn"
         @click="closeCTX"
       />
-      <h2>Call to {{ callingData.chatTitle }}</h2>
+      <h2>{{ $t("conference.initCall.callTo") }} {{ callingData.chatTitle }}</h2>
       <button @click="cancelCalling">
-        Cancel
+        {{ $t("conference.initCall.cancel") }}
       </button>
     </div>
   </ModalWindow>

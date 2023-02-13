@@ -1,11 +1,4 @@
 {
-  "header": {
-    "chats": "Chats",
-    "contacts": "Contacts",
-    "calls": "Calls",
-    "settings": "Settings",
-    "exit": "Exit"
-  },
   "list": {
     "empty": "No chats"
   },

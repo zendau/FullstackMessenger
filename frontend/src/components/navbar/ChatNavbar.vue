@@ -13,7 +13,7 @@
             :class="{ 'chat__list-item--active': showChats }"
           >
             <i class="bi bi-chat-dots" />
-            <span>{{ $t("chat.header.calls") }}</span>
+            <span>{{ $t("navbar.chatNavbar.calls") }}</span>
           </a>
         </li>
         <li
@@ -27,7 +27,7 @@
             :class="{ 'chat__list-item--active': !showChats }"
           >
             <i class="bi bi-person-lines-fill" />
-            <span>{{ $t("chat.header.contacts") }}</span>
+            <span>{{ $t("navbar.chatNavbar.contacts") }}</span>
           </a>
         </li>
         <li>
@@ -36,7 +36,7 @@
             to="/conferences"
           >
             <i class="bi bi-telephone" />
-            <span>{{ $t("chat.header.calls") }}</span>
+            <span>{{ $t("navbar.chatNavbar.calls") }}</span>
           </router-link>
         </li>
         <li>
@@ -45,7 +45,7 @@
             to="/settings"
           >
             <i class="bi bi-gear" />
-            <span>{{ $t("chat.header.settings") }}</span>
+            <span>{{ $t("navbar.chatNavbar.settings") }}</span>
           </router-link>
         </li>
       </ul>
@@ -55,7 +55,7 @@
         @click="logout"
       >
         <i class="bi bi-box-arrow-right" />
-        <span>{{ $t("chat.header.exit") }}</span>
+        <span>{{ $t("navbar.chatNavbar.exit") }}</span>
       </a>
     </nav>
   </header>

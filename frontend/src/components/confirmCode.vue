@@ -6,7 +6,7 @@
     <form-input
       id="code"
       v-model="confirmCode"
-      title="Confirm code"
+      :title="$t('ui.confirmCode.title')"
       type="text"
     />
     <input

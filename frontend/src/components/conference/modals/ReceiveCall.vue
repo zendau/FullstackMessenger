@@ -1,12 +1,12 @@
 <template>
   <ModalWindow :is-show-c-t-x="isCaller">
     <div class="test">
-      <h2>Call from {{ callingData.from.login }}</h2>
+      <h2>{{ $t("conference.receiveCall.callFrom") }} {{ callingData.from.login }}</h2>
       <button @click="acceptCall">
-        Accept
+        {{ $t("conference.receiveCall.accept") }}
       </button>
       <button @click="rejectCall">
-        Reject
+        {{ $t("conference.receiveCall.reject") }}
       </button>
     </div>
   </ModalWindow>

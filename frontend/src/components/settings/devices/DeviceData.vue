@@ -5,7 +5,7 @@
     <p>{{ deviceData.lastOnline }}</p>
     <font-awesome-icon :icon="getDeviceIcon(deviceData.brand, deviceData.osName)" />
     <button @click="showDeviceModal(true)">
-      Open
+      {{ $t("setting.deviceData.open") }}
     </button>
     <device-modal
       :is-current="isCurrent"

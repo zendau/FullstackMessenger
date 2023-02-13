@@ -1,0 +1,22 @@
+{
+  "chatNavbar": {
+    "chats": "Chats",
+    "contacts": "Contacts",
+    "calls": "Calls",
+    "settings": "Settings",
+    "exit": "Exit"
+  },
+  "adminNavbar": {
+    "submenu": "Admin menu",
+    "users": "Users"
+  },
+  "mainNavbar": {
+    "exit": "Exit",
+    "chat": "Chat",
+    "conferences": "Conferences",
+    "users": "Users",
+    "settings": "Settings",
+    "login": "Login",
+    "register": "Register"
+  }
+}

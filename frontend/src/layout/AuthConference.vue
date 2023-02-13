@@ -85,34 +85,6 @@ export default {
       document.querySelector("#app").classList.remove("conference-grid");
     });
 
-    // TODO: ПОЧИНИТЬ ПОСЛЕ ЧАТА
-    // watch(
-    //   () => store.state.conference.adminId,
-    //   (adminId) => {
-    //     if (adminId === store.state.auth.user.id) {
-    //       isConferenceAdmin.value = true;
-    //     }
-    //     const userId = store.state.auth.user.id;
-
-    //     const { chatId } = store.state.conference;
-
-    //     if (chatId) {
-    //       store.dispatch("chat/invaiteUserToChat", {
-    //         userId,
-    //         chatId,
-    //       });
-    //     }
-    //   },
-    //   {
-    //     immediate: true,
-    //   }
-    // );
-
-    // peerSocket.on("redirectUsers", () => {
-    //   store.dispatch("conference/getConferesRooms");
-    //   router.push("/conferences");
-    // });
-
     return {
       showChat,
       roomData,

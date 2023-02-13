@@ -1,0 +1,24 @@
+{
+  "conferenceFoouter": {
+    "group": "Group",
+    "private": "Private",
+    "interrupt": "Interrupt",
+    "chat": "Chat"
+  },
+  "conferenceItem": {
+    "group": "Group",
+    "private": "Private",
+    "video": "Video call",
+    "audio": "Audio call",
+    "enter": "Enter"
+  },
+  "initCall": {
+    "callTo": "Call to",
+    "cancel": "Cancel"
+  },
+  "receiveCall": {
+    "callFrom": "Call from",
+    "accept": "Accept",
+    "reject": "Reject"
+  }
+}

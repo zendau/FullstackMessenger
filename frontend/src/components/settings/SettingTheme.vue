@@ -1,6 +1,6 @@
 <template>
   <button @click="toggleTheme">
-    Change theme
+    {{ $t("setting.settingTheme.change") }}
   </button>
 </template>
 

@@ -8,19 +8,19 @@
         class="close-btn"
         @click="closeCTX"
       />
-      <p>OS: {{ deviceData.osName }} - {{ deviceData.osVersion }}</p>
-      <p>Device: {{ deviceData.brand }} - {{ deviceData.model }}</p>
-      <p>Time: {{ deviceData.lastOnline }}</p>
+      <p>{{ $t("setting.deviceModal.os") }} {{ deviceData.osName }} - {{ deviceData.osVersion }}</p>
+      <p>{{ $t("setting.deviceModal.device") }}: {{ deviceData.brand }} - {{ deviceData.model }}</p>
+      <p>{{ $t("setting.deviceModal.time") }}: {{ deviceData.lastOnline }}</p>
       <p>IP: {{ deviceData.ipAdress }}</p>
       <font-awesome-icon :icon="icon" />
       <button
         v-if="!isCurrent"
         @click="deleteDevices"
       >
-        Delete session
+        {{ $t("setting.deviceModal.delete") }}
       </button>
       <button @click="closeCTX">
-        Cancel
+        {{ $t("setting.deviceModal.cancel") }}
       </button>
     </div>
   </ModalWindow>

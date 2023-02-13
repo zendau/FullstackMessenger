@@ -1,0 +1,22 @@
+{
+  "chatNavbar": {
+    "chats": "Чаты",
+    "contacts": "Контакты",
+    "calls": "Звонки",
+    "settings": "Настройки",
+    "exit": "Выход"
+  },
+  "adminNavbar": {
+    "submenu": "Администрирование",
+    "users": "Пользователи"
+  },
+  "mainNavbar": {
+    "exit": "Выход",
+    "chat": "Чат",
+    "conferences": "Конференции",
+    "users": "Пользователи",
+    "settings": "Настройки",
+    "login": "Авторизация",
+    "register": "Регистрация"
+  }
+}

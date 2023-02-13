@@ -1,0 +1,35 @@
+{
+  "deviceModal": {
+    "os": "OS:",
+    "device": "Device:",
+    "time": "Time:",
+    "delete": "Delete session",
+    "cancel": "Cancel"
+  },
+  "accountForm": {
+    "email": "Email",
+    "login": "Login",
+    "phone": "Phone Number",
+    "details": "User Details",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "changeBtn": "Change data"
+  },
+  "settingAccount": {
+    "hello": "Hello",
+    "role": "Role:",
+    "change": "Change user data"
+  },
+  "settingTheme": {
+    "change": "Change theme"
+  },
+  "settingDevices": {
+    "current": "Current",
+    "endOther": "End all other sessions",
+    "other": "Other sessions",
+    "noSessions": "No other sessions"
+  },
+  "deviceData": {
+    "open": "Open"
+  }
+}
