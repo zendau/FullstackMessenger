@@ -15,6 +15,9 @@ import conference_ru from "./conference/ru.json";
 import setting_en from "./setting/en.json";
 import setting_ru from "./setting/ru.json";
 
+import view_en from "./view/en.json";
+import view_ru from "./view/ru.json";
+
 const messages = {
   en: {
     chat: chat_en,
@@ -22,6 +25,7 @@ const messages = {
     navbar: navbar_en,
     conference: conference_en,
     setting: setting_en,
+    view: view_en,
   },
   ru: {
     chat: chat_ru,
@@ -29,6 +33,7 @@ const messages = {
     navbar: navbar_ru,
     conference: conference_ru,
     setting: setting_ru,
+    view: view_ru,
   },
 };
 

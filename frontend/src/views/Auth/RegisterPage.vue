@@ -1,6 +1,6 @@
 <template>
   <h1 class="user__title">
-    Register
+    {{ $t("view.registerPage.title") }}
   </h1>
   <AlertNotification />
   <ConfirmCode
@@ -16,31 +16,31 @@
     <form-input
       id="email"
       v-model="email"
-      title="Email"
+      :title="$t('view.registerPage.email')"
       type="email"
     />
     <form-input
       id="login"
       v-model="login"
-      title="Login"
+      :title="$t('view.registerPage.login')"
       type="text"
     />
     <form-input
       id="password"
       v-model="password"
-      title="Password"
+      :title="$t('view.registerPage.password')"
       type="password"
     />
     <form-input
       id="ConfirmPassword"
       v-model="confirmPassword"
-      title="Confirm password"
+      :title="$t('view.registerPage.confirmPassword')"
       type="password"
     />
 
     <input
       type="submit"
-      value="Register"
+      :value="$t('view.registerPage.submit')"
     >
   </form>
 </template>

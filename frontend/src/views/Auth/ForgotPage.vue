@@ -1,6 +1,6 @@
 <template>
   <h1 class="user__title">
-    Forgot password
+    {{ $t("view.forgotPage.title") }}
   </h1>
   <AlertNotification />
   <ConfirmCode
@@ -16,12 +16,12 @@
     <form-input
       id="email"
       v-model="email"
-      title="Email"
+      :title="$t('view.forgotPage.email')"
       type="email"
     />
     <input
       type="submit"
-      value="Send"
+      :value="$t('view.forgotPage.submit')"
     >
   </form>
 </template>

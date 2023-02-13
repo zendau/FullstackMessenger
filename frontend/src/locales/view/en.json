@@ -1,0 +1,42 @@
+{
+  "pageNotFound": {
+    "message": "Page not found"
+  },
+  "conferencesList": {
+    "empty": "No conferences created"
+  },
+  "forgotPage": {
+    "title": "Forgot password",
+    "email": "Email",
+    "submit": "Send"
+  },
+  "loginPage": {
+    "title": "Auth",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "forgot": "Forgot your password ? "
+  },
+  "registerPage": {
+    "title": "Register",
+    "email": "Email",
+    "login": "Login",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "submit": "Register"
+  },
+  "admin": {
+    "usersPage": {
+      "id": "id",
+      "email": "Email",
+      "login": "Login",
+      "role": "Role",
+      "phone": "Phone",
+      "details": "Details",
+      "online": "Last online",
+      "status": "Status",
+      "block": "Block",
+      "unBlock": "UnBlock"
+    }
+  }
+}

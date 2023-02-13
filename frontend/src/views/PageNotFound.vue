@@ -1,5 +1,5 @@
 <template>
   <h1 class="user__title">
-    Page not found
+    {{ $t("view.pageNotFound.message") }}
   </h1>
 </template>

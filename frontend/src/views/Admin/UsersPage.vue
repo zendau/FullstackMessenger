@@ -3,14 +3,14 @@
   <table class="table">
     <thead>
       <tr>
-        <th>id</th>
-        <th>Email</th>
-        <th>Login</th>
-        <th>Role</th>
-        <th>Phone</th>
-        <th>Details</th>
-        <th>Last online</th>
-        <th>Status</th>
+        <th>{{ $t("view.admin.usersPage.id") }}</th>
+        <th>{{ $t("view.admin.usersPage.email") }}</th>
+        <th>{{ $t("view.admin.usersPage.login") }}</th>
+        <th>{{ $t("view.admin.usersPage.role") }}</th>
+        <th>{{ $t("view.admin.usersPage.phone") }}</th>
+        <th>{{ $t("view.admin.usersPage.details") }}</th>
+        <th>{{ $t("view.admin.usersPage.online") }}</th>
+        <th>{{ $t("view.admin.usersPage.status") }}</th>
       </tr>
     </thead>
     <tbody>
@@ -36,7 +36,7 @@
             class="btn"
             @click="banUser(user.id)"
           >
-            Block
+            {{ $t("view.admin.usersPage.block") }}
           </button>
         </td>
         <td v-else>
@@ -44,7 +44,7 @@
             class="btn"
             @click="unBlockUser(user.id)"
           >
-            UnBlock
+            {{ $t("view.admin.usersPage.unBlock") }}
           </button>
         </td>
       </tr>

@@ -16,7 +16,7 @@
       v-else
       class="rooms__message"
     >
-      No conferences created
+      {{ $t("view.conferencesList.empty") }}
     </p>
   </section>
 </template>

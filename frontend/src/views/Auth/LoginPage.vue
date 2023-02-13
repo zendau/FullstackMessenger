@@ -1,6 +1,6 @@
 <template>
   <h1 class="user__title">
-    Login
+    {{ $t("view.loginPage.title") }}
   </h1>
   <AlertNotification />
   <form
@@ -10,18 +10,18 @@
     <form-input
       id="email"
       v-model="email"
-      title="Email"
+      :title="$t('view.loginPage.email')"
       type="email"
     />
     <form-input
       id="password"
       v-model="password"
-      title="Password"
+      :title="$t('view.loginPage.password')"
       type="password"
     />
     <input
       type="submit"
-      value="Login"
+      :value="$t('view.loginPage.submit')"
     >
   </form>
   <hr class="user__hr">
@@ -29,7 +29,7 @@
     class="user__link"
     to="/forgot"
   >
-    Forgot your password
+    {{ $t("view.loginPage.forgot") }}
   </router-link>
 </template>
 

@@ -1,0 +1,42 @@
+{
+  "pageNotFound": {
+    "message": "Страница не найдена"
+  },
+  "conferencesList": {
+    "empty": "Созданные конференции отсутствуют"
+  },
+  "forgotPage": {
+    "title": "Восстановление паспорта",
+    "email": "Почта",
+    "submit": "Восстановить"
+  },
+  "loginPage": {
+    "title": "Авторизация",
+    "email": "Почта",
+    "password": "Пароль",
+    "submit": "Войти",
+    "forgot": "Забыли ваш пароль ?"
+  },
+  "registerPage": {
+    "title": "Регистрация",
+    "email": "Почта",
+    "login": "Логин",
+    "password": "Пароль",
+    "confirmPassword": "Подтвердить пароль",
+    "submit": "Зарегистрироваться"
+  },
+  "admin": {
+    "usersPage": {
+      "id": "id",
+      "email": "Почта",
+      "login": "Логин",
+      "role": "Роль",
+      "phone": "Телефон",
+      "details": "Доп. информация",
+      "online": "В сети",
+      "status": "Статус",
+      "block": "Заблокировать",
+      "unBlock": "Разблокировать"
+    }
+  }
+}
