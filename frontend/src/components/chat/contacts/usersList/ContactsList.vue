@@ -11,7 +11,10 @@
         @click.left="checkPrivateContact(user)"
         @click.right="openUserModal(user.id)"
       >
-        <i class="bi bi-person" />
+        <font-awesome-icon
+          class="contact__item-icon"
+          icon="fa-solid fa-user"
+        />
 
         <p>{{ user.login }}</p>
         <p>{{ user.lastOnline }}</p>
@@ -19,6 +22,7 @@
       <input
         v-if="createGroupUsers.length > 0"
         v-model="createGroupUsers"
+        class="contact__checkbox"
         :value="user.id"
         type="checkbox"
       >
@@ -113,5 +117,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

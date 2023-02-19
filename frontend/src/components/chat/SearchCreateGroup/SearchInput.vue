@@ -1,9 +1,16 @@
 <template>
-  <input
-    :placeholder="$t('chat.searchInput.placeholder')"
-    type="text"
-    @input="searchByPattern"
-  >
+  <div class="search__container">
+    <input
+      :placeholder="$t('chat.searchInput.placeholder')"
+      type="text"
+      class="search__input"
+      @input="searchByPattern"
+    >
+    <font-awesome-icon
+      class="search__icon"
+      icon="fa-solid fa-magnifying-glass"
+    />
+  </div>
 </template>
 
 <script>
@@ -23,4 +30,33 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.search {
+  &__container {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__input {
+    color: var(--color-primary);
+    background-color: var(--input-background);
+    width: 100%;
+    height: 40px;
+    border: none;
+    padding: 6px 45px;
+    margin: 11px;
+    border-radius: 50px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  &__icon {
+    color: var(--color-icon);
+    left: 30px;
+    position: absolute;
+    top: 22px;
+  }
+}
+</style>

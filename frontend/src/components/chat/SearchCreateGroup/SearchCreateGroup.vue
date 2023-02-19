@@ -1,11 +1,35 @@
 <template>
-  <div v-if="createGroupUsers.length > 0">
+  <div class="searchCreate__container">
+    <font-awesome-icon
+      v-if="createGroupUsers.length === 0"
+      icon="fa-solid fa-pen-to-square"
+      class="searchCreate__icon"
+      @click="startCreateGroup"
+    />
+    <div v-else>
+      <font-awesome-icon
+        icon="fa-solid fa-xmark"
+        class="searchCreate__icon"
+        @click="cancelCreateGroup"
+      />
+    </div>
+    <SearchInput @search-pattern="searchByPattern" />
+  </div>
+  <AlertNotification />
+  <div
+    v-if="createGroupUsers.length > 0"
+    class="searchCreate__create-container"
+  >
     <input
       v-model="chatTitle"
       type="text"
+      class="searchCreate__input"
       :placeholder="$t('chat.searchCreateGroup.inputPlaceholder')"
     >
-    <select v-model="conferenceType">
+    <select
+      v-model="conferenceType"
+      class="searchCreate__input"
+    >
       <option
         disabled
         selected
@@ -20,24 +44,9 @@
         {{ $t("chat.searchCreateGroup.type.video") }}
       </option>
     </select>
-  </div>
-
-  <SearchInput @search-pattern="searchByPattern" />
-  <AlertNotification />
-  <font-awesome-icon
-    v-if="createGroupUsers.length === 0"
-    icon="fa-solid fa-pen-to-square"
-    color="white"
-    @click="startCreateGroup"
-  />
-  <div v-else>
-    <font-awesome-icon
-      icon="fa-solid fa-xmark"
-      color="white"
-      @click="cancelCreateGroup"
-    />
     <button
       :disabled="isValidGroupUsersLength"
+      class="searchCreate__create"
       @click="onCreateChat"
     >
       {{ $t("chat.searchCreateGroup.create") }}
@@ -133,4 +142,63 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.searchCreate {
+  &__container {
+    box-shadow: 0 2px 2px rgb(0 0 0 / 25%);
+    display: grid;
+    grid-template-columns: 35px 1fr;
+    align-items: center;
+  }
+
+  &__create-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: rgb(0 0 0 / 25%) 0px 2px 2px;
+    margin-bottom: 5px;
+    padding: 5px 0;
+  }
+
+  &__icon {
+    color: var(--color-primary);
+    width: 25px;
+    height: 25px;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  &__input {
+    color: var(--color-secondary);
+    background-color: var(--input-background);
+    width: 90%;
+    height: 40px;
+    border: none;
+    font-size: 16px;
+    box-sizing: border-box;
+    padding: 6px;
+    margin: 5px;
+    border-radius: 5px;
+  }
+
+  &__create {
+    background-color: var(--button-chat-color);
+    transition: 0.3s ease;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    color: var(--color-primary);
+    padding: 10px 15px;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: var(--button-chat-hover);
+    }
+
+    &:disabled,
+    &[disabled] {
+      cursor: not-allowed;
+    }
+  }
+}
+</style>

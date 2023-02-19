@@ -125,8 +125,7 @@ export default {
     overflow: hidden;
     max-height: 100vh;
     box-sizing: border-box;
-    padding-top: 10px;
-    background-color: var(--bgcColor);
+    background-color: var(--color-background);
 
     button {
       margin-bottom: 10px;
@@ -139,8 +138,8 @@ export default {
 .contacts {
   &__btn {
     &--active {
-      background-color: blue;
-      color: white;
+      background-color: var(--button-primary);
+      color: var(--color-primary);
     }
   }
 
@@ -148,48 +147,69 @@ export default {
     overflow: auto;
     margin-top: 12.5px;
 
+    li {
+      position: relative;
+    }
+
     &::-webkit-scrollbar {
       width: 5px;
     }
 
     &::-webkit-scrollbar-track {
-      background-color: #3f4750;
+      background-color: var(--scrollbarTrack);
       border-radius: 100px;
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: #9b9fa4;
+      background-color: var(-scrollbarThumb);
       box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
       border-radius: 10px;
     }
   }
 }
+</style>
 
+<style lang="scss">
 .contact {
   &__item {
-    display: flex;
+    color: white;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    grid-template-rows: 40px 1fr;
+    justify-items: center;
     align-items: center;
-    transition: 0.3s ease;
     cursor: pointer;
-    color: var(--textColor);
-    padding: 14px 0;
-
-    a {
-      padding: 14.5px 0;
-    }
+    padding: 5px;
+    transition: 0.3s ease;
 
     &:hover {
-      background-color: var(--itemColor);
+      background-color: var(--color-background-item);
     }
 
-    input {
-      margin: 0 5px;
+    &-icon {
+      grid-row: 1/3;
+      height: 25px;
+      width: 25px;
+      padding: 5px;
     }
 
-    i {
-      margin: 0 10px;
-      font-size: 26px;
+    p:nth-child(3) {
+      grid-column: 2/3;
     }
+  }
+
+  &__checkbox {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 22px;
+    width: 22px;
+  }
+}
+
+.contacts__list {
+  li {
+    position: relative;
   }
 }
 </style>

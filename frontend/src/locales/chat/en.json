@@ -23,11 +23,12 @@
     "blockedUsers": "Blocked"
   },
   "headerGroup": {
-    "members": "members"
+    "members": "{n}  member | {n} members"
   },
   "headerMessages": {
     "deleted": "Deleted",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "selected": "Selected {n} message | Selected {n} messages"
   },
   "headerChatMenu": {
     "call": "Call",

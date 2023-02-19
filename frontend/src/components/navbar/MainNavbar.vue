@@ -109,7 +109,7 @@ export default {
 <style lang="scss" scoped>
 header {
   height: 50px;
-  background-color: var(--bgcColor);
+  background-color: var(--color-background);
   box-sizing: border-box;
 }
 
@@ -134,12 +134,12 @@ header {
 
     :deep(a) {
       text-decoration: none;
-      color: var(--textColor);
+      color: var(--color-primary);
       padding: 6px;
       transition: 0.3s ease;
 
       &:hover {
-        color: var(--linkColor);
+        color: var(--color-links);
       }
     }
 
@@ -239,7 +239,7 @@ header {
       position: fixed;
       top: 0;
       width: 100%;
-      background-color: var(--bgcColor);
+      background-color: var(--color-background);
 
       &--active {
         display: flex;

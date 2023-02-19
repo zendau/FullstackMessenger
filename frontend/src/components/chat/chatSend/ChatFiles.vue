@@ -9,7 +9,8 @@
       class="chat__file"
       @click="deleteFileById(index, file)"
     >
-      <i class="bi bi-file-earmark-arrow-down" />{{ file?.name ?? file?.fileName }}
+      <font-awesome-icon icon="fa-solid fa-file" />
+      <p>{{ file?.name ?? file?.fileName }}</p>
     </li>
   </ul>
 </template>
@@ -34,4 +35,16 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.chat {
+  &__file {
+    cursor: pointer;
+    margin: 3px 8px;
+    display: flex;
+
+    svg {
+      margin-right: 5px;
+    }
+  }
+}
+</style>

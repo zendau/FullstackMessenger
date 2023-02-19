@@ -1,14 +1,16 @@
 <template>
-  <li style="margin: 0">
+  <li class="group-list__item">
     <div @click="openUserInfo(userData.id)">
-      <div>{{ userData.id }}</div>
-      <div>{{ userData.login }}</div>
-      <div>{{ userData.lastOnline }}</div>
+      <p>{{ userData.login }}</p>
+      <p>{{ userData.lastOnline }}</p>
     </div>
-    <div v-if="chatData.adminId === userData.id">
+    <p
+      v-if="chatData.adminId === userData.id"
+      class="group-list__item-admin"
+    >
       {{ $t("chat.groupListItem.admin") }}
-    </div>
-    <div v-else-if="chatData.adminId === userId">
+    </p>
+    <template v-else-if="chatData.adminId === userId">
       <button
         v-if="isAddedType"
         @click="addChatMember(userData.id, userData.login)"
@@ -21,7 +23,7 @@
       >
         {{ $t("chat.groupListItem.delete") }}
       </button>
-    </div>
+    </template>
   </li>
 </template>
 
@@ -86,4 +88,41 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.group-list {
+  &__item {
+    margin: 0;
+    display: grid;
+    justify-content: space-between;
+    align-items: center;
+    grid-template-columns: 250px 100px;
+    margin: 5px;
+    cursor: pointer;
+
+    p {
+      text-align: center;
+    }
+
+    &-admin {
+      color: var(--color-secondary);
+    }
+
+    button,
+    &-admin {
+      grid-column: 2/3;
+    }
+    button {
+      background-color: var(--button-chat-color);
+      transition: 0.3s ease;
+      cursor: pointer;
+      border: none;
+      padding: 5px;
+      color: var(--color-primary);
+
+      &:hover {
+        background-color: var(--button-chat-hover);
+      }
+    }
+  }
+}
+</style>

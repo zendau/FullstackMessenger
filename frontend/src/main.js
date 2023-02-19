@@ -11,6 +11,32 @@ import {
   faGlobe,
   faPenToSquare,
   faXmark,
+  faMagnifyingGlass,
+  faUser,
+  faUserGroup,
+  faCheck,
+  faCheckDouble,
+  faFile,
+  faPaperPlane,
+  faCommentDots,
+  faAddressBook,
+  faPhone,
+  faGear,
+  faRightFromBracket,
+  faMicrophone,
+  faMicrophoneSlash,
+  faVideo,
+  faVideoSlash,
+  faDisplay,
+  faCircleStop,
+  faCircleXmark,
+  faRecordVinyl,
+  faCopy,
+  faCircleCheck,
+  faTrash,
+  faPhoneVolume,
+  faEnvelope,
+  faInfo,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faEdge,
@@ -36,12 +62,38 @@ library.add(
   faOpera,
   faYandex,
   faPenToSquare,
-  faXmark
+  faXmark,
+  faMagnifyingGlass,
+  faUser,
+  faUserGroup,
+  faCheck,
+  faCheckDouble,
+  faFile,
+  faPaperPlane,
+  faCommentDots,
+  faAddressBook,
+  faPhone,
+  faGear,
+  faRightFromBracket,
+  faMicrophone,
+  faMicrophoneSlash,
+  faVideo,
+  faVideoSlash,
+  faDisplay,
+  faCircleStop,
+  faCircleXmark,
+  faRecordVinyl,
+  faCopy,
+  faPenToSquare,
+  faCircleCheck,
+  faTrash,
+  faPhoneVolume,
+  faEnvelope,
+  faInfo
 );
 
-// import 'bootstrap'
-// import 'bootstrap/dist/css/bootstrap.min.css'
 import i18n from "./locales";
+
 createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)
   .use(store)

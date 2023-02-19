@@ -1,19 +1,20 @@
 <template>
-  <div>
-    <button @click="getFreeChatUsersHandler">
-      {{ $t("chat.groupFreeContacts.invite") }}
-    </button>
-    <ul>
-      <GroupListItem
-        v-for="userData in freeUsersList"
-        :key="userData.id"
-        :user-data="userData"
-        :chat-data="chatData"
-        :user-id="userId"
-        :is-added-type="true"
-      />
-    </ul>
-  </div>
+  <button
+    class="group-free__load-btn"
+    @click="getFreeChatUsersHandler"
+  >
+    {{ $t("chat.groupFreeContacts.invite") }}
+  </button>
+  <ul>
+    <GroupListItem
+      v-for="userData in freeUsersList"
+      :key="userData.id"
+      :user-data="userData"
+      :chat-data="chatData"
+      :user-id="userId"
+      :is-added-type="true"
+    />
+  </ul>
 </template>
 
 <script>
@@ -55,4 +56,22 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.group-free {
+  &__load-btn {
+    background-color: var(--color-links);
+    transition: 0.3s ease;
+    cursor: pointer;
+    border: none;
+    padding: 8px 5px;
+    color: var(--color-primary);
+    border-radius: 2px;
+    width: 250px;
+    margin: 12px auto;
+
+    &:hover {
+      background-color: var(--color-links-active);
+    }
+  }
+}
+</style>

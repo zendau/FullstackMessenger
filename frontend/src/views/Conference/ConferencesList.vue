@@ -110,11 +110,11 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: var(--messageColor);
+    background-color: var(--color-message);
   }
 
   &__message {
-    color: var(--textColor);
+    color: var(--color-primary);
     min-height: 100%;
     font-size: 18px;
     display: flex;
@@ -127,15 +127,15 @@ export default {
 .room {
   &__title {
     margin: 10px 0;
-    color: var(--textColor);
+    color: var(--color-primary);
   }
 
   &__author {
-    color: var(--secondTextColor);
+    color: var(--color-secondary);
   }
 
   &__type {
-    color: var(--activeColor);
+    color: var(--color-links-active);
   }
 
   &__link {
@@ -145,14 +145,14 @@ export default {
     height: 30px;
     display: block;
     text-align: center;
-    background-color: var(--btnChat);
+    background-color: var(--button-chat-color);
     line-height: 30px;
     border: 10%;
     transition: 0.3s ease;
-    color: var(--textColor);
+    color: var(--color-primary);
 
     &:hover {
-      background-color: var(--btnHover);
+      background-color: var(--button-chat-hover);
     }
   }
 }

@@ -55,7 +55,7 @@ export default {
       left: 50%;
       transform: translateX(-50%);
       width: 150px;
-      background-color: #17212b;
+      background-color: var(--color-background);
       border-top: 1px solid black;
       justify-content: center;
 

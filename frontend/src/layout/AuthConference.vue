@@ -113,7 +113,7 @@ export default {
 .main-container {
   overflow: hidden;
   display: flex;
-  background-color: var(--menuColor);
+  background-color: var(--color-background-secondary);
 }
 
 .conference {
@@ -132,21 +132,6 @@ export default {
       grid-auto-flow: column;
     }
 
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: #3f4750;
-      border-radius: 100px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: #9b9fa4;
-      box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
-      border-radius: 10px;
-    }
-
     &--hide {
       display: none;
     }
@@ -156,13 +141,13 @@ export default {
     display: flex;
     flex-direction: column;
     width: 350px;
-    background-color: var(--messageColor);
+    background-color: var(--color-message);
 
     &--active {
       width: 100%;
       position: absolute;
       z-index: 2;
-      background-color: white;
+      background-color: var(--color-primary);
       height: 100%;
     }
   }
@@ -174,25 +159,6 @@ export default {
     margin: 0 auto;
     justify-content: space-between;
     align-items: center;
-  }
-}
-
-.chat {
-  &__body {
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: #3f4750;
-      border-radius: 100px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: #9b9fa4;
-      box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
-      border-radius: 10px;
-    }
   }
 }
 

@@ -2,9 +2,13 @@
   <div class="audio__container">
     <div class="audio__info">
       <span class="mute">
-        <i
-          class="bi"
-          :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"
+        <font-awesome-icon
+          v-if="isMuted"
+          icon="fa-solid fa-microphone-slash"
+        />
+        <font-awesome-icon
+          v-else
+          icon="fa-solid fa-microphone"
         />
       </span>
       <p>{{ userName }}</p>
@@ -58,7 +62,7 @@ export default {
 <style lang="scss" scoped>
 .audio {
   &__container {
-    background-color: var(--messageColor);
+    background-color: var(--color-message);
     width: 250px;
     height: 40px;
     align-self: center;
@@ -68,7 +72,7 @@ export default {
     display: flex;
     height: 40px;
     align-items: center;
-    color: var(--textColor);
+    color: var(--color-primary);
 
     .mute {
       border-right: 1px solid black;
@@ -86,10 +90,10 @@ export default {
     }
 
     &--active {
-      border: 2px solid var(--activeColor);
+      border: 2px solid var(--color-links-active);
 
       .mute {
-        border-right: 2px solid var(--activeColor);
+        border-right: 2px solid var(--color-links-active);
       }
     }
 

@@ -62,8 +62,8 @@ export default {
   border: 1px dashed black;
   align-items: center;
   justify-content: center;
-  color: var(--activeColor);
-  background-color: var(--activeBgcColor);
+  color: var(--color-links-active);
+  background-color: var(--color-background-active);
 }
 
 .drag__container {

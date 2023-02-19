@@ -97,25 +97,40 @@ export default {
 
 <style lang="scss">
 body {
-  background-color: var(--menuColor);
+  background-color: var(--color-background-secondary);
 }
 
 * {
   margin: 0;
   padding: 0;
   font-family: "Roboto", sans-serif;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: var(--scrollbarTrack);
+    border-radius: 100px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbarThumb);
+    box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+    border-radius: 10px;
+  }
 }
 
 .empty_message {
   text-align: center;
-  color: var(--textColor);
-  margin-top: 15px;
+  color: var(--color-danger);
+  margin-top: 25px;
 }
 
 .btn {
-  background-color: var(--btnChat);
+  background-color: var(--button-chat-color);
   border: none;
-  color: var(--textColor);
+  color: var(--color-primary);
   border-radius: 2px;
   padding: 5px 9px;
   cursor: pointer;
@@ -126,18 +141,98 @@ body {
   }
 
   &:hover {
-    background-color: var(--btnHover);
+    background-color: var(--button-chat-hover);
+  }
+}
+
+.modal {
+  width: 400px;
+  height: 400px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  background-color: var(--color-background);
+  color: var(--color-primary);
+  border-radius: 10px;
+  box-shadow: 2px 2px 41px -6px rgba(34, 60, 80, 0.2);
+
+  &__container-btn {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    margin: 35px 0;
+  }
+
+  &__btn {
+    background-color: var(--button-chat-color);
+    transition: 0.3s ease;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    color: var(--color-primary);
+    padding: 6px;
+    width: 140px;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: var(--button-chat-hover);
+    }
+
+    &:disabled,
+    &[disabled] {
+      cursor: not-allowed;
+    }
+  }
+
+  .close-btn {
+    position: absolute;
+    right: 32px;
+    top: 32px;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &:before,
+    &:after {
+      position: absolute;
+      left: 15px;
+      content: " ";
+      height: 33px;
+      width: 2px;
+      background-color: var(--color-icon);
+    }
+
+    &:before {
+      transform: rotate(45deg);
+    }
+    &:after {
+      transform: rotate(-45deg);
+    }
+  }
+
+  .info {
+    width: 100%;
+    word-break: break-all;
+    max-height: 120px;
+    overflow: auto;
   }
 }
 
 .user {
   &__container {
     width: 600px;
-    background-color: var(--bgcColor);
+    background-color: var(--color-background);
     margin: 50px auto;
     display: flex;
     flex-direction: column;
-    color: var(--textColor);
+    color: var(--color-primary);
     border-radius: 3px;
     padding: 30px 0;
     height: fit-content;
@@ -146,13 +241,13 @@ body {
   &__title {
     text-align: center;
     margin: 25px 0;
-    color: var(--textColor);
+    color: var(--color-primary);
   }
 
   &__hr {
     width: 80%;
     margin: 35px auto;
-    border-color: var(--secondTextColor);
+    border-color: var(--color-secondary);
   }
 
   &__text {
@@ -161,7 +256,7 @@ body {
 
   &__link {
     align-self: center;
-    color: var(--linkColor);
+    color: var(--color-links);
     text-decoration: none;
     margin-bottom: 15px;
   }
@@ -175,24 +270,24 @@ body {
 
     label {
       margin-bottom: 5px;
-      color: var(--textColor);
+      color: var(--color-primary);
     }
 
     input {
       border: none;
       outline: none;
-      color: var(--textColor);
+      color: var(--color-primary);
       padding: 5px;
       font-size: 18px;
       margin-bottom: 20px;
 
       &::placeholder {
-        color: var(--textColor);
+        color: var(--color-primary);
       }
     }
 
     input[type="submit"] {
-      background-color: var(--btnChat);
+      background-color: var(--button-chat-color);
       transition: 0.3s ease;
       cursor: pointer;
 
@@ -201,7 +296,7 @@ body {
       }
 
       &:hover {
-        background-color: var(--btnHover);
+        background-color: var(--button-chat-hover);
       }
     }
 
@@ -209,7 +304,7 @@ body {
     input {
       width: 200px;
       font-size: 16px;
-      background-color: #242f3d;
+      background-color: var(--input-background);
     }
 
     select {
@@ -217,7 +312,7 @@ body {
 
       border: none;
       outline: none;
-      color: var(--textColor);
+      color: var(--color-primary);
       border-radius: 0;
     }
   }

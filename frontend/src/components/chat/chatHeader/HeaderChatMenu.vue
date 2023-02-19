@@ -1,21 +1,33 @@
 <template>
-  <div style="justify-self: end">
-    <button @click="initCallConference">
-      {{ $t("chat.headerChatMenu.call") }}
+  <div class="header-menu__container">
+    <button
+      class="header-menu__btn"
+      @click="initCallConference"
+    >
+      <font-awesome-icon
+        :title="$t('chat.headerChatMenu.call')"
+        icon="fa-solid fa-phone-volume"
+      />
     </button>
     <button
-      v-if="isChatAdmin"
-      class="chat__exit"
+      v-if="adminId && isChatAdmin"
+      class="header-menu__btn header-menu__btn--danger"
       @click="isShowConfirmModal = true"
     >
-      {{ $t("chat.headerChatMenu.deleteChat") }}
+      <font-awesome-icon
+        :title="$t('chat.headerChatMenu.deleteChat')"
+        icon="fa-solid fa-trash"
+      />
     </button>
     <button
-      v-else
-      class="chat__exit"
+      v-else-if="adminId"
+      class="header-menu__btn header-menu__btn--danger"
       @click="exitFromChat"
     >
-      {{ $t("chat.headerChatMenu.exit") }}
+      <font-awesome-icon
+        :title="$t('chat.headerChatMenu.exit')"
+        icon="fa-solid fa-right-from-bracket"
+      />
     </button>
   </div>
 
@@ -36,7 +48,7 @@ export default {
   components: { ConfirmModal },
   props: {
     adminId: {
-      type: Number,
+      type: [Number, null],
       required: true,
     },
     userId: {
@@ -118,4 +130,30 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.header-menu {
+  &__container {
+    justify-self: end;
+    align-self: center;
+  }
+
+  &__btn {
+    border: none;
+    background-color: inherit;
+    margin: 0 20px;
+    cursor: pointer;
+
+    &--danger {
+      svg {
+        color: var(--color-danger) !important;
+      }
+    }
+
+    svg {
+      color: var(--color-icon);
+      height: 22px;
+      width: 22px;
+    }
+  }
+}
+</style>

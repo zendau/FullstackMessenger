@@ -1,10 +1,15 @@
 <template>
-  <h1 class="chat__title chat__title--private">
-    <!-- TODO: добавить иконку -->
-    [Group icon] - {{ chatTitle }}
+  <h1
+    class="chat__title chat__title--private"
+    @click="toggleUsersList"
+  >
+    {{ chatTitle }}
   </h1>
-  <p @click="toggleUsersList">
-    {{ membersCount }} {{ $t("chat.headerGroup.members") }}
+  <p
+    class="chat__count"
+    @click="toggleUsersList"
+  >
+    {{ $t("chat.headerGroup.members", membersCount) }}
   </p>
 </template>
 
@@ -33,4 +38,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.chat {
+  &__count {
+    color: var(--color-secondary);
+  }
+}
+</style>

@@ -8,9 +8,13 @@
   >
     <div class="video__info">
       <span class="mute">
-        <i
-          class="bi"
-          :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"
+        <font-awesome-icon
+          v-if="isMuted"
+          icon="fa-solid fa-microphone-slash"
+        />
+        <font-awesome-icon
+          v-else
+          icon="fa-solid fa-microphone"
         />
       </span>
       <p>{{ userName }}</p>
@@ -19,7 +23,7 @@
       v-if="isPauseVideo"
       class="video__placeholder"
     >
-      <i class="bi bi-camera-video-off" />
+      <font-awesome-icon icon="fa-solid fa-video-slash" />
     </div>
     <video ref="media" />
   </div>
@@ -126,7 +130,7 @@ export default {
     display: block;
     position: relative;
     aspect-ratio: 16/9;
-    background-color: var(--messageColor);
+    background-color: var(--color-message);
     border-radius: 3px;
     max-width: 100%;
     top: 50%;
@@ -142,15 +146,15 @@ export default {
     display: flex;
     bottom: 10px;
     left: 5px;
-    color: var(--textColor);
+    color: var(--color-primary);
     z-index: 7;
   }
 
   &__placeholder {
     position: absolute;
     font-size: 70px;
-    color: var(--textColor);
-    background-color: var(--messageColor);
+    color: var(--color-primary);
+    background-color: var(--color-message);
     width: 100%;
     height: 100%;
 

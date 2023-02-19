@@ -2,12 +2,13 @@
   <button
     v-for="(type, key) in listTypes"
     :key="type"
+    class="contacts__btn"
     :class="{ 'contacts__btn--active': listType === key }"
     @click="changeListType(key)"
   >
     {{ type }}
     <div v-if="key !== 'freeUsers'">
-      ({{ contactsCount[key] }})
+      {{ contactsCount[key] }}
     </div>
   </button>
 </template>
@@ -57,9 +58,20 @@ export default {
 <style lang="scss">
 .contacts {
   &__btn {
+    height: 40px;
+    color: var(--color-primary);
+    background-color: var(--color-background-active);
+    cursor: pointer;
+    border: none;
+    margin: 2px;
+    font-size: 15px;
+
+    div {
+      color: var(--color-secondary);
+    }
+
     &--active {
-      background-color: blue;
-      color: white;
+      background-color: var(--button-primary);
     }
   }
 }

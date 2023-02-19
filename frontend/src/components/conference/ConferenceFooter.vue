@@ -3,52 +3,73 @@
     <div class="conference__menu">
       <div class="menu__setting">
         <button @click="isMuted = !isMuted">
-          <i
-            class="bi"
-            :class="isMuted ? 'bi-mic-mute-fill' : 'bi-mic-fill'"
-          />{{ isMuted ? "Unmute" : "Mute" }}
+          <font-awesome-icon
+            v-if="isMuted"
+            icon="fa-solid fa-microphone-slash"
+          />
+          <font-awesome-icon
+            v-else
+            icon="fa-solid fa-microphone"
+          />
+          {{ isMuted ? "Unmute" : "Mute" }}
         </button>
         <button
           v-if="conferenceType"
           @click="isPauseVideo = !isPauseVideo"
         >
-          <i
-            class="bi"
-            :class="isPauseVideo ? 'bi-camera-video-off-fill' : 'bi-camera-video-fill'"
-          />{{
-            isPauseVideo ? "Off" : "On"
-          }}
+          <font-awesome-icon
+            v-if="isPauseVideo"
+            icon="fa-solid fa-video-slash"
+          />
+          <font-awesome-icon
+            v-else
+            icon="fa-solid fa-video"
+          />
+          {{ isPauseVideo ? "Off" : "On" }}
         </button>
         <button
           v-if="!conferenceType"
           @click="isRecord = !isRecord"
         >
-          <i
-            class="bi"
-            :class="isRecord ? 'bi-stop-circle' : 'bi-record-circle'"
-          />{{ isRecord ? "Stop" : "Record" }}
+          <font-awesome-icon
+            v-if="isRecord"
+            icon="fa-solid fa-circle-stop"
+          />
+          <font-awesome-icon
+            v-else
+            icon="fa-solid fa-record-vinyl"
+          />
+          {{ isRecord ? "Stop" : "Record" }}
         </button>
         <button
           v-if="conferenceType"
           class="mobile"
           @click="isRecordScreen = !isRecordScreen"
         >
-          <i
-            class="bi"
-            :class="isRecordScreen ? 'bi-stop-circle' : 'bi-record-circle'"
-          />{{
-            isRecordScreen ? "Stop" : "Record"
-          }}
+          <font-awesome-icon
+            v-if="isRecordScreen"
+            icon="fa-solid fa-circle-stop"
+          />
+          <font-awesome-icon
+            v-else
+            icon="fa-solid fa-record-vinyl"
+          />
+          {{ isRecordScreen ? "Stop" : "Record" }}
         </button>
         <button
           v-if="conferenceType"
           class="mobile"
           @click="isShareScreen = !isShareScreen"
         >
-          <i
-            class="bi"
-            :class="isShareScreen ? 'bi-tv-fill' : 'bi-tv'"
-          />{{ isShareScreen ? "Stop" : "Show" }}
+          <font-awesome-icon
+            v-if="isShareScreen"
+            icon="fa-solid fa-circle-stop"
+          />
+          <font-awesome-icon
+            v-else
+            icon="fa-solid fa-display"
+          />
+          {{ isShareScreen ? "Stop" : "Show" }}
         </button>
       </div>
       <div class="menu__conference-data">
@@ -70,14 +91,14 @@
           class="menu__chat"
           @click="$router.push('/conferences')"
         >
-          <i class="bi bi-x-circle-fill" />
+          <font-awesome-icon icon="fa-solid fa-circle-xmark" />
           {{ $t("conference.conferenceFoouter.interrupt") }}
         </button>
         <button
           class="menu__chat"
           @click="$emit('show-chat')"
         >
-          <i class="bi bi-chat-dots" /> {{ $t("conference.conferenceFoouter.chat") }}
+          <font-awesome-icon icon="fa-solid fa-comment-dots" /> {{ $t("conference.conferenceFoouter.chat") }}
         </button>
       </div>
     </div>
@@ -143,7 +164,7 @@ export default {
 <style lang="scss" scoped>
 footer {
   height: 60px;
-  background-color: var(--bgcColor);
+  background-color: var(--color-background);
   box-sizing: border-box;
 
   .chat-group__container {
@@ -159,7 +180,7 @@ footer {
     height: 50px;
     border: none;
     background-color: inherit;
-    color: var(--textColor);
+    color: var(--color-primary);
     cursor: pointer;
     transition: 0.3s ease;
     display: inline-flex;
@@ -168,7 +189,7 @@ footer {
     align-items: center;
 
     &:hover {
-      color: var(--activeColor);
+      color: var(--color-links-active);
     }
 
     i {
@@ -179,11 +200,11 @@ footer {
   }
 
   &__conference-title {
-    color: var(--textColor);
+    color: var(--color-primary);
   }
 
   &__conference-admin {
-    color: var(--secondTextColor);
+    color: var(--color-secondary);
 
     &--group {
       user-select: none;

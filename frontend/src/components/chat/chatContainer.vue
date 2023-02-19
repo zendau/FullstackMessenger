@@ -164,8 +164,8 @@ export default {
   height: 100%;
   max-height: 100vh;
   overflow: hidden;
-  grid-template-rows: 58px 1fr;
-  background-color: var(--menuColor);
+  grid-template-rows: 64px 1fr;
+  background-color: var(--color-background-secondary);
 
   &--conference {
     grid-template-rows: 1fr;

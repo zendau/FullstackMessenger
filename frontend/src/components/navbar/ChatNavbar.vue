@@ -12,8 +12,11 @@
             class="chat__list-item"
             :class="{ 'chat__list-item--active': showChats }"
           >
-            <i class="bi bi-chat-dots" />
-            <span>{{ $t("navbar.chatNavbar.calls") }}</span>
+            <font-awesome-icon
+              class="list-item__icon"
+              icon="fa-solid fa-comment-dots"
+            />
+            <span>{{ $t("navbar.chatNavbar.chats") }}</span>
           </a>
         </li>
         <li
@@ -26,7 +29,10 @@
             class="chat__list-item"
             :class="{ 'chat__list-item--active': !showChats }"
           >
-            <i class="bi bi-person-lines-fill" />
+            <font-awesome-icon
+              class="list-item__icon"
+              icon="fa-solid fa-address-book"
+            />
             <span>{{ $t("navbar.chatNavbar.contacts") }}</span>
           </a>
         </li>
@@ -35,7 +41,10 @@
             class="chat__list-item"
             to="/conferences"
           >
-            <i class="bi bi-telephone" />
+            <font-awesome-icon
+              class="list-item__icon"
+              icon="fa-solid fa-phone"
+            />
             <span>{{ $t("navbar.chatNavbar.calls") }}</span>
           </router-link>
         </li>
@@ -44,7 +53,10 @@
             class="chat__list-item"
             to="/settings"
           >
-            <i class="bi bi-gear" />
+            <font-awesome-icon
+              class="list-item__icon"
+              icon="fa-solid fa-gear"
+            />
             <span>{{ $t("navbar.chatNavbar.settings") }}</span>
           </router-link>
         </li>
@@ -54,7 +66,10 @@
         href="#"
         @click="logout"
       >
-        <i class="bi bi-box-arrow-right" />
+        <font-awesome-icon
+          class="list-item__icon"
+          icon="fa-solid fa-right-from-bracket"
+        />
         <span>{{ $t("navbar.chatNavbar.exit") }}</span>
       </a>
     </nav>
@@ -100,7 +115,7 @@ export default {
     height: 100%;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--menuColor);
+    background-color: var(--color-background-secondary);
   }
 
   &__list {
@@ -115,10 +130,12 @@ export default {
       padding: 5px 0;
       box-sizing: border-box;
       cursor: pointer;
+      height: 63px;
+      justify-content: space-around;
 
       i,
       span {
-        color: var(--textColor);
+        color: var(--color-primary);
       }
 
       &--exit span {
@@ -126,11 +143,11 @@ export default {
       }
 
       &--active {
-        background-color: var(--activeBgcColor);
+        background-color: var(--color-background-active);
 
-        i,
+        .list-item__icon,
         span {
-          color: var(--activeColor);
+          color: var(--color-links-active);
         }
       }
 
@@ -138,6 +155,13 @@ export default {
         font-size: 26px;
       }
     }
+  }
+}
+
+.list-item {
+  &__icon {
+    color: var(--color-icon);
+    font-size: 26px;
   }
 }
 </style>

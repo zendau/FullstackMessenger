@@ -1,18 +1,5 @@
 <template>
-  <div
-    style="
-      width: 100px;
-      align-self: center;
-      color: white;
-      display: flex;
-      justify-content: center;
-      margin: 5px 10px;
-      padding: 10px;
-      background-color: var(--messageColor);
-      border-radius: 5px;
-      text-align: center;
-    "
-  >
+  <div class="message__info">
     {{ getMessageAlert(messageType, messageText) }}
   </div>
 </template>
@@ -58,4 +45,17 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.message__info {
+  width: 130px;
+  align-self: center;
+  color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+  margin: 5px 10px;
+  padding: 10px;
+  background-color: var(--color-message);
+  border-radius: 5px;
+  text-align: center;
+}
+</style>

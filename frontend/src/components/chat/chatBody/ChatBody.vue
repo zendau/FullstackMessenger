@@ -229,26 +229,11 @@ export default {
     display: flex;
     flex-direction: column-reverse;
     overflow: auto;
-    background-color: var(--menuColor);
+    background-color: var(--color-background-secondary);
     padding: 1px 0;
     box-sizing: border-box;
 
     height: 100%;
-
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: #3f4750;
-      border-radius: 100px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: #9b9fa4;
-      box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
-      border-radius: 10px;
-    }
 
     &--mini {
       padding: 10px;

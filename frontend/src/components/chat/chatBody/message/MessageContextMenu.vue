@@ -4,49 +4,48 @@
     @close-context="closeCTX"
   >
     <ul
-      style="
-        position: absolute;
-        z-index: 15;
-        background-color: orange;
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 8px 20px;
-      "
+      ref="context"
+      class="msg-context__container"
       :style="{
-        left: ctxMenuData.position.x + 'px',
-        top: ctxMenuData.position.y + 'px',
+        left: position.x + 'px',
+        top: position.y + 'px',
       }"
     >
-      <li style="width: 100%; padding: 5px; cursor: pointer">
-        {{ $t("chat.messageContextMenu.copy") }}
+      <li
+        class="msg-context__item"
+        @click="copyText"
+      >
+        <font-awesome-icon icon="fa-solid fa-copy" />
+        <p>{{ $t("chat.messageContextMenu.copy") }}</p>
       </li>
       <li
         v-if="ctxMenuData.isAuthor"
-        style="width: 100%; padding: 5px; cursor: pointer"
+        class="msg-context__item"
         @click="editMessage"
       >
-        {{ $t("chat.messageContextMenu.edit") }}
+        <font-awesome-icon icon="fa-solid fa-pen-to-square" />
+        <p>{{ $t("chat.messageContextMenu.edit") }}</p>
       </li>
       <li
-        style="width: 100%; padding: 5px; cursor: pointer"
+        class="msg-context__item"
         @click="selectMessageHandler"
       >
-        {{ $t("chat.messageContextMenu.select") }}
+        <font-awesome-icon icon="fa-solid fa-circle-check" />
+        <p>{{ $t("chat.messageContextMenu.select") }}</p>
       </li>
       <li
-        style="width: 100%; padding: 5px; cursor: pointer"
+        class="msg-context__item"
         @click="deleteMessage"
       >
-        {{ $t("chat.messageContextMenu.delete") }}
+        <font-awesome-icon icon="fa-solid fa-trash" />
+        <p>{{ $t("chat.messageContextMenu.delete") }}</p>
       </li>
     </ul>
   </ModalWindow>
 </template>
 
 <script>
-import { inject, computed } from "vue";
+import { inject, computed, ref, onUpdated, reactive } from "vue";
 import ModalWindow from "@/components/UI/ModalWindow.vue";
 
 export default {
@@ -63,6 +62,27 @@ export default {
     const selectedMessages = inject("selectedMessages");
     const editMessageData = inject("editMessageData");
     const isShowMessageCTX = inject("isShowMessageCTX");
+    const position = reactive({ x: 0, y: 0 });
+
+    onUpdated(() => {
+      const el = context.value?.getBoundingClientRect();
+
+      if (!el) return;
+
+      if (props.ctxMenuData.position.y < window.innerHeight - el.height) {
+        position.y = props.ctxMenuData.position.y;
+      } else {
+        position.y = props.ctxMenuData.position.y - el.height;
+      }
+
+      if (props.ctxMenuData.position.x < window.innerWidth - el.width) {
+        position.x = props.ctxMenuData.position.x;
+      } else {
+        position.x = props.ctxMenuData.position.x - el.width;
+      }
+    });
+
+    const context = ref(null);
 
     const isShowCTX = computed(() => isShowMessageCTX.value === props.ctxMenuData?.message?.id);
 
@@ -75,6 +95,11 @@ export default {
         id: props.ctxMenuData.message.id,
         isRead: props.ctxMenuData.isRead,
       });
+      isShowMessageCTX.value = null;
+    }
+
+    function copyText() {
+      navigator.clipboard.writeText(props.ctxMenuData.message.text);
       isShowMessageCTX.value = null;
     }
 
@@ -101,9 +126,42 @@ export default {
       deleteMessage,
       closeCTX,
       isShowCTX,
+      context,
+      position,
+      copyText,
     };
   },
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.msg-context {
+  &__container {
+    position: absolute;
+    z-index: 15;
+    background-color: var(--color-background);
+    color: var(--color-primary);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__item {
+    width: 100%;
+    cursor: pointer;
+    transition: 0.3s ease;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+
+    svg {
+      margin-right: 10px;
+    }
+
+    &:hover {
+      background-color: var(--color-background-hover);
+    }
+  }
+}
+</style>

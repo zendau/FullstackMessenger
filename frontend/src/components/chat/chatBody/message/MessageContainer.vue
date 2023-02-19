@@ -5,13 +5,17 @@
     :class="{ 'message__container--author': isAuthor, 'message__container--mini': isConferenceChat }"
     @contextmenu="openMessageCTXMenu"
   >
-    <input
+    <label
       v-if="isSelectMessagesMode"
-      v-model="selectedMessages"
-      :value="checboxData"
-      type="checkbox"
-      style="width: 25px; height: 25px"
+      class="message__select"
     >
+      <input
+        v-model="selectedMessages"
+        :value="checboxData"
+        type="checkbox"
+      >
+    </label>
+
     <p class="message__author">
       {{ message.authorLogin }}
     </p>
@@ -19,44 +23,54 @@
       <p class="message__text">
         <span v-html="isLink(message.text)" />
       </p>
-      <i
-        v-if="isRead"
-        class="bi bi-check-all"
-      />
-      <i
-        v-else
-        class="bi bi-check"
-      />
-      <p v-if="message.isEdited">
-        {{ $t("chat.messageContainer.edited") }}
-      </p>
-      <!-- <a href="#" class="message__link">localhost.com</a> -->
-      <div
-        v-for="file in message.files"
-        :key="file.id"
-      >
-        <p
-          v-if="file.mimetype.includes('image')"
-          style="display: flex; justify-content: center"
-          @mousedown.right.prevent="null"
+      <ul style="display: flex; flex-wrap: wrap; list-style: none; justify-content: space-around; margin-top: 7px">
+        <li
+          v-for="file in message.files"
+          :key="file.id"
+          style="margin: 5px"
         >
-          <img
-            :src="`http://localhost:4000/storage/${file.foulder.path}/${file.fileTempName}`"
-            height="200"
-            :alt="file.fileName"
-          >
-        </p>
-        <div v-else>
           <a
-            class="message__file"
-            :href="getDownloadLink(file.id)"
+            v-if="file.mimetype.includes('image')"
+            target="_blank"
+            :href="`http://localhost:4000/storage/${file.foulder.path}/${file.fileTempName}`"
           >
-            <i class="bi bi-file-earmark-arrow-down" />
-            <p>{{ file.fileName }}</p>
+            <img
+              :src="`http://localhost:4000/storage/${file.foulder.path}/${file.fileTempName}`"
+              height="200"
+              :alt="file.fileName"
+              @mousedown.right.prevent="null"
+            >
           </a>
-        </div>
-      </div>
+
+          <template v-else>
+            <a
+              class="message__file"
+              :href="getDownloadLink(file.id)"
+            >
+              <font-awesome-icon icon="fa-solid fa-file" />
+              <p>{{ file.fileName }}</p>
+              <span>{{ formatBytes(file.size) }}</span>
+            </a>
+          </template>
+        </li>
+      </ul>
     </div>
+    <font-awesome-icon
+      v-if="isRead"
+      class="message__is-read"
+      icon="fa-solid fa-check-double"
+    />
+    <font-awesome-icon
+      v-else
+      class="message__is-read"
+      icon="fa-solid fa-check"
+    />
+    <p
+      v-if="message.isEdited"
+      class="message__edited"
+    >
+      {{ $t("chat.messageContainer.edited") }}
+    </p>
     <span
       class="message__time"
       :title="messageDate"
@@ -66,7 +80,7 @@
   </div>
   <div
     v-if="isFirstUnread"
-    style="color: red"
+    class="message__unread"
   >
     {{ $t("chat.messageContainer.newMessage") }}
   </div>
@@ -134,7 +148,6 @@ export default {
       }
 
       e.preventDefault();
-
       ctxPosition.x = e.pageX || e.clientX;
       ctxPosition.y = e.pageY || e.clientY;
 
@@ -164,9 +177,22 @@ export default {
       y: 0,
     };
 
+    function formatBytes(bytes, decimals = 2) {
+      if (!+bytes) return "0 Bytes";
+
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+      return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    }
+
     const isAuthor = computed(() => props.message.authorId === props.userId);
 
     return {
+      formatBytes,
       isConferenceChat,
       checboxData,
       ctxPosition,
@@ -183,6 +209,13 @@ export default {
 };
 </script>
 
+<style>
+.message__link {
+  color: var(--color-links-active);
+  text-decoration: none;
+}
+</style>
+
 <style lang="scss" scoped>
 @mixin message__container--mini {
   width: 100%;
@@ -195,11 +228,17 @@ export default {
     align-items: flex-start;
     margin: 5px 10px;
     display: grid;
-    grid-template-columns: 1fr 80px;
+    grid-template-columns: 1fr 70px 80px 40px;
     align-items: end;
     padding: 7px;
-    background-color: var(--messageColor);
+    background-color: var(--color-message);
     border-radius: 5px;
+    gap: 2px;
+    position: relative;
+
+    &:has(label input:checked) {
+      background-color: var(--button-chat-hover);
+    }
 
     &--author {
       align-self: flex-end;
@@ -210,35 +249,86 @@ export default {
     }
   }
 
-  &__link,
+  &__select {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    input {
+      display: none;
+    }
+  }
+
+  &__unread {
+    color: var(--dangerColor);
+  }
+
   &__file {
-    color: var(--activeColor);
+    color: var(--color-links-active);
+  }
+
+  &__file {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    grid-template-rows: 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+    width: fit-content;
+    font-size: 16px;
+    text-decoration: none;
+
+    svg {
+      grid-column: 1/1;
+      grid-row: 1/3;
+      height: 28px;
+      width: 28px;
+      color: var(--button-primary);
+    }
+
+    span {
+      font-size: 14px;
+      color: var(--color-icon);
+    }
   }
 
   &__author {
     justify-self: start;
     margin-left: 10px;
-    color: var(--activeColor);
+    color: var(--color-links);
     align-self: baseline;
   }
 
   &__time {
     text-align: center;
-    color: var(--secondTextColor);
+    color: var(--color-secondary);
+    grid-column: 3/4;
+    grid-row: 1/2;
   }
 
   &__text {
     text-align: left;
-    color: var(--textColor);
+    color: var(--color-primary);
+  }
+
+  &__edited {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    text-align: center;
+    color: var(--color-secondary);
+    font-size: 14px;
   }
 
   &__body {
     grid-row: 2/3;
-    grid-column: 1/3;
+    grid-column: 1/5;
   }
 
-  &__time {
-    grid-column: 2/3;
+  &__is-read {
+    justify-self: center;
+    align-self: end;
+    color: var(--color-links);
+    grid-row: 1/2;
+    grid-column: 4/5;
   }
 }
 

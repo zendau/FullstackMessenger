@@ -1,14 +1,15 @@
 <template>
   <ModalWindow :is-show-c-t-x="isCaller">
-    <div class="test">
-      <a
-        class="close-btn"
-        @click="closeCTX"
-      />
-      <h2>{{ $t("conference.initCall.callTo") }} {{ callingData.chatTitle }}</h2>
-      <button @click="cancelCalling">
-        {{ $t("conference.initCall.cancel") }}
-      </button>
+    <div class="modal">
+      <div class="container">
+        <h2>{{ $t("conference.initCall.callTo") }} {{ callingData.chatTitle }}</h2>
+        <button
+          class="modal__btn"
+          @click="cancelCalling"
+        >
+          {{ $t("conference.initCall.cancel") }}
+        </button>
+      </div>
     </div>
   </ModalWindow>
 </template>
@@ -39,10 +40,9 @@ export default {
 
       peerSocket.emit("initInviteCalling", callingData.value);
 
-      callingTimer.value = setTimeout(() => {
-        console.log("test");
-        cancelCalling();
-      }, 15000);
+      // callingTimer.value = setTimeout(() => {
+      //   cancelCalling();
+      // }, 15000);
     });
 
     function cancelCalling() {
@@ -66,46 +66,16 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.test {
-  width: 400px;
-  height: 400px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  background-color: var(--bgcColor);
-  color: var(--textColor);
-}
+<style lang="scss" scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 90%;
+  align-items: center;
 
-.close-btn {
-  position: absolute;
-  right: 32px;
-  top: 32px;
-  width: 32px;
-  height: 32px;
-  opacity: 0.3;
-
-  &:hover {
-    opacity: 1;
-  }
-
-  &:before,
-  &:after {
-    position: absolute;
-    left: 15px;
-    content: " ";
-    height: 33px;
-    width: 2px;
-    background-color: #333;
-  }
-
-  &:before {
-    transform: rotate(45deg);
-  }
-  &:after {
-    transform: rotate(-45deg);
+  h2 {
+    margin-bottom: 30px;
   }
 }
 </style>

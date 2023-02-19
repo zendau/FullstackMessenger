@@ -7,7 +7,6 @@
     <p
       v-if="chatsList.size === 0"
       class="empty_message"
-      style="color: red"
     >
       {{ $t("chat.list.empty") }}
     </p>
@@ -91,21 +90,7 @@ export default {
 .chats {
   &__list {
     overflow: auto;
-
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: #3f4750;
-      border-radius: 100px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: #9b9fa4;
-      box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
-      border-radius: 10px;
-    }
+    margin-top: 2px;
   }
 
   &__container {
@@ -114,7 +99,7 @@ export default {
     overflow: hidden;
     max-height: 100vh;
     box-sizing: border-box;
-    background-color: var(--bgcColor);
+    background-color: var(--color-background);
 
     button {
       margin-bottom: 10px;
@@ -124,11 +109,16 @@ export default {
   }
 
   &__item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 40px 1fr;
     align-items: center;
+    justify-items: center;
+    height: 70px;
+    gap: 10px;
+
     transition: 0.3s ease;
     cursor: pointer;
-    color: var(--textColor);
+    color: var(--color-primary);
     a {
       color: inherit;
       text-decoration: none;
@@ -139,7 +129,7 @@ export default {
     }
 
     &:hover {
-      background-color: var(--itemColor);
+      background-color: var(--color-background-item);
     }
     input {
       margin: 0 5px;
@@ -152,26 +142,26 @@ export default {
   }
 
   &__info {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
     width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 50px;
+    grid-template-rows: 1fr 1fr;
+    height: 100%;
+
+    p {
+      padding: 5px;
+      box-sizing: border-box;
+    }
   }
 }
 
 .chat {
   &__last-message {
-    width: 180px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     overflow-wrap: break-word;
-    text-align: center;
+    color: var(--color-secondary);
   }
-}
-
-.router-link-active {
-  background-color: #2b5278;
 }
 </style>

@@ -159,16 +159,16 @@ export default {
 
 .btn {
   &--chat {
-    background-color: var(--btnChat);
+    background-color: var(--button-chat-color);
     border: none;
-    color: var(--textColor);
+    color: var(--color-primary);
     border-radius: 2px;
     padding: 5px 9px;
     cursor: pointer;
     transition: 0.3s ease;
 
     &:hover {
-      background-color: var(--btnHover);
+      background-color: var(--button-chat-hover);
     }
   }
 }

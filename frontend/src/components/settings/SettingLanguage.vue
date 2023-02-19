@@ -1,9 +1,9 @@
 <template>
-  <ul style="color: white">
+  <ul style="color: var(--color-primary)">
     <li
       v-for="item in availableLocales"
       :key="item"
-      style="cursor: pointer; width: 40px; height: 40px; background-color: gray; margin: 5px"
+      style="cursor: pointer; width: 40px; height: 40px; background-color: var(--button-chat-hover); margin: 5px"
       @click="changeLocale(item)"
     >
       {{ item }}

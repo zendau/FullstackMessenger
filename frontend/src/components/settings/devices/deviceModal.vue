@@ -3,7 +3,7 @@
     :is-show-c-t-x="isOpenDeviceModal"
     @close-context="closeCTX"
   >
-    <div class="test">
+    <div class="modal">
       <a
         class="close-btn"
         @click="closeCTX"
@@ -13,15 +13,21 @@
       <p>{{ $t("setting.deviceModal.time") }}: {{ deviceData.lastOnline }}</p>
       <p>IP: {{ deviceData.ipAdress }}</p>
       <font-awesome-icon :icon="icon" />
-      <button
-        v-if="!isCurrent"
-        @click="deleteDevices"
-      >
-        {{ $t("setting.deviceModal.delete") }}
-      </button>
-      <button @click="closeCTX">
-        {{ $t("setting.deviceModal.cancel") }}
-      </button>
+      <div class="modal__container-btn">
+        <button
+          v-if="!isCurrent"
+          class="modal__btn"
+          @click="deleteDevices"
+        >
+          {{ $t("setting.deviceModal.delete") }}
+        </button>
+        <button
+          class="modal__btn"
+          @click="closeCTX"
+        >
+          {{ $t("setting.deviceModal.cancel") }}
+        </button>
+      </div>
     </div>
   </ModalWindow>
 </template>
@@ -67,47 +73,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.test {
-  width: 400px;
-  height: 400px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  background-color: var(--bgcColor);
-  color: var(--textColor);
-}
-
-.close-btn {
-  position: absolute;
-  right: 32px;
-  top: 32px;
-  width: 32px;
-  height: 32px;
-  opacity: 0.3;
-
-  &:hover {
-    opacity: 1;
-  }
-
-  &:before,
-  &:after {
-    position: absolute;
-    left: 15px;
-    content: " ";
-    height: 33px;
-    width: 2px;
-    background-color: #333;
-  }
-
-  &:before {
-    transform: rotate(45deg);
-  }
-  &:after {
-    transform: rotate(-45deg);
-  }
-}
-</style>

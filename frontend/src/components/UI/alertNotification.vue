@@ -47,15 +47,15 @@ export default {
   align-self: center;
 
   &__danger {
-    background-color: var(--dangerColor);
+    background-color: var(--color-danger);
   }
 
   &__success {
-    background-color: var(--successColor);
+    background-color: var(--color-success);
   }
 
   &__text {
-    color: var(--textColor);
+    color: var(--color-primary);
     display: flex;
     flex-direction: column;
     align-items: center;

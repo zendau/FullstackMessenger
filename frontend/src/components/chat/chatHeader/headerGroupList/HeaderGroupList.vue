@@ -1,6 +1,6 @@
 <template>
   <div class="chat-group__container">
-    <ul style="margin: 0">
+    <ul>
       <GroupListItem
         v-for="userData in chatData.users"
         :key="userData.id"
@@ -42,13 +42,19 @@ export default {
     height: min-content;
     padding: 10px;
     max-height: 400px;
-    color: white;
+    color: var(--color-primary);
     overflow: auto;
-    background-color: gray;
+    background-color: var(--color-background);
     box-sizing: border-box;
     width: 100%;
     display: grid;
     justify-content: center;
+    box-shadow: 0 -2px 2px rgb(0 0 0 / 25%);
+
+    ul {
+      margin: 0;
+      list-style: none;
+    }
   }
 }
 </style>

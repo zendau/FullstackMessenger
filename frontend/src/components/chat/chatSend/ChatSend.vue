@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isPrivateBanned"
-    style="color: white"
+    style="color: var(--color-primary)"
   >
     {{ $t("chat.chatSend.banned") }}
   </div>
@@ -9,12 +9,12 @@
     else
     class="chat__send"
   >
+    <ChatPressing :user-login="userPressing" />
     <ChatEditMessage
       v-if="editMessageData"
       :edit-text-message="editMessageData.text"
       @cancel-message="cancelMessage"
     />
-    <ChatPressing :user-login="userPressing" />
     <div
       ref="message"
       class="chat__input"
@@ -26,7 +26,7 @@
     <ChatFiles @delete-file="deleteFileById" />
     <ChatFileUpload :file-upload-percent="fileUploadPercent" />
     <button @click="sendMessage">
-      <i class="bi bi-send" />
+      <font-awesome-icon icon="fa-solid fa-paper-plane" />
     </button>
   </div>
 </template>
@@ -136,7 +136,7 @@ export default {
         }
       }
 
-      const messageText = message.value.getInnerHTML();
+      const messageText = message.value.getInnerHTML().trim();
       if (editMessageData.value) {
         chatSocket.emit("edit_message", {
           roomId: chatId.value,
@@ -148,7 +148,7 @@ export default {
         cancelMessage();
       } else {
         console.log("messageText", messageText);
-        if (messageText.length === 0 && inseredFilesData.length === 0) return;
+        if (messageText.length === 0 || (messageText.length === 0 && inseredFilesData.length === 0)) return;
 
         const messageData = {
           roomId: chatId.value,
@@ -221,24 +221,29 @@ export default {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 60px;
-    background-color: var(--bgcColor);
-    color: var(--textColor);
+    grid-template-rows: auto;
+    background-color: var(--color-background);
+    color: var(--color-primary);
 
     button {
       grid-column: 2/3;
-      grid-row: 1/2;
+      grid-row: 3/4;
       height: 40px;
       align-self: end;
       border: none;
-      background-color: var(--activeColor);
+      background-color: var(--color-links-active);
+      cursor: pointer;
 
-      i {
-        font-size: 28px;
-        &::before {
-          transform: rotateZ(45deg);
-        }
+      svg {
+        color: var(--color-primary);
+        font-size: 18px;
       }
     }
+  }
+
+  &__pressing {
+    padding: 10px;
+    grid-row: 1/2;
   }
 
   &__input {
@@ -246,11 +251,12 @@ export default {
     width: 100%;
     min-height: 1.4em;
     max-height: 10em;
-    background-color: white;
+    background-color: var(--color-primary);
     font-size: 16px;
     text-align: left;
     overflow-y: auto;
     grid-column: 1/2;
+    grid-row: 3/4;
     background-color: inherit;
     outline: none;
     padding: 10px;
@@ -262,6 +268,7 @@ export default {
 
     &:empty:before {
       content: attr(data-placeholder);
+      color: var(--color-secondary);
     }
     // div {
     //     border: none;
@@ -269,22 +276,15 @@ export default {
   }
 
   &__files {
-    border-top: 1px solid black;
+    box-shadow: 0 -2px 2px rgb(0 0 0 / 25%);
+    margin-top: 2px;
     list-style: none;
     display: flex;
     flex-wrap: wrap;
     padding: 3px;
     grid-column: 1/3;
-    background-color: var(--bgcColor);
-    border-left: 1px solid black;
-  }
-
-  &__file {
-    margin: 3px 8px;
-    a {
-      color: var(--linkColor);
-      text-decoration: none;
-    }
+    grid-row: 5/6;
+    background-color: var(--color-background);
   }
 }
 </style>

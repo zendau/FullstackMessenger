@@ -108,21 +108,21 @@ export default {
   text-align: center;
   border: none;
   padding: 10px 15px;
-  background: var(--activeBgcColor);
-  color: var(--activeColor);
+  background: var(--color-background-active);
+  color: var(--color-links-active);
   font-size: 14px;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  border-left: 1px solid var(--color-secondary);
+  border-right: 1px solid var(--color-secondary);
 }
 
 .table tbody td {
   text-align: center;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  border-left: 1px solid var(--color-secondary);
+  border-right: 1px solid var(--color-secondary);
   padding: 10px 15px;
   font-size: 14px;
   vertical-align: top;
-  color: #fff;
+  color: var(--color-primary);
 }
 
 .table thead tr th:first-child,
@@ -136,11 +136,11 @@ export default {
 }
 
 .table tbody tr:nth-child(even) {
-  background: var(--itemColor);
+  background: var(--color-background-item);
 }
 
 .table tbody tr:nth-child(odd) {
-  background: var(--bgcColor);
+  background: var(--color-background);
 }
 
 @media (max-width: 720px) {

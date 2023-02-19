@@ -10,11 +10,12 @@
     <small
       v-if="roomData.conferenceWithVideo"
       class="room__type"
-    ><i class="bi bi-camera-video-fill" /> {{ $t("conference.conferenceItem.video") }}</small>
+    >
+      <font-awesome-icon icon="fa-solid fa-video" />{{ $t("conference.conferenceItem.video") }}</small>
     <small
       v-else
       class="room__type"
-    ><i class="bi bi-mic-fill" /> {{ $t("conference.conferenceItem.audio") }}</small>
+    ><font-awesome-icon icon="fa-solid fa-microphone" /> {{ $t("conference.conferenceItem.audio") }}</small>
     <router-link
       class="room__link"
       :to="`/conference/${roomData.conferenceWithVideo ? 'video' : 'audio'}/${roomData.id}`"

@@ -1,5 +1,5 @@
 <template>
-  <div style="color: gray">
+  <div style="color: var(--button-chat-hover)">
     <h1>{{ $t("setting.settingDevices.current") }}</h1>
 
     <Device
@@ -16,7 +16,7 @@
     <li
       v-for="device in othersDevices"
       :key="device.id"
-      style="color: white"
+      style="color: var(--color-primary)"
     >
       <Device
         :device-data="device"

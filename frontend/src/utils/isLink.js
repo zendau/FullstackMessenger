@@ -22,7 +22,10 @@ export default function isLink(text) {
         url = link;
       }
       const temp = restText
-        .replace(link, `<a target='_blank' href='${url}'>$&</a>`)
+        .replace(
+          link,
+          `<a target='_blank' class='message__link' href='${url}'>$&</a>`
+        )
         .split("</a>");
       result += temp[0] + "</a>";
       [, restText] = temp;

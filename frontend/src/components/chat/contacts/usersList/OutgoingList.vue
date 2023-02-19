@@ -6,7 +6,10 @@
       class="contact__item"
       @click="openUserModal(user.id)"
     >
-      <i class="bi bi-person" />
+      <font-awesome-icon
+        class="contact__item-icon"
+        icon="fa-solid fa-user"
+      />
 
       <p>{{ user.login }}</p>
       <p>{{ user.lastOnline }}</p>

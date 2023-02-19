@@ -1,6 +1,13 @@
 <template>
   <div class="chat__header">
-    <div class="chat__header-data">
+    <HeaderMessages
+      v-if="selectedMessages.length"
+      @delete-messages="deleteMessages"
+    />
+    <div
+      v-else
+      class="chat__header-data"
+    >
       <HeaderGroup
         v-if="chatData?.adminId"
         :chat-title="chatData.title"
@@ -15,9 +22,8 @@
         :user-id="userData.id"
       />
     </div>
-    <HeaderMessages @delete-messages="deleteMessages" />
     <HeaderChatMenu
-      v-if="chatData?.adminId"
+      v-if="!selectedMessages.length"
       :user-id="userData.id"
       :peer-id="userData.peerId"
       :user-login="userData.login"
@@ -53,6 +59,7 @@ export default {
     const userData = computed(() => store.state.auth.user);
     const router = useRoute();
     const chatId = computed(() => router.params.id);
+    const selectedMessages = inject("selectedMessages");
 
     const privateChatOnlineStatus = computed(() => {
       if (!chatData.value?.users) return chatData.value.lastOnline;
@@ -91,6 +98,7 @@ export default {
       deleteMessages,
       userData,
       toggleUsersList,
+      selectedMessages,
     };
   },
 };
@@ -101,8 +109,8 @@ export default {
   &__header {
     display: grid;
     height: 100%;
-    background-color: var(--bgcColor);
-    border-left: 1px solid black;
+    background-color: var(--color-background);
+    border-left: 1px solid rgb(0 0 0 / 40%);
 
     grid-template-columns: 1fr 300px;
     justify-items: baseline;
@@ -117,7 +125,7 @@ export default {
   }
 
   &__title {
-    color: var(--textColor);
+    color: var(--color-primary);
 
     &--private {
       grid-row: 1/3;
@@ -131,6 +139,11 @@ export default {
     text-align: center;
     display: flex;
     justify-content: center;
+    cursor: pointer;
+  }
+
+  &__status {
+    color: var(--color-secondary);
   }
 
   &__user-group {
@@ -142,7 +155,7 @@ export default {
 
   &__count {
     font-size: 14px;
-    color: var(--secondTextColor);
+    color: var(--color-secondary);
     cursor: pointer;
     user-select: none;
   }
