@@ -1,8 +1,14 @@
 <template>
-  <account />
-  <language />
-  <theme />
-  <devices />
+  <section class="setting__container">
+    <account />
+    <hr class="user__hr">
+    <h2 class="user__title">
+      {{ $t("setting.settingPage.select") }}
+    </h2>
+    <language />
+    <theme />
+    <devices />
+  </section>
 </template>
 
 <script>
@@ -16,4 +22,18 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.setting {
+  &__container {
+    width: 600px;
+    background-color: var(--color-background);
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    color: var(--color-primary);
+    border-radius: 3px;
+    padding: 30px 0;
+    height: fit-content;
+  }
+}
+</style>

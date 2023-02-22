@@ -1,29 +1,35 @@
 <template>
-  <div style="color: var(--button-chat-hover)">
-    <h1>{{ $t("setting.settingDevices.current") }}</h1>
+  <hr class="user__hr">
+  <h2 class="user__title">
+    {{ $t("setting.settingDevices.title") }}
+  </h2>
+  <div>
+    <h3>{{ $t("setting.settingDevices.current") }}</h3>
 
     <Device
       :device-data="currenteDevice"
       :is-current="true"
     />
 
-    <button @click="deleteDevices()">
+    <button
+      class="setting__end"
+      @click="deleteDevices()"
+    >
+      <font-awesome-icon icon="fa-solid fa-hand" />
       {{ $t("setting.settingDevices.endOther") }}
     </button>
   </div>
-  <h1>{{ $t("setting.settingDevices.other") }}</h1>
+  <h3>{{ $t("setting.settingDevices.other") }}</h3>
   <ul v-if="othersDevices.length > 0">
     <li
       v-for="device in othersDevices"
       :key="device.id"
-      style="color: var(--color-primary)"
     >
       <Device
         :device-data="device"
         :is-current="false"
         @delete-devices="deleteDevices"
       />
-      <hr>
     </li>
   </ul>
   <div v-else>
@@ -85,4 +91,30 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+h3 {
+  text-align: center;
+  color: var(--color-links);
+  margin: 15px;
+}
+
+.setting {
+  &__end {
+    color: var(--color-danger);
+    border: none;
+    background-color: inherit;
+    font-size: 14px;
+    margin: 15px auto 0;
+    display: block;
+    cursor: pointer;
+  }
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  margin-bottom: 15px;
+}
+</style>

@@ -124,7 +124,7 @@ body {
 .empty_message {
   text-align: center;
   color: var(--color-danger);
-  margin-top: 25px;
+  margin: 25px;
 }
 
 .btn {
@@ -226,18 +226,6 @@ body {
 }
 
 .user {
-  &__container {
-    width: 600px;
-    background-color: var(--color-background);
-    margin: 50px auto;
-    display: flex;
-    flex-direction: column;
-    color: var(--color-primary);
-    border-radius: 3px;
-    padding: 30px 0;
-    height: fit-content;
-  }
-
   &__title {
     text-align: center;
     margin: 25px 0;
@@ -277,9 +265,11 @@ body {
       border: none;
       outline: none;
       color: var(--color-primary);
-      padding: 5px;
       font-size: 18px;
       margin-bottom: 20px;
+      padding: 8px 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
 
       &::placeholder {
         color: var(--color-primary);
@@ -316,6 +306,10 @@ body {
       border-radius: 0;
     }
   }
+}
+
+.router-link-active {
+  color: var(--color-links-active) !important;
 }
 
 @media (max-width: 720px) {

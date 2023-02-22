@@ -58,6 +58,7 @@ export default {
       background-color: var(--color-background);
       border-top: 1px solid black;
       justify-content: center;
+      z-index: 10;
 
       li {
         width: 100%;

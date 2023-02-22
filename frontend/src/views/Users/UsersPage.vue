@@ -33,4 +33,24 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+:deep(.searchCreate__container) {
+  width: 50%;
+  margin: 0 auto;
+  box-shadow: none;
+}
+
+:deep(.contacts__btn) {
+  width: 140px;
+}
+
+:deep(.contacts__list) {
+  width: 550px;
+  margin: 15px auto;
+}
+
+.chat__contacts {
+  height: calc(100vh - 50px);
+  background-color: var(--color-message);
+}
+</style>

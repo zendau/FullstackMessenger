@@ -37,6 +37,9 @@ import {
   faPhoneVolume,
   faEnvelope,
   faInfo,
+  faMoon,
+  faSun,
+  faHand,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faEdge,
@@ -89,7 +92,10 @@ library.add(
   faTrash,
   faPhoneVolume,
   faEnvelope,
-  faInfo
+  faInfo,
+  faSun,
+  faMoon,
+  faHand
 );
 
 import i18n from "./locales";

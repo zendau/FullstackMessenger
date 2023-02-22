@@ -65,6 +65,7 @@ export default {
     border: none;
     margin: 2px;
     font-size: 15px;
+    width: 100%;
 
     div {
       color: var(--color-secondary);

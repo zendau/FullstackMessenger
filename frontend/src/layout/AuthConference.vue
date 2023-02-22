@@ -140,7 +140,7 @@ export default {
   &-chat {
     display: flex;
     flex-direction: column;
-    width: 350px;
+    width: 400px;
     background-color: var(--color-message);
 
     &--active {

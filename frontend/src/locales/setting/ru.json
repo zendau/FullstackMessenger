@@ -15,18 +15,25 @@
     "confirmPassword": "Подтвердите пароль",
     "changeBtn": "Изменить данные"
   },
+  "settingPage": {
+    "select": "Настройка интерфейса"
+  },
   "settingAccount": {
     "hello": "Привет",
     "role": "Роль:",
     "change": "Изменить пользовательские данные"
   },
+  "settingLanguage": {
+    "select": "Выберите язык"
+  },
   "settingTheme": {
     "change": "Изменить тему"
   },
   "settingDevices": {
-    "current": "Текущая",
+    "title": "Устройства",
+    "current": "Это устройство",
     "endOther": "Завершить все остальные сессии",
-    "other": "Остальные сессии",
+    "other": "Активные сессии",
     "noSessions": "Остальные сессии отсутствуют"
   },
   "deviceData": {

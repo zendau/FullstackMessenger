@@ -88,6 +88,13 @@ export default {
 };
 </script>
 
+<style scoped>
+.search__container {
+  width: 50%;
+  margin: 10px auto;
+}
+</style>
+
 <style lang="scss">
 .rooms {
   &__container {
@@ -101,7 +108,7 @@ export default {
     grid-template-columns: repeat(auto-fill, 250px);
     gap: 15px;
     justify-content: center;
-    margin: 35px 0;
+    margin: 20px 0;
   }
 
   &__item {
@@ -136,20 +143,23 @@ export default {
 
   &__type {
     color: var(--color-links-active);
+    margin-top: 5px;
+    svg {
+      margin-right: 5px;
+    }
   }
 
   &__link {
     margin: 10px 0;
     text-decoration: none;
-    width: 100px;
-    height: 30px;
     display: block;
     text-align: center;
     background-color: var(--button-chat-color);
     line-height: 30px;
-    border: 10%;
+    border-radius: 4px;
     transition: 0.3s ease;
     color: var(--color-primary);
+    padding: 5px 8px;
 
     &:hover {
       background-color: var(--button-chat-hover);

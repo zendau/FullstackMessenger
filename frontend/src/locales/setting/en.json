@@ -15,18 +15,25 @@
     "confirmPassword": "Confirm password",
     "changeBtn": "Change data"
   },
+  "settingPage": {
+    "select": "Interface customization"
+  },
   "settingAccount": {
     "hello": "Hello",
     "role": "Role:",
     "change": "Change user data"
   },
+  "settingLanguage": {
+    "select": "Select language"
+  },
   "settingTheme": {
     "change": "Change theme"
   },
   "settingDevices": {
-    "current": "Current",
+    "title": "Devices",
+    "current": "This device",
     "endOther": "End all other sessions",
-    "other": "Other sessions",
+    "other": "Active sessions",
     "noSessions": "No other sessions"
   },
   "deviceData": {

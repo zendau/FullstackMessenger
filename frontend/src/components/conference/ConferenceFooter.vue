@@ -192,7 +192,7 @@ footer {
       color: var(--color-links-active);
     }
 
-    i {
+    svg {
       font-size: 24px;
     }
 

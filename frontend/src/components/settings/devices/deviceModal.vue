@@ -8,25 +8,41 @@
         class="close-btn"
         @click="closeCTX"
       />
-      <p>{{ $t("setting.deviceModal.os") }} {{ deviceData.osName }} - {{ deviceData.osVersion }}</p>
-      <p>{{ $t("setting.deviceModal.device") }}: {{ deviceData.brand }} - {{ deviceData.model }}</p>
-      <p>{{ $t("setting.deviceModal.time") }}: {{ deviceData.lastOnline }}</p>
-      <p>IP: {{ deviceData.ipAdress }}</p>
-      <font-awesome-icon :icon="icon" />
-      <div class="modal__container-btn">
-        <button
-          v-if="!isCurrent"
-          class="modal__btn"
-          @click="deleteDevices"
-        >
-          {{ $t("setting.deviceModal.delete") }}
-        </button>
-        <button
-          class="modal__btn"
-          @click="closeCTX"
-        >
-          {{ $t("setting.deviceModal.cancel") }}
-        </button>
+      <div class="device__container">
+        <div class="device__content">
+          <div>
+            <p>{{ $t("setting.deviceModal.os") }}</p>
+            <p>{{ deviceData.osName }} - {{ deviceData.osVersion }}</p>
+          </div>
+          <div>
+            <p>{{ $t("setting.deviceModal.device") }}</p>
+            <p>{{ deviceData.brand }} - {{ deviceData.model }}</p>
+          </div>
+          <div>
+            <p>{{ $t("setting.deviceModal.time") }}</p>
+            <p>{{ $d(deviceData.lastOnline, "long") }}</p>
+          </div>
+          <div>
+            <p>IP:</p>
+            <p>{{ deviceData.ipAdress }}</p>
+          </div>
+          <font-awesome-icon :icon="icon" />
+        </div>
+        <div class="modal__container-btn">
+          <button
+            v-if="!isCurrent"
+            class="modal__btn"
+            @click="deleteDevices"
+          >
+            {{ $t("setting.deviceModal.delete") }}
+          </button>
+          <button
+            class="modal__btn"
+            @click="closeCTX"
+          >
+            {{ $t("setting.deviceModal.cancel") }}
+          </button>
+        </div>
       </div>
     </div>
   </ModalWindow>
@@ -73,3 +89,41 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.device {
+  &__container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__content {
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    height: 100%;
+    column-gap: 30px;
+
+    div {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      width: 100%;
+
+      p:nth-child(2) {
+        text-align: center;
+      }
+    }
+
+    svg {
+      grid-column: 1/2;
+      grid-row: 1/5;
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
+</style>

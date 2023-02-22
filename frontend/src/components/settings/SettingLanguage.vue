@@ -1,14 +1,18 @@
 <template>
-  <ul style="color: var(--color-primary)">
-    <li
+  <select
+    v-model="locale"
+    @change="changeLocale"
+  >
+    <option disabled>
+      {{ $t("setting.settingLanguage.select") }}
+    </option>
+    <option
       v-for="item in availableLocales"
       :key="item"
-      style="cursor: pointer; width: 40px; height: 40px; background-color: var(--button-chat-hover); margin: 5px"
-      @click="changeLocale(item)"
     >
       {{ item }}
-    </li>
-  </ul>
+    </option>
+  </select>
 </template>
 
 <script>
@@ -18,8 +22,8 @@ export default {
   setup() {
     const { locale, availableLocales } = useI18n();
 
-    const changeLocale = (lang) => {
-      locale.value = lang;
+    const changeLocale = (e) => {
+      localStorage.setItem("locale", e.target.value);
     };
 
     return {
@@ -31,4 +35,17 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+select {
+  color: var(--color-secondary);
+  background-color: var(--input-background);
+  height: 40px;
+  border: none;
+  font-size: 16px;
+  box-sizing: border-box;
+  padding: 6px;
+  margin: 10px auto;
+  border-radius: 5px;
+  width: 50%;
+}
+</style>

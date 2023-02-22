@@ -1,29 +1,24 @@
 <template>
-  <section
-    section
-    class="user__container"
-  >
-    <h1 class="user__title">
-      {{ $t("setting.settingAccount.hello") }} {{ userData.login }}
-    </h1>
-    <p class="user__text">
-      {{ $t("setting.settingAccount.role") }} {{ userData.role }}
-    </p>
-    <hr class="user__hr">
-    <h2 class="user__title">
-      {{ $t("setting.settingAccount.change") }}
-    </h2>
-    <AlertNotification />
-    <ConfirmCode
-      v-if="isConfirmCode"
-      :email="userData.email"
-      @confirm-code-event="confirmChangeData"
-    />
-    <AccountForm
-      v-else
-      :user-data="userData"
-    />
-  </section>
+  <h1 class="user__title">
+    {{ $t("setting.settingAccount.hello") }} {{ userData.login }}
+  </h1>
+  <p class="user__text">
+    {{ $t("setting.settingAccount.role") }} {{ userData.role }}
+  </p>
+  <hr class="user__hr">
+  <h2 class="user__title">
+    {{ $t("setting.settingAccount.change") }}
+  </h2>
+  <AlertNotification />
+  <ConfirmCode
+    v-if="isConfirmCode"
+    :email="userData.email"
+    @confirm-code-event="confirmChangeData"
+  />
+  <AccountForm
+    v-else
+    :user-data="userData"
+  />
 </template>
 
 <script>

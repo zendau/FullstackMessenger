@@ -1,5 +1,8 @@
 <template>
-  <ul class="contacts__list">
+  <ul
+    v-if="Object.keys(listData).length > 0"
+    class="contacts__list"
+  >
     <li
       v-for="user in listData"
       :key="user.id"
@@ -15,7 +18,7 @@
     </li>
   </ul>
   <p
-    v-if="listData.length === 0"
+    v-else
     class="empty_message"
   >
     {{ $t("chat.contactsList.noUsers") }}
