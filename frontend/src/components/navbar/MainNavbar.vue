@@ -27,14 +27,14 @@
         </li>
         <admin-menu v-if="isAdmin" />
       </ul>
-      <div v-else>
+      <template v-else>
         <router-link to="/login">
           {{ $t("navbar.mainNavbar.login") }}
         </router-link>
         <router-link to="/register">
           {{ $t("navbar.mainNavbar.register") }}
         </router-link>
-      </div>
+      </template>
       <a
         v-if="authStatus"
         href="#"
@@ -116,6 +116,7 @@ header {
 .nav {
   &__menu {
     height: 100%;
+    z-index: 2;
     width: 1000px;
     margin: 0 auto;
     display: flex;

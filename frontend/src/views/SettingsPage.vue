@@ -36,4 +36,14 @@ export default {
     height: fit-content;
   }
 }
+
+@media (max-width: 720px) {
+  .setting {
+    &__container {
+      width: auto;
+      margin: 10px;
+      padding: 30px 5px;
+    }
+  }
+}
 </style>

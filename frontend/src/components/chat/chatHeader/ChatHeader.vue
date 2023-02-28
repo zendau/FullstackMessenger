@@ -191,10 +191,15 @@ export default {
 @media (max-width: 720px) {
   .chat {
     &__header {
-      grid-template-columns: auto;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
 
       &-data {
         width: auto;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
       }
     }
   }

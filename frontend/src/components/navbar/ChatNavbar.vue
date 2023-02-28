@@ -2,12 +2,7 @@
   <header>
     <nav class="chat__menu">
       <ul class="chat__list">
-        <li
-          @click="
-            showChats = true;
-            isShowMobileMessages = false;
-          "
-        >
+        <li @click="toogleMobileChats(true)">
           <a
             class="chat__list-item"
             :class="{ 'chat__list-item--active': showChats }"
@@ -19,12 +14,7 @@
             <span>{{ $t("navbar.chatNavbar.chats") }}</span>
           </a>
         </li>
-        <li
-          @click="
-            showChats = false;
-            isShowMobileMessages = false;
-          "
-        >
+        <li @click="toogleMobileChats(false)">
           <a
             class="chat__list-item"
             :class="{ 'chat__list-item--active': !showChats }"
@@ -79,12 +69,13 @@
 <script>
 import { inject } from "vue";
 
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 export default {
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const store = useStore();
 
     const isShowMobileMessages = inject("isShowMobileMessages");
@@ -92,13 +83,19 @@ export default {
     const showChats = inject("showChats");
 
     route.query.page = "chat";
-    console.log("NAVBAR", route);
+
+    function toogleMobileChats(chatStatus) {
+      showChats.value = chatStatus;
+      isShowMobileMessages.value = false;
+      router.push("/chat");
+    }
 
     function logout() {
       store.dispatch("auth/logout");
     }
 
     return {
+      toogleMobileChats,
       isShowMobileMessages,
       showChats,
       logout,

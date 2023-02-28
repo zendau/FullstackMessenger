@@ -116,4 +116,12 @@ export default {
     }
   }
 }
+
+@media (max-width: 720px) {
+  .device {
+    &__data {
+      width: auto;
+    }
+  }
+}
 </style>

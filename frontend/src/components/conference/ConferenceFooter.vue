@@ -123,7 +123,7 @@ export default {
       required: true,
     },
     conferenceType: {
-      type: Number,
+      type: Boolean,
       required: true,
     },
   },

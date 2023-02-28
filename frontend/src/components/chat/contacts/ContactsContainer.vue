@@ -7,7 +7,7 @@
       {{ groupType ? "Close" : "Create group" }}
     </button> -->
     <SearchCreateGroup @search-pattern="searchContacts" />
-    <div style="display: flex; flex-direction: row; margin: 0 auto; flex-wrap: wrap">
+    <div class="contacts__container">
       <ContactsListType
         :list-type="listType"
         @change-list-type="changeListType"
@@ -143,6 +143,11 @@ export default {
     }
   }
 
+  &__container {
+    display: flex;
+    flex-direction: column;
+  }
+
   &__list {
     overflow: auto;
     margin-top: 12.5px;
@@ -164,6 +169,14 @@ export default {
       background-color: var(-scrollbarThumb);
       box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
       border-radius: 10px;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .chat {
+    &__contacts {
+      max-height: initial;
     }
   }
 }

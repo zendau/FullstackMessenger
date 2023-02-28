@@ -1,7 +1,7 @@
 <template>
   <div
     class="chats__container"
-    :class="{ 'chats__container--active': !isShowMobileMessages }"
+    :class="{ 'chats__container--active': isShowMobileMessages }"
   >
     <SearchCreateGroup @search-pattern="searchChats" />
     <p
@@ -162,6 +162,16 @@ export default {
     text-overflow: ellipsis;
     overflow-wrap: break-word;
     color: var(--color-secondary);
+  }
+}
+
+@media (max-width: 720px) {
+  .chats {
+    &__container {
+      &--active {
+        display: none;
+      }
+    }
   }
 }
 </style>

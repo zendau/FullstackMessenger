@@ -226,14 +226,23 @@ body {
 }
 
 .user {
+  &__container {
+    height: calc(100vh - 50px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 50px 0;
+  }
+
   &__title {
     text-align: center;
-    margin: 25px 0;
+    /* margin: 25px 0; */
     color: var(--color-primary);
   }
 
   &__hr {
-    width: 80%;
+    width: 30%;
     margin: 35px auto;
     border-color: var(--color-secondary);
   }
@@ -243,10 +252,10 @@ body {
   }
 
   &__link {
-    align-self: center;
+    text-align: center;
+    display: block;
     color: var(--color-links);
     text-decoration: none;
-    margin-bottom: 15px;
   }
 
   &__form {
@@ -257,7 +266,7 @@ body {
     margin-top: 20px;
 
     label {
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       color: var(--color-primary);
     }
 
@@ -280,6 +289,8 @@ body {
       background-color: var(--button-chat-color);
       transition: 0.3s ease;
       cursor: pointer;
+      margin-bottom: 0;
+      margin-top: 15px;
 
       &:disabled {
         cursor: not-allowed;
@@ -312,6 +323,14 @@ body {
   color: var(--color-links-active) !important;
 }
 
+@media (max-width: 960px) {
+  .user {
+    &__container {
+      height: 100vh;
+    }
+  }
+}
+
 @media (max-width: 720px) {
   .chat__header {
     font-size: 10px;
@@ -320,8 +339,17 @@ body {
   .user {
     &__container {
       width: 90%;
-      margin: 15px auto;
-      box-sizing: border-box;
+      margin: 0 auto;
+    }
+  }
+}
+
+@media (max-height: 420px) {
+  .user {
+    &__form {
+      input {
+        margin-bottom: 5px;
+      }
     }
   }
 }

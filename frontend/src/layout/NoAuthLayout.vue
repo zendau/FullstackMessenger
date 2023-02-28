@@ -17,4 +17,8 @@ export default {
 body {
   background-color: var(--color-background-secondary);
 }
+
+:deep(.nav__menu) {
+  justify-content: center;
+}
 </style>

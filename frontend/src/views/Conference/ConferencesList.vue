@@ -98,7 +98,6 @@ export default {
 <style lang="scss">
 .rooms {
   &__container {
-    width: 1200px;
     margin: 0 auto;
   }
 
@@ -167,20 +166,8 @@ export default {
   }
 }
 
-@media (max-width: 1140px) {
-  .rooms {
-    &__container {
-      width: 1000px;
-    }
-  }
-}
-
 @media (max-width: 960px) {
   .rooms {
-    &__container {
-      width: 800px;
-    }
-
     &__list {
       grid-template-columns: repeat(auto-fill, 200px);
     }
@@ -189,10 +176,6 @@ export default {
 
 @media (max-width: 730px) {
   .rooms {
-    &__container {
-      width: 100%;
-    }
-
     &__list {
       display: flex;
       flex-direction: column;

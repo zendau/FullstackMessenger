@@ -86,10 +86,11 @@ export default {
 
     &__dropdown {
       &-menu {
-        top: 50%;
-        left: 100%;
-        transform: translateY(-50%);
-        border: 1px solid black;
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: initial;
+        border-top: none;
       }
     }
   }

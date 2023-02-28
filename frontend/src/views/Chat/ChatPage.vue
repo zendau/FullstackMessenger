@@ -100,6 +100,9 @@ export default {
       const { isPushed } = route.query;
 
       if (!roomId || (chatId.value === roomId && !isFirstLoad)) return;
+
+      isShowMobileMessages.value = true;
+
       if (!isPushed) {
         router.push(`/chat/${roomId}`);
 

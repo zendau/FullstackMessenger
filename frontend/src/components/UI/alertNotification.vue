@@ -38,7 +38,7 @@ export default {
 .alert {
   width: 250px;
   height: auto;
-  margin: 0 auto;
+  margin: 10px auto;
   display: flex;
   align-items: center;
   justify-content: center;

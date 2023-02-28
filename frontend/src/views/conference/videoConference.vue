@@ -121,7 +121,7 @@ export default {
       });
       window.removeEventListener("keypress", muteEvent);
       peerSocket.removeAllListeners("getUsers");
-      mainStream?.value.getTracks().forEach((t) => {
+      mainStream?.value?.getTracks().forEach((t) => {
         t.stop();
       });
       childStream?.forEach((stream) => {

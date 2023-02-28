@@ -19,7 +19,7 @@
   <FooterComponent
     v-if="roomData"
     :conference-title="roomData.title"
-    :conference-type="roomData.adminId"
+    :conference-type="!!roomData.adminId"
     @show-chat="showChat = !showChat"
   />
 </template>
@@ -171,6 +171,12 @@ export default {
 }
 
 @media (max-width: 960px) {
+  .menu {
+    &__conference-data {
+      margin: 0 10px;
+    }
+  }
+
   .main-container {
     max-height: 100vh;
     position: relative;
@@ -180,6 +186,7 @@ export default {
     &__menu {
       width: 600px;
       margin: 0 auto;
+      justify-content: center;
     }
 
     &__navbar {

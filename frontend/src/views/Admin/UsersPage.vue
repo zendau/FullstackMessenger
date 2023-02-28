@@ -98,9 +98,8 @@ export default {
 <style lang="scss">
 .table {
   width: 90%;
-  margin: 10px auto;
   border: none;
-  margin-bottom: 20px;
+  margin: 10px auto;
 }
 
 .table thead th {
@@ -144,6 +143,10 @@ export default {
 }
 
 @media (max-width: 720px) {
+  .table {
+    margin: 10px;
+  }
+
   .table tbody td {
     padding: 10px;
   }

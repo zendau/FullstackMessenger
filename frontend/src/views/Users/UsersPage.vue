@@ -49,8 +49,38 @@ export default {
   margin: 15px auto;
 }
 
+:deep(.contacts__container) {
+  flex-direction: row;
+  margin: 0 auto;
+}
+
 .chat__contacts {
   height: calc(100vh - 50px);
-  background-color: var(--color-message);
+  background-color: var(--color-background-secondary);
+}
+
+@media (max-width: 720px) {
+  :deep(.contacts__container) {
+    flex-direction: column;
+    margin: 0 10px;
+  }
+
+  :deep(.contacts__btn) {
+    width: 100%;
+  }
+
+  :deep(.contacts__list) {
+    width: 100%;
+    margin: 15px auto;
+  }
+
+  :deep(.contact__checkbox) {
+    right: 10px;
+  }
+
+  .chat__contacts {
+    height: auto;
+    max-height: initial;
+  }
 }
 </style>

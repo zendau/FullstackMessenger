@@ -36,7 +36,6 @@
           >
             <img
               :src="`http://localhost:4000/storage/${file.foulder.path}/${file.fileTempName}`"
-              height="200"
               :alt="file.fileName"
               @mousedown.right.prevent="null"
             >
@@ -217,6 +216,10 @@ export default {
 </style>
 
 <style lang="scss" scoped>
+img {
+  width: 100%;
+}
+
 @mixin message__container--mini {
   width: 100%;
   margin: 6px 0;
