@@ -450,6 +450,7 @@ export class SocketService {
     // const chatData = JSON.parse(
     //   JSON.stringify(this.getRoomDataWithOnlineStatus(this.rooms[chatId])),
     // );
+    debugger;
     const chatData = (await this.getChatById(chatId)) as IChatExtended;
     chatData.lastMessage = await this.getLastChatMessage(chatId);
 

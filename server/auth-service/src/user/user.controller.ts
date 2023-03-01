@@ -129,7 +129,7 @@ export class UsersController {
 
   @MessagePattern('user/id')
   async getUserById(@Payload() id: number) {
-    console.log('1');
+    console.log('1', id);
     const res = await this.userService.getUserById(id).catch((err) => {
       return {
         status: false,

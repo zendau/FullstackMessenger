@@ -21,6 +21,8 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { useStore } from "vuex";
 import { onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import onInvalidSubmit from "@/utils/onInvalidSubmit";
 
 import FormInput from "./UI/FormInput.vue";
 export default {
@@ -35,8 +37,10 @@ export default {
   setup(props, ctx) {
     const store = useStore();
 
+    const { t } = useI18n();
+
     const schema = yup.object({
-      confirmCode: yup.string().required(),
+      confirmCode: yup.string().required().label(t("ui.confirmCode.title")),
     });
 
     const { handleSubmit } = useForm({
@@ -48,10 +52,6 @@ export default {
     });
 
     const { value: confirmCode } = useField("confirmCode");
-
-    function onInvalidSubmit({ errors }) {
-      store.commit("alert/setErrorMessage", errors.confirmCode);
-    }
 
     const onSubmitForm = handleSubmit((value) => {
       ctx.emit("confirm-code-event", value.confirmCode);

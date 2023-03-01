@@ -31,6 +31,8 @@ import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import { useStore } from "vuex";
 import { onUnmounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import onInvalidSubmit from "@/utils/onInvalidSubmit";
 
 import AlertNotification from "@/components/UI/AlertNotification.vue";
 import FormInput from "@/components/UI/FormInput.vue";
@@ -43,12 +45,14 @@ export default {
     const isConfirmCode = ref(false);
     const tempEmail = ref(null);
 
+    const { t } = useI18n();
+
     onUnmounted(() => {
       store.commit("alert/clearAlert");
     });
 
     const schema = yup.object({
-      email: yup.string().required().email(),
+      email: yup.string().required().email().label(t("view.forgotPage.email")),
     });
 
     const { handleSubmit } = useForm({
@@ -56,13 +60,6 @@ export default {
     });
 
     const { value: email } = useField("email");
-
-    function onInvalidSubmit({ errors }) {
-      const errorMessage = Object.keys(errors)
-        .map((error) => `<span>${errors[error]}</span>`)
-        .join("");
-      store.commit("alert/setErrorMessage", errorMessage);
-    }
 
     const onSubmitForm = handleSubmit((value) => {
       tempEmail.value = value.email;

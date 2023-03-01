@@ -48,6 +48,7 @@ export class UserService {
   }
 
   async getUserById(userId: number) {
+    console.log('!', userId);
     if (!userId) return;
 
     const userData: IUser = await this.socketRedisAdapter.getValue(

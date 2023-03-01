@@ -50,6 +50,8 @@ import { useStore } from "vuex";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
+import onInvalidSubmit from "@/utils/onInvalidSubmit";
+import { useI18n } from "vue-i18n";
 
 import ConfirmCode from "@/components/ConfirmCode.vue";
 import AlertNotification from "@/components/UI/AlertNotification.vue";
@@ -58,18 +60,20 @@ export default {
   components: { AlertNotification, FormInput, ConfirmCode },
   setup() {
     const store = useStore();
+    const { t } = useI18n();
 
     const registerData = ref(null);
     const isConfirmCode = ref(false);
 
     const schema = yup.object({
-      email: yup.string().required().email(),
-      login: yup.string().required().min(6),
-      password: yup.string().required().min(6),
+      email: yup.string().required().email().label(t("view.registerPage.email")),
+      login: yup.string().required().min(6).label(t("view.registerPage.login")),
+      password: yup.string().required().min(6).label(t("view.registerPage.password")),
       confirmPassword: yup
         .string()
         .required()
-        .oneOf([yup.ref("password"), null], "Passwords must match"),
+        .oneOf([yup.ref("password"), null], t("yup.string.oneOf"))
+        .label(t("view.registerPage.confirmPassword")),
     });
 
     const { handleSubmit } = useForm({
@@ -80,13 +84,6 @@ export default {
     const { value: login } = useField("login");
     const { value: password } = useField("password");
     const { value: confirmPassword } = useField("confirmPassword");
-
-    function onInvalidSubmit({ errors }) {
-      const errorMessage = Object.keys(errors)
-        .map((error) => `<span>${errors[error]}</span>`)
-        .join("");
-      store.commit("alert/setErrorMessage", errorMessage);
-    }
 
     const onSubmitForm = handleSubmit((value) => {
       registerData.value = value;

@@ -59,6 +59,7 @@ import { inject, computed } from "vue";
 import { useStore } from "vuex";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
+import onInvalidSubmit from "@/utils/onInvalidSubmit";
 
 import AlertNotification from "@/components/UI/AlertNotification.vue";
 import SearchInput from "@/components/chat/SearchCreateGroup/SearchInput.vue";
@@ -93,9 +94,12 @@ export default {
     }
 
     const schema = yup.object({
-      chatTitle: yup.string().required().min(4),
-      groupUsers: yup.string().min(2),
-      conferenceType: yup.boolean().required().typeError(t("chat.searchCreateGroup.typeError")),
+      chatTitle: yup.string().required().min(4).label(t("chat.searchCreateGroup.inputPlaceholder")),
+      conferenceType: yup
+        .boolean()
+        .required()
+        .typeError(t("chat.searchCreateGroup.typeError"))
+        .label(t("chat.searchCreateGroup.selectType")),
     });
 
     const { handleSubmit } = useForm({
@@ -104,14 +108,6 @@ export default {
 
     const { value: conferenceType } = useField("conferenceType", {}, { initialValue: null });
     const { value: chatTitle } = useField("chatTitle");
-
-    function onInvalidSubmit({ errors }) {
-      const errorMessage = Object.keys(errors)
-        .map((error) => `<span>${errors[error]}</span>`)
-        .join("");
-      store.commit("alert/setErrorMessage", errorMessage);
-      console.log("ERRORS", errors);
-    }
 
     const onCreateChat = handleSubmit((formData) => {
       console.log("CREATE GROUP");

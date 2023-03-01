@@ -222,10 +222,12 @@ export class ChatService {
     const usersIdList = res.map((item) => item.userId);
     // const usersData = await this.getUsersListData(usersIdList);
     // return usersData;
+    console.log('@', usersIdList);
     return usersIdList;
   }
 
   async getUsersListData(userList: number[]) {
+    console.log('12', userList);
     const usersData = await Promise.all(
       userList.map(async (userId) => {
         const res = await this.userService.getUserById(userId);

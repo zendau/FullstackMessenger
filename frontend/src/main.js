@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import "./style.css";
+import { setLocale } from "yup";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 
@@ -99,6 +100,17 @@ library.add(
 );
 
 import i18n from "./locales";
+const $t = i18n.global.t;
+
+setLocale({
+  mixed: {
+    required: ({ label }) => ({ key: $t("yup.mixed.required", { label }) }),
+  },
+  string: {
+    min: ({ min, label }) => ({ key: $t("yup.string.min", { min, label }) }),
+    email: $t("yup.string.email"),
+  },
+});
 
 createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)
