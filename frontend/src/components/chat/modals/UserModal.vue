@@ -8,7 +8,6 @@
         class="close-btn"
         @click="closeCTX"
       />
-
       <div v-if="contactData.isBannedByContact">
         {{ $t("chat.userModal.blockedByUsers") }}
       </div>

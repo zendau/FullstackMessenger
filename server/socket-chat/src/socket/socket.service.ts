@@ -939,7 +939,13 @@ export class SocketService {
 
     this.socketRedisAdapter.setValue(
       'room',
-      createdChatData,
+      {
+        id: createdChatData.id,
+        title: createdChatData.title,
+        adminId: createdChatData.adminId,
+        users: chatData.users,
+        conferenceWithVideo: createdChatData.conferenceWithVideo,
+      },
       true,
       createdChatData.id,
     );

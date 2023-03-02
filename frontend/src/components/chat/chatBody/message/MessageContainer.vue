@@ -23,19 +23,19 @@
       <p class="message__text">
         <span v-html="isLink(message.text)" />
       </p>
-      <ul style="display: flex; flex-wrap: wrap; list-style: none; justify-content: space-around; margin-top: 7px">
+      <ul class="message__files-container">
         <li
           v-for="file in message.files"
           :key="file.id"
-          style="margin: 5px"
+          class="message__file-item"
         >
           <a
             v-if="file.mimetype.includes('image')"
             target="_blank"
-            :href="`http://localhost:4000/storage/${file.foulder.path}/${file.fileTempName}`"
+            :href="`${storageURL}/storage/${file.foulder.path}/${file.fileTempName}`"
           >
             <img
-              :src="`http://localhost:4000/storage/${file.foulder.path}/${file.fileTempName}`"
+              :src="`${storageURL}/storage/${file.foulder.path}/${file.fileTempName}`"
               :alt="file.fileName"
               @mousedown.right.prevent="null"
             >
@@ -113,6 +113,8 @@ export default {
   setup(props, { emit }) {
     const messageDate = ref(null);
     const messageTime = ref(null);
+
+    const storageURL = import.meta.env.VITE_STORAGE;
 
     const { d } = useI18n();
 
@@ -203,6 +205,7 @@ export default {
       selectedMessages,
       isSelectMessagesMode,
       isAuthor,
+      storageURL,
     };
   },
 };
@@ -264,6 +267,18 @@ img {
 
   &__unread {
     color: var(--dangerColor);
+  }
+
+  &__files-container {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    justify-content: space-around;
+    margin-top: 7px;
+  }
+
+  &__file-item {
+    margin: 5px;
   }
 
   &__file {

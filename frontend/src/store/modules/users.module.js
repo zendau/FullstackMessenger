@@ -11,6 +11,8 @@ export function insertUsersList(usersList) {
       if (user.lastOnline !== "online") {
         user.lastDate = user.lastOnline;
         user.lastOnline = dateTransformer(user.lastOnline);
+      } else {
+        user.lastOnline = $t("store.user.online");
       }
 
       stateList.set(user.id, user);
@@ -52,7 +54,7 @@ export const users = {
       state.userList = new Map([...state.userList, ...newUsers]);
     },
     saveUser(state, userData) {
-      state.chats.set(userData.id, userData);
+      state.usersList.set(userData.id, userData);
     },
     updateUserOnline(state, userStatus) {
       if (!state.usersList.has(userStatus.userId)) return;
@@ -60,7 +62,6 @@ export const users = {
       const userData = state.usersList.get(userStatus.userId);
       userData.peerId = userStatus.peerId;
       userData.lastOnline = userStatus.status;
-
       if (userStatus.status === "online") {
         userData.lastOnline = $t("store.user.online");
         return;
@@ -70,9 +71,8 @@ export const users = {
       userData.lastDate = userStatus.status;
     },
     updateUsersDateOnline(state) {
-      console.log("call", state.usersList);
       for (const user of state.usersList.values()) {
-        if (user.lastOnline === "online") continue;
+        if (user.lastOnline === $t("store.user.online")) continue;
 
         user.lastOnline = dateTransformer(user.lastDate);
       }

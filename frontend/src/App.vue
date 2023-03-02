@@ -8,6 +8,7 @@
 <script>
 import { useStore } from "vuex";
 import { computed, provide, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 import AuthMainLayout from "./layout/AuthMainLayout.vue";
 import AuthChatLayout from "./layout/AuthChatLayout.vue";
@@ -20,11 +21,15 @@ import { useRoute } from "vue-router";
 
 import { io } from "socket.io-client";
 
+import { getUserTheme } from "@/utils/theme";
+
 export default {
   components: { ConferenceCall },
   setup() {
-    // TODO: TEMP
-    document.documentElement.dataset.theme = "dark";
+    getUserTheme();
+
+    const { locale } = useI18n();
+    locale.value = localStorage.getItem("locale") ?? locale.value;
 
     const store = useStore();
 
@@ -51,7 +56,7 @@ export default {
       return noAuthLayoutVue;
     });
 
-    const chatSocket = io("http://localhost:80", { path: "/socketChat" });
+    const chatSocket = io(import.meta.env.VITE_SOCKET_HOST, { path: "/socketChat" });
     provide("chatSocket", chatSocket);
 
     const peerSocket = io(import.meta.env.VITE_SOCKET_PEER_HOST, { path: "/peerChat" });

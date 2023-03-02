@@ -154,7 +154,7 @@ export const contact = {
             contactId,
           },
         });
-        commit("setContactStatutesData", res.data);
+        commit("setContactStatutesData", { contactId, data: res.data });
       } catch (e) {
         commit("setError", e.response.data.message);
       }
@@ -308,8 +308,8 @@ export const contact = {
 
       state[field] = {};
     },
-    setContactStatutesData(state, data) {
-      state.contactStatutes[data.id] = data;
+    setContactStatutesData(state, { contactId, data }) {
+      state.contactStatutes[contactId] = data;
     },
     setNewContactStatus(state, { contactId, status, value }) {
       console.log("setNewContactStatus", contactId, status, value);

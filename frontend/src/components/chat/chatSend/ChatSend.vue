@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isPrivateBanned"
-    style="color: var(--color-primary)"
+    class="chat_banned"
   >
     {{ $t("chat.chatSend.banned") }}
   </div>
@@ -217,6 +217,10 @@ export default {
 
 <style lang="scss" scoped>
 .chat {
+  &__banned {
+    color: var(--color-primary);
+  }
+
   &__send {
     width: 100%;
     display: grid;

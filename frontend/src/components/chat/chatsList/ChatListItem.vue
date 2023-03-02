@@ -77,6 +77,7 @@ export default {
 
   &__time {
     font-size: 14px;
+    text-align: center;
   }
 
   &__unread {
