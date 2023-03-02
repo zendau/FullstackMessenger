@@ -110,7 +110,7 @@ export default {
     display: grid;
     height: 100%;
     background-color: var(--color-background);
-    border-left: 1px solid rgb(0 0 0 / 40%);
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
 
     grid-template-columns: 1fr 300px;
     justify-items: baseline;

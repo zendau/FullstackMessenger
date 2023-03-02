@@ -140,7 +140,7 @@ export default {
       }
 
       &--active {
-        background-color: var(--color-background-active);
+        background-color: var(--chat-navbar-bgc-active);
 
         .list-item__icon,
         span {

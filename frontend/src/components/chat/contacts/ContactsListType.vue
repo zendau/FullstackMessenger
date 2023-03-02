@@ -72,7 +72,7 @@ export default {
     }
 
     &--active {
-      background-color: var(--button-primary);
+      background-color: var(--chat-selecte-active);
     }
   }
 }

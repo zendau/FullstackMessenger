@@ -56,7 +56,7 @@ export default {
       transform: translateX(-50%);
       width: 150px;
       background-color: var(--color-background);
-      border-top: 1px solid black;
+      border-top: 1px solid rgba(0, 0, 0, 0.2);
       justify-content: center;
       z-index: 10;
 

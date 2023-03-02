@@ -17,9 +17,6 @@ export function getUserTheme() {
 }
 
 export function toggleTheme(theme) {
-  // eslint-disable-next-line no-debugger
-  debugger;
-
   if (theme === themes.dark) theme = themes.light;
   else if (theme === themes.light) theme = themes.dark;
   else return;

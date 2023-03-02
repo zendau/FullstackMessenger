@@ -167,7 +167,7 @@ export default {
 
     &::-webkit-scrollbar-thumb {
       background-color: var(-scrollbarThumb);
-      box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+      box-shadow: inset 2px 2px 5px 0 rgba(var(--color-primary), 0.5);
       border-radius: 10px;
     }
   }
@@ -185,7 +185,7 @@ export default {
 <style lang="scss">
 .contact {
   &__item {
-    color: white;
+    color: var(--color-primary);
     display: grid;
     grid-template-columns: 30px 1fr;
     grid-template-rows: 40px 1fr;

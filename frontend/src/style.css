@@ -1,6 +1,7 @@
 :root {
   --color-links: rgb(51, 144, 236);
   --button-primary: #1866e4;
+  --color-links-active: #5eb5f7;
   --color-danger: #e33741;
   --color-success: #119c1a;
   --scrollbarTrack: #3f4750;
@@ -25,18 +26,19 @@
   --inputBgcColor: #242f3d;
 } */
 :root[data-theme="light"] {
-  --color-primary: rgb(0, 0, 0); /**/
-  --color-icon: rgb(170, 170, 170);
-  --color-secondary: rgb(112, 117, 121); /**/
-  --color-background: rgb(255, 255, 255); /**/
-  --color-background-secondary: #99ba92; /**/
-  --color-background-active: rgb(51, 144, 236); /**/
-  --color-background-item: rgba(0, 0, 0, 0.0666667); /**/
-  --button-chat-color: rgb(255, 255, 255);
-  --button-chat-hover: rgb(51, 144, 236);
-  --color-links-active: #ffffff; /**/
-  --color-message: rgb(238, 255, 222); /**/
-  --input-background: #f4f4f5; /**/
+  --color-primary: #354259;
+  --color-icon: #272727;
+  --color-secondary: rgb(112, 117, 121);
+  --color-background: #f7f7f8;
+  --color-background-secondary: #edeef0;
+  --color-background-active: #e1e5ea;
+  --color-background-item: rgba(0, 0, 0, 0.0666667);
+  --button-chat-color: #dce1e6;
+  --button-chat-hover: #d3d9de;
+  --color-message: #f5f6f8;
+  --input-background: #e3e3e3;
+  --chat-navbar-bgc-active: #cce4ff;
+  --chat-selecte-active: #c8c8d0;
 }
 
 :root[data-theme="dark"] {
@@ -50,9 +52,10 @@
   --color-background-item: #202b36;
   --button-chat-color: #3a3a3d;
   --button-chat-hover: #464649;
-  --color-links-active: #5eb5f7;
   --color-message: #182533;
   --input-background: #242f3d;
+  --chat-navbar-bgc-active: #25303e;
+  --chat-selecte-active: #1866e4;
 }
 
 /* :root[data-theme="dark"] {
