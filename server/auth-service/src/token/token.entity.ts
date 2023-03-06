@@ -1,5 +1,5 @@
-import { User } from '../user/user.entity';
-import { Device } from './device.entity';
+import { User } from '@/user/user.entity';
+import { Device } from '@/token/device.entity';
 
 import {
   Entity,

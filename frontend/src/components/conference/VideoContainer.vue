@@ -135,6 +135,7 @@ export default {
     max-width: 100%;
     top: 50%;
     transform: translateY(-50%);
+    box-sizing: border-box;
 
     &--admin {
       border: 1px solid red;
@@ -172,8 +173,6 @@ export default {
 video {
   width: 100%;
   height: 100%;
-  position: absolute;
-  z-index: 2;
 }
 
 /* video::before {

@@ -1,15 +1,13 @@
-import { Connection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { HttpStatus, Injectable } from '@nestjs/common';
-
 import { InjectRepository } from '@nestjs/typeorm';
-import { Contact } from './contact.entity';
-import { UserService } from 'src/user/user.service';
-import { union } from 'src/utils/typeorm/union';
-import { User } from 'src/user/user.entity';
-import IGetContactList from './interfaces/IUserPaginationList';
-import IContact from './interfaces/IContact';
-import { Cache } from 'cache-manager';
-import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+
+import { Contact } from '@/contacts/contact.entity';
+import { UserService } from '@/user/user.service';
+import { union } from '@/utils/typeorm/union';
+import IGetContactList from '@/contacts/interfaces/IUserPaginationList';
+import IContact from '@/contacts/interfaces/IContact';
+import IUserContactsCount from './interfaces/IUserContactsCount';
 
 @Injectable()
 export class ContactService {
@@ -17,8 +15,6 @@ export class ContactService {
     @InjectRepository(Contact)
     private contactRepository: Repository<Contact>,
     private userService: UserService,
-    private connection: Connection,
-    @InjectRedis() private readonly redis: Redis,
   ) {}
 
   async isVerifiedConctacts(veridiedData: IContact) {
@@ -28,13 +24,11 @@ export class ContactService {
         contactId: veridiedData.contactId,
       },
     });
-    console.log('res', res, veridiedData);
 
     return res;
   }
 
   async getContactList(listData: IGetContactList) {
-    debugger;
     const subQuery = this.contactRepository
       .createQueryBuilder()
       .select('contactId as id')
@@ -53,7 +47,6 @@ export class ContactService {
   }
 
   async getFreeUsers(listData: IGetContactList) {
-    debugger;
     const subContacts = this.contactRepository
       .createQueryBuilder()
       .select('contactId as id')
@@ -83,8 +76,6 @@ export class ContactService {
       userId: requestData.userId,
     });
 
-    console.log('check', checkContact);
-
     if (checkContact) {
       return {
         status: true,
@@ -100,7 +91,6 @@ export class ContactService {
   }
 
   async getContactsPending(listData: IGetContactList) {
-    // SELECT * FROM test.contact c WHERE c.userId = 1 AND c.contactId  NOT IN  (SELECT c2.userId  FROM  test.contact c2 WHERE c2.contactId = 1 )
 
     const subQuery = this.contactRepository
       .createQueryBuilder()
@@ -108,11 +98,6 @@ export class ContactService {
       .where('contactId = :userId', { userId: listData.userId })
       .andWhere('isContact = 0')
       .andWhere('isBanned = 0');
-    // const resList = await this.contactRepository
-    //   .createQueryBuilder()
-    //   .select('contactId as id')
-    //   .where(`contactId NOT IN (${subQuery.getQuery()})`)
-    //   .andWhere('userId = :userId', { userId });
 
     const resList = await this.userService.getOtherUsersList(
       subQuery,
@@ -123,8 +108,6 @@ export class ContactService {
       listData.pattern,
     );
     return resList;
-
-    //return resList;
   }
 
   async getContactsOutgoing(listData: IGetContactList) {
@@ -135,11 +118,6 @@ export class ContactService {
       .andWhere('isContact = 0')
       .andWhere('isBanned = 0');
 
-    // const resList = await this.contactRepository
-    //   .createQueryBuilder()
-    //   .select('userId as id')
-    //   .where(`userId NOT IN (${subQuery.getQuery()})`)
-    //   .andWhere('contactId = :userId', { userId });
 
     const resList = await this.userService.getOtherUsersList(
       subQuery,
@@ -153,16 +131,14 @@ export class ContactService {
   }
 
   async getUserContactsCount(userId: number) {
-    const contactsCount = await this.contactRepository
+    const contactsCount: IUserContactsCount = await this.contactRepository
       .createQueryBuilder()
       .select('COUNT(contactId)', 'count')
       .where('userId = :userId', { userId })
       .andWhere('isContact = 1')
       .getRawOne();
 
-    console.log('1', contactsCount);
-
-    const pendingCount = await this.contactRepository
+    const pendingCount: IUserContactsCount = await this.contactRepository
       .createQueryBuilder()
       .select('COUNT(userId)', 'count')
       .where('contactId = :userId', { userId })
@@ -170,7 +146,7 @@ export class ContactService {
       .andWhere('isBanned = 0')
       .getRawOne();
 
-    const outgoingCount = await this.contactRepository
+    const outgoingCount: IUserContactsCount = await this.contactRepository
       .createQueryBuilder()
       .select('COUNT(userId)', 'count')
       .where('userId = :userId', { userId })
@@ -178,7 +154,7 @@ export class ContactService {
       .andWhere('isBanned = 0')
       .getRawOne();
 
-    const blockedCount = await this.contactRepository
+    const blockedCount: IUserContactsCount = await this.contactRepository
       .createQueryBuilder()
       .select('COUNT(contactId)', 'count')
       .where('userId = :userId', { userId })
@@ -225,8 +201,8 @@ export class ContactService {
   }
 
   async deleteUserFromContact(requestData: IContact) {
-    debugger;
-    const resDeleted = await this.deleteFromContact({
+
+    await this.deleteFromContact({
       userId: requestData.userId,
       contactId: requestData.contactId,
     });
@@ -250,7 +226,6 @@ export class ContactService {
 
     const deletedStatus = !!resDeleted.affected;
     return deletedStatus;
-    //if (!deletedStatus) return;
   }
 
   async changeContactStatus(userId: number, status: boolean) {
@@ -297,7 +272,7 @@ export class ContactService {
   }
 
   async blockUser(requestData: IContact) {
-    debugger;
+
     const resUpdate = await this.contactRepository
       .createQueryBuilder()
       .update()
@@ -312,7 +287,6 @@ export class ContactService {
       .execute();
 
     const upadtedStatus = !!resUpdate.affected;
-    console.log('upadtedStatus', upadtedStatus);
 
     if (!upadtedStatus) {
       await this.contactRepository.save({
@@ -321,14 +295,6 @@ export class ContactService {
         isBanned: true,
       });
     }
-
-    // if (!upadtedStatus) {
-    //   return {
-    //     status: false,
-    //     message: 'Wrong block contact data',
-    //     httpCode: HttpStatus.BAD_REQUEST,
-    //   };
-    // }
 
     await this.deleteFromContact({
       userId: requestData.contactId,
@@ -343,17 +309,6 @@ export class ContactService {
       contactId: requestData.contactId,
       userId: requestData.userId,
     });
-    // const resUpdate = await this.contactRepository
-    //   .createQueryBuilder()
-    //   .update()
-    //   .set({
-    //     isBanned: false,
-    //   })
-    //   .where('userId = :contactId and contactId = :userId', {
-    //     userId,
-    //     contactId,
-    //   })
-    //   .execute();
 
     return res;
   }
@@ -402,13 +357,5 @@ export class ContactService {
       return resStatus;
     }
     return resStatus;
-    // async getUserRequest(userId: number) {
-    //   const usersList = await this.userSerivce.getAllUsers()
-    //   const contactsList = await this.getContactList(userId)
-    //   console.log(userId, typeof userId)
-    //   const freeUsersList = usersList.filter((item) => !contactsList.includes(item) && item.id !== userId && !item.isBanned)
-    //   return freeUsersList
-
-    // }
   }
 }

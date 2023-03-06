@@ -1,6 +1,6 @@
-import { UserAccess } from './../access/access.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, CreateDateColumn } from 'typeorm';
-import { UserInfo } from './userInfo.entity';
+import { UserAccess } from '@/access/access.entity';
+import { UserInfo } from '@/user/userInfo.entity';
 
 export enum UserRole {
   ADMIN = 'ADMIN',

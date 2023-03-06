@@ -1,4 +1,4 @@
-import { IDevice } from 'src/token/interfaces/ITokenDevice';
+import { IDevice } from '@/token/interfaces/ITokenDevice';
 
 export default interface IRefreshData {
   refreshToken: string;

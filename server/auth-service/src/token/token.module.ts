@@ -1,11 +1,11 @@
-import { UsersModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { Module, forwardRef } from '@nestjs/common';
-import { TokenService } from './token.service';
-import { Token } from './token.entity';
-import { Device } from './device.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DeviceService } from './device.service';
+import { UsersModule } from '@/user/user.module';
+import { TokenService } from '@/token/token.service';
+import { Token } from '@/token/token.entity';
+import { Device } from '@/token/device.entity';
+import { DeviceService } from '@/token/device.service';
 
 @Module({
   imports: [

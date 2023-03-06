@@ -40,8 +40,13 @@ export default {
     const callingTimer = ref(null);
     const router = useRouter();
 
+    const audio = new Audio("/audio/call_ringing.mp3");
+    audio.loop = true;
+
     onUpdated(() => {
       if (!callingData.value) return;
+
+      audio.play();
 
       callingTimer.value = setTimeout(() => {
         rejectCall();
@@ -62,6 +67,8 @@ export default {
     }
 
     function closeCTX() {
+      audio.pause();
+      audio.currentTime = 0;
       console.log("callingTimer.value", callingTimer.value);
       clearTimeout(callingTimer.value);
       callingData.value = null;

@@ -1,36 +1,25 @@
-import { ConfirmCodeService } from '../access/access-confirm/access-confirm';
-import { NodeMailerService } from '../access/nodemailer/nodemailer.service';
-
-import { TokenService } from '../token/token.service';
-import { CACHE_MANAGER, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  Connection,
   Repository,
-  QueryRunner,
   SelectQueryBuilder,
 } from 'typeorm';
-import { User } from './user.entity';
-
-import IUser from './interfaces/IUserData';
-import IRoleData from './interfaces/IRoleData';
-import { hashPassword } from './utils/passwordFactory';
-
-import convertEditUserDTO from './dto/createEditUserDTO';
-import { sqlErrorCodes } from './utils/sqlErrorCodes';
-import IEditUser from './interfaces/IEditUserData';
-import { UserInfoService } from './userInfo.service';
-// import { UserOnlineService } from './UserOnline.service';
-import { DeviceService } from 'src/token/device.service';
-import { UserRole } from './user.entity';
-import { Contact } from 'src/contacts/contact.entity';
-import { UnionParameters } from 'src/utils/typeorm/union';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
-import IUserPaginationList from 'src/contacts/interfaces/IUserPaginationList';
+
+import { ConfirmCodeService } from '@/access/access-confirm/access-confirm';
+import { User } from '@/user/user.entity';
+import { hashPassword } from '@/utils/passwordFactory';
+import convertEditUserDTO from '@/user/dto/createEditUserDTO';
+import { sqlErrorCodes } from '@/utils/sqlErrorCodes';
+import IEditUserData from '@/user/interfaces/IEditUserData';
+import { UserInfoService } from '@/user/userInfo.service';
+import { Contact } from '@/contacts/contact.entity';
+import { UnionParameters } from '@/utils/typeorm/union';
+import IPublicUserData from '@/user/interfaces/IPublicUserData';
+import IUser from '@/user/interfaces/IUser';
 
 @Injectable()
 export class UserService {
-  private queryRunner: QueryRunner;
   private getUserQuery: SelectQueryBuilder<User>;
 
   constructor(
@@ -55,7 +44,7 @@ export class UserService {
       .leftJoin('user.access', 'access');
   }
 
-  async editUserData(userData: IEditUser) {
+  async editUserData(userData: IEditUserData) {
     try {
       const checkCode = await this.confirmCodeService.checkConfirmCode(
         userData.confirmCode,
@@ -109,11 +98,11 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    const user: any = await this.usersRepository
-      .createQueryBuilder('u')
-      .select(['u.id', 'u.email', 'u.login', 'u.password, u.role'])
-      .where('u.email = :email', { email })
-      .getOne();
+    const user: IUser = await this.usersRepository
+      .createQueryBuilder()
+      .select(['id', 'email', 'login', 'password, role'])
+      .where('email = :email', { email })
+      .getRawOne();
 
     if (user !== undefined) {
       return {
@@ -147,12 +136,7 @@ export class UserService {
     limit: string | undefined,
     pattern: string | undefined,
   ) {
-    //console.log('sub', await subQuery.getRawMany());
-
-    debugger;
     const start = parseInt(page) * parseInt(limit);
-
-    console.log('start', start, page, limit);
 
     let query = this.getUserQuery;
 
@@ -161,40 +145,37 @@ export class UserService {
       .andWhere('user.id != :userId', { userId });
 
     if (!Number.isNaN(start)) {
-      console.log('setOffset');
       query = query.offset(start).limit(parseInt(limit));
     }
 
     if (pattern) {
-      console.log('set pattern');
       query = query.andWhere('login like :title', {
         title: `%${pattern}%`,
       });
     }
-
-    console.log('userId', query.getQuery());
-    debugger;
     const resQuery: any = await query.getMany();
 
-    console.log('resQuery', resQuery);
+    const resList: Record<number, IPublicUserData> = await resQuery.reduce(
+      async (resDataPromise, user: IPublicUserData) => {
+        const onlineUserData: string = await this.redis.get(
+          `online:${user.id.toString()}`,
+        );
 
-    const resList = await resQuery.reduce(async (resDataPromise, user) => {
-      const onlineUserData: string = await this.redis.get(
-        `online:${user.id.toString()}`,
-      );
+        if (onlineUserData) {
+          user.lastOnline = 'online';
+          user.peerId = JSON.parse(onlineUserData);
+        }
 
-      if (onlineUserData) {
-        user.lastOnline = 'online';
-        user.peerId = JSON.parse(onlineUserData);
-      }
+        const resData = await resDataPromise;
 
-      const resData = await resDataPromise;
+        return {
+          ...resData,
+          [user.id]: user,
+        };
+      },
+      Promise.resolve({}),
+    );
 
-      return {
-        ...resData,
-        [user.id]: user,
-      };
-    }, Promise.resolve({}));
     return {
       resList,
       hasMore: pattern ? true : resQuery.length === parseInt(limit),
@@ -219,8 +200,6 @@ export class UserService {
       .where('user.id = :id', { id })
       .getOne();
 
-    console.log('GET', user);
-
     if (user === undefined) {
       return {
         status: false,
@@ -232,11 +211,6 @@ export class UserService {
     return user;
   }
 
-  async confirmEmail() {
-    //const res = await this.nodeMailerService.send('te');
-    // this.cacheManager.set('test', 'tet');
-    // return this.cacheManager.get('test');
-  }
 
   async setLastOnline(userId: number, lastOnline: Date) {
     const user = await this.usersRepository

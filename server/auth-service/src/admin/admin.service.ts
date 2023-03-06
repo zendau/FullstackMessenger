@@ -30,7 +30,6 @@ export class AdminService {
   }
 
   async setBlock(userId: number) {
-    console.log(userId);
     const res = await this.accessRepository
       .createQueryBuilder()
       .update()

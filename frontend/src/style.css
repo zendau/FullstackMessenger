@@ -30,14 +30,14 @@
   --color-icon: #272727;
   --color-secondary: rgb(112, 117, 121);
   --color-background: #f7f7f8;
-  --color-background-secondary: #edeef0;
-  --color-background-active: #e1e5ea;
+  --color-background-secondary: #e4e5e7;
+  --color-background-active: #dadee3;
   --color-background-item: rgba(0, 0, 0, 0.0666667);
-  --button-chat-color: #dce1e6;
-  --button-chat-hover: #d3d9de;
+  --button-chat-color: #cfd3d8;
+  --button-chat-hover: #bac1c6;
   --color-message: #f5f6f8;
-  --input-background: #e3e3e3;
-  --chat-navbar-bgc-active: #cce4ff;
+  --input-background: #d8d8d8;
+  --chat-navbar-bgc-active: #cbcace;
   --chat-selecte-active: #c8c8d0;
 }
 

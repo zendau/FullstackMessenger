@@ -1,9 +1,8 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { ParseIntPipe } from 'src/pipes/parse-int.pipe';
-import { ContactService } from './contact.service';
-import IContact from './interfaces/IContact';
-import IUserPaginationList from './interfaces/IUserPaginationList';
+import { ContactService } from '@/contacts/contact.service';
+import IContact from '@/contacts/interfaces/IContact';
+import IUserPaginationList from '@/contacts/interfaces/IUserPaginationList';
 
 @Controller()
 export class ContactController {
@@ -25,7 +24,6 @@ export class ContactController {
 
   @MessagePattern('contact/freeList')
   async getFreeUserList(listData: IUserPaginationList) {
-    debugger;
     const res = await this.contactService
       .getFreeUsers(listData)
       .catch((err) => {

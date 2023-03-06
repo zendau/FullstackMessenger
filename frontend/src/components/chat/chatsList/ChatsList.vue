@@ -113,7 +113,7 @@ export default {
     grid-template-columns: 40px 1fr;
     align-items: center;
     justify-items: center;
-    height: 70px;
+    height: 60px;
     gap: 10px;
 
     transition: 0.3s ease;
@@ -147,9 +147,10 @@ export default {
     grid-template-columns: 1fr 50px;
     grid-template-rows: 1fr 1fr;
     height: 100%;
+    align-items: center;
 
     p {
-      padding: 5px;
+      padding: 0 5px;
       box-sizing: border-box;
     }
   }
@@ -162,6 +163,7 @@ export default {
     text-overflow: ellipsis;
     overflow-wrap: break-word;
     color: var(--color-secondary);
+    align-self: baseline;
   }
 }
 

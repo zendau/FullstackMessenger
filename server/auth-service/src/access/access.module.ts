@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ConfirmCodeService } from './access-confirm/access-confirm';
-import { NodeMailerService } from './nodemailer/nodemailer.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserAccess } from './access.entity';
 import { ConfigService } from '@nestjs/config';
+
+import { ConfirmCodeService } from '@/access/access-confirm/access-confirm';
+import { NodeMailerService } from '@/access/nodemailer/nodemailer.service';
+import { UserAccess } from '@/access/access.entity';
 
 @Module({
   imports: [

@@ -1,5 +1,5 @@
-import IUser from "./IUserData";
+import IUserData from './IUserData';
 
-export default interface IEditUser extends IUser {
-  newEmail: string
+export default interface IEditUserData extends IUserData {
+  newEmail: string;
 }

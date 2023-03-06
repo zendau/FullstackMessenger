@@ -53,6 +53,8 @@ export default {
 
     peerSocket.on("rejectInviteCalling", (rejectedUser) => {
       console.log("rejectInviteCalling", rejectedUser);
+      const audio = new Audio("/audio/disconnect.mp3");
+      audio.play();
 
       if (!callingData.value) return;
 
@@ -63,6 +65,7 @@ export default {
         callingData.value.users.length === rejectedAnswerers.length
       ) {
         console.log("ALL USERS REJECTED  CALL");
+
         clearCallingData();
       }
     });

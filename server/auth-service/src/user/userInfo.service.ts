@@ -1,8 +1,8 @@
 import { EntityManager, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserInfo } from './userInfo.entity';
-import IUserInfo from './interfaces/IUserInfo';
+import { UserInfo } from '@/user/userInfo.entity';
+import IUserInfo from '@/user/interfaces/IUserInfo';
 
 @Injectable()
 export class UserInfoService {

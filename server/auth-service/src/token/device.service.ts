@@ -1,9 +1,11 @@
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Device } from './device.entity';
-import { IDevice, ITokenDevice } from './interfaces/ITokenDevice';
 import { UAParser } from 'ua-parser-js';
+
+import { Device } from '@/token/device.entity';
+import { IDevice, ITokenDevice } from '@/token/interfaces/ITokenDevice';
+import { IUserDevice } from './interfaces/IUserDevice';
 
 @Injectable()
 export class DeviceService {
@@ -62,10 +64,12 @@ export class DeviceService {
     return deviceData;
   }
 
-  async findByTag(deviceTag: string) {
+  async findByTag(deviceTag: string, userId: number) {
     const deviceData: ITokenDevice = await this.deviceRepository
-      .createQueryBuilder()
-      .where('tag = :deviceTag', { deviceTag })
+      .createQueryBuilder('device')
+      .where('device.tag = :deviceTag', { deviceTag })
+      .andWhere('token.userId = :userId', { userId })
+      .innerJoin('device.tokenId', 'token')
       .getOne();
 
     return deviceData;
@@ -98,8 +102,7 @@ export class DeviceService {
   }
 
   async getTokensDeviceData(userId: number) {
-    console.log('test');
-    const devicesData = await this.deviceRepository
+    const devicesData: IUserDevice[] = await this.deviceRepository
       .createQueryBuilder('device')
       .select([
         'device.brand, device.model, device.osName, device.osVersion, device.ipAdress',
@@ -109,8 +112,6 @@ export class DeviceService {
       .innerJoin('device.tokenId', 'token')
       .where('token.userId = :userId', { userId })
       .getRawMany();
-
-    console.log('devicesData', devicesData);
 
     return devicesData;
   }

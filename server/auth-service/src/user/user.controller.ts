@@ -1,15 +1,15 @@
-import { AuthService } from './auth.service';
-import { TokenService } from './../token/token.service';
-import { ConfirmCodeService } from '../access/access-confirm/access-confirm';
-import { UserService } from './user.service';
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import IUser from './interfaces/IUserData';
-import IConfirmData from './interfaces/IConfirmData';
-import IEditUser from './interfaces/IEditUserData';
-import IRefreshData from './interfaces/IRefreshData';
-import { UserRole } from './user.entity';
-import { DeviceService } from 'src/token/device.service';
+
+import { AuthService } from '@/user/auth.service';
+import { TokenService } from '@/token/token.service';
+import { ConfirmCodeService } from '@/access/access-confirm/access-confirm';
+import { UserService } from '@/user/user.service';
+import IUserData from '@/user/interfaces/IUserData';
+import IConfirmData from '@/user/interfaces/IConfirmData';
+import IRefreshData from '@/user/interfaces/IRefreshData';
+import { DeviceService } from '@/token/device.service';
+import IEditUserData from './interfaces/IEditUserData';
 
 @Controller()
 export class UsersController {
@@ -22,8 +22,7 @@ export class UsersController {
   ) {}
 
   @MessagePattern('user/register')
-  async registerUser(@Payload() userData: IUser) {
-    console.log(userData);
+  async registerUser(@Payload() userData: IUserData) {
     const res = await this.authService.register(userData).catch((err) => {
       return {
         status: false,
@@ -35,7 +34,7 @@ export class UsersController {
   }
 
   @MessagePattern('user/login')
-  async loginUser(@Payload() userData: IUser) {
+  async loginUser(@Payload() userData: IUserData) {
     const res = await this.authService.login(userData).catch((err) => {
       return {
         status: false,
@@ -51,7 +50,6 @@ export class UsersController {
     const res = await this.authService
       .refreshToken(refreshData)
       .catch((err) => {
-        console.log(err);
         return {
           status: false,
           message: err.sqlMessage,
@@ -72,7 +70,6 @@ export class UsersController {
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
-    console.log(res);
     return res;
   }
 
@@ -84,10 +81,8 @@ export class UsersController {
   }
 
   @MessagePattern('user/editData')
-  async changeUserData(@Payload() editData: IEditUser) {
-    console.log('edit data', editData);
+  async changeUserData(@Payload() editData: IEditUserData) {
     const res = await this.userService.editUserData(editData).catch((err) => {
-      console.log('err', err);
       return {
         status: false,
         message: err.sqlMessage,
@@ -98,11 +93,10 @@ export class UsersController {
   }
 
   @MessagePattern('user/resetPassword')
-  async resetUserPassword(@Payload() resetData: IUser) {
+  async resetUserPassword(@Payload() resetData: IUserData) {
     const res = await this.authService
       .resetUserPassword(resetData)
       .catch((err) => {
-        console.log(err);
         return {
           status: false,
           message: err.sqlMessage,
@@ -123,13 +117,11 @@ export class UsersController {
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
-    console.log('res 1', res);
     return res;
   }
 
   @MessagePattern('user/id')
   async getUserById(@Payload() id: number) {
-    console.log('1', id);
     const res = await this.userService.getUserById(id).catch((err) => {
       return {
         status: false,
@@ -157,11 +149,9 @@ export class UsersController {
   }
   @MessagePattern('user/getTokensDeviceData')
   async getTokensDeviceData(@Payload() userId: number) {
-    console.log('userId', userId);
     const res = await this.deviceService
       .getTokensDeviceData(userId)
       .catch((err) => {
-        console.log('err', err);
         return {
           status: false,
           message: err.sqlMessage,

@@ -1,4 +1,4 @@
-import IEditUser from "../interfaces/IEditUserData";
+import IEditUser from "@/user/interfaces/IEditUserData";
 
 export default function convertEditUserDTO(userData: IEditUser) {
   return {

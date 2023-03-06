@@ -89,8 +89,8 @@ export default {
     const { value: login } = useField("login", {}, { initialValue: props.userData.login });
     const { value: password } = useField("password", {}, { initialValue: "" });
     const { value: confirmPassword } = useField("confirmPassword", {}, { initialValue: "" });
-    const { value: phoneNumber } = useField("phoneNumber", {}, { initialValue: props.userData.info.phone });
-    const { value: userDetails } = useField("userDetails", {}, { initialValue: props.userData.info.details });
+    const { value: phoneNumber } = useField("phoneNumber", {}, { initialValue: props.userData.info?.phone });
+    const { value: userDetails } = useField("userDetails", {}, { initialValue: props.userData.info?.details });
 
     function onInvalidSubmit({ errors }) {
       console.log("errors", errors);

@@ -41,6 +41,7 @@
 
 <script>
 import { ref, inject, computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 import ConfirmModal from "@/components/chat/modals/ConfirmModal.vue";
 
@@ -76,20 +77,30 @@ export default {
     const isShowConfirmModal = ref(false);
     const chatSocket = inject("chatSocket");
 
+    const { t } = useI18n();
+
     const chatId = inject("chatId");
     const callingData = inject("callingData");
 
     const isChatAdmin = computed(() => props.adminId === props.userId);
 
     function initCallConference() {
-      console.log("TEST", props.chatUsers);
+      console.log("TEST1", props.chatUsers);
       const onlineUsersPeers = Object.values(props.chatUsers).reduce((prev, curr) => {
-        if (curr.lastOnline === "online" && curr.id !== props.userId) {
+        if (curr.lastOnline === t("store.user.online") && curr.id !== props.userId) {
           prev.push(curr.peerId);
         }
 
         return prev;
       }, []);
+
+      console.log("TEST2", onlineUsersPeers);
+      if (onlineUsersPeers.length === 0) {
+        const audio = new Audio("/audio/disconnect.mp3");
+        audio.play();
+
+        return;
+      }
 
       callingData.value = {
         from: {

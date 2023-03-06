@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from 'src/user/user.module';
-import { AdminController } from './admin.controller';
-import { AdminService } from './admin.service';
-import { ConfirmModule } from 'src/access/access.module';
+import { UsersModule } from '@/user/user.module';
+import { AdminController } from '@/admin/admin.controller';
+import { AdminService } from '@/admin/admin.service';
+import { ConfirmModule } from '@/access/access.module';
 
 @Module({
   imports: [UsersModule, ConfirmModule],

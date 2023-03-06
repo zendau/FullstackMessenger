@@ -88,7 +88,7 @@ export default {
     border-radius: 50%;
     justify-self: center;
     font-size: 16px;
-    line-height: 16px;
+    line-height: 25px;
     grid-column: 2/3;
   }
 }

@@ -1,13 +1,13 @@
-import { User } from '../../user/user.entity';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import * as uuid from 'uuid';
-import { UserAccess } from '../access.entity';
-import { NodeMailerService } from '../nodemailer/nodemailer.service';
-
-import IConfirmData from 'src/user/interfaces/IConfirmData';
+import { randomInt } from 'crypto';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+
+import { User } from '@/user/user.entity';
+import { UserAccess } from '@/access/access.entity';
+import { NodeMailerService } from '@/access/nodemailer/nodemailer.service';
+import IConfirmData from '@/user/interfaces/IConfirmData';
 
 @Injectable()
 export class ConfirmCodeService {
@@ -15,17 +15,16 @@ export class ConfirmCodeService {
     @InjectRepository(UserAccess)
     private accessRepository: Repository<UserAccess>,
     private nodeMailerService: NodeMailerService,
-    @InjectRedis() private readonly redis: Redis) { }
+    @InjectRedis() private readonly redis: Redis,
+  ) {}
 
   async initAcceesNote(user: User, manager: EntityManager) {
-
-    const confirmCode = uuid.v4()
-
+    const confirmCode = randomInt(1000000).toString().padStart(6, '0');
 
     const res = await manager.save(UserAccess, {
       confirmCode,
-      user
-    })
+      user,
+    });
 
     //this.nodeMailerService.send(confirmCode);
     return res;
@@ -42,11 +41,10 @@ export class ConfirmCodeService {
   }
 
   async setConfirmCode(confirmData: IConfirmData) {
-
     try {
-      const confirmCode = uuid.v4()
+      const confirmCode = randomInt(1000000).toString().padStart(6, '0');
 
-      this.redis.set(confirmData.email, confirmCode);
+      this.redis.set(`confirm:${confirmData.email}`, confirmCode);
       this.nodeMailerService.sendConfirmCode(confirmCode, confirmData.email);
       return true;
     } catch {
@@ -55,13 +53,12 @@ export class ConfirmCodeService {
   }
 
   async checkConfirmCode(userConfrimCode: string, confirmId: string) {
-
-    const confirmCode = await this.redis?.get(confirmId);
+    const confirmCode = await this.redis?.get(`confirm:${confirmId}`);
 
     if (confirmCode === userConfrimCode) {
       return {
         status: true,
-      }
+      };
     }
 
     return {
@@ -72,9 +69,6 @@ export class ConfirmCodeService {
   }
 
   async deleteConfirmCode(confirmId: string) {
-    await this.redis.del(confirmId)
+    await this.redis.del(`confirm:${confirmId}`);
   }
-
-
-
 }

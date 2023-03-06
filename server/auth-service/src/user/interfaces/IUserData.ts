@@ -1,13 +1,10 @@
-import { IDevice } from "src/token/interfaces/ITokenDevice";
+import { IDevice } from "@/token/interfaces/ITokenDevice";
 
-export default interface IUser {
+export default interface IUserData {
   id?: number;
   email: string;
   login?: string;
   password?: string;
-  confirmId?: string;
   confirmCode?: string;
   system: IDevice;
-
 }
-

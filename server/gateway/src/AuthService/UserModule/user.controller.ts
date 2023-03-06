@@ -36,12 +36,10 @@ import { ConfirmDataDTO } from './dto/confirmData.dto';
 import { EditDataDTO } from './dto/userEdit.dto';
 
 import HttpCacheInterceptor from '../../Cache/HttpCacheInterceptor';
-import HttpClearCacheInterceptor from '../../Cache/clearCache';
 import { authSuccessDTO } from '../ResponseDTO/authSuccess.dto';
 
 import BodyWithDevice from '../decorators/BodyWithDevice.decorator';
 import RefreshData from '../decorators/RefreshData.decorator';
-import { RoleDTO } from './dto/role.dto';
 import { UserResetPasswordDTO } from './dto/userResetPassword.dto';
 
 @ApiTags('Auth microservice - User controller')
@@ -151,7 +149,6 @@ export class UserController {
     return true;
   }
 
-
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'get user by id' })
@@ -175,14 +172,14 @@ export class UserController {
     return resData;
   }
 
-
-
   @ApiOperation({ summary: 'register confirm code' })
   @ApiResponse({ status: 200, description: 'true register confirm code' })
   @ApiResponse({ status: 400, description: 'false register confirm code' })
   @UsePipes(ValidationPipe)
   @Post('setConfirmCode')
   async getCodeEditData(@Body() confirmData: ConfirmDataDTO) {
+    console.log('confirmData', confirmData);
+
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/setConfirmCode', confirmData),
     );

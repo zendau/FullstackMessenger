@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
-import { Token } from './token.entity';
+import { Token } from '@/token/token.entity';
 
 @Entity()
 export class Device {

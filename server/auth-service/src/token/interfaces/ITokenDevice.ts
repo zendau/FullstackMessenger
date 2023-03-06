@@ -1,10 +1,7 @@
-export interface ITokenDevice {
-  id?: number;
+import IDeviceData from "./IDeviceData";
+
+export interface ITokenDevice extends IDeviceData{
   tag: string;
-  brand: string;
-  model: string;
-  osName: string;
-  osVersion: string;
 }
 
 export interface IDevice {

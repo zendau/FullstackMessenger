@@ -31,6 +31,8 @@ export default {
     const callingTimer = ref(null);
 
     const peerSocket = inject("peerSocket");
+    const audio = new Audio("/audio/call_calling.mp3");
+    audio.loop = true;
 
     onUpdated(() => {
       if (!callingData.value) {
@@ -38,21 +40,19 @@ export default {
         return;
       }
 
-      peerSocket.emit("initInviteCalling", callingData.value);
+      audio.play();
 
-      // callingTimer.value = setTimeout(() => {
-      //   cancelCalling();
-      // }, 15000);
+      peerSocket.emit("initInviteCalling", callingData.value);
     });
 
     function cancelCalling() {
-      console.log("cancelCalling");
       peerSocket.emit("cancelCalling", callingData.value);
       closeCTX();
     }
 
     function closeCTX() {
-      console.log("callingTimer.value", callingTimer.value);
+      audio.pause();
+      audio.currentTime = 0;
       clearTimeout(callingTimer.value);
       callingData.value = null;
     }

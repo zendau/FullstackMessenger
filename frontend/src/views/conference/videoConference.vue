@@ -163,26 +163,26 @@ export default {
       port: import.meta.env.VITE_PEER_PORT,
     });
 
-    const getUserMedia =
-      navigator.mediaDevices.getUserMedia ||
-      navigator.mediaDevices.webkitGetUserMedia ||
-      navigator.mediaDevices.mozGetUserMedia;
+    console.log("navigator.mediaDevices", navigator.mediaDevices);
 
     // User media stream
-    getUserMedia({
-      audio: true,
-      video: { aspectRatio: 16 / 9 },
-    })
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: true,
+        video: { aspectRatio: 16 / 9, facingMode: "user" },
+      })
       .then((stream) => {
         mainStream.value = stream;
         containersRefs.forEach((item) => {
           if (item.peerId === peerId.value) {
+            console.log("1");
             item.setStream(stream);
             item.muteYourSelf();
           }
         });
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log("!!!!!!!!!!!!!!!!!1e", e);
         store.commit("alert/setErrorMessage", "Could not start video source");
       });
 
@@ -193,9 +193,9 @@ export default {
         streams.push(call);
 
         // Another user media stream
-        const stream = await getUserMedia({
+        const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
-          video: { aspectRatio: 16 / 9 },
+          video: { aspectRatio: 16 / 9, facingMode: "user" },
         });
 
         childStream.push(stream);
@@ -206,6 +206,7 @@ export default {
           containersRefs.forEach((item) => {
             console.log("item.peerId === call.peer", item, item.peerId, call.peer);
             if (item.peerId === call.peer) {
+              console.log("2");
               item.setStream(userVideoStream);
             }
           });
@@ -233,6 +234,7 @@ export default {
         console.log("STREAM");
         containersRefs.forEach((item) => {
           if (item.peerId === userId) {
+            console.log("3");
             item.setStream(userVideoStream);
           }
         });

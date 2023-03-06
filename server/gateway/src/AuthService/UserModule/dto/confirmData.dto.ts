@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, Min } from 'class-validator';
+import { IsEmail } from 'class-validator';
 
 export class ConfirmDataDTO {
   @ApiProperty({
@@ -7,7 +7,6 @@ export class ConfirmDataDTO {
     description: 'user email',
     required: true,
   })
-  @Min(1)
-  @IsNumber()
+  @IsEmail()
   email: string;
 }

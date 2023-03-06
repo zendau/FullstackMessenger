@@ -5,6 +5,8 @@ import { Token } from './token.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IDevice } from './interfaces/ITokenDevice';
 import { DeviceService } from './device.service';
+import IToken from './interfaces/IToken';
+import ITokens from './interfaces/ITokens';
 
 @Injectable()
 export class TokenService {
@@ -15,13 +17,13 @@ export class TokenService {
     private jwtService: JwtService,
   ) {}
 
-  generateTokens(payload) {
+  generateTokens(payload: IToken) {
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn:  process.env.JWT_ACCESS_EXPIRE,
+      expiresIn: process.env.JWT_ACCESS_EXPIRE,
       secret: process.env.JWT_ACCESS_SECRET,
     });
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn:  process.env.JWT_REFRESH_EXPIRE,
+      expiresIn: process.env.JWT_REFRESH_EXPIRE,
       secret: process.env.JWT_REFRESH_SECRET,
     });
 
@@ -31,34 +33,47 @@ export class TokenService {
     };
   }
 
-  insertTokens(tokenData, device: number, manager: EntityManager);
-  insertTokens(tokenData, device: IDevice, manager: null);
+  insertTokens(
+    tokenData: IToken,
+    device: IDevice,
+    manager: EntityManager,
+  ): Promise<ITokens>;
+  insertTokens(
+    tokenData: IToken,
+    device: IDevice,
+    manager: null,
+  ): Promise<ITokens>;
 
   async insertTokens(
-    tokenData,
-    device: number | IDevice,
+    tokenData: IToken,
+    device: IDevice,
     manager: EntityManager | null,
-  ) {
-    const tokens = await this.generateTokens(tokenData);
+  ): Promise<ITokens> {
+    let deviceId: number = null;
 
-    if (typeof device !== 'number') {
-      device = await this.deviceSerivce.add(device);
+    const deviceData = await this.deviceSerivce.findByTag(
+      device.system.userAgent ?? device.system.mobileData,
+      tokenData.id,
+    );
+
+    if (!deviceData) {
+      deviceId = await this.deviceSerivce.add(device);
+    } else {
+      deviceId = deviceData.id;
     }
 
-    await this.saveToken(tokenData.id, tokens.refreshToken, device, manager);
+    const tokens = await this.generateTokens({ ...tokenData, deviceId });
+    await this.saveToken(tokenData.id, tokens.refreshToken, deviceId, manager);
     return tokens;
   }
 
   async findTokenAndGet(refreshToken: string, deviceTag: string) {
-
-    debugger;
     const tokenData = await this.tokenRepository
       .createQueryBuilder('token')
       .innerJoinAndSelect('token.deviceId', 'device')
       .where('token.refreshToken = :refreshToken', { refreshToken })
       .select(['token.refreshToken, token.deviceId, device.tag'])
-      .execute()
-
+      .execute();
 
     if (tokenData[0] === undefined || tokenData[0].tag !== deviceTag) {
       return {
@@ -70,13 +85,12 @@ export class TokenService {
       const userData = await this.jwtService.decode(tokenData[0].refreshToken);
 
       if (typeof userData === 'object') {
-
-        delete userData['iat']
-        delete userData['exp']
+        delete userData['iat'];
+        delete userData['exp'];
 
         return {
           status: true,
-          userData: userData,
+          userData: userData as IToken,
           deviceId: tokenData[0].deviceId,
         };
       } else {
@@ -127,32 +141,7 @@ export class TokenService {
     return token;
   }
 
-  // async updateToken(tokenData: any, deviceData: IDevice) {
-
-  //   const resUpdate = await this.tokenRepository
-  //     .createQueryBuilder()
-  //     .update()
-  //     .set({
-  //       refreshToken: tokens.refreshToken,
-  //     })
-  //     .where('userId = :userId, deviceId = :deviceId', {
-  //       userId: tokenData.id,
-  //       deviceId,
-  //     })
-  //     .execute();
-
-  //   if (!!resUpdate.affected) {
-  //     return tokens;
-  //   } else {
-  //     return {
-  //       status: false,
-  //       message: 'User not auth',
-  //       httpCode: HttpStatus.UNAUTHORIZED,
-  //     };
-  //   }
-  // }
-
-  async removeToken(refreshToken) {
+  async removeToken(refreshToken: string) {
     try {
       const tokenData = await this.tokenRepository
         .createQueryBuilder()
@@ -161,7 +150,6 @@ export class TokenService {
         .execute();
       return !!tokenData.affected;
     } catch (e) {
-      console.log('data e', e);
       return {
         status: false,
         message: 'Token not found',

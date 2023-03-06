@@ -1,21 +1,20 @@
-import { ConfirmCodeService } from '../access/access-confirm/access-confirm';
-import { NodeMailerService } from '../access/nodemailer/nodemailer.service';
-import { TokenService } from '../token/token.service';
-import { CACHE_MANAGER, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository, QueryRunner } from 'typeorm';
-import { User } from './user.entity';
+import { randomBytes } from 'crypto';
 
-import IUser from './interfaces/IUserData';
-import { comparePassword, hashPassword } from './utils/passwordFactory';
-import { Cache } from 'cache-manager';
-import { UserService } from './user.service';
-import { UserInfoService } from './userInfo.service';
-// import { UserOnlineService } from './UserOnline.service';
-import convertUserDTO from './dto/createUserDTO';
-import { DeviceService } from 'src/token/device.service';
-import { IDevice } from 'src/token/interfaces/ITokenDevice';
-import IRefreshData from './interfaces/IRefreshData';
+import { ConfirmCodeService } from '@/access/access-confirm/access-confirm';
+import { NodeMailerService } from '@/access/nodemailer/nodemailer.service';
+import { TokenService } from '@/token/token.service';
+import { User } from '@/user/user.entity';
+import IUser from '@/user/interfaces/IEditUserData';
+import { comparePassword, hashPassword } from '@/utils/passwordFactory';
+import { UserService } from '@/user/user.service';
+import { UserInfoService } from '@/user/userInfo.service';
+import convertUserDTO from '@/user/dto/createUserDTO';
+import { IDevice } from '@/token/interfaces/ITokenDevice';
+import IRefreshData from '@/user/interfaces/IRefreshData';
+import IUserData from './interfaces/IUserData';
 
 @Injectable()
 export class AuthService {
@@ -29,17 +28,18 @@ export class AuthService {
     private nodeMailerService: NodeMailerService,
     private confirmCodeService: ConfirmCodeService,
     private userInfoService: UserInfoService,
-    // private userOnlineService: UserOnlineService,
-    private deviceService: DeviceService,
     private connection: Connection,
   ) {}
 
-  async register(userData: IUser): Promise<any> {
-    // const checkCode = await this.confirmCodeService.checkConfirmCode(userData.confirmCode, userData.email);
+  async register(userData: IUserData) {
+    const checkCode = await this.confirmCodeService.checkConfirmCode(
+      userData.confirmCode,
+      userData.email,
+    );
 
-    // if (!checkCode.status) {
-    //   return checkCode
-    // }
+    if (!checkCode.status) {
+      return checkCode;
+    }
 
     const hashedPassword = await hashPassword(userData.password);
 
@@ -58,7 +58,7 @@ export class AuthService {
         userEntity,
       );
 
-      const tokens = await this.registerTransaction(
+      const tokens = await this.userRegisterTransaction(
         resUserInsered,
         userData.system,
       );
@@ -79,7 +79,7 @@ export class AuthService {
     }
   }
 
-  async login(userData: IUser) {
+  async login(userData: IUserData) {
     try {
       const resUserData = await this.userService.findByEmail(userData.email);
       if (!resUserData.status) return resUserData;
@@ -94,9 +94,9 @@ export class AuthService {
       }
 
       const { bannedStatus, userInfo } =
-        await this.userService.getAdditionalUserData(resUserData.userData.id,);
+        await this.userService.getAdditionalUserData(resUserData.userData.id);
 
-      const tokens = this.tokenService.insertTokens(
+      const tokens = await this.tokenService.insertTokens(
         {
           ...convertUserDTO(resUserData.userData),
           isBanned: bannedStatus.isBanned,
@@ -109,7 +109,6 @@ export class AuthService {
       await this.confirmCodeService.deleteConfirmCode(userData.email);
       return tokens;
     } catch (e) {
-      console.log(e);
       return {
         status: false,
         message: e.message,
@@ -118,8 +117,7 @@ export class AuthService {
     }
   }
 
-  private async registerTransaction(userData: User, deviceData: IDevice) {
-
+  private async userRegisterTransaction(userData: User, deviceData: IDevice) {
     const accessData = await this.confirmCodeService.initAcceesNote(
       userData,
       this.queryRunner.manager,
@@ -129,14 +127,6 @@ export class AuthService {
       { userId: userData.id },
       this.queryRunner.manager,
     );
-    // await this.userOnlineService.add(
-    //   {
-    //     userId: userData.id,
-    //   },
-    //   this.queryRunner.manager,
-    // );
-
-    const deviceId = await this.deviceService.add(deviceData);
 
     const tokens = await this.tokenService.insertTokens(
       {
@@ -144,14 +134,14 @@ export class AuthService {
         info: userInfo,
         isBanned: accessData.isBanned,
       },
-      deviceId,
+      deviceData,
       this.queryRunner.manager,
     );
 
     return tokens;
   }
 
-  async resetUserPassword(userData: IUser) {
+  async resetUserPassword(userData: IUserData) {
     const checkCode = await this.confirmCodeService.checkConfirmCode(
       userData.confirmCode,
       userData.email,
@@ -161,7 +151,7 @@ export class AuthService {
       return checkCode;
     }
 
-    const newPassword = Math.random().toString(36).slice(-8);
+    const newPassword = randomBytes(64).toString('hex');
 
     const hashedPassword = await hashPassword(newPassword);
 
@@ -202,7 +192,7 @@ export class AuthService {
 
     const tokens = await this.tokenService.insertTokens(
       userTokenData.userData,
-      userTokenData.deviceId,
+      refreshData.device,
       null,
     );
 

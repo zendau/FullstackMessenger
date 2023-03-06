@@ -1,14 +1,14 @@
-import { UsersController } from './user/user.controller';
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TokenModule } from './token/token.module';
 import { ConfigModule } from '@nestjs/config';
-import { ConfirmModule } from './access/access.module';
 import * as Joi from '@hapi/joi';
-import config from './ormconfig';
 import { RedisModule } from '@nestjs-modules/ioredis';
-import { AdminModule } from './admin/admin.module';
+import { UsersController } from '@/user/user.controller';
+import { UsersModule } from '@/user/user.module';
+import { TokenModule } from '@/token/token.module';
+import { ConfirmModule } from '@/access/access.module';
+import config from '@/ormconfig';
+import { AdminModule } from '@/admin/admin.module';
 
 @Module({
   imports: [

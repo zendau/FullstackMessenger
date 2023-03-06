@@ -1,3 +1,10 @@
 {
-  "test": "Hello"
+  "mixed": {
+    "required": "Field '{label}' is required"
+  },
+  "string": {
+    "min": "{label} must consist of at least {min} characters",
+    "email": "Incorrect mail format",
+    "oneOf": "Passwords must match"
+  }
 }
