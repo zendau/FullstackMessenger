@@ -19,6 +19,7 @@ export const auth = {
     },
     devices: [],
     authStatus: false,
+    isConfirmCode: false,
   },
   actions: {
     async login({ commit }, loginData) {
@@ -32,9 +33,32 @@ export const auth = {
         const tokenDecode = jwt_decode(accessToken);
         commit("authSuccess", tokenDecode);
         localStorage.setItem("token", accessToken);
-        router.push("/users");
+        router.push("/chat");
       } catch (e) {
         const message = e.response.data;
+        commit("alert/setErrorMessage", message, {
+          root: true,
+        });
+      }
+    },
+    async checkEmail({ commit }, { email, isFind }) {
+      try {
+        const resData = await $api.post("/user/checkEmail", {
+          email,
+        });
+
+        const { find, message } = resData.data;
+
+        if (find === isFind) {
+          commit("setIsConfirmCode", true);
+        } else {
+          commit("alert/setErrorMessage", message, {
+            root: true,
+          });
+        }
+      } catch (e) {
+        console.log("DEAT", e);
+        const { message } = e.response.data;
         commit("alert/setErrorMessage", message, {
           root: true,
         });
@@ -49,11 +73,12 @@ export const auth = {
 
         commit(
           "alert/setSuccessMessage",
-          $t("store.auth.newPassword", resetData.email),
+          $t("store.auth.newPassword", { email: resetData.email }),
           {
             root: true,
           }
         );
+        router.push("/login");
       } catch (e) {
         const { message } = e.response.data;
         commit("alert/setErrorMessage", message, {
@@ -105,7 +130,7 @@ export const auth = {
         const tokenDecode = jwt_decode(accessToken);
         commit("authSuccess", tokenDecode);
         localStorage.setItem("token", accessToken);
-        router.push("/users");
+        router.push("/chat");
       } catch (e) {
         const message = e.response.data;
         commit("alert/setErrorMessage", message, {
@@ -128,35 +153,36 @@ export const auth = {
     async checkAuth({ commit }) {
       console.log("checkAuth");
       // TODO: Return jwt request
-      //   const accessToken = localStorage.getItem("token");
-      //   let tokenDecode = null;
+      const accessToken = localStorage.getItem("token");
+      let tokenDecode = null;
 
-      //   try {
-      //     tokenDecode = jwt_decode(accessToken);
-      //   } catch {
-      //     const resRefresh = await $api.get("/user/refresh");
+      try {
+        tokenDecode = jwt_decode(accessToken);
+      } catch {
+        const resRefresh = await $api.get("/user/refresh");
 
-      //     if (resRefresh.data.statusCode === 401) return;
+        if (resRefresh.data.statusCode === 401) return;
 
-      //     const accessToken = resRefresh.data.accessToken;
-      //     localStorage.setItem("token", accessToken);
-      //     tokenDecode = jwt_decode(accessToken);
-      //   } finally {
-      //     if (tokenDecode !== null) {
-      //       commit("authSuccess", tokenDecode);
-      //     }
-      //   }
-      const userData = JSON.parse(localStorage.getItem("userData"));
-      console.log("userData", userData);
-      commit("authSuccess", {
-        id: userData.id,
-        email: userData.email,
-        login: userData.login,
-        role: userData.role,
-        isBanned: userData.isBanned,
-        deviceId: userData.deviceId,
-        info: userData.info,
-      });
+        const [accessToken] = resRefresh.data;
+        localStorage.setItem("token", accessToken);
+        tokenDecode = jwt_decode(accessToken);
+      } finally {
+        if (tokenDecode !== null) {
+          commit("authSuccess", tokenDecode);
+        }
+      }
+      // const userData = JSON.parse(localStorage.getItem("userData"));
+      // console.log("userData", userData);
+      // commit("authSuccess", {
+      //   id: userData.id,
+      //   email: userData.email,
+      //   login: userData.login,
+      //   role: userData.role,
+      //   isBanned: userData.isBanned,
+      //   deviceId: userData.deviceId,
+      //   info: userData.info,
+      // });
+      commit("authSuccess", tokenDecode);
     },
     async getUserDevices({ commit, state }) {
       try {
@@ -218,7 +244,10 @@ export const auth = {
       state.user = {
         id: null,
         email: null,
-        role: [],
+        login: null,
+        role: null,
+        isBanned: null,
+        deviceId: null,
       };
       state.authStatus = false;
     },
@@ -242,6 +271,9 @@ export const auth = {
         return !devicesIdList.includes(device.id);
       });
       console.log("RES", state.devices);
+    },
+    setIsConfirmCode(state, status) {
+      state.isConfirmCode = status;
     },
   },
   getters: {

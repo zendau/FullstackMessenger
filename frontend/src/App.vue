@@ -244,6 +244,7 @@ body {
     text-align: center;
     /* margin: 25px 0; */
     color: var(--color-primary);
+    margin-bottom: 10px;
   }
 
   &__hr {

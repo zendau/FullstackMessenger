@@ -32,7 +32,10 @@
       />
     </li>
   </ul>
-  <div v-else>
+  <div
+    v-else
+    class="setting__empty"
+  >
     {{ $t("setting.settingDevices.noSessions") }}
   </div>
 </template>
@@ -107,6 +110,10 @@ h3 {
     margin: 15px auto 0;
     display: block;
     cursor: pointer;
+  }
+
+  &__empty {
+    text-align: center;
   }
 }
 

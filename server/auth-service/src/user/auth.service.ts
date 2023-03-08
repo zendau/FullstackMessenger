@@ -79,6 +79,27 @@ export class AuthService {
     }
   }
 
+  async checkEmail(email: string) {
+    try {
+      const resUserData = await this.userService.findByEmail(email);
+      if (resUserData.status)
+        return {
+          find: true,
+          message: `Email - is already exist`,
+        };
+      return {
+        find: false,
+        message: `Email - is not exist`,
+      };
+    } catch (e) {
+      return {
+        status: false,
+        message: e.message,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+  }
+
   async login(userData: IUserData) {
     try {
       const resUserData = await this.userService.findByEmail(userData.email);
@@ -151,7 +172,7 @@ export class AuthService {
       return checkCode;
     }
 
-    const newPassword = randomBytes(64).toString('hex');
+    const newPassword = randomBytes(12).toString('hex');
 
     const hashedPassword = await hashPassword(newPassword);
 

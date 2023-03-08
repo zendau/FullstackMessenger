@@ -76,6 +76,19 @@ export class UserController {
     return resData;
   }
 
+  // TODO: add api dock
+  @UsePipes(ValidationPipe)
+  @Post('checkEmail')
+  async checkUserEmail(@Body() checkData: { email: string }) {
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/checkEmail', checkData.email),
+    );
+    if (resData.status === false) {
+      throw new HttpException(resData.message, resData.httpCode);
+    }
+    return resData;
+  }
+
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, type: authSuccessDTO })
   @ApiResponse({ status: 400, description: 'Wrong auth', type: HttpErrorDTO })

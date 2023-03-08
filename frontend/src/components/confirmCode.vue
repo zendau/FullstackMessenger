@@ -20,7 +20,7 @@
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { useStore } from "vuex";
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import onInvalidSubmit from "@/utils/onInvalidSubmit";
 
@@ -49,6 +49,10 @@ export default {
 
     onMounted(() => {
       store.dispatch("auth/confirmCode", props.email);
+    });
+
+    onUnmounted(() => {
+      store.commit("auth/setIsConfirmCode", false);
     });
 
     const { value: confirmCode } = useField("confirmCode");

@@ -49,7 +49,7 @@
 import { useStore } from "vuex";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import onInvalidSubmit from "@/utils/onInvalidSubmit";
 import { useI18n } from "vue-i18n";
 
@@ -63,7 +63,7 @@ export default {
     const { t } = useI18n();
 
     const registerData = ref(null);
-    const isConfirmCode = ref(false);
+    const isConfirmCode = computed(() => store.state.auth.isConfirmCode);
 
     const schema = yup.object({
       email: yup.string().required().email().label(t("view.registerPage.email")),
@@ -87,8 +87,12 @@ export default {
 
     const onSubmitForm = handleSubmit((value) => {
       registerData.value = value;
-      isConfirmCode.value = true;
       store.commit("alert/clearAlert");
+
+      store.dispatch("auth/checkEmail", {
+        email: value.email,
+        isFind: false,
+      });
     }, onInvalidSubmit);
 
     function confirmRegister(confirmCode) {

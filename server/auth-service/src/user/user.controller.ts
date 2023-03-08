@@ -33,6 +33,18 @@ export class UsersController {
     return res;
   }
 
+  @MessagePattern('user/checkEmail')
+  async checkUserEmail(@Payload() email: string) {
+    const res = await this.authService.checkEmail(email).catch((err) => {
+      return {
+        status: false,
+        message: err.sqlMessage,
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
+    return res;
+  }
+
   @MessagePattern('user/login')
   async loginUser(@Payload() userData: IUserData) {
     const res = await this.authService.login(userData).catch((err) => {

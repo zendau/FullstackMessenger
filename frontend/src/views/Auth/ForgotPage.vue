@@ -30,7 +30,7 @@
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import { useStore } from "vuex";
-import { onUnmounted, ref } from "vue";
+import { computed, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import onInvalidSubmit from "@/utils/onInvalidSubmit";
 
@@ -42,7 +42,7 @@ export default {
   components: { AlertNotification, FormInput, ConfirmCode },
   setup() {
     const store = useStore();
-    const isConfirmCode = ref(false);
+    const isConfirmCode = computed(() => store.state.auth.isConfirmCode);
     const tempEmail = ref(null);
 
     const { t } = useI18n();
@@ -63,8 +63,11 @@ export default {
 
     const onSubmitForm = handleSubmit((value) => {
       tempEmail.value = value.email;
-      isConfirmCode.value = true;
       store.commit("alert/clearAlert");
+      store.dispatch("auth/checkEmail", {
+        email: value.email,
+        isFind: true,
+      });
     }, onInvalidSubmit);
 
     function confirmResetPassword(confirmCode) {
