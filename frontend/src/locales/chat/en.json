@@ -68,7 +68,8 @@
     "message": "Put file(s) to download"
   },
   "chatSend": {
-    "banned": "Banned by user",
+    "isBanned": "You have blocked this user",
+    "isBannedByContact": "This user has blocked you",
     "placeholder": "Type message..."
   },
   "chatEditMessage": {

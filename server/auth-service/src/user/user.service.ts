@@ -1,9 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Repository,
-  SelectQueryBuilder,
-} from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 import { ConfirmCodeService } from '@/access/access-confirm/access-confirm';
@@ -17,6 +14,7 @@ import { Contact } from '@/contacts/contact.entity';
 import { UnionParameters } from '@/utils/typeorm/union';
 import IPublicUserData from '@/user/interfaces/IPublicUserData';
 import IUser from '@/user/interfaces/IUser';
+import { TokenService } from '@/token/token.service';
 
 @Injectable()
 export class UserService {
@@ -27,6 +25,7 @@ export class UserService {
     private usersRepository: Repository<User>,
     private confirmCodeService: ConfirmCodeService,
     private userInfoService: UserInfoService,
+    private tokenService: TokenService,
     @InjectRedis() private readonly redis: Redis,
   ) {
     this.getUserQuery = this.usersRepository
@@ -54,13 +53,7 @@ export class UserService {
         return checkCode;
       }
 
-      const oldUserData: any = await this.getUserById(userData.id);
-
-      if (oldUserData.email !== userData.email) {
-        throw new Error();
-      }
-
-      if (userData.password !== undefined) {
+      if (userData.password) {
         const hashedPassword = await hashPassword(userData.password);
 
         userData.password = hashedPassword;
@@ -68,18 +61,39 @@ export class UserService {
 
       const updatedUserData = convertEditUserDTO(userData);
 
-      const statusUpdated = await this.usersRepository
+      await this.usersRepository
         .createQueryBuilder()
         .update()
         .set(updatedUserData)
         .where('id = :id', { id: userData.id })
         .execute();
 
-      if (!statusUpdated.affected) {
-        throw new Error();
+      if (userData?.phone || userData?.details) {
+        await this.userInfoService.update({
+          ...(userData.phone && { phone: userData.phone }),
+          ...(userData.details && { details: userData.details }),
+          userId: userData.id,
+        });
       }
 
-      return true;
+      delete userData.tokenData.exp;
+      delete userData.tokenData.iat;
+
+      userData.tokenData = {
+        ...userData.tokenData,
+        ...(userData.login && { login: userData.login }),
+        ...(userData.newEmail && { email: userData.newEmail }),
+        ...(userData.phone && { phone: userData.phone }),
+        ...(userData.details && { details: userData.details }),
+      };
+
+      const tokens = await this.tokenService.insertTokens(
+        userData.tokenData,
+        userData.system,
+        null,
+      );
+
+      return tokens;
     } catch (e) {
       if (e.errno === sqlErrorCodes.DuplicateEmail) {
         return {
@@ -196,7 +210,20 @@ export class UserService {
   }
 
   async getUserById(id: number) {
-    const user = await this.getUserQuery
+    debugger;
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.email',
+        'user.login',
+        'user.lastOnline',
+        'user.role',
+        'userInfo.phone',
+        'userInfo.details',
+      ])
+      .leftJoin('user.info', 'userInfo')
+      .leftJoin('user.access', 'access')
       .where('user.id = :id', { id })
       .getOne();
 
@@ -210,7 +237,6 @@ export class UserService {
 
     return user;
   }
-
 
   async setLastOnline(userId: number, lastOnline: Date) {
     const user = await this.usersRepository

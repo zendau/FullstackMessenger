@@ -4,7 +4,7 @@
     class="contacts__list"
   >
     <li
-      v-for="(user, index) in listData"
+      v-for="(user, _, index) in listData"
       :key="user.id"
       :ref="(el) => setObserver(el, index)"
       class="contact__item"
@@ -40,7 +40,7 @@ export default {
     const contactsPattern = inject("contactsPattern");
 
     const observer = new IntersectionObserver(async (entries) => {
-      console.log("free", entries[0]);
+      console.log("free", entries[0].isIntersecting, contactsPattern.value, !contactsPattern.value);
       if (entries[0].isIntersecting && !contactsPattern.value) {
         store.dispatch("contact/getFreeUsersList", { userId: userId.value });
       }
@@ -71,7 +71,7 @@ export default {
     );
 
     function setObserver(el, index) {
-      if (index !== listData.value.length - 1) return;
+      if (index != Object.keys(listData.value).length - 1) return;
       if (!el) return;
       observer.disconnect();
       observer.observe(el);

@@ -26,7 +26,7 @@ $api.interceptors.response.use(
     }
 
     if (
-      error.response.status == 401 &&
+      error.response?.status == 401 &&
       error.config &&
       !error.config._isRetry
     ) {
@@ -38,8 +38,7 @@ $api.interceptors.response.use(
         localStorage.setItem("token", response.data.accessToken);
         return $api.request(originalRequest);
       } catch (e) {
-        // TODO: return dispatch
-        //store.dispatch("auth/logout");
+        store.dispatch("auth/logout");
       }
     }
     throw error;

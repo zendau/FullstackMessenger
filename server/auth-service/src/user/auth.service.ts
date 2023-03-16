@@ -7,7 +7,6 @@ import { ConfirmCodeService } from '@/access/access-confirm/access-confirm';
 import { NodeMailerService } from '@/access/nodemailer/nodemailer.service';
 import { TokenService } from '@/token/token.service';
 import { User } from '@/user/user.entity';
-import IUser from '@/user/interfaces/IEditUserData';
 import { comparePassword, hashPassword } from '@/utils/passwordFactory';
 import { UserService } from '@/user/user.service';
 import { UserInfoService } from '@/user/userInfo.service';
@@ -172,7 +171,7 @@ export class AuthService {
       return checkCode;
     }
 
-    const newPassword = randomBytes(12).toString('hex');
+    const newPassword = randomBytes(4).toString('hex');
 
     const hashedPassword = await hashPassword(newPassword);
 

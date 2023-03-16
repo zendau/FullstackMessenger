@@ -3,7 +3,7 @@ import { insertUsersList } from "./users.module";
 
 const defaultPatination = {
   page: 0,
-  limit: 6,
+  limit: 8,
   hasMore: true,
 };
 
@@ -124,13 +124,15 @@ export const contact = {
       }
     },
     async cancelPendingRequest({ commit }, { userId, contactId }) {
+      // eslint-disable-next-line no-debugger
+      debugger;
       try {
         await $api.post("/contact/reject", {
           userId,
           contactId,
         });
         commit("setNewContactStatus", {
-          contactId,
+          contactId: userId,
           status: "isConfirmRequest",
           value: false,
         });
@@ -192,6 +194,8 @@ export const contact = {
       }
     },
     async getFreeUsersList({ commit, state }, { userId, pattern }) {
+      // eslint-disable-next-line no-debugger
+      debugger;
       try {
         let params = null;
 
@@ -312,6 +316,8 @@ export const contact = {
       state.contactStatutes[contactId] = data;
     },
     setNewContactStatus(state, { contactId, status, value }) {
+      // eslint-disable-next-line no-debugger
+      debugger;
       console.log("setNewContactStatus", contactId, status, value);
       if (!state.contactStatutes[contactId]) return;
       state.contactStatutes[contactId][status] = value;
@@ -337,6 +343,8 @@ export const contact = {
       state.contactsPagintation.hasMore = data.hasMore;
     },
     setFreeUsers(state, data) {
+      // eslint-disable-next-line no-debugger
+      debugger;
       if (Object.keys(data.resList).length > 0) {
         Object.assign(state.freeUsers, data.resList);
       }
@@ -364,6 +372,8 @@ export const contact = {
     },
     changeUserStatus(state, statusData) {
       console.log("test", statusData);
+      // eslint-disable-next-line no-debugger
+      debugger;
       switch (statusData.operation) {
         case "AddContact": {
           const contactData = state.freeUsers[statusData.contactId];
@@ -449,7 +459,13 @@ export const contact = {
           delete state.freeUsers[statusData.userData.id];
           state.pendingRequests[statusData.userData.id] = statusData.userData;
           state.contactsCount.pendingRequests++;
-          state.contactStatutes[statusData.userData.id].isConfirmRequest = true;
+
+          if (state.contactStatutes[statusData.userData.id]) {
+            state.contactStatutes[
+              statusData.userData.id
+            ].isConfirmRequest = true;
+          }
+
           break;
         case "PendingAccept":
           delete state.outgoingRequests[statusData.userData.id];
@@ -459,31 +475,49 @@ export const contact = {
           state.contactStatutes[
             statusData.userData.id
           ].isPendingRequest = false;
-          state.contactStatutes[statusData.userData.id].isFriend = true;
+
+          if (state.contactStatutes[statusData.userData.id]) {
+            state.contactStatutes[statusData.userData.id].isFriend = true;
+          }
+
           break;
         case "PendingReject":
           delete state.outgoingRequests[statusData.userData.id];
           state.freeUsers[statusData.userData.id] = statusData.userData;
           state.contactsCount.outgoingRequests--;
-          state.contactStatutes[
-            statusData.userData.id
-          ].isPendingRequest = false;
+
+          if (state.contactStatutes[statusData.userData.id]) {
+            state.contactStatutes[
+              statusData.userData.id
+            ].isPendingRequest = false;
+          }
+
           break;
         case "OutgointCancel":
           delete state.pendingRequests[statusData.userData.id];
           state.freeUsers[statusData.userData.id] = statusData.userData;
           state.contactsCount.pendingRequests--;
-          state.contactStatutes[
-            statusData.userData.id
-          ].isConfirmRequest = false;
+
+          if (state.contactStatutes[statusData.userData.id]) {
+            state.contactStatutes[
+              statusData.userData.id
+            ].isConfirmRequest = false;
+          }
+
           break;
         case "DeleteContact":
           delete state.contacts[statusData.userData.id];
           state.outgoingRequests[statusData.userData.id] = statusData.userData;
           state.contactsCount.contacts--;
           state.contactsCount.outgoingRequests++;
-          state.contactStatutes[statusData.userData.id].isPendingRequest = true;
-          state.contactStatutes[statusData.userData.id].isFriend = false;
+
+          if (state.contactStatutes[statusData.userData.id]) {
+            state.contactStatutes[
+              statusData.userData.id
+            ].isPendingRequest = true;
+            state.contactStatutes[statusData.userData.id].isFriend = false;
+          }
+
           break;
         case "BlockUser":
           if (state.contacts[statusData.userData.id]) {
@@ -498,17 +532,24 @@ export const contact = {
             delete state.outgoingRequests[statusData.userData.id];
             state.contactsCount.outgoingRequests--;
           }
-          state.contactStatutes[
-            statusData.userData.id
-          ].isBannedByContact = true;
+
+          if (state.contactStatutes[statusData.userData.id]) {
+            state.contactStatutes[
+              statusData.userData.id
+            ].isBannedByContact = true;
+          }
 
           break;
 
         case "UnBlockUser":
           state.freeUsers[statusData.userData.id] = statusData.userData;
-          state.contactStatutes[
-            statusData.userData.id
-          ].isBannedByContact = false;
+
+          if (state.contactStatutes[statusData.userData.id]) {
+            state.contactStatutes[
+              statusData.userData.id
+            ].isBannedByContact = false;
+          }
+
           break;
 
         default:

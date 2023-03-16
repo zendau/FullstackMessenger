@@ -9,4 +9,6 @@ export default interface IToken {
     details?: string;
   };
   deviceId?: number;
+  iat?: number;
+  exp?: number;
 }

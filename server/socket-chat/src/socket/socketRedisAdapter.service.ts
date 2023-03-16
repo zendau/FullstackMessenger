@@ -102,6 +102,7 @@ export class SocketRedisAdapter {
     mainId: string | number,
     subId?: string | number,
   ) {
+    debugger;
     const valueKey = `${key}:${mainId}` + (subId ? `:${subId}` : '');
     const resData = await this.redis.get(valueKey);
 
@@ -114,7 +115,7 @@ export class SocketRedisAdapter {
     if (!resDB) return null;
 
     if (typeof resDB === 'object' && 'status' in resDB)
-      throw new Error(resDB?.message ?? 'No found value');
+      return resDB?.message ?? 'No found value';
 
     this.setValue(key, resDB, setQuery.isExpire, mainId, subId);
     return resDB;

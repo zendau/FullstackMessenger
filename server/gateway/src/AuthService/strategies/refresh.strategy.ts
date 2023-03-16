@@ -21,7 +21,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   }
 
   async validate(payload: any) {
-    debugger
     if (payload) return payload;
     return false;
   }

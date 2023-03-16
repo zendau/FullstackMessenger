@@ -4,7 +4,7 @@
     class="contacts__list"
   >
     <li
-      v-for="(user, index) in listData"
+      v-for="(user, _, index) in listData"
       :key="user.id"
       :ref="(el) => setObserver(el, index)"
     >
@@ -86,9 +86,8 @@ export default {
     );
 
     function setObserver(el, index) {
-      if (index !== listData.value.length - 1) return;
+      if (index != Object.keys(listData.value).length - 1) return;
       if (!el) return;
-      console.log("set last contacts");
       observer.disconnect();
       observer.observe(el);
     }

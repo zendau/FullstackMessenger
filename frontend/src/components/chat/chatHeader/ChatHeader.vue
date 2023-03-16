@@ -30,6 +30,7 @@
       :admin-id="chatData?.adminId"
       :chat-users="chatData?.users"
       :chat-title="chatData.title"
+      :is-private-banned="isPrivateBanned"
     />
   </div>
   <HeaderGroupList
@@ -52,6 +53,12 @@ import HeaderGroupList from "@/components/chat/chatHeader/headerGroupList/Header
 
 export default {
   components: { HeaderMessages, HeaderGroup, HeaderPrivate, HeaderChatMenu, HeaderGroupList },
+  props: {
+    isPrivateBanned: {
+      type: [String, Boolean],
+      required: true,
+    },
+  },
   emits: ["delete-messages"],
   setup(_, { emit }) {
     const store = useStore();

@@ -88,7 +88,13 @@ export default {
     });
 
     chatSocket.on("updateUserOnline", (userStatus) => {
+      console.log("userStatus", userStatus);
       store.commit("users/updateUserOnline", userStatus);
+    });
+
+    chatSocket.on("changeContactStatus", (data) => {
+      console.log("data", data);
+      store.commit("contact/changeContactStatus", data);
     });
 
     setInterval(() => store.commit("users/updateUsersDateOnline"), 30000);

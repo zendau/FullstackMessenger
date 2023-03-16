@@ -1,12 +1,12 @@
 <template>
   <div
     v-if="isPrivateBanned"
-    class="chat_banned"
+    class="chat__banned"
   >
-    {{ $t("chat.chatSend.banned") }}
+    {{ $t(isPrivateBanned) }}
   </div>
   <div
-    else
+    v-else
     class="chat__send"
   >
     <ChatPressing :user-login="userPressing" />
@@ -48,9 +48,8 @@ export default {
   components: { ChatEditMessage, ChatPressing, ChatFiles, ChatFileUpload },
   props: {
     isPrivateBanned: {
-      type: Boolean,
-      required: false,
-      default: false,
+      type: [String, Boolean],
+      required: true,
     },
   },
   setup() {
@@ -219,6 +218,8 @@ export default {
 .chat {
   &__banned {
     color: var(--color-primary);
+    text-align: center;
+    margin-bottom: 10px;
   }
 
   &__send {

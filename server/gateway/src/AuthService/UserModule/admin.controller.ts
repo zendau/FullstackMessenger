@@ -1,4 +1,3 @@
-import { GetUserDTO } from '../ResponseDTO/getUser.dto';
 import {
   Body,
   Controller,
@@ -15,7 +14,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { firstValueFrom } from 'rxjs';
 import {
   ApiBearerAuth,
@@ -23,14 +21,21 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { GetUserDTO } from '../ResponseDTO/getUser.dto';
 import { HttpErrorDTO } from '../ResponseDTO/httpError.dto';
 
 import HttpClearCacheInterceptor from '../../Cache/clearCache';
 
 import { RoleDTO } from './dto/role.dto';
 import IUserPaginationList from './interfaces/IUserPaginationList';
+import RoleGuard from '../guards/roles.guard';
+import { UserRole } from '../enum/userRole.enum';
+import { RoleListDTO } from './dto/roleList.dto';
 
 @ApiTags('Auth microservice - Admin controller')
+@UseGuards(JwtAuthGuard)
+@UseGuards(RoleGuard(UserRole.ADMIN))
 @Controller('admin')
 export class AdminController {
   constructor(@Inject('AUTH_SERVICE') private authServiceClient: ClientProxy) {}
@@ -39,10 +44,8 @@ export class AdminController {
   @ApiOperation({ summary: 'get all users' })
   @ApiResponse({ status: 200, type: GetUserDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
-  //@UseGuards(JwtRefreshGuard)
   @Get('list')
   async getAllUsers(@Query() listData: IUserPaginationList) {
-    console.log('listData', listData);
     const resData = await firstValueFrom(
       this.authServiceClient.send('admin/list', listData),
     );
@@ -54,7 +57,6 @@ export class AdminController {
   }
 
   @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(HttpClearCacheInterceptor)
   @ApiOperation({ summary: 'set banned status for user by id' })
   @ApiResponse({ status: 200, description: 'Success operation' })
@@ -63,8 +65,6 @@ export class AdminController {
     description: 'user not found',
     type: HttpErrorDTO,
   })
-  //@UseGuards(RoleGuard(UserRole.Admin))
-  //@UseGuards(JwtRefreshGuard)
   @Patch('blockUser/:id')
   async blockUser(@Param('id', ParseIntPipe) userId: number) {
     const resData = await firstValueFrom(
@@ -85,8 +85,6 @@ export class AdminController {
     description: 'user not found',
     type: HttpErrorDTO,
   })
-  //@UseGuards(RoleGuard(UserRole.Admin))
-  //@UseGuards(JwtRefreshGuard)
   @Patch('unblockUser/:id')
   async unBlockUser(@Param('id', ParseIntPipe) userId: number) {
     const resData = await firstValueFrom(
@@ -109,7 +107,6 @@ export class AdminController {
     description: 'user not found',
     type: HttpErrorDTO,
   })
-  //@UseGuards(JwtRefreshGuard)
   @UsePipes(ValidationPipe)
   @Patch('setRole')
   async setUserRole(
@@ -125,6 +122,11 @@ export class AdminController {
 
     return resData;
   }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get role`s list' })
+  @ApiResponse({ status: 200, type: RoleListDTO, isArray: true })
+  @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('rolesList')
   async getRolesList() {
     const resData = await firstValueFrom(

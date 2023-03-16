@@ -29,7 +29,7 @@ import { IContactStatus } from './interfaces/contact/IContactStatus';
 import IChatCreate from 'src/chat/interfaces/IChatCreate';
 import IChatGroupMember from './interfaces/chat/IChatGroupMember';
 
-@WebSocketGateway(80, {
+@WebSocketGateway(8082, {
   path: '/socketChat',
   cors: {
     origin: '*',
@@ -50,6 +50,7 @@ export class SocketGateway {
     );
 
     if (!userStatus) return;
+    socket.broadcast.emit('contact', userStatus);
     const rooms = await this.socketService.getUserRoomsIds(userStatus.userId);
     if (!rooms || rooms.length === 0) return;
     socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
@@ -60,11 +61,13 @@ export class SocketGateway {
     socket: Socket,
     { userId, peerId }: { userId: number; peerId: string },
   ) {
+    debugger;
     const userStatus = this.socketService.addUser(userId, peerId);
     const rooms = await this.socketService.getUserRoomsIds(userId);
-    console.log('joined rooms', rooms);
     socket.data.userId = userId;
     socket.join(rooms);
+    socket.broadcast.emit('contact', userStatus);
+    if (!rooms || rooms.length === 0) return;
     socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
   }
 

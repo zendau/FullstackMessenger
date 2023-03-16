@@ -8,7 +8,10 @@
         class="close-btn"
         @click="closeCTX"
       />
-      <div v-if="contactData.isBannedByContact">
+      <div
+        v-if="contactStatus?.isBannedByContact"
+        class="user-modal__blocked"
+      >
         {{ $t("chat.userModal.blockedByUsers") }}
       </div>
       <div
@@ -233,9 +236,11 @@ export default {
     }
 
     async function cancelPendingRequest() {
+      // eslint-disable-next-line no-debugger
+      debugger;
       store.dispatch("contact/cancelPendingRequest", {
-        userId: userId.value,
-        contactId: contactId.value,
+        userId: contactId.value,
+        contactId: userId.value,
       });
 
       const statusData = {
@@ -284,6 +289,13 @@ export default {
     justify-content: center;
     align-items: center;
     text-align: center;
+    height: 100%;
+  }
+
+  &__blocked {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100%;
   }
 

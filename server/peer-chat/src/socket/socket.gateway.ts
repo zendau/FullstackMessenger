@@ -12,7 +12,7 @@ import IUserMediaStatus from './interfaces/IUserMediaStatus';
 import { SocketService } from './socket.service';
 import ICallingData from './interfaces/ICallingData';
 
-@WebSocketGateway(81, {
+@WebSocketGateway(8084, {
   path: '/peerChat',
   cors: {
     origin: '*',

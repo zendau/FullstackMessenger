@@ -38,7 +38,7 @@ import IUserChat from '../interfaces/IUserChat';
 
 @ApiBearerAuth()
 @ApiTags('Chat microservice - chat controller')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('chat')
 export class ChatController {
   constructor(

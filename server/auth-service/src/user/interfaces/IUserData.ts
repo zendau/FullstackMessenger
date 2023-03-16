@@ -6,5 +6,5 @@ export default interface IUserData {
   login?: string;
   password?: string;
   confirmCode?: string;
-  system: IDevice;
+  system?: IDevice;
 }

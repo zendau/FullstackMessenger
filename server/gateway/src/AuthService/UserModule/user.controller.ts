@@ -212,15 +212,28 @@ export class UserController {
     type: HttpErrorDTO,
   })
   @UsePipes(ValidationPipe)
-  //@UseGuards(JwtRefreshGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('editData')
-  async editUserData(@Body() editData: EditDataDTO) {
+  async editUserData(
+    @Req() request: Request & { user: { id: number; email: string } },
+    @BodyWithDevice() editData: EditDataDTO,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const editUserData = {
+      ...editData,
+      ...(editData.email && { newEmail: editData.email }),
+      email: request.user.email,
+      id: request.user.id,
+      tokenData: request.user,
+    };
     const resData = await firstValueFrom(
-      this.authServiceClient.send('user/editData', editData),
+      this.authServiceClient.send('user/editData', editUserData),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
     }
+
+    res.cookie('auth-cookie', resData.refreshToken, this.cookieOptions);
     return resData;
   }
 

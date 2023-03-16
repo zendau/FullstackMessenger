@@ -5,6 +5,7 @@
       @click="initCallConference"
     >
       <font-awesome-icon
+        v-if="!isPrivateBanned"
         :title="$t('chat.headerChatMenu.call')"
         icon="fa-solid fa-phone-volume"
       />
@@ -48,6 +49,10 @@ import ConfirmModal from "@/components/chat/modals/ConfirmModal.vue";
 export default {
   components: { ConfirmModal },
   props: {
+    isPrivateBanned: {
+      type: [String, Boolean],
+      required: true,
+    },
     adminId: {
       type: [Number, null],
       required: true,

@@ -87,20 +87,17 @@ export const auth = {
       }
     },
     async changeUserData({ commit }, userData) {
+      // eslint-disable-next-line no-debugger
+      debugger;
       try {
-        await $api.patch("/user/editData", {
-          id: userData.id,
-          email: userData.email,
-          newEmail: userData.newEmail,
-          login: userData.login,
-          password: userData.password,
-          confirmPassword: userData.confirmPassword,
-          confirmCode: userData.confirmCode,
-        });
+        const resData = await $api.patch("/user/editData", userData);
 
         commit("alert/setSuccessMessage", $t("store.auth.updatedData"), {
           root: true,
         });
+
+        const { accessToken } = resData.data;
+        localStorage.setItem("token", accessToken);
         commit("updateData", userData);
       } catch (e) {
         const { message } = e.response.data;
@@ -160,7 +157,7 @@ export const auth = {
         tokenDecode = jwt_decode(accessToken);
       } catch {
         const resRefresh = await $api.get("/user/refresh");
-
+        console.log("resRefresh", resRefresh);
         if (resRefresh.data.statusCode === 401) return;
 
         const [accessToken] = resRefresh.data;

@@ -74,6 +74,8 @@ export default {
     }
 
     function muteYourSelf() {
+      if (!media.value) return;
+
       isMainFrame.value = true;
       media.value.muted = true;
     }
@@ -92,8 +94,9 @@ export default {
     );
 
     function setStream(stream) {
+      if (!media.value) return;
+
       media.value.srcObject = stream;
-      console.log("stream", stream);
       media.value.addEventListener("loadedmetadata", () => {
         media.value.play();
       });

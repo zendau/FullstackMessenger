@@ -1,6 +1,6 @@
 import { createParamDecorator } from '@nestjs/common';
 
-const BodyWithDevice = createParamDecorator((data, req) => {
+const BodyWithDevice = createParamDecorator((_, req) => {
   const reqData = req.args[0];
   const userData = reqData.body;
   const ip =

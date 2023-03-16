@@ -6,10 +6,11 @@
   >
     <ChatHeader
       v-if="!isConferenceChat"
+      :is-private-banned="isPrivateBannedStatus"
       @delete-messages="deleteMessagesMany"
     />
     <ChatBody @delete-messages="deleteMessages" />
-    <ChatSend :is-private-banned="isPrivateBanned" />
+    <ChatSend :is-private-banned="isPrivateBannedStatus" />
   </div>
 </template>
 
@@ -126,30 +127,47 @@ export default {
     console.log("CHATDATA", chatData);
     provide("chatData", chatData);
     const privateMemberId = ref(null);
-    const isPrivateBanned = computed(() => {
-      const data = store.state.contact.contactStatutes[privateMemberId.value];
+    const privateUserStatus = computed(() => store.state.contact.contactStatutes[privateMemberId.value]);
+    const isPrivateBannedStatus = ref(false);
 
-      if (!data) return null;
-      return data.isBanned || data.isBannedByContact;
-    });
+    watch(
+      chatData,
+      (newChat) => {
+        if (newChat?.adminId || newChat?.users === undefined) return;
 
-    watch(chatData, (newChat) => {
-      if (newChat?.adminId || newChat?.users === undefined) return;
+        privateMemberId.value = Object.values(newChat.users)[0].id;
 
-      privateMemberId.value = Object.values(newChat.users)[0].id;
+        if (privateUserStatus.value) return;
+        store.dispatch("contact/getContactStatutesData", {
+          userId: userId.value,
+          contactId: privateMemberId.value,
+        });
+      },
+      {
+        immediate: true,
+      }
+    );
 
-      console.log("memberData", isPrivateBanned.value);
-      if (isPrivateBanned.value !== null) return;
-      store.dispatch("contact/getContactStatutesData", {
-        userId: userId.value,
-        contactId: privateMemberId.value,
-      });
-    });
+    watch(
+      privateUserStatus,
+      (status) => {
+        if (status?.isBanned) {
+          isPrivateBannedStatus.value = "chat.chatSend.isBanned";
+        } else if (status?.isBannedByContact) {
+          isPrivateBannedStatus.value = "chat.chatSend.isBannedByContact";
+        } else {
+          isPrivateBannedStatus.value = false;
+        }
+      },
+      {
+        deep: true,
+      }
+    );
 
     return {
       deleteMessages,
       deleteMessagesMany,
-      isPrivateBanned,
+      isPrivateBannedStatus,
       isShowMobileMessages,
       chatData,
       isConferenceChat,

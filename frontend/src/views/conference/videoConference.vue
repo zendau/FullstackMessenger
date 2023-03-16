@@ -53,7 +53,14 @@ export default {
     const containersRefs = reactive([]);
     const setItemRef = (el) => {
       if (el) {
+        console.log("set el");
         containersRefs.push(el);
+
+        if (el.peerId === peerId.value && mainStream.value) {
+          console.log("1", mainStream.value);
+          el.setStream(mainStream.value);
+          el.muteYourSelf();
+        }
       }
     };
 
@@ -64,8 +71,11 @@ export default {
     // Wait socket connected and join to room
     watch(
       [socketConnected, peerConnected],
-      ([socketStatus, peerStatus]) => {
+      async ([socketStatus, peerStatus]) => {
+        console.log("JOIN TO ROOM");
         if (socketStatus && peerStatus) {
+          mainStream.value = await initUserMedia();
+
           peerSocket.emit("join-room", {
             userId: userData.value.id,
             userLogin: userData.value.login,
@@ -143,6 +153,7 @@ export default {
     });
 
     peerSocket.on("userJoinedRoom", (userId) => {
+      console.log("userJoinedRoom", userId, new Date().getTime());
       connectToNewUser(userId, mainStream.value);
     });
 
@@ -166,25 +177,28 @@ export default {
     console.log("navigator.mediaDevices", navigator.mediaDevices);
 
     // User media stream
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: true,
-        video: { aspectRatio: 16 / 9, facingMode: "user" },
-      })
-      .then((stream) => {
-        mainStream.value = stream;
-        containersRefs.forEach((item) => {
-          if (item.peerId === peerId.value) {
-            console.log("1");
-            item.setStream(stream);
-            item.muteYourSelf();
-          }
+
+    async function initUserMedia() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: { aspectRatio: 16 / 9, facingMode: "user" },
         });
-      })
-      .catch((e) => {
-        console.log("!!!!!!!!!!!!!!!!!1e", e);
+
+        console.log("set mainStream");
+        return stream;
+      } catch (e) {
         store.commit("alert/setErrorMessage", "Could not start video source");
-      });
+      }
+
+      // .then((stream) => {
+
+      // })
+      // .catch((e) => {
+      //   console.log("!!!!!!!!!!!!!!!!!1e", e);
+      //   store.commit("alert/setErrorMessage", "Could not start video source");
+      // });
+    }
 
     // answer to call
     peerConnect.on("call", async (call) => {

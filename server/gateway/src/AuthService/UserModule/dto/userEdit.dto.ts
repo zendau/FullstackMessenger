@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class EditDataDTO {
   @ApiProperty({
@@ -29,7 +34,6 @@ export class EditDataDTO {
   @ApiProperty({
     example: 'root',
     description: 'user password',
-
   })
   @Length(6, 20, {
     message: 'password is smaller than 6 signs or bigger than 20 signs',
@@ -47,25 +51,18 @@ export class EditDataDTO {
   confirmCode: string;
 
   @ApiProperty({
-    example: '1',
-    description: 'User id',
-    required: true,
+    example: '+71111111111',
+    description: "user's phone number",
   })
-  @Length(6, 20, {
-    message: 'email is smaller than 6 signs or bigger than 20 signs',
-  })
-  @IsEmail({ message: 'Is not email' })
-  id: number;
+  @IsString({ message: 'Is not currect string' })
+  @IsOptional()
+  phone: string;
 
   @ApiProperty({
-    example: 'root@gmail.com',
-    description: 'new email for edit data',
+    example: 'my user info',
+    description: "user's data info",
   })
+  @IsString({ message: 'Is not currect string' })
   @IsOptional()
-  @Length(6, 20, {
-    message: 'email is smaller than 6 signs or bigger than 20 signs',
-  })
-  @IsEmail({ message: 'Is not email' })
-  newEmail: string;
-
+  details: string;
 }

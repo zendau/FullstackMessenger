@@ -11,18 +11,18 @@
   </h2>
   <AlertNotification />
   <ConfirmCode
-    v-if="isConfirmCode"
+    v-show="isConfirmCode"
     :email="userData.email"
     @confirm-code-event="confirmChangeData"
   />
   <AccountForm
-    v-else
-    :user-data="userData"
+    v-show="!isConfirmCode"
+    @init-change-data="initChangeData"
   />
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed, onUnmounted, ref } from "vue";
 import { useStore } from "vuex";
 import AlertNotification from "@/components/UI/AlertNotification.vue";
 
@@ -34,33 +34,37 @@ export default {
   setup() {
     const store = useStore();
 
-    const userId = store.state.auth.user.id;
-    const userEmail = store.state.auth.user.email;
-
     const userData = computed(() => store.state.auth.user);
     const updatedUserData = ref(null);
     const isConfirmCode = ref(false);
 
+    function initChangeData(newUserData) {
+      isConfirmCode.value = true;
+      updatedUserData.value = newUserData;
+    }
+
+    onUnmounted(() => {
+      isConfirmCode.value = false;
+    });
+
     function confirmChangeData(confirmCode) {
       console.log({
-        id: userId,
         ...updatedUserData.value,
-        email: userEmail,
         newEmail: updatedUserData.value.email,
         confirmCode,
       });
       store.dispatch("auth/changeUserData", {
-        id: userId,
         ...updatedUserData.value,
-        email: userEmail,
         newEmail: updatedUserData.value.email,
         confirmCode,
       });
+      isConfirmCode.value = false;
     }
 
     return {
       userData,
       isConfirmCode,
+      initChangeData,
       confirmChangeData,
     };
   },

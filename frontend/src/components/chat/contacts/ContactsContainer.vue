@@ -3,9 +3,6 @@
     class="chat__contacts"
     :class="{ 'chat__contacts--active': !isShowMobileMessages }"
   >
-    <!-- <button class="btn" @click="groupType = !groupType">
-      {{ groupType ? "Close" : "Create group" }}
-    </button> -->
     <SearchCreateGroup @search-pattern="searchContacts" />
     <div class="contacts__container">
       <ContactsListType
@@ -21,12 +18,11 @@
     <PendingList v-else-if="listType === 'pendingRequests'" />
     <OutgoingList v-else-if="listType === 'outgoingRequests'" />
     <BlockedList v-else-if="listType === 'blockedUsers'" />
-    <!-- <create-group v-if="groupType" :groupUsers="groupUsers" :adminId="userId" /> -->
   </div>
 </template>
 
 <script>
-import { computed, inject, provide, ref, watch } from "vue";
+import { computed, inject, onUnmounted, provide, ref, watch } from "vue";
 
 import { useStore } from "vuex";
 
@@ -71,9 +67,15 @@ export default {
 
     store.dispatch("contact/getContactCount", userId.value);
 
-    chatSocket.on("changeContactStatus", (data) => {
-      console.log("data", data);
-      store.commit("contact/changeContactStatus", data);
+    console.log("on contact");
+    chatSocket.on("contact", (userStatus) => {
+      console.log("USER sttaa", userStatus);
+      store.commit("users/updateUserOnline", userStatus);
+    });
+
+    onUnmounted(() => {
+      console.log("unmounted");
+      chatSocket.removeAllListeners("contact");
     });
 
     watch(
@@ -150,7 +152,6 @@ export default {
 
   &__list {
     overflow: auto;
-    margin-top: 12.5px;
 
     li {
       position: relative;
