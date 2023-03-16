@@ -34,7 +34,6 @@ export default {
   setup() {
     const store = useStore();
     const listData = computed(() => store.state.contact.outgoingRequests);
-    const userId = computed(() => store.state.auth.user.id);
 
     const modalUserId = inject("modalUserId");
     const contactsPattern = inject("contactsPattern");
@@ -43,10 +42,7 @@ export default {
       contactsPattern,
       (pattern, oldPattern) => {
         if (pattern) {
-          store.dispatch("contact/getOutgoingRequests", {
-            userId: userId.value,
-            pattern: contactsPattern.value,
-          });
+          store.dispatch("contact/getOutgoingRequests", contactsPattern.value);
           return;
         } else {
           if (oldPattern) {
@@ -56,7 +52,7 @@ export default {
 
         if (listData.value.length > 0) return;
 
-        store.dispatch("contact/getOutgoingRequests", { userId: userId.value });
+        store.dispatch("contact/getOutgoingRequests");
       },
       {
         immediate: true,

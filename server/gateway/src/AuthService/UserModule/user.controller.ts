@@ -1,5 +1,5 @@
-import { GetUserDTO } from './../ResponseDTO/getUser.dto';
-import { UserRegisterDTO } from './dto/userRegister.dto';
+import { GetUserDTO } from '@/AuthService/ResponseDTO/getUser.dto';
+import { UserRegisterDTO } from '@/AuthService/UserModule/dto/userRegister.dto';
 import {
   Body,
   Controller,
@@ -19,10 +19,10 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Response, Request } from 'express';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
+import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
+import { JwtRefreshGuard } from '@/AuthService/guards/jwt-refresh.guard';
 import { firstValueFrom } from 'rxjs';
-import { UserLoginDTO } from './dto/userLogin.dto';
+import { UserLoginDTO } from '@/AuthService/UserModule/dto/userLogin.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -30,17 +30,18 @@ import {
   ApiTags,
   ApiCookieAuth,
 } from '@nestjs/swagger';
-import { HttpErrorDTO } from '../ResponseDTO/httpError.dto';
+import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
 
-import { ConfirmDataDTO } from './dto/confirmData.dto';
-import { EditDataDTO } from './dto/userEdit.dto';
+import { ConfirmDataDTO } from '@/AuthService/UserModule/dto/confirmData.dto';
+import { EditDataDTO } from '@/AuthService/UserModule/dto/userEdit.dto';
 
-import HttpCacheInterceptor from '../../Cache/HttpCacheInterceptor';
-import { authSuccessDTO } from '../ResponseDTO/authSuccess.dto';
+import HttpCacheInterceptor from '@/Cache/HttpCacheInterceptor';
+import { authSuccessDTO } from '@/AuthService/ResponseDTO/authSuccess.dto';
 
-import BodyWithDevice from '../decorators/BodyWithDevice.decorator';
-import RefreshData from '../decorators/RefreshData.decorator';
-import { UserResetPasswordDTO } from './dto/userResetPassword.dto';
+import BodyWithDevice from '@/AuthService/decorators/BodyWithDevice.decorator';
+import RefreshData from '@/AuthService/decorators/RefreshData.decorator';
+import { UserResetPasswordDTO } from '@/AuthService/UserModule/dto/userResetPassword.dto';
+import IToken from '@/AuthService/UserModule/interfaces/IToken';
 
 @ApiTags('Auth microservice - User controller')
 @Controller('user')
@@ -76,7 +77,13 @@ export class UserController {
     return resData;
   }
 
-  // TODO: add api dock
+  @ApiOperation({ summary: 'Check user email' })
+  @ApiResponse({ status: 200, description: 'True email data' })
+  @ApiResponse({
+    status: 400,
+    description: 'Error check email',
+    type: HttpErrorDTO,
+  })
   @UsePipes(ValidationPipe)
   @Post('checkEmail')
   async checkUserEmail(@Body() checkData: { email: string }) {
@@ -171,7 +178,6 @@ export class UserController {
     description: 'user not found',
     type: HttpErrorDTO,
   })
-  //@UseGuards(JwtRefreshGuard)
   @Get('getById/:id')
   @UseInterceptors(HttpCacheInterceptor)
   async getUserById(@Param('id', ParseIntPipe) id: number) {
@@ -215,7 +221,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Patch('editData')
   async editUserData(
-    @Req() request: Request & { user: { id: number; email: string } },
+    @Req() request: Request & { user: IToken },
     @BodyWithDevice() editData: EditDataDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -248,7 +254,6 @@ export class UserController {
     type: HttpErrorDTO,
   })
   @UsePipes(ValidationPipe)
-  //@UseGuards(JwtRefreshGuard)
   @Patch('resetPassword')
   async resetUserPassword(
     @Res({ passthrough: true }) res: Response,
@@ -267,15 +272,13 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'get user by id' })
+  @ApiOperation({ summary: 'get device by id' })
   @ApiResponse({ status: 200, type: GetUserDTO })
   @ApiResponse({
     status: 400,
     description: 'user not found',
     type: HttpErrorDTO,
   })
-  //@UseGuards(JwtRefreshGuard)
   @Get('getDevicesData/:id')
   async getTokensDeviceData(@Param('id', ParseIntPipe) id: number) {
     console.log('id', id);

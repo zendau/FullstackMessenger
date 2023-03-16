@@ -57,8 +57,7 @@ export default {
     const observer = new IntersectionObserver(async (entries) => {
       console.log("contacts", entries[0], contactsPattern.value);
       if (entries[0].isIntersecting && !contactsPattern.value) {
-        console.log("observer getContactsList");
-        store.dispatch("contact/getContactsList", { userId: userId.value });
+        store.dispatch("contact/getContactsList");
       }
     });
 
@@ -68,17 +67,14 @@ export default {
       contactsPattern,
       (pattern, oldPattern) => {
         if (pattern) {
-          store.dispatch("contact/getContactsList", {
-            userId: userId.value,
-            pattern: contactsPattern.value,
-          });
+          store.dispatch("contact/getContactsList", contactsPattern.value);
           return;
         } else {
           if (oldPattern) {
             store.commit("contact/clearListData", "contacts");
           }
         }
-        store.dispatch("contact/getContactsList", { userId: userId.value });
+        store.dispatch("contact/getContactsList");
       },
       {
         immediate: true,

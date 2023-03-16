@@ -33,7 +33,6 @@ export default {
   setup() {
     const store = useStore();
     const listData = computed(() => store.state.contact.pendingRequests);
-    const userId = computed(() => store.state.auth.user.id);
 
     const modalUserId = inject("modalUserId");
     const contactsPattern = inject("contactsPattern");
@@ -43,10 +42,7 @@ export default {
       (pattern, oldPattern) => {
         console.log("WATCH");
         if (pattern) {
-          store.dispatch("contact/getPendingRequests", {
-            userId: userId.value,
-            pattern: contactsPattern.value,
-          });
+          store.dispatch("contact/getPendingRequests", contactsPattern.value);
           return;
         } else {
           if (oldPattern) {
@@ -56,7 +52,7 @@ export default {
 
         if (listData.value.length > 0) return;
 
-        store.dispatch("contact/getPendingRequests", { userId: userId.value });
+        store.dispatch("contact/getPendingRequests");
       },
       {
         immediate: true,

@@ -65,7 +65,7 @@ export default {
 
     const createGroupUsers = inject("createGroupUsers");
 
-    store.dispatch("contact/getContactCount", userId.value);
+    store.dispatch("contact/getContactCount");
 
     console.log("on contact");
     chatSocket.on("contact", (userStatus) => {

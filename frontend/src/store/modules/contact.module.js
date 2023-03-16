@@ -24,10 +24,9 @@ export const contact = {
     error: null,
   },
   actions: {
-    async blockUser({ commit }, { userId, contactId }) {
+    async blockUser({ commit }, contactId) {
       try {
         await $api.patch("/contact/block", {
-          userId,
           contactId,
         });
         commit("blockUser", contactId);
@@ -35,10 +34,9 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async unblockUser({ commit }, { userId, contactId }) {
+    async unblockUser({ commit }, contactId) {
       try {
         await $api.patch("/contact/unBlock", {
-          userId,
           contactId,
         });
 
@@ -51,11 +49,10 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async deleteFromContacts({ commit }, { userId, contactId }) {
+    async deleteFromContacts({ commit }, contactId) {
       try {
         await $api.delete("/contact/delete", {
           params: {
-            userId,
             contactId,
           },
         });
@@ -73,10 +70,9 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async addToContacts({ commit }, { userId, contactId }) {
+    async addToContacts({ commit }, contactId) {
       try {
         await $api.post("/contact/sendRequest", {
-          userId,
           contactId,
         });
         commit("setNewContactStatus", {
@@ -88,10 +84,9 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async cancelOutgoingRequest({ commit }, { userId, contactId }) {
+    async cancelOutgoingRequest({ commit }, contactId) {
       try {
         await $api.post("/contact/reject", {
-          userId,
           contactId,
         });
         commit("setNewContactStatus", {
@@ -103,10 +98,9 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async confirmContactRequest({ commit }, { userId, contactId }) {
+    async confirmContactRequest({ commit }, contactId) {
       try {
         await $api.post("/contact/confirm", {
-          userId,
           contactId,
         });
         commit("setNewContactStatus", {
@@ -124,11 +118,8 @@ export const contact = {
       }
     },
     async cancelPendingRequest({ commit }, { userId, contactId }) {
-      // eslint-disable-next-line no-debugger
-      debugger;
       try {
         await $api.post("/contact/reject", {
-          userId,
           contactId,
         });
         commit("setNewContactStatus", {
@@ -140,19 +131,18 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async getContactCount({ commit }, userId) {
+    async getContactCount({ commit }) {
       try {
-        const res = await $api.get(`/contact/getContactCount/${userId}`);
+        const res = await $api.get("contact/getContactCount");
         commit("setContactsCount", res.data);
       } catch (e) {
         commit("setError", e.response.data.message);
       }
     },
-    async getContactStatutesData({ commit }, { userId, contactId }) {
+    async getContactStatutesData({ commit }, contactId) {
       try {
         const res = await $api.get(`/contact/contactData`, {
           params: {
-            userId,
             contactId,
           },
         });
@@ -161,7 +151,7 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async getContactsList({ commit, state }, { pattern, userId }) {
+    async getContactsList({ commit, state }, pattern) {
       try {
         let params = null;
 
@@ -169,13 +159,11 @@ export const contact = {
           commit("clearListData", "contacts");
           params = {
             pattern,
-            userId,
           };
         } else {
           if (!state.contactsPagintation.hasMore) return;
 
           params = {
-            userId,
             page: state.contactsPagintation.page,
             limit: state.contactsPagintation.limit,
           };
@@ -193,9 +181,7 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async getFreeUsersList({ commit, state }, { userId, pattern }) {
-      // eslint-disable-next-line no-debugger
-      debugger;
+    async getFreeUsersList({ commit, state }, pattern) {
       try {
         let params = null;
 
@@ -203,11 +189,9 @@ export const contact = {
           commit("clearListData", "freeUsers");
           params = {
             pattern,
-            userId,
           };
         } else {
           params = {
-            userId,
             page: state.freeUsersPagintation.page,
             limit: state.freeUsersPagintation.limit,
           };
@@ -227,7 +211,7 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async getPendingRequests({ commit }, { userId, pattern }) {
+    async getPendingRequests({ commit }, pattern) {
       try {
         let params = null;
 
@@ -235,11 +219,6 @@ export const contact = {
           commit("clearListData", "pendingRequests");
           params = {
             pattern,
-            userId,
-          };
-        } else {
-          params = {
-            userId,
           };
         }
 
@@ -253,7 +232,7 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async getOutgoingRequests({ commit }, { userId, pattern }) {
+    async getOutgoingRequests({ commit }, pattern) {
       try {
         let params = null;
 
@@ -261,11 +240,6 @@ export const contact = {
           commit("clearListData", "outgoingRequests");
           params = {
             pattern,
-            userId,
-          };
-        } else {
-          params = {
-            userId,
           };
         }
 
@@ -279,7 +253,7 @@ export const contact = {
         commit("setError", e.response.data.message);
       }
     },
-    async getBlockedUsers({ commit }, { userId, pattern }) {
+    async getBlockedUsers({ commit }, pattern) {
       try {
         let params = null;
 
@@ -287,11 +261,6 @@ export const contact = {
           commit("clearListData", "blockedUsers");
           params = {
             pattern,
-            userId,
-          };
-        } else {
-          params = {
-            userId,
           };
         }
 
@@ -316,9 +285,6 @@ export const contact = {
       state.contactStatutes[contactId] = data;
     },
     setNewContactStatus(state, { contactId, status, value }) {
-      // eslint-disable-next-line no-debugger
-      debugger;
-      console.log("setNewContactStatus", contactId, status, value);
       if (!state.contactStatutes[contactId]) return;
       state.contactStatutes[contactId][status] = value;
     },

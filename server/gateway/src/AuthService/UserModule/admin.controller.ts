@@ -21,18 +21,18 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { GetUserDTO } from '../ResponseDTO/getUser.dto';
-import { HttpErrorDTO } from '../ResponseDTO/httpError.dto';
 
-import HttpClearCacheInterceptor from '../../Cache/clearCache';
+import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
+import { GetUserDTO } from '@/AuthService/ResponseDTO/getUser.dto';
+import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
+import { RoleDTO } from '@/AuthService/UserModule/dto/role.dto';
+import IUserPaginationList from '@/AuthService/UserModule/interfaces/IUserPaginationList';
+import RoleGuard from '@/AuthService/guards/roles.guard';
+import { UserRole } from '@/AuthService/enum/userRole.enum';
+import { RoleListDTO } from '@/AuthService/UserModule/dto/roleList.dto';
+import HttpClearCacheInterceptor from '@/Cache/clearCache';
 
-import { RoleDTO } from './dto/role.dto';
-import IUserPaginationList from './interfaces/IUserPaginationList';
-import RoleGuard from '../guards/roles.guard';
-import { UserRole } from '../enum/userRole.enum';
-import { RoleListDTO } from './dto/roleList.dto';
-
+@ApiBearerAuth()
 @ApiTags('Auth microservice - Admin controller')
 @UseGuards(JwtAuthGuard)
 @UseGuards(RoleGuard(UserRole.ADMIN))

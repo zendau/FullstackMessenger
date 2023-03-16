@@ -67,9 +67,7 @@ export default {
       (entries) => {
         console.log("OBSERVER CHAT", entries);
         if (entries[0].isIntersecting) {
-          store.dispatch("chat/getChats", {
-            userId: userId.value,
-          });
+          store.dispatch("chat/getChats");
         }
       },
       {
@@ -78,7 +76,6 @@ export default {
     );
 
     store.dispatch("chat/getChats", {
-      userId: userId.value,
       chatId: chatId.value,
     });
 

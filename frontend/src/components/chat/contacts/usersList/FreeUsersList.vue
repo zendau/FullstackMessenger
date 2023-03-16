@@ -34,7 +34,6 @@ export default {
   setup() {
     const store = useStore();
     const listData = computed(() => store.state.contact.freeUsers);
-    const userId = computed(() => store.state.auth.user.id);
 
     const modalUserId = inject("modalUserId");
     const contactsPattern = inject("contactsPattern");
@@ -42,7 +41,7 @@ export default {
     const observer = new IntersectionObserver(async (entries) => {
       console.log("free", entries[0].isIntersecting, contactsPattern.value, !contactsPattern.value);
       if (entries[0].isIntersecting && !contactsPattern.value) {
-        store.dispatch("contact/getFreeUsersList", { userId: userId.value });
+        store.dispatch("contact/getFreeUsersList");
       }
     });
 
@@ -52,10 +51,7 @@ export default {
         console.log("pattern", pattern);
 
         if (pattern) {
-          store.dispatch("contact/getFreeUsersList", {
-            userId: userId.value,
-            pattern: contactsPattern.value,
-          });
+          store.dispatch("contact/getFreeUsersList", contactsPattern.value);
           return;
         } else {
           if (oldPattern) {
@@ -63,7 +59,7 @@ export default {
           }
         }
 
-        store.dispatch("contact/getFreeUsersList", { userId: userId.value });
+        store.dispatch("contact/getFreeUsersList");
       },
       {
         immediate: true,

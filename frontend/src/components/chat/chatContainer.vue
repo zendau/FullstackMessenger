@@ -138,10 +138,7 @@ export default {
         privateMemberId.value = Object.values(newChat.users)[0].id;
 
         if (privateUserStatus.value) return;
-        store.dispatch("contact/getContactStatutesData", {
-          userId: userId.value,
-          contactId: privateMemberId.value,
-        });
+        store.dispatch("contact/getContactStatutesData", privateMemberId.value);
       },
       {
         immediate: true,

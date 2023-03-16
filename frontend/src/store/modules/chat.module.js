@@ -146,7 +146,6 @@ export const chat = {
             page: state.loadChatsPagination.page,
             limit: state.loadChatsPagination.limit,
             inMemory: state.loadChatsPagination.inMemory,
-            userId: paginationData.userId,
             ...(paginationData.chatId && { chatId: paginationData.chatId }),
           },
         });

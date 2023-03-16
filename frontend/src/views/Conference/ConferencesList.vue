@@ -41,9 +41,7 @@ export default {
     const chatObserver = new IntersectionObserver((entries) => {
       for (let entry of entries) {
         if (entry.isIntersecting) {
-          store.dispatch("chat/getChats", {
-            userId: userId.value,
-          });
+          store.dispatch("chat/getChats");
           break;
         }
       }
@@ -75,9 +73,7 @@ export default {
       chatObserver.observe(el);
     }
 
-    store.dispatch("chat/getChats", {
-      userId: userId.value,
-    });
+    store.dispatch("chat/getChats");
 
     return {
       setLastRoomElement,

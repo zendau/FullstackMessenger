@@ -1,11 +1,10 @@
-import { GetUserDTO } from './../ResponseDTO/getUser.dto';
+import { GetUserDTO } from '@/AuthService/ResponseDTO/getUser.dto';
 import {
   Body,
   Controller,
   Get,
   HttpException,
   Inject,
-  Param,
   Patch,
   Post,
   UseGuards,
@@ -13,9 +12,10 @@ import {
   ValidationPipe,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
 import { firstValueFrom } from 'rxjs';
 import {
   ApiBearerAuth,
@@ -23,15 +23,17 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { HttpErrorDTO } from '../ResponseDTO/httpError.dto';
-import { ContactDTO } from '../ResponseDTO/contact.dto';
-import { ParseIntPipe } from '@nestjs/common/pipes';
-import IUserPaginationList from './interfaces/IUserPaginationList';
-import IContact from './interfaces/IContact';
-import IUserChat from 'src/ChatService/interfaces/IUserChat';
+import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
+import { ContactDTO } from '@/AuthService/ResponseDTO/contact.dto';
+import IUserPaginationList from '@/AuthService/UserModule/interfaces/IUserPaginationList';
+import IContact from '@/AuthService/UserModule/interfaces/IContact';
+import IUserChat from '@/ChatService/interfaces/IUserChat';
+import IToken from '@/AuthService/UserModule/interfaces/IToken';
+import { ContactStatusesDTO } from '@/AuthService/ResponseDTO/contactStatuses.dto';
 
 @ApiBearerAuth()
 @ApiTags('Auth microservice - Contact controller')
+@UseGuards(JwtAuthGuard)
 @Controller('contact')
 export class ContactController {
   constructor(
@@ -49,12 +51,16 @@ export class ContactController {
     status: 400,
     type: HttpErrorDTO,
   })
-  //@UseGuards(JwtAuthGuard)
   @Get('list')
-  async getUserContactList(@Query() listData: IUserPaginationList) {
-    console.log('test', listData);
+  async getUserContactList(
+    @Query() listData: IUserPaginationList,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.chatServiceClient.send('chat/contacts', listData),
+      this.chatServiceClient.send('chat/contacts', {
+        ...listData,
+        userId: request.user.id,
+      }),
     );
     console.log('resData', resData);
     if (resData.status === false) {
@@ -74,11 +80,16 @@ export class ContactController {
     status: 400,
     type: HttpErrorDTO,
   })
-  //@UseGuards(JwtAuthGuard)
   @Get('freeList')
-  async getFreeUserList(@Query() listData: IUserPaginationList) {
+  async getFreeUserList(
+    @Query() listData: IUserPaginationList,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/freeList', listData),
+      this.authServiceClient.send('contact/freeList', {
+        ...listData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -87,7 +98,7 @@ export class ContactController {
     return resData;
   }
 
-  @ApiOperation({ summary: 'Get users list who are not added to contacts' })
+  @ApiOperation({ summary: 'User`s contact statuses count' })
   @ApiResponse({
     status: 200,
     type: GetUserDTO,
@@ -97,11 +108,10 @@ export class ContactController {
     status: 400,
     type: HttpErrorDTO,
   })
-  //@UseGuards(JwtAuthGuard)
-  @Get('getContactCount/:id')
-  async getUserContactsCount(@Param('id', ParseIntPipe) id: number) {
+  @Get('getContactCount')
+  async getUserContactsCount(@Req() request: Request & { user: IToken }) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/getContactCount', id),
+      this.authServiceClient.send('contact/getContactCount', request.user.id),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -121,12 +131,16 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   @UsePipes(ValidationPipe)
-  //@UseGuards(JwtAuthGuard)
-  //TODO
   @Post('sendRequest')
-  async sendContactRequest(@Body() requestData: IContact) {
+  async sendContactRequest(
+    @Body() requestData: IContact,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/sendRequest', requestData),
+      this.authServiceClient.send('contact/sendRequest', {
+        ...requestData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -145,11 +159,16 @@ export class ContactController {
     status: 400,
     type: HttpErrorDTO,
   })
-  //@UseGuards(JwtAuthGuard)
   @Get('pending')
-  async getContactsRequestPending(@Query() listData: IUserPaginationList) {
+  async getContactsRequestPending(
+    @Query() listData: IUserPaginationList,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/pending', listData),
+      this.authServiceClient.send('contact/pending', {
+        ...listData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -168,11 +187,16 @@ export class ContactController {
     status: 400,
     type: HttpErrorDTO,
   })
-  //@UseGuards(JwtAuthGuard)
   @Get('outgoing')
-  async getContactsRequestOutgoing(@Query() listData: IUserPaginationList) {
+  async getContactsRequestOutgoing(
+    @Query() listData: IUserPaginationList,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/outgoing', listData),
+      this.authServiceClient.send('contact/outgoing', {
+        ...listData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -192,11 +216,16 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   @UsePipes(ValidationPipe)
-  //@UseGuards(JwtAuthGuard)
   @Post('confirm')
-  async confirmUserRequest(@Body() requestData: IContact) {
+  async confirmUserRequest(
+    @Body() requestData: IContact,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/confirm', requestData),
+      this.authServiceClient.send('contact/confirm', {
+        ...requestData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -216,11 +245,16 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   @UsePipes(ValidationPipe)
-  //@UseGuards(JwtAuthGuard)
   @Post('reject')
-  async rejectUserRequest(@Body() requestData: IContact) {
+  async rejectUserRequest(
+    @Body() requestData: IContact,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/reject', requestData),
+      this.authServiceClient.send('contact/reject', {
+        ...requestData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -240,11 +274,16 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   @UsePipes(ValidationPipe)
-  //@UseGuards(JwtAuthGuard)
   @Delete('delete')
-  async deleteUserFromContact(@Query() requestData: IContact) {
+  async deleteUserFromContact(
+    @Query() requestData: IContact,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/delete', requestData),
+      this.authServiceClient.send('contact/delete', {
+        ...requestData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -263,11 +302,16 @@ export class ContactController {
     status: 400,
     type: HttpErrorDTO,
   })
-  //@UseGuards(JwtAuthGuard)
   @Get('blockedUsers')
-  async getBlockedUsers(@Query() listData: IUserPaginationList) {
+  async getBlockedUsers(
+    @Query() listData: IUserPaginationList,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/blockedUsers', listData),
+      this.authServiceClient.send('contact/blockedUsers', {
+        ...listData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -287,11 +331,16 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   @UsePipes(ValidationPipe)
-  //@UseGuards(JwtAuthGuard)
   @Patch('block')
-  async blockUserContact(@Body() requestData: IContact) {
+  async blockUserContact(
+    @Body() requestData: IContact,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/block', requestData),
+      this.authServiceClient.send('contact/block', {
+        ...requestData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -312,11 +361,16 @@ export class ContactController {
     type: HttpErrorDTO,
   })
   @UsePipes(ValidationPipe)
-  //@UseGuards(JwtAuthGuard)
   @Patch('unBlock')
-  async unBlockUserContact(@Body() requestData: ContactDTO) {
+  async unBlockUserContact(
+    @Body() requestData: ContactDTO,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/unblock', requestData),
+      this.authServiceClient.send('contact/unblock', {
+        ...requestData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
@@ -325,10 +379,26 @@ export class ContactController {
     return resData;
   }
 
+  @ApiOperation({ summary: 'Get contact statuses' })
+  @ApiResponse({
+    status: 200,
+    type: ContactStatusesDTO,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'error when get statuses',
+    type: HttpErrorDTO,
+  })
   @Get('contactData')
-  async getContactData(@Query() contactData: IUserChat) {
+  async getContactData(
+    @Query() contactData: IUserChat,
+    @Req() request: Request & { user: IToken },
+  ) {
     const resData = await firstValueFrom(
-      this.authServiceClient.send('contact/getContactData', contactData),
+      this.authServiceClient.send('contact/getContactData', {
+        ...contactData,
+        userId: request.user.id,
+      }),
     );
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);

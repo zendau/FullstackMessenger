@@ -117,10 +117,7 @@ export default {
 
     onUpdated(() => {
       if (!contactStatus.value && contactId.value) {
-        store.dispatch("contact/getContactStatutesData", {
-          userId: userId.value,
-          contactId: contactId.value,
-        });
+        store.dispatch("contact/getContactStatutesData", contactId.value);
       }
     });
 
@@ -135,10 +132,7 @@ export default {
     };
 
     async function blockUser() {
-      store.dispatch("contact/blockUser", {
-        userId: userId.value,
-        contactId: contactId.value,
-      });
+      store.dispatch("contact/blockUser", contactId.value);
 
       const statusData = {
         operation: listTypes.BlockUser,
@@ -151,10 +145,7 @@ export default {
     }
 
     async function unblockUser() {
-      store.dispatch("contact/unblockUser", {
-        userId: userId.value,
-        contactId: contactId.value,
-      });
+      store.dispatch("contact/unblockUser", contactId.value);
 
       const statusData = {
         operation: listTypes.UnBlockUser,
@@ -167,10 +158,7 @@ export default {
     }
 
     async function deleteFromContacts() {
-      store.dispatch("contact/deleteFromContacts", {
-        userId: userId.value,
-        contactId: contactId.value,
-      });
+      store.dispatch("contact/deleteFromContacts", contactId.value);
 
       const statusData = {
         operation: listTypes.DeleteContact,
@@ -183,15 +171,7 @@ export default {
     }
 
     async function addToContacts() {
-      store.dispatch("contact/addToContacts", {
-        userId: userId.value,
-        contactId: contactId.value,
-      });
-      console.log("ASASASAS", {
-        operation: listTypes.AddContact,
-        contactId: contactId.value,
-        userData: store.getters["auth/getUserContactData"],
-      });
+      store.dispatch("contact/addToContacts", contactId.value);
 
       const statusData = {
         operation: listTypes.AddContact,
@@ -205,7 +185,6 @@ export default {
 
     async function cancelOutgoingRequest() {
       store.dispatch("contact/cancelOutgoingRequest", {
-        userId: userId.value,
         contactId: contactId.value,
       });
 
@@ -220,10 +199,7 @@ export default {
     }
 
     async function confirmContactRequest() {
-      store.dispatch("contact/confirmContactRequest", {
-        userId: userId.value,
-        contactId: contactId.value,
-      });
+      store.dispatch("contact/confirmContactRequest", contactId.value);
 
       const statusData = {
         operation: listTypes.PendingAccept,
@@ -236,8 +212,6 @@ export default {
     }
 
     async function cancelPendingRequest() {
-      // eslint-disable-next-line no-debugger
-      debugger;
       store.dispatch("contact/cancelPendingRequest", {
         userId: contactId.value,
         contactId: userId.value,
