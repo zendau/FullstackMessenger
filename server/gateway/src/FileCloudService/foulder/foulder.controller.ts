@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
 import {
   Controller,
   Get,
@@ -8,21 +9,25 @@ import {
   Inject,
   HttpException,
   Put,
-  UseGuards,
   ValidationPipe,
   UsePipes,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
-import { JwtAuthGuard } from 'src/AuthService/guards/jwt-auth.guard';
-import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
-import { FoulderDTO } from './dto/foulder.dto';
+import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
+import { FoulderDTO } from '@/FileCloudService/foulder/dto/foulder.dto';
 
 @ApiBearerAuth()
 @ApiTags('FileCloud microservice - Foulder controller')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('foulder')
 export class FoulderController {
   constructor(@Inject('FILE_SERVICE') private fileServiceClient: ClientProxy) {}

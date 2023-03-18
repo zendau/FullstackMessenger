@@ -1,4 +1,4 @@
-import { FoulderDTO } from './../../foulder/dto/foulder.dto';
+import { FoulderDTO } from '@/FileCloudService/foulder/dto/foulder.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class FileDTO {

@@ -1,5 +1,4 @@
-import RoleGuard from './../../AuthService/guards/roles.guard';
-import { HttpErrorDTO } from './../../AuthService/ResponseDTO/httpError.dto';
+import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
 import {
   Controller,
   Get,
@@ -17,20 +16,19 @@ import {
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
-import { RoomDTO } from './dto/room.dto';
-import { EditRoomDTO } from './dto/editRoom.dto';
-import { JwtAuthGuard } from '../../AuthService/guards/jwt-auth.guard';
+import { RoomDTO } from '@/PeerService/room/dto/room.dto';
+import { EditRoomDTO } from '@/PeerService/room/dto/editRoom.dto';
+import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserRole } from 'src/AuthService/enum/userRole.enum';
 
 @ApiBearerAuth()
 @ApiTags('Peer microservice - Room controller')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('room')
 export class RoomController {
   constructor(
@@ -41,7 +39,7 @@ export class RoomController {
   @ApiOperation({ summary: 'Register new conference room' })
   @ApiResponse({ status: 200, type: EditRoomDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
-  //@UsePipes(ValidationPipe)
+  @UsePipes(ValidationPipe)
   @Post('add')
   async create(@Body() createRoomDto: RoomDTO) {
     const res = await firstValueFrom(
@@ -56,17 +54,11 @@ export class RoomController {
   @ApiOperation({ summary: 'Get all conference rooms' })
   @ApiResponse({ status: 200, type: EditRoomDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
-  // @Roles(UserRole.Admin)
-  // @UseGuards(RolesGuard)
-  //@UseGuards(RoleGuard(UserRole.Admin))
-  // @UseGuards(JwtAuthGuard)
   @Get('list')
   async findAll(@Query() requestData: { userId: number }) {
     const chatIdList = await firstValueFrom(
-      this.chatServiceClient.send('chat/idList', 5),
+      this.chatServiceClient.send('chat/idList', requestData.userId),
     );
-
-    console.log('chatList', chatIdList);
 
     if (chatIdList.status === false) {
       throw new HttpException(chatIdList.message, chatIdList.httpCode);

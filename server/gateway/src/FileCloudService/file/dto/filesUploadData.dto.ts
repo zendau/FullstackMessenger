@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsString, Length, Min, IsUUID } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
 export class FilesUploadDataDTO {
   @ApiProperty({
