@@ -89,10 +89,7 @@ export default {
       }
 
       if (inseredUserData.inseredData.userId === userId.value) {
-        store.dispatch("chat/getChatMessages", {
-          chatId: inseredUserData.inseredData.chatId,
-          userId: userId.value,
-        });
+        store.dispatch("chat/getChatMessages", inseredUserData.inseredData.chatId);
       } else {
         const userData = store.state.users.usersList.get(inseredUserData.inseredData.userId);
 

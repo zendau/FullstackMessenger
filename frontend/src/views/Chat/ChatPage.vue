@@ -117,10 +117,7 @@ export default {
       if (!paginationPage) {
         store.commit("chat/clearChatMessages", roomId);
         console.log("GET CHAT MESSGES");
-        store.dispatch("chat/getChatMessages", {
-          chatId: roomId,
-          userId: userId.value,
-        });
+        store.dispatch("chat/getChatMessages", roomId);
       }
     }
 

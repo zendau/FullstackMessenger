@@ -38,7 +38,7 @@ export default {
     const searchPattern = ref(null);
     const isShowMobileMessages = inject("isShowMobileMessages");
     const chatsData = computed(() => store.state.chat.chats);
-    const userId = computed(() => store.state.auth.user.id);
+
     function openChat(chatId) {
       emit("open-chat", chatId);
     }
@@ -53,10 +53,7 @@ export default {
         return;
       }
 
-      store.dispatch("chat/getChatsByPattern", {
-        userId: userId.value,
-        pattern,
-      });
+      store.dispatch("chat/getChatsByPattern", pattern);
     };
 
     function setLastChatItem(component, index) {

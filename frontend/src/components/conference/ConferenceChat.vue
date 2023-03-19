@@ -20,13 +20,9 @@ export default {
 
     const chatId = computed(() => router.params.id);
     provide("chatId", chatId);
-    const userData = computed(() => store.state.auth.user);
 
     onMounted(() => {
-      store.dispatch("chat/getChatMessages", {
-        chatId: chatId.value,
-        userId: userData.value.id,
-      });
+      store.dispatch("chat/getChatMessages", chatId.value);
     });
 
     return {

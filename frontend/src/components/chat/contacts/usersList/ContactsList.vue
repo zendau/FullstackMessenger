@@ -48,7 +48,6 @@ export default {
   setup(_, { emit }) {
     const store = useStore();
     const listData = computed(() => store.state.contact.contacts);
-    const userId = computed(() => store.state.auth.user.id);
 
     const modalUserId = inject("modalUserId");
     const contactsPattern = inject("contactsPattern");
@@ -90,7 +89,7 @@ export default {
 
     function checkPrivateContact(contactData) {
       console.log("CHAT", contactData);
-      store.dispatch("chat/getPrivateChatId", { userId: userId.value, contactData, openChat });
+      store.dispatch("chat/getPrivateChatId", { contactData, openChat });
     }
 
     function openChat(chatId) {

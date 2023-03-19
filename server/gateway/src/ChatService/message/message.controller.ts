@@ -17,15 +17,15 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
-import { JwtAuthGuard } from 'src/AuthService/guards/jwt-auth.guard';
-import { HttpErrorDTO } from 'src/AuthService/ResponseDTO/httpError.dto';
-import { MessageDTO } from './dto/message.dto';
-import { UpdateMessageDTO } from './dto/update-message.dto';
-import IChatPagination from '../interfaces/IChatPagination';
+import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
+import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
+import { MessageDTO } from '@/ChatService/message/dto/message.dto';
+import { UpdateMessageDTO } from '@/ChatService/message/dto/update-message.dto';
+import IChatPagination from '@/ChatService/interfaces/IChatPagination';
 
 @ApiBearerAuth()
 @ApiTags('Chat microservice - Message controller')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('message')
 export class MessageController {
   constructor(

@@ -57,7 +57,6 @@ export default {
     const selectedMessages = inject("selectedMessages");
     const chatId = inject("chatId");
     const messages = computed(() => store.state.chat.messages[chatId.value]);
-    const userId = computed(() => store.state.auth.user.id);
     const scrollEnd = ref(null);
     const chatData = inject("chatData");
     const isConferenceChat = inject("isConferenceChat", false);
@@ -123,11 +122,7 @@ export default {
           });
           messageScrollObserver.unobserve(entries[0].target);
 
-          console.log("!1");
-          store.dispatch("chat/getChatMessages", {
-            chatId: chatId.value,
-            userId: userId.value,
-          });
+          store.dispatch("chat/getChatMessages", chatId.value);
           readMessageObserver.disconnect();
         }
       },

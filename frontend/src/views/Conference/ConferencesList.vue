@@ -32,8 +32,6 @@ export default {
   setup() {
     const store = useStore();
 
-    const userId = computed(() => store.state.auth.user.id);
-
     const chatsList = computed(() => store.getters["chat/chatList"]);
 
     const searchPattern = ref(null);
@@ -55,10 +53,7 @@ export default {
         return;
       }
 
-      store.dispatch("chat/getChatsByPattern", {
-        userId: userId.value,
-        pattern,
-      });
+      store.dispatch("chat/getChatsByPattern", pattern);
     };
 
     function setLastRoomElement(component, index) {

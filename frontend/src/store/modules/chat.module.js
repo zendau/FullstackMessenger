@@ -38,7 +38,6 @@ export const chat = {
         if (!state.chats.has(messagesData.roomId)) {
           const res = await $api.get("/chat/byId", {
             params: {
-              userId,
               chatId: messagesData.roomId,
             },
           });
@@ -62,12 +61,11 @@ export const chat = {
         });
       }
     },
-    async getChatMessages({ commit, state }, { chatId, userId }) {
+    async getChatMessages({ commit, state }, chatId) {
       try {
         if (!state.chats.has(chatId)) {
           const chatData = await $api.get("/chat/byId", {
             params: {
-              userId,
               chatId,
             },
           });
@@ -175,12 +173,11 @@ export const chat = {
         });
       }
     },
-    async getChatsByPattern({ commit }, searchData) {
+    async getChatsByPattern({ commit }, pattern) {
       try {
         const res = await $api.get("/chat/serch", {
           params: {
-            userId: searchData.userId,
-            pattern: searchData.pattern,
+            pattern,
           },
         });
 
@@ -250,11 +247,10 @@ export const chat = {
         });
       }
     },
-    async getPrivateChatId({ commit }, { userId, contactData, openChat }) {
+    async getPrivateChatId({ commit }, { contactData, openChat }) {
       try {
         const res = await $api.get("/chat/checkPrivate", {
           params: {
-            userId,
             contactId: contactData.id,
           },
         });

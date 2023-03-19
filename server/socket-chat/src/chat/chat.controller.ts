@@ -8,6 +8,7 @@ import IGetContactList from './interfaces/IGetContactList';
 import { SocketService } from 'src/socket/socket.service';
 import IChatPagination from 'src/socket/interfaces/chat/IChatPagination';
 import IChatSearch from 'src/socket/interfaces/chat/IChatSearch';
+import IChatLoad from 'src/socket/interfaces/user/IChatLoad';
 
 @Controller('chat')
 export class ChatController {
@@ -150,7 +151,7 @@ export class ChatController {
   }
 
   @MessagePattern('chat/byId')
-  async loadChatById(@Payload() loadData: IUserChat) {
+  async loadChatById(@Payload() loadData: IChatLoad) {
     const userRoomsData = await this.socketService
       .getCurrentChatById(loadData.userId, loadData.chatId)
       .catch((err) => {
