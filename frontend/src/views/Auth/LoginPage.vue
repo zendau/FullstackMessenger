@@ -42,6 +42,7 @@ import onInvalidSubmit from "@/utils/onInvalidSubmit";
 
 import FormInput from "@/components/UI/FormInput.vue";
 import AlertNotification from "@/components/UI/AlertNotification.vue";
+import { onUnmounted } from "vue";
 export default {
   components: { AlertNotification, FormInput },
   setup() {
@@ -60,6 +61,10 @@ export default {
 
     const { errorMessage: errorMessageEmail, value: email } = useField("email");
     const { errorMessage: errorMessagePassword, value: password } = useField("password");
+
+    onUnmounted(() => {
+      store.commit("alert/hotClearAlert");
+    });
 
     const onSubmitForm = handleSubmit((value) => {
       store.commit("alert/clearAlert");

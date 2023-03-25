@@ -1,9 +1,9 @@
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { Media } from 'src/message/entities/media.entity';
-import { Message } from 'src/message/entities/message.entity';
-import { MessageService } from 'src/message/message.service';
+import { Media } from '@/message/entities/media.entity';
+import { Message } from '@/message/entities/message.entity';
+import { MessageService } from '@/message/message.service';
 
 @Injectable()
 export class TasksService {
@@ -16,9 +16,6 @@ export class TasksService {
 
   @Cron('30 * * * * *')
   async messagesCron() {
-    // LRANGE key_processing 0 -1
-    // DEL key_processing
-    //const messageKeys = await this.redis.keys('message:*');
     const messagesData: [Error, Message][] = [];
     let scanPos = 0;
     while (true) {
@@ -96,18 +93,12 @@ export class TasksService {
       multiPipe.exec();
     }
 
-    // for (const key of messageKeys) {
-    //   //this.logger.debug(`messageKey - ${key}`);
-    //   const messages = await this.redis.lrange(key, 0, -1);
-    //   //this.logger.debug(`saveMessages - ${messages}`);
-    //   await this.redis.del(key);
-    // }
-
     this.logger.debug('Called when the current second is 45');
   }
 
   @Cron('0 50 21 * * 0-6')
-  alertDateChatCron() {
+  clearDateChatCron() {
     this.logger.debug('CLEAR');
+    this.redis.del('chatDate');
   }
 }

@@ -1,31 +1,31 @@
-import { Chat } from './entities/chat.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 import {
-  HttpException,
   HttpStatus,
   Inject,
   Injectable,
   forwardRef,
+  Logger,
 } from '@nestjs/common';
-import { Connection, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { ChatUsers } from './entities/chatUsers.entity';
-import { ClientProxy } from '@nestjs/microservices';
-import { Message } from 'src/message/entities/message.entity';
-import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
-import IUser from './interfaces/IUser';
-import IGetDataError from './interfaces/IGetDataError';
-import IChat from './interfaces/IChat';
-import { UserService } from './user.service';
-import IChatPagination from 'src/socket/interfaces/chat/IChatPagination';
-import IUserChat from 'src/socket/interfaces/user/IUserChat';
-import IChatCreate from './interfaces/IChatCreate';
-import IGetContactList from './interfaces/IGetContactList';
-import { SocketService } from 'src/socket/socket.service';
+import { Repository } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
+
+import { Chat } from '@/chat/entities/chat.entity';
+import { ChatUsers } from '@/chat/entities/chatUsers.entity';
+import { ClientProxy } from '@nestjs/microservices';
+import { Message } from '@/message/entities/message.entity';
+import { SocketRedisAdapter } from '@/socket/socketRedisAdapter.service';
+import IChat from '@/chat/interfaces/IChat';
+import { UserService } from '@/chat/user.service';
+import IChatPagination from '@/socket/interfaces/chat/IChatPagination';
+import IUserChat from '@/socket/interfaces/user/IUserChat';
+import IChatCreate from '@/chat/interfaces/IChatCreate';
+import IGetContactList from '@/chat/interfaces/IGetContactList';
+import { SocketService } from '@/socket/socket.service';
 
 @Injectable()
 export class ChatService {
+  private readonly logger = new Logger(ChatService.name);
+
   constructor(
     @InjectRepository(Chat)
     private chatRepository: Repository<Chat>,
@@ -129,7 +129,7 @@ export class ChatService {
     if (res === undefined)
       return {
         status: false,
-        message: `chat id - ${id} is not valid`,
+        message: 'error.notFoundChat',
         httpCode: HttpStatus.BAD_REQUEST,
       };
 
@@ -142,9 +142,10 @@ export class ChatService {
       );
       return res;
     } catch (e) {
+      this.logger.error(e.message);
       return {
         status: false,
-        message: e.message as string,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
@@ -159,10 +160,6 @@ export class ChatService {
 
       const usersEntity: ChatUsers[] = [];
 
-      // if (chatData?.adminId) {
-      //   usersEntity.push(this.createEntity(chatData.adminId, chatInseted));
-      // }
-
       chatData.users.forEach((userId) => {
         usersEntity.push(this.createEntity(userId, chatInseted));
       });
@@ -171,9 +168,10 @@ export class ChatService {
 
       return chatInseted;
     } catch (e) {
+      this.logger.error(e.sqlMessage ?? e);
       return {
         status: false,
-        message: e.sqlMessage ?? e,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
@@ -185,21 +183,6 @@ export class ChatService {
     userChat.userId = userId;
     return userChat;
   }
-
-  // async update(updateRoomDTO: IEditRoomDTO) {
-  //   const res = await this.roomRepository
-  //     .createQueryBuilder()
-  //     .update()
-  //     .set({
-  //       adminLogin: updateRoomDTO.adminLogin,
-  //       roomId: uuidv4(),
-  //       roomTitle: updateRoomDTO.roomTitle,
-  //     })
-  //     .where(`id = ${updateRoomDTO.id}`)
-  //     .execute();
-
-  //   return !!res.affected;
-  // }
 
   async remove(id: string) {
     const res = await this.chatRepository
@@ -220,14 +203,10 @@ export class ChatService {
       .getRawMany();
 
     const usersIdList = res.map((item) => item.userId);
-    // const usersData = await this.getUsersListData(usersIdList);
-    // return usersData;
-    console.log('@', usersIdList);
     return usersIdList;
   }
 
   async getUsersListData(userList: number[]) {
-    console.log('12', userList);
     const usersData = await Promise.all(
       userList.map(async (userId) => {
         const res = await this.userService.getUserById(userId);
@@ -319,8 +298,6 @@ export class ChatService {
       contactList.resList[item.userId].chat = item.chat.id;
     });
 
-    console.log('privateData', privateData);
-
     return contactList;
   }
 
@@ -346,7 +323,6 @@ export class ChatService {
   }
 
   async checkPrivateChat(userId: number, contactId: number) {
-    console.log('!!@13', userId, contactId);
     const chatId = await this.socketRedisAdapter.getValue(
       'privateChat',
       {

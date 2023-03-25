@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Logger,
   Param,
   ParseIntPipe,
   Post,
@@ -20,6 +21,8 @@ import filenameStorage from './multer/filename.storage';
 
 @Controller('file')
 export class FileController {
+  private readonly logger = new Logger(FileController.name);
+
   constructor(private readonly fileService: FileService) {}
 
   @Post('add')
@@ -54,7 +57,7 @@ export class FileController {
     console.log('filesData', filesData);
     const res = await this.fileService.create(filesData).catch((err) => {
       const errorMessage =
-        err.errno === 1452 ? 'foulderId is not found' : err.sqlMessage;
+        err.errno === 1452 ? ['error.notFoundFoulder'] : 'error.unexpected';
 
       return {
         status: false,
@@ -65,29 +68,13 @@ export class FileController {
     return res;
   }
 
-  // @MessagePattern('file/add')
-  // async create(@Payload() filesData) {
-  //   debugger;
-  //   const res = await this.fileService.create(filesData).catch((err) => {
-  //     const errorMessage =
-  //       err.errno === 1452 ? 'foulderId is not found' : err.sqlMessage;
-
-  //     return {
-  //       status: false,
-  //       message: errorMessage,
-  //       httpCode: HttpStatus.BAD_REQUEST,
-  //     };
-  //   });
-  //   return res;
-  // }
-
   @MessagePattern('file/getAll')
   async findAll() {
     const res = await this.fileService.getAll().catch((err) => {
-      console.log(err);
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
@@ -98,74 +85,28 @@ export class FileController {
   async findOne(@Payload() fileId: number) {
     const res = await this.fileService.getById(fileId).catch((err) => {
       console.log('err', err);
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
     return res;
   }
 
-  // @MessagePattern('file/delete')
-  // async remove(@Payload() fileId: number) {
-  //   const res = await this.fileService.removeFromDb(fileId).catch((err) => {
-  //     if (err.sqlMessage) {
-  //       return {
-  //         status: false,
-  //         message: err.sqlMessage,
-  //         httpCode: HttpStatus.BAD_REQUEST,
-  //       };
-  //     } else {
-  //       return {
-  //         status: false,
-  //         message: err.message,
-  //         httpCode: HttpStatus.BAD_REQUEST,
-  //       };
-  //     }
-  //   });
-  //   return res;
-  // }
-
   @MessagePattern('file/deleteMany')
   async remove(@Payload() fileList: any[]) {
     const res = await this.fileService.removeMany(fileList).catch((err) => {
-      if (err.sqlMessage) {
-        return {
-          status: false,
-          message: err.sqlMessage,
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      } else {
-        return {
-          status: false,
-          message: err.message,
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      }
+      this.logger.error(err.sqlMessage ?? err.message);
+      return {
+        status: false,
+        message: 'error.unexpected',
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
     });
     return res;
   }
-
-  // @MessagePattern('file/edit')
-  // async messagesFileData(@Payload() editData: any) {
-  //   const res = await this.fileService.update(editData).catch((err) => {
-  //     if (err.sqlMessage) {
-  //       return {
-  //         status: false,
-  //         message: err.sqlMessage,
-  //         httpCode: HttpStatus.BAD_REQUEST,
-  //       };
-  //     } else {
-  //       return {
-  //         status: false,
-  //         message: err.message,
-  //         httpCode: HttpStatus.BAD_REQUEST,
-  //       };
-  //     }
-  //   });
-  //   return res;
-  // }
 
   @Get('download/:id')
   async dowloadFile(
@@ -180,7 +121,7 @@ export class FileController {
     } else {
       response.status(HttpStatus.BAD_REQUEST).send({
         status: false,
-        message: `no such file with id ${fileId}`,
+        message: ['error.notFoundFile', fileId],
         httpCode: HttpStatus.BAD_REQUEST,
       });
     }

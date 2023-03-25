@@ -1,5 +1,5 @@
 import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ChatUsers } from './chatUsers.entity';
+import { ChatUsers } from '@/chat/entities/chatUsers.entity';
 
 @Entity()
 export class Chat {

@@ -1,5 +1,6 @@
 {
   "confirmCode": {
-    "title": "Confirm code"
+    "title": "Confirm code",
+    "btn": "Confirm"
   }
 }

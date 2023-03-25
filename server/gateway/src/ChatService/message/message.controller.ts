@@ -15,7 +15,12 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
 import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
@@ -28,10 +33,7 @@ import IChatPagination from '@/ChatService/interfaces/IChatPagination';
 @UseGuards(JwtAuthGuard)
 @Controller('message')
 export class MessageController {
-  constructor(
-    @Inject('CHAT_SERVICE') private chatServiceClient: ClientProxy,
-    @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
-  ) {}
+  constructor(@Inject('CHAT_SERVICE') private chatServiceClient: ClientProxy) {}
 
   @ApiOperation({ summary: 'Add new message' })
   @ApiResponse({ status: 200, type: UpdateMessageDTO })
@@ -76,7 +78,6 @@ export class MessageController {
     return res;
   }
 
-
   @ApiOperation({ summary: 'Edit message by id' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
@@ -91,7 +92,6 @@ export class MessageController {
     }
     return res;
   }
-
 
   @ApiOperation({ summary: 'Delete message by id' })
   @ApiResponse({ status: 200, description: 'Success operation' })

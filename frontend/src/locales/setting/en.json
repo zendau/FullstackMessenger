@@ -38,5 +38,10 @@
   },
   "deviceData": {
     "open": "Open"
+  },
+  "role": {
+    "ADMIN": "Admin",
+    "MODERATOR": "Moderator",
+    "USER": "User"
   }
 }

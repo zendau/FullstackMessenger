@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository, QueryRunner } from 'typeorm';
 import { randomBytes } from 'crypto';
@@ -18,6 +18,7 @@ import IUserData from './interfaces/IUserData';
 @Injectable()
 export class AuthService {
   private queryRunner: QueryRunner;
+  private readonly logger = new Logger(AuthService.name);
 
   constructor(
     @InjectRepository(User)
@@ -69,7 +70,7 @@ export class AuthService {
       await this.queryRunner.rollbackTransaction();
       return {
         status: false,
-        message: 'Wrong credentials provided',
+        message: 'error.wrongCredentials',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     } finally {
@@ -91,9 +92,10 @@ export class AuthService {
         message: `Email - is not exist`,
       };
     } catch (e) {
+      this.logger.error(e.message);
       return {
         status: false,
-        message: e.message,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
@@ -129,9 +131,10 @@ export class AuthService {
       await this.confirmCodeService.deleteConfirmCode(userData.email);
       return tokens;
     } catch (e) {
+      this.logger.error(e.message);
       return {
         status: false,
-        message: e.message,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
@@ -187,7 +190,7 @@ export class AuthService {
     if (!statusUpdated.affected) {
       return {
         status: false,
-        message: 'Not valid reset data',
+        message: 'error.invalidResetData',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }

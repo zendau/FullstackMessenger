@@ -1,13 +1,11 @@
-import { MessageModule } from './../message/message.module';
 import { Module, forwardRef } from '@nestjs/common';
-import { SocketService } from './socket.service';
-import { SocketGateway } from './socket.gateway';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
-import { ChatModule } from 'src/chat/chat.module';
-import { TasksService } from './task.service';
-import { SocketRedisAdapter } from './socketRedisAdapter.service';
-import { ChatService } from 'src/chat/chat.service';
+import { MessageModule } from '@/message/message.module';
+import { SocketService } from '@/socket/socket.service';
+import { SocketGateway } from '@/socket/socket.gateway';
+import { ChatModule } from '@/chat/chat.module';
+import { SocketRedisAdapter } from '@/socket/socketRedisAdapter.service';
 
 @Module({
   imports: [

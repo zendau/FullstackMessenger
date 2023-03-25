@@ -52,85 +52,12 @@ export class FileService {
     if (res === undefined)
       return {
         status: false,
-        message: `fileId ${fileId} is not valid`,
+        message: ['error.notFoundFile', fileId],
         httpCode: HttpStatus.BAD_REQUEST,
       };
 
     return res;
   }
-
-  // async update(updateFileDTO: any) {
-  //   try {
-  //     const filesId = JSON.parse(updateFileDTO.filesId);
-  //     const fileData = updateFileDTO.filesData;
-
-  //     if (filesId.length !== fileData.length) {
-  //       throw new Error();
-  //     }
-
-  //     await Promise.all(
-  //       filesId.map(async (fileId, index) => {
-  //         const res = await this.fileRepository
-  //           .createQueryBuilder()
-  //           .update()
-  //           .set({
-  //             fileName: fileData[index].fileName,
-  //             fileTempName: fileData[index].fileTempName,
-  //             mimetype: fileData[index].mimetype,
-  //             size: fileData[index].size,
-  //           })
-  //           .where('id = :fileId', { fileId })
-  //           .execute();
-  //         if (!!res.affected === false) throw new Error();
-  //         return true;
-  //       }),
-  //     );
-  //     return true;
-  //   } catch (e) {
-  //     updateFileDTO.filesData.forEach((file) => {
-  //       this.removeFromStorage(file.fileTempName, updateFileDTO.path);
-  //     });
-
-  //     return {
-  //       status: false,
-  //       message: 'Invalid creditans',
-  //       httpCode: HttpStatus.BAD_REQUEST,
-  //     };
-  //   }
-
-  //   return true;
-  //   // const file = await this.getById(updateFileDTO.id);
-  //   // if (file instanceof File) {
-  //   //   const error = this.removeFromStorage(file);
-
-  //   //   if (typeof error === 'string') {
-  //   //     throw new Error(error);
-  //   //   }
-
-  //   //   const foulder = await this.foulderService.getByPath(updateFileDTO.path);
-  //   //   if (!(foulder instanceof Foulder)) {
-  //   //     return foulder;
-  //   //   }
-
-  //   //   const res = await this.fileRepository
-  //   //     .createQueryBuilder()
-  //   //     .update()
-  //   //     .set({
-  //   //       fileName: updateFileDTO.fileName,
-  //   //       fileTempName: updateFileDTO.fileTempName,
-  //   //       mimetype: updateFileDTO.mimetype,
-  //   //       size: updateFileDTO.size,
-  //   //       userId: updateFileDTO.userId,
-  //   //       foulder: foulder,
-  //   //     })
-  //   //     .where(`id = ${updateFileDTO.id}`)
-  //   //     .execute();
-
-  //   //   return !!res.affected;
-  //   // } else {
-  //   //   return file;
-  //   // }
-  // }
 
   async removeMany(idList: number[]) {
     const resRemoveStatuses = await Promise.all(

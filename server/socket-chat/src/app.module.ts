@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { SocketModule } from './socket/socket.module';
-import { ChatModule } from './chat/chat.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MessageModule } from './message/message.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TasksService } from './socket/task.service';
+import { SocketModule } from '@/socket/socket.module';
+import { ChatModule } from '@/chat/chat.module';
+import { MessageModule } from '@/message/message.module';
+import { TasksService } from '@/socket/task.service';
 
 @Module({
   imports: [

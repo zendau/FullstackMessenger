@@ -4,7 +4,6 @@ import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
 import { firstValueFrom } from 'rxjs';
 import IUser from './interfaces/IUser';
 import IGetDataError from './interfaces/IGetDataError';
-import IUserChat from 'src/socket/interfaces/user/IUserChat';
 import IGetContactList from './interfaces/IGetContactList';
 
 @Injectable()
@@ -25,17 +24,6 @@ export class UserService {
     return res;
   }
 
-  // async getContacts() {
-  //   const res: IUser[] | IGetDataError = await firstValueFrom(
-  //     this.authServiceClient.send('user/all', ''),
-  //   );
-
-  //   if ('status' in res) {
-  //     throw new HttpException(res.message, res.httpCode);
-  //   }
-  //   return res;
-  // }
-
   async getManyUserByid(idList: number[]) {
     const res: IUser[] | IGetDataError = await firstValueFrom(
       this.authServiceClient.send('user/idList', idList),
@@ -48,8 +36,6 @@ export class UserService {
   }
 
   async getUserById(userId: number) {
-    console.log('!', userId);
-    debugger;
     if (!userId) return;
 
     const userData: IUser = await this.socketRedisAdapter.getValue(
@@ -67,18 +53,6 @@ export class UserService {
     );
     return userData;
   }
-
-  // async getInvaitedUsers(usersIdList: number[]) {
-  //   const allUsers = await this.getContacts();
-
-  //   //const ids = usersId.map((id) => parseInt(id));
-
-  //   const invaitedUsers = allUsers.filter(
-  //     (userData) => usersIdList.indexOf(userData.id) === -1,
-  //   );
-
-  //   return invaitedUsers;
-  // }
 
   async updateLastOnline(userId: number, lastOnline: Date) {
     const res: boolean | IGetDataError = await firstValueFrom(

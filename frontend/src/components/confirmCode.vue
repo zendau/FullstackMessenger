@@ -11,7 +11,7 @@
     />
     <input
       type="submit"
-      value="Confirm"
+      :value="$t('ui.confirmCode.btn')"
     >
   </form>
 </template>
@@ -53,6 +53,7 @@ export default {
 
     onUnmounted(() => {
       store.commit("auth/setIsConfirmCode", false);
+      store.commit("alert/hotClearAlert");
     });
 
     const { value: confirmCode } = useField("confirmCode");

@@ -3,7 +3,7 @@
     {{ $t("setting.settingAccount.hello") }} {{ userData.login }}
   </h1>
   <p class="user__text">
-    {{ $t("setting.settingAccount.role") }} {{ userData.role }}
+    {{ $t("setting.settingAccount.role") }} {{ $t(`setting.role.${userData.role}`) }}
   </p>
   <hr class="user__hr">
   <h2 class="user__title">

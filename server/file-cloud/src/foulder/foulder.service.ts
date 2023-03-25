@@ -1,5 +1,5 @@
 import { Foulder } from './entities/foulder.entity';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { IFoulderDTO } from './dto/foulder.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import * as fs from 'fs';
 
 @Injectable()
 export class FoulderService {
+  private readonly logger = new Logger(FoulderService.name);
   constructor(
     @InjectRepository(Foulder)
     private foulderRepository: Repository<Foulder>,
@@ -20,7 +21,7 @@ export class FoulderService {
         if (err) {
           return {
             status: false,
-            message: err.code,
+            message: 'error.unexpected',
             httpCode: HttpStatus.BAD_REQUEST,
           };
         }
@@ -30,7 +31,7 @@ export class FoulderService {
     } else {
       return {
         status: false,
-        message: `foulder with name '${createFoulderDTO.path}' is alredy exist`,
+        message: ['error.foulderExist', createFoulderDTO.path],
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
@@ -49,7 +50,7 @@ export class FoulderService {
     if (res === undefined)
       return {
         status: false,
-        message: `foulderId ${id} is not valid`,
+        message: ['error.notFoundFoulder', id],
         httpCode: HttpStatus.BAD_REQUEST,
       };
 
@@ -65,7 +66,7 @@ export class FoulderService {
     if (res === undefined)
       return {
         status: false,
-        message: `foulder path - ${path} is not found`,
+        message: ['error.notFoundFoulderPath', path],
         httpCode: HttpStatus.BAD_REQUEST,
       };
 
@@ -83,7 +84,7 @@ export class FoulderService {
           if (err) {
             return {
               status: false,
-              message: err.code,
+              message: 'error.unexpected',
               httpCode: HttpStatus.BAD_REQUEST,
             };
           }
@@ -101,14 +102,14 @@ export class FoulderService {
       } else {
         return {
           status: false,
-          message: `foulder with new name '${newFoulderExist.path}' is alredy exist`,
+          message: ['error.foulderExist', updateFoulderDTO.path],
           httpCode: HttpStatus.BAD_REQUEST,
         };
       }
     } else {
       return {
         status: false,
-        message: `curr foulder with id '${updateFoulderDTO.id}' is not found`,
+        message: ['error.notFoundFoulder', updateFoulderDTO.id],
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
@@ -123,7 +124,7 @@ export class FoulderService {
         if (err) {
           return {
             status: false,
-            message: err.code,
+            message: 'error.unexpected',
             httpCode: HttpStatus.BAD_REQUEST,
           };
         }
@@ -139,7 +140,7 @@ export class FoulderService {
     } else {
       return {
         status: false,
-        message: `foulder with id '${id}' is not found`,
+        message: ['error.notFoundFoulder', id],
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }

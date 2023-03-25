@@ -41,9 +41,10 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px;
+  padding: 10px;
   min-height: 50px;
   align-self: center;
+  border-radius: 2px;
 
   &__danger {
     background-color: var(--color-danger);

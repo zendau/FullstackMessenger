@@ -1,6 +1,3 @@
-import { Media } from './entities/media.entity';
-import { Chat } from './../chat/entities/chat.entity';
-import { ChatService } from './../chat/chat.service';
 import {
   HttpException,
   HttpStatus,
@@ -8,17 +5,21 @@ import {
   Injectable,
   forwardRef,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Message } from './entities/message.entity';
-import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { IMessage } from './interfaces/IMessage';
-import IEditMessage from 'src/socket/interfaces/message/IEditMessage';
-import IFile from 'src/socket/interfaces/message/IFile';
-import { IDeletedData } from 'src/socket/interfaces/message/IDeleteMessage';
-import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
-import IChatMessages from 'src/socket/interfaces/chat/IChatMessages';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ClientProxy } from '@nestjs/microservices';
+import { Repository } from 'typeorm';
+
+import { Media } from '@/message/entities/media.entity';
+import { Chat } from '@/chat/entities/chat.entity';
+import { ChatService } from '@/chat/chat.service';
+import { Message } from '@/message/entities/message.entity';
+import { IMessage } from '@/message/interfaces/IMessage';
+import IEditMessage from '@/socket/interfaces/message/IEditMessage';
+import IFile from '@/socket/interfaces/message/IFile';
+import { IDeletedData } from '@/socket/interfaces/message/IDeleteMessage';
+import { SocketRedisAdapter } from '@/socket/socketRedisAdapter.service';
+import IChatMessages from '@/socket/interfaces/chat/IChatMessages';
 
 @Injectable()
 export class MessageService {
@@ -73,11 +74,6 @@ export class MessageService {
   }
 
   async getRoomMessages(scrollData: IChatMessages) {
-    //
-    // const messagesKeys = await this.socketRedisAdapter.getBranchesSubKeys(
-    //   'message',
-    //   roomId,
-    // );
     let roomMessages: Message[] = [];
     const page = parseInt(scrollData.page);
 
@@ -162,7 +158,7 @@ export class MessageService {
     if (res === undefined)
       return {
         status: false,
-        message: `messageId ${messageId} is not valid`,
+        message: ['error.notFoundMessage', messageId],
         httpCode: HttpStatus.BAD_REQUEST,
       };
 
@@ -181,7 +177,7 @@ export class MessageService {
       .execute();
 
     if (updateMessageData.deletedFiles?.length > 0) {
-      const files = await this.mediaRepository
+      await this.mediaRepository
         .createQueryBuilder()
         .delete()
         .where('messageId = :messageId', {
@@ -192,7 +188,7 @@ export class MessageService {
         })
         .execute();
 
-      const deleteStatus = await this.fileServiceClient.send(
+      await this.fileServiceClient.send(
         'file/deleteMany',
         updateMessageData.deletedFiles,
       );
@@ -204,15 +200,6 @@ export class MessageService {
         updateMessageData.messageId,
       );
     }
-    // const filesInsered = await Promise.all(
-    //   files.map(async (fileId) => {
-    //     const resInsered = await this.mediaRepository.save({
-    //       fileId,
-    //       message: messageInsered,
-    //     });
-    //     return resInsered.fileId;
-    //   }),
-    // );
 
     return !!res.affected;
   }
@@ -242,11 +229,9 @@ export class MessageService {
   async setFilesDataToMessage(media: Media[]) {
     return await Promise.all(
       media.map(async (file) => {
-        console.log('file', file);
         const res = await firstValueFrom(
           this.fileServiceClient.send('file/get', file.fileId),
         );
-        console.log('res', res);
         if (res.status === false) {
           throw new HttpException(res.message, res.httpCode);
         }

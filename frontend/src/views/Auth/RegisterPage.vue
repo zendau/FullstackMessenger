@@ -49,7 +49,7 @@
 import { useStore } from "vuex";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
-import { computed, ref } from "vue";
+import { computed, onUnmounted, ref } from "vue";
 import onInvalidSubmit from "@/utils/onInvalidSubmit";
 import { useI18n } from "vue-i18n";
 
@@ -84,6 +84,10 @@ export default {
     const { value: login } = useField("login");
     const { value: password } = useField("password");
     const { value: confirmPassword } = useField("confirmPassword");
+
+    onUnmounted(() => {
+      store.commit("alert/hotClearAlert");
+    });
 
     const onSubmitForm = handleSubmit((value) => {
       registerData.value = value;

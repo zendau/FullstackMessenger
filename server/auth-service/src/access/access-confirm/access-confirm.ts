@@ -63,7 +63,7 @@ export class ConfirmCodeService {
 
     return {
       status: false,
-      message: `Confirm code is not valid`,
+      message: 'error.confirmCodeValid',
       httpCode: HttpStatus.BAD_REQUEST,
     };
   }

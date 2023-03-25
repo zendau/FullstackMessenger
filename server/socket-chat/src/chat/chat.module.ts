@@ -1,15 +1,13 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { ChatService } from './chat.service';
-import { ChatController } from './chat.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Chat } from './entities/chat.entity';
-import { ChatUsers } from './entities/chatUsers.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
-import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
-import { UserService } from './user.service';
-import { SocketService } from 'src/socket/socket.service';
-import { SocketModule } from 'src/socket/socket.module';
+import { ChatService } from '@/chat/chat.service';
+import { ChatController } from '@/chat/chat.controller';
+import { Chat } from '@/chat/entities/chat.entity';
+import { ChatUsers } from '@/chat/entities/chatUsers.entity';
+import { UserService } from '@/chat/user.service';
+import { SocketModule } from '@/socket/socket.module';
 
 @Module({
   imports: [

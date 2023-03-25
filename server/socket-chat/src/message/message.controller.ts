@@ -1,13 +1,13 @@
-import { Controller, HttpStatus } from '@nestjs/common';
-import { MessageService } from './message.service';
-
+import { Controller, HttpStatus, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { IMessage } from './interfaces/IMessage';
-import IChatMessages from 'src/socket/interfaces/chat/IChatMessages';
-//import IUpdateMessage from './interfaces/IUpdateMessage';
+
+import { MessageService } from '@/message/message.service';
+import { IMessage } from '@/message/interfaces/IMessage';
+import IChatMessages from '@/socket/interfaces/chat/IChatMessages';
 
 @Controller('message')
 export class MessageController {
+  private readonly logger = new Logger(MessageController.name);
   constructor(private readonly messageService: MessageService) {}
 
   @MessagePattern('message/add')
@@ -15,9 +15,10 @@ export class MessageController {
     const res = await this.messageService
       .create(createMessageDto)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -29,9 +30,10 @@ export class MessageController {
     const res = await this.messageService
       .getRoomMessages(loadData)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -41,35 +43,23 @@ export class MessageController {
   @MessagePattern('message/get')
   async findOne(@Payload() messageId: string) {
     const res = await this.messageService.getById(messageId).catch((err) => {
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
     return res;
   }
 
-  // @MessagePattern('message/edit')
-  // async update(@Payload() updateMessageDto: IUpdateMessage) {
-  //   const res = await this.messageService
-  //     .update(updateMessageDto)
-  //     .catch((err) => {
-  //       return {
-  //         status: false,
-  //         message: err.sqlMessage,
-  //         httpCode: HttpStatus.BAD_REQUEST,
-  //       };
-  //     });
-  //   return res;
-  // }
-
   @MessagePattern('message/delete')
   async remove(@Payload() messageId: number) {
     const res = await this.messageService.remove(messageId).catch((err) => {
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });

@@ -1,4 +1,4 @@
-import { HttpStatus } from "@nestjs/common";
+import { HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 export async function hashPassword(password: string) {
@@ -11,7 +11,7 @@ export async function comparePassword(password: string, hash: string) {
   if (!resCompare)
     return {
       status: false,
-      message: `Password is wrong`,
+      message: 'error.incorrectPassword',
       httpCode: HttpStatus.BAD_REQUEST,
     };
 

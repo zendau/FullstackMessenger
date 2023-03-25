@@ -1,4 +1,6 @@
 import debounce from "@/utils/debounce";
+import i18n from "@/locales/index";
+const { t: $t } = i18n.global;
 
 const alertTypes = {
   success: "success",
@@ -12,21 +14,24 @@ export const alert = {
     type: null,
   },
   mutations: {
+    hotClearAlert: (state) => {
+      state.text = "";
+      state.type = null;
+    },
     clearAlert: debounce((state) => {
       state.text = "";
       state.type = null;
     }, 4000),
     setErrorMessage(state, text) {
-      let message = null;
-      if (typeof text === "string") {
-        message = text;
+      if (Array.isArray(text)) {
+        state.text = $t(text[0], text[1]);
+      } else if (typeof text === "string") {
+        state.text = text;
       } else if (text.message) {
-        [message] = text;
+        state.text = text;
       } else {
-        [message] = text;
+        state.text = text;
       }
-
-      state.text = message;
       state.type = alertTypes.danger;
 
       this.commit("alert/clearAlert");

@@ -55,7 +55,7 @@ import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 
 import FormInput from "@/components/UI/FormInput.vue";
-import { computed } from "vue";
+import { computed, onUnmounted } from "vue";
 import onInvalidSubmit from "@/utils/onInvalidSubmit";
 
 export default {
@@ -101,6 +101,10 @@ export default {
     const { value: confirmPassword } = useField("confirmPassword", {}, { initialValue: "" });
     const { value: phoneNumber } = useField("phoneNumber", {}, { initialValue: userData.value.info?.phone });
     const { value: userDetails } = useField("userDetails", {}, { initialValue: userData.value.info?.details });
+
+    onUnmounted(() => {
+      store.commit("alert/hotClearAlert");
+    });
 
     const onSubmitForm = handleSubmit((changeData) => {
       console.log("value", changeData, userData);

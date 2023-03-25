@@ -47,10 +47,6 @@ export default {
 
     const { t } = useI18n();
 
-    onUnmounted(() => {
-      store.commit("alert/clearAlert");
-    });
-
     const schema = yup.object({
       email: yup.string().required().email().label(t("view.forgotPage.email")),
     });
@@ -60,6 +56,10 @@ export default {
     });
 
     const { value: email } = useField("email");
+
+    onUnmounted(() => {
+      store.commit("alert/hotClearAlert");
+    });
 
     const onSubmitForm = handleSubmit((value) => {
       tempEmail.value = value.email;

@@ -98,14 +98,14 @@ export class UserService {
       if (e.errno === sqlErrorCodes.DuplicateEmail) {
         return {
           status: false,
-          message: `email - ${userData.email} is already registered`,
+          message: ['error.takenEmail', userData.email],
           httpCode: HttpStatus.BAD_REQUEST,
         };
       }
 
       return {
         status: false,
-        message: 'Wrong credentials provided',
+        message: 'error.wrongCredentials',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
@@ -127,7 +127,7 @@ export class UserService {
 
     return {
       status: false,
-      message: `Email - ${email} is not found`,
+      message: ['error.undefinedEmail', email],
       httpCode: HttpStatus.BAD_REQUEST,
     };
   }
@@ -230,7 +230,7 @@ export class UserService {
     if (user === undefined) {
       return {
         status: false,
-        message: `User id - ${id} is not found`,
+        message: ['error.undefinedUser', id],
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }

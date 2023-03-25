@@ -1,9 +1,7 @@
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { Injectable, Logger } from '@nestjs/common';
-import { Message } from 'src/message/entities/message.entity';
-import IFile from './interfaces/message/IFile';
-import IEditMessage from './interfaces/message/IEditMessage';
-import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
+import IEditMessage from '@/socket/interfaces/message/IEditMessage';
+import { IDeleteMessage } from '@/socket/interfaces/message/IDeleteMessage';
 
 type redisValue =
   | 'user'
@@ -132,7 +130,6 @@ export class SocketRedisAdapter {
       const valueKey = `${key}:${mainId}:${id}`;
 
       multiPipe.set(valueKey, JSON.stringify(data[id]));
-      //this.setValue(key, data[valueId], withExpire, valueId, null);
       if (withExpire) {
         multiPipe.expire(valueKey, this.EXPIRE);
       }

@@ -27,6 +27,9 @@ import store_ru from "./store/ru.json";
 import yup_en from "./yup/en.json";
 import yup_ru from "./yup/ru.json";
 
+import error_en from "./error/en.json";
+import error_ru from "./error/ru.json";
+
 const messages = {
   en: {
     chat: chat_en,
@@ -37,6 +40,7 @@ const messages = {
     view: view_en,
     store: store_en,
     yup: yup_en,
+    error: error_en,
   },
   ru: {
     chat: chat_ru,
@@ -47,6 +51,7 @@ const messages = {
     view: view_ru,
     store: store_ru,
     yup: yup_ru,
+    error: error_ru,
   },
 };
 

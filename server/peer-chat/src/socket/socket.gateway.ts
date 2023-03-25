@@ -5,12 +5,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import INewRoomData from './interfaces/INewRoomData';
 import IUserInvite from './interfaces/IUserInvite';
 import IUserJoin from './interfaces/IUserJoin';
 import IUserMediaStatus from './interfaces/IUserMediaStatus';
 import { SocketService } from './socket.service';
 import ICallingData from './interfaces/ICallingData';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(8084, {
   path: '/peerChat',
@@ -19,12 +19,18 @@ import ICallingData from './interfaces/ICallingData';
   },
 })
 export class SocketGateway {
+  private readonly logger = new Logger(SocketGateway.name);
+
   constructor(private readonly socketService: SocketService) {}
 
   @WebSocketServer()
   server: Server;
 
   handleDisconnect(socket: Socket) {
+    this.logger.log(
+      `Cancel call in room ${socket.data.roomId} with user ${socket.data.userId}`,
+    );
+
     const roomId = socket.data.roomId;
 
     if (!roomId) return;
@@ -33,7 +39,6 @@ export class SocketGateway {
 
     const roomUsers = this.socketService.clientLeaveRoom(roomId, userId);
 
-    // TODO: проверить можно ли оптимизировать до 1
     this.server.to(roomId).emit('getUsers', roomUsers);
     this.server.to(roomId).emit('UserLeave', roomUsers);
   }
@@ -45,6 +50,10 @@ export class SocketGateway {
 
   @SubscribeMessage('join-room')
   handleMessage(socket: Socket, payload: IUserJoin) {
+    this.logger.log(
+      `Init call in room ${payload.roomId} with user ${payload.userId}`,
+    );
+
     socket.data.roomId = payload.roomId;
 
     const roomUser = this.socketService.clientJoinRoom(
@@ -53,8 +62,6 @@ export class SocketGateway {
       payload.roomId,
       payload.peerId,
     );
-
-    console.log('JOIN RIIM', roomUser, socket.data);
 
     socket.join(payload.roomId);
     this.server.to(payload.roomId).emit('getUsers', roomUser);

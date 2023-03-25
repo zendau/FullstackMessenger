@@ -78,7 +78,7 @@ export class TokenService {
     if (tokenData[0] === undefined || tokenData[0].tag !== deviceTag) {
       return {
         status: false,
-        message: 'Not auth',
+        message: 'error.notAuth',
         httpCode: HttpStatus.UNAUTHORIZED,
       };
     } else {
@@ -152,7 +152,7 @@ export class TokenService {
     } catch (e) {
       return {
         status: false,
-        message: 'Token not found',
+        message: 'error.noToken',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }

@@ -1,85 +1,30 @@
-import { Controller, HttpStatus } from '@nestjs/common';
+import { Controller, HttpStatus, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import IUserChat from 'src/socket/interfaces/user/IUserChat';
-import { ChatService } from './chat.service';
-import IChatCreate from './interfaces/IChatCreate';
-import { UserService } from './user.service';
-import IGetContactList from './interfaces/IGetContactList';
-import { SocketService } from 'src/socket/socket.service';
-import IChatPagination from 'src/socket/interfaces/chat/IChatPagination';
-import IChatSearch from 'src/socket/interfaces/chat/IChatSearch';
-import IChatLoad from 'src/socket/interfaces/user/IChatLoad';
+import IUserChat from '@/socket/interfaces/user/IUserChat';
+import { ChatService } from '@/chat/chat.service';
+import IGetContactList from '@/chat/interfaces/IGetContactList';
+import { SocketService } from '@/socket/socket.service';
+import IChatPagination from '@/socket/interfaces/chat/IChatPagination';
+import IChatSearch from '@/socket/interfaces/chat/IChatSearch';
+import IChatLoad from '@/socket/interfaces/user/IChatLoad';
 
 @Controller('chat')
 export class ChatController {
+  private readonly logger = new Logger(ChatController.name);
+
   constructor(
     private readonly chatService: ChatService,
-    private readonly userService: UserService,
     private readonly socketService: SocketService,
   ) {}
-
-  // @MessagePattern('chat/delete')
-  // async remove(@Payload() chatId: string) {
-  //   const res = await this.chatService.remove(chatId).catch((err) => {
-  //     console.log('err', err);
-  //     return {
-  //       status: false,
-  //       message: err.sqlMessage,
-  //       httpCode: HttpStatus.BAD_REQUEST,
-  //     };
-  //   });
-  //   return res;
-  // }
-
-  // @MessagePattern('chat/groupUser')
-  // async getGroupUser(@Payload() chatId: string) {
-  //   const res = await this.chatService.getGroupUsers(chatId).catch((err) => {
-  //     return {
-  //       status: false,
-  //       message: err.sqlMessage,
-  //       httpCode: HttpStatus.BAD_REQUEST,
-  //     };
-  //   });
-  //   return res;
-  // }
-
-  // @MessagePattern('chat/invaiteToChat')
-  // async invaiteUsersToChat(@Payload() invateData: IUserChat) {
-  //   const res = await this.chatService
-  //     .invaiteUsersToChat(invateData)
-  //     .catch((err) => {
-  //       console.log(err);
-  //       return {
-  //         status: false,
-  //         message: err.sqlMessage,
-  //         httpCode: HttpStatus.BAD_REQUEST,
-  //       };
-  //     });
-  //   return res;
-  // }
-
-  // @MessagePattern('chat/exitUser')
-  // async exitUserGroup(@Payload() exitUserData: IUserChat) {
-  //   const res = await this.chatService
-  //     .exitUserGroup(exitUserData)
-  //     .catch((err) => {
-  //       console.log(err);
-  //       return {
-  //         status: false,
-  //         message: err.sqlMessage,
-  //         httpCode: HttpStatus.BAD_REQUEST,
-  //       };
-  //     });
-  //   return res;
-  // }
 
   @MessagePattern('chat/contacts')
   async getUserContacts(@Payload() listData: IGetContactList) {
     const res = await this.chatService.getContactList(listData).catch((err) => {
       console.log(err);
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
@@ -93,9 +38,10 @@ export class ChatController {
     const res = await this.chatService
       .checkPrivateChat(privateData.userId, privateData.contactId)
       .catch((err) => {
+        this.logger.error(err?.sqlMessage ?? err.message);
         return {
           status: false,
-          message: err?.sqlMessage ?? err.message,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -110,9 +56,10 @@ export class ChatController {
       .getUsersPrivateChats(privateData.userId, privateData.userIdList)
       .catch((err) => {
         console.log(err);
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -125,9 +72,10 @@ export class ChatController {
       .getChatPagination(paginationData)
       .catch((err) => {
         console.log(err);
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -140,9 +88,10 @@ export class ChatController {
       .getChatsByPattern(searchData.userId, searchData.pattern)
       .catch((err) => {
         console.log('1', err);
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -156,9 +105,10 @@ export class ChatController {
       .getCurrentChatById(loadData.userId, loadData.chatId)
       .catch((err) => {
         console.log(err);
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -186,9 +136,10 @@ export class ChatController {
       .getUserRoomsIds(userId)
       .catch((err) => {
         console.log(err);
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });

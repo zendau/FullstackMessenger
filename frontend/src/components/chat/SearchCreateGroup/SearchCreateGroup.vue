@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { inject, computed } from "vue";
+import { inject, computed, onUnmounted } from "vue";
 import { useStore } from "vuex";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
@@ -108,6 +108,10 @@ export default {
 
     const { value: conferenceType } = useField("conferenceType", {}, { initialValue: null });
     const { value: chatTitle } = useField("chatTitle");
+
+    onUnmounted(() => {
+      store.commit("alert/hotClearAlert");
+    });
 
     const onCreateChat = handleSubmit((formData) => {
       console.log("CREATE GROUP");

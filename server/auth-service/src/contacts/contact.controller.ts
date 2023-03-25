@@ -1,4 +1,4 @@
-import { Controller, HttpStatus } from '@nestjs/common';
+import { Controller, HttpStatus, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ContactService } from '@/contacts/contact.service';
 import IContact from '@/contacts/interfaces/IContact';
@@ -6,6 +6,8 @@ import IUserPaginationList from '@/contacts/interfaces/IUserPaginationList';
 
 @Controller()
 export class ContactController {
+  private readonly logger = new Logger(ContactController.name);
+
   constructor(private contactService: ContactService) {}
 
   @MessagePattern('contact/list')
@@ -13,9 +15,10 @@ export class ContactController {
     const res = await this.contactService
       .getContactList(listData)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -27,9 +30,10 @@ export class ContactController {
     const res = await this.contactService
       .getFreeUsers(listData)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -44,9 +48,10 @@ export class ContactController {
         contactId: requestData.contactId,
       })
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -58,9 +63,10 @@ export class ContactController {
     const res = await this.contactService
       .getContactsPending(listData)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -72,9 +78,10 @@ export class ContactController {
     const res = await this.contactService
       .getContactsOutgoing(listData)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -89,9 +96,10 @@ export class ContactController {
         contactId: requestData.contactId,
       })
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -106,9 +114,10 @@ export class ContactController {
         contactId: requestData.contactId,
       })
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -123,9 +132,10 @@ export class ContactController {
         contactId: requestData.contactId,
       })
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -137,9 +147,10 @@ export class ContactController {
     const res = await this.contactService
       .getBlockedUsers(listData)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -154,9 +165,10 @@ export class ContactController {
         contactId: requestData.contactId,
       })
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -171,9 +183,10 @@ export class ContactController {
         contactId: requestData.contactId,
       })
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -188,9 +201,10 @@ export class ContactController {
         contactId: requestData.contactId,
       })
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -201,9 +215,10 @@ export class ContactController {
     const res = await this.contactService
       .getUserContactsCount(userId)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });

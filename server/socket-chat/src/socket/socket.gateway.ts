@@ -1,33 +1,21 @@
-import { Message } from './../message/entities/message.entity';
-import { MessageService } from './../message/message.service';
 import {
-  MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { SocketService } from './socket.service';
+import { SocketService } from '@/socket/socket.service';
 
-import * as uuid from 'uuid';
-
-import { HttpException } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
-import IUserConnect from './interfaces/message/IMessagePressing';
-import IUserJoin from './interfaces/user/IUserChat';
-import IMessageData from './interfaces/message/IMessageData';
-import IChatPagination from './interfaces/chat/IChatPagination';
-import IChatSearch from './interfaces/chat/IChatSearch';
-import IUserChat from './interfaces/user/IUserChat';
-import IMessagePressing from './interfaces/message/IMessagePressing';
-import IChatMessages from './interfaces/chat/IChatMessages';
-import IEditMessage from './interfaces/message/IEditMessage';
-import IReadMessage from './interfaces/message/IReadMessage';
-import IUserData from './interfaces/user/IUserData';
-import { IDeleteMessage } from './interfaces/message/IDeleteMessage';
-import { IContactStatus } from './interfaces/contact/IContactStatus';
-import IChatCreate from 'src/chat/interfaces/IChatCreate';
-import IChatGroupMember from './interfaces/chat/IChatGroupMember';
+import IMessageData from '@/socket/interfaces/message/IMessageData';
+import IMessagePressing from '@/socket/interfaces/message/IMessagePressing';
+import IEditMessage from '@/socket/interfaces/message/IEditMessage';
+import IReadMessage from '@/socket/interfaces/message/IReadMessage';
+import { IDeleteMessage } from '@/socket/interfaces/message/IDeleteMessage';
+import { IContactStatus } from '@/socket/interfaces/contact/IContactStatus';
+import IChatCreate from '@/chat/interfaces/IChatCreate';
+import IChatGroupMember from '@/socket/interfaces/chat/IChatGroupMember';
+import IUserPeer from '@/socket/interfaces/user/IUserPeer';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(8082, {
   path: '/socketChat',
@@ -36,15 +24,15 @@ import IChatGroupMember from './interfaces/chat/IChatGroupMember';
   },
 })
 export class SocketGateway {
-  constructor(
-    private readonly socketService: SocketService,
-    private readonly messageService: MessageService,
-  ) {}
+  private readonly logger = new Logger(SocketGateway.name);
+  constructor(private readonly socketService: SocketService) {}
 
   @WebSocketServer()
   server: Server;
 
   async handleDisconnect(socket: Socket) {
+    this.logger.log(`user - ${socket.data.userId} disconnect`);
+
     const userStatus = await this.socketService.clientDisconnect(
       socket.data.userId,
     );
@@ -57,11 +45,8 @@ export class SocketGateway {
   }
 
   @SubscribeMessage('connect-user')
-  async connectUser(
-    socket: Socket,
-    { userId, peerId }: { userId: number; peerId: string },
-  ) {
-    debugger;
+  async connectUser(socket: Socket, { userId, peerId }: IUserPeer) {
+    this.logger.log(`user - ${userId} connected`);
     const userStatus = this.socketService.addUser(userId, peerId);
     const rooms = await this.socketService.getUserRoomsIds(userId);
     socket.data.userId = userId;
@@ -70,62 +55,6 @@ export class SocketGateway {
     if (!rooms || rooms.length === 0) return;
     socket.broadcast.to(rooms).emit('updateUserOnline', userStatus);
   }
-
-  // API
-  // @SubscribeMessage('get-chats')
-  // async getChats(socket: Socket, payload: IChatLoad) {
-  //   const userRoomsData = await this.socketService.getUserRoomsData(
-  //     payload.userId,
-  //     0,
-  //     payload.limit,
-  //   );
-
-  //   const currentTempChatData = await this.socketService.getCurrentChatRoom(
-  //     userRoomsData.roomsData,
-  //     payload.userId,
-  //     payload.chatId,
-  //   );
-
-  //   this.server
-  //     .to(socket.id)
-  //     .emit('getRoomsData', { ...userRoomsData, currentTempChatData });
-  // }
-
-  // API
-  // @SubscribeMessage('load-chats')
-  // async loadChatsPage(socket: Socket, payload: IChatPagination) {
-  //   //const rooms = await this.socketService.getUserRooms(payload.userId);
-  //   const userRoomsData = await this.socketService.getUserRoomsData(
-  //     payload.userId,
-  //     payload.page,
-  //     payload.limit,
-  //   );
-  //   this.server.to(socket.id).emit('appendRoomsData', userRoomsData);
-  // }
-
-  // API
-  // @SubscribeMessage('serchChats')
-  // async getChatsByPattern(socket: Socket, payload: IChatSearch) {
-  //   const userRoomsData = await this.socketService.getChatsByPattern(
-  //     payload.userId,
-  //     payload.pattern,
-  //   );
-  //   this.server.to(socket.id).emit('getChatsByPattern', userRoomsData);
-  // }
-
-  // API
-  // @SubscribeMessage('load-chat-by-id')
-  // async loadChatById(socket: Socket, payload: IUserChat) {
-  //   const currentChatData = await this.socketService.getCurrentChatById(
-  //     payload.userId,
-  //     payload.chatId,
-  //   );
-
-  //   this.server.to(socket.id).emit('appendRoomData', {
-  //     chatId: payload.chatId,
-  //     data: currentChatData,
-  //   });
-  // }
 
   @SubscribeMessage('invite-user')
   async inviteUserToChat(socket: Socket, payload: IChatGroupMember) {
@@ -227,13 +156,6 @@ export class SocketGateway {
     socket.broadcast.to(payload.roomId).emit('message_status', payload);
   }
 
-  // API
-  // @SubscribeMessage('getRoomMessages')
-  // async getRoomMessagesHandler(socket: Socket, payload: IChatMessages) {
-  //   const messagesData = await this.socketService.getRoomMessages(payload);
-  //   this.server.to(socket.id).emit('upload_messages', messagesData);
-  // }
-
   @SubscribeMessage('delete_messages')
   deleteMessagesHandler(socket: Socket, payload: IDeleteMessage) {
     this.socketService.deleteMessages(payload);
@@ -281,50 +203,10 @@ export class SocketGateway {
       });
     }
 
-    // const res = await this.messageService.create(
-    //   {
-    //     authorLogin: payload.authorLogin,
-    //     text: payload.text,
-    //     chatId: payload.chatId,
-    //   },
-    //   payload.files,
-    // );
-    // if (res?.media) {
-    //   res.files = await this.messageService.setFilesDataToMessage(res.media);
-    // }
-    // if ('chat' in res) {
-    //   this.server.to(payload.chatId).emit('newMessage', {
-    //     authorLogin: res.authorLogin,
-    //     text: res.text,
-    //     created_at: res.created_at,
-    //     id: res.id,
-    //     files: res.files,
-    //   });
-    // }
-
     const message = await this.socketService.addMessage(payload);
     console.log('MESSAGE', message);
     this.server.to(payload.roomId).emit('newMessage', message);
   }
-
-  // API
-  // @SubscribeMessage('getFreeChatUsers')
-  // async getFreeChatUsers(socket: Socket, payload: IUserChat) {
-  //   const freeUsers = await this.socketService.getFreeChatUsers(
-  //     payload.chatId,
-  //     payload.userId,
-  //   );
-
-  //   this.server.to(socket.id).emit('getFreeChatContacts', freeUsers);
-  // }
-
-  // API
-  // @SubscribeMessage('getContactData')
-  // async getContactData(socket: Socket, payload: IUserChat) {
-  //   const contactData = await this.socketService.getContactData(payload);
-
-  //   this.server.to(socket.id).emit('contactData', contactData);
-  // }
 
   @SubscribeMessage('chatContactStatus')
   async chatContactStatus(socket: Socket, payload: IContactStatus) {

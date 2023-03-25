@@ -67,7 +67,7 @@ export class AdminService {
     if (!roleObject.includes(role)) {
       return {
         status: false,
-        message: `Undefined role - ${role}`,
+        message: ['error.undefinedRole', role],
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
@@ -86,7 +86,7 @@ export class AdminService {
     } else {
       return {
         status: false,
-        message: `Undefined user with id - ${userId}`,
+        message: ['error.undefinedUser', userId],
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }

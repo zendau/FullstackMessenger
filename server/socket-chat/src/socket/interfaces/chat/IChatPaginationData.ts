@@ -1,4 +1,4 @@
-import IChat from 'src/chat/interfaces/IChat';
+import IChat from '@/chat/interfaces/IChat';
 
 export default interface IChatPaginationData {
   [key: number]: IChat;

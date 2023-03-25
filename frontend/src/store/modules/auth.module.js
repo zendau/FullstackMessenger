@@ -107,7 +107,7 @@ export const auth = {
       }
     },
     async logout({ commit }) {
-      localStorage.removeItem("token");
+      // localStorage.removeItem("token");
       const resData = await $api.get("/user/logout");
       console.log(resData);
       commit("logout");

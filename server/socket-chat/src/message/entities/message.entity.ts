@@ -1,4 +1,3 @@
-import { Chat } from 'src/chat/entities/chat.entity';
 import {
   Entity,
   Column,
@@ -7,8 +6,9 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Media } from './media.entity';
-import { MessageTypes } from '../interfaces/MessageTypes';
+import { Chat } from '@/chat/entities/chat.entity';
+import { Media } from '@/message/entities/media.entity';
+import { MessageTypes } from '@/message/interfaces/MessageTypes';
 
 @Entity()
 export class Message {

@@ -91,7 +91,6 @@ export class ContactService {
   }
 
   async getContactsPending(listData: IGetContactList) {
-
     const subQuery = this.contactRepository
       .createQueryBuilder()
       .select('userId')
@@ -117,7 +116,6 @@ export class ContactService {
       .where('userId = :userId', { userId: listData.userId })
       .andWhere('isContact = 0')
       .andWhere('isBanned = 0');
-
 
     const resList = await this.userService.getOtherUsersList(
       subQuery,
@@ -201,7 +199,6 @@ export class ContactService {
   }
 
   async deleteUserFromContact(requestData: IContact) {
-
     await this.deleteFromContact({
       userId: requestData.userId,
       contactId: requestData.contactId,
@@ -243,7 +240,7 @@ export class ContactService {
     if (!updatedStatus) {
       return {
         status: false,
-        message: `Wrong user id - ${userId} contact data`,
+        message: ['error.invalidContactStatus', userId],
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }
@@ -272,7 +269,6 @@ export class ContactService {
   }
 
   async blockUser(requestData: IContact) {
-
     const resUpdate = await this.contactRepository
       .createQueryBuilder()
       .update()

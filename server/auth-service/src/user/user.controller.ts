@@ -1,4 +1,4 @@
-import { Controller, HttpStatus } from '@nestjs/common';
+import { Controller, HttpStatus, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
 import { AuthService } from '@/user/auth.service';
@@ -13,6 +13,8 @@ import IEditUserData from './interfaces/IEditUserData';
 
 @Controller()
 export class UsersController {
+  private readonly logger = new Logger(UsersController.name);
+
   constructor(
     private userService: UserService,
     private authService: AuthService,
@@ -24,9 +26,10 @@ export class UsersController {
   @MessagePattern('user/register')
   async registerUser(@Payload() userData: IUserData) {
     const res = await this.authService.register(userData).catch((err) => {
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
@@ -36,9 +39,10 @@ export class UsersController {
   @MessagePattern('user/checkEmail')
   async checkUserEmail(@Payload() email: string) {
     const res = await this.authService.checkEmail(email).catch((err) => {
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
@@ -48,9 +52,10 @@ export class UsersController {
   @MessagePattern('user/login')
   async loginUser(@Payload() userData: IUserData) {
     const res = await this.authService.login(userData).catch((err) => {
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
@@ -62,9 +67,10 @@ export class UsersController {
     const res = await this.authService
       .refreshToken(refreshData)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -76,15 +82,15 @@ export class UsersController {
     const res = await this.tokenService
       .removeToken(refreshToken)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
     return res;
   }
-
 
   @MessagePattern('user/setConfirmCode')
   async getCodeEditData(@Payload() confirmData: IConfirmData) {
@@ -95,9 +101,10 @@ export class UsersController {
   @MessagePattern('user/editData')
   async changeUserData(@Payload() editData: IEditUserData) {
     const res = await this.userService.editUserData(editData).catch((err) => {
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
@@ -109,23 +116,23 @@ export class UsersController {
     const res = await this.authService
       .resetUserPassword(resetData)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
     return res;
   }
 
-
-
   @MessagePattern('user/idList')
   async getManyUserById(@Payload() idList: number[]) {
     const res = await this.userService.getManyUserById(idList).catch((err) => {
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
@@ -135,9 +142,10 @@ export class UsersController {
   @MessagePattern('user/id')
   async getUserById(@Payload() id: number) {
     const res = await this.userService.getUserById(id).catch((err) => {
+      this.logger.error(err.sqlMessage);
       return {
         status: false,
-        message: err.sqlMessage,
+        message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
     });
@@ -151,9 +159,10 @@ export class UsersController {
     const res = await this.userService
       .setLastOnline(roleData.userId, roleData.lastOnline)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
@@ -164,13 +173,13 @@ export class UsersController {
     const res = await this.deviceService
       .getTokensDeviceData(userId)
       .catch((err) => {
+        this.logger.error(err.sqlMessage);
         return {
           status: false,
-          message: err.sqlMessage,
+          message: 'error.unexpected',
           httpCode: HttpStatus.BAD_REQUEST,
         };
       });
     return res;
   }
-
 }
