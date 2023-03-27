@@ -17,5 +17,6 @@
   "notFoundFoulder": "Папка с id {id} не найдена",
   "notFoundFoulderPath": "Папка имеющая путь - {path} не существует",
   "foulderExist": "Папка имеющая путь {path} - уже существует",
-  "notFoundFile": "File with id {id} is not found"
+  "notFoundFile": "Файс с {id} не найден",
+  "fileUpload": "Ошибка при отправке файла"
 }

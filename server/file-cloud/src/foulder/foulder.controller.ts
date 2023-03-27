@@ -10,17 +10,15 @@ export class FoulderController {
   constructor(private readonly foulderService: FoulderService) {}
 
   @MessagePattern('foulder/add')
-  async create(@Payload() createFoulderDto: IFoulderDTO) {
-    const res = await this.foulderService
-      .create(createFoulderDto)
-      .catch((err) => {
-        this.logger.error(err.sqlMessage);
-        return {
-          status: false,
-          message: 'error.unexpected',
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
-      });
+  async create(@Payload() foulderPath: string) {
+    const res = await this.foulderService.create(foulderPath).catch((err) => {
+      this.logger.error(err.sqlMessage);
+      return {
+        status: false,
+        message: 'error.unexpected',
+        httpCode: HttpStatus.BAD_REQUEST,
+      };
+    });
 
     return res;
   }

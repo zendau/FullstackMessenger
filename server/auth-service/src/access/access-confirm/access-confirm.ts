@@ -42,7 +42,8 @@ export class ConfirmCodeService {
 
   async setConfirmCode(confirmData: IConfirmData) {
     try {
-      const confirmCode = randomInt(1000000).toString().padStart(6, '0');
+      // const confirmCode = randomInt(1000000).toString().padStart(6, '0');
+      const confirmCode = '1111';
 
       this.redis.set(`confirm:${confirmData.email}`, confirmCode);
       this.nodeMailerService.sendConfirmCode(confirmCode, confirmData.email);

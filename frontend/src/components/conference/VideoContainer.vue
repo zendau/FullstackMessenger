@@ -95,7 +95,7 @@ export default {
 
     function setStream(stream) {
       if (!media.value) return;
-
+      console.log("stream", stream);
       media.value.srcObject = stream;
       media.value.addEventListener("loadedmetadata", () => {
         media.value.play();
@@ -161,6 +161,9 @@ export default {
     background-color: var(--color-message);
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     z-index: 5;
 

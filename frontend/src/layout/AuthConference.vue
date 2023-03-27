@@ -19,7 +19,8 @@
   <FooterComponent
     v-if="roomData"
     :conference-title="roomData.title"
-    :conference-type="!!roomData.adminId"
+    :conference-type="roomData.conferenceWithVideo"
+    :is-private="!!roomData.adminId"
     @show-chat="showChat = !showChat"
   />
 </template>
@@ -81,7 +82,10 @@ export default {
     });
 
     onUnmounted(() => {
-      isConferenceAdmin.value = false;
+      if (isConferenceAdmin?.value) {
+        isConferenceAdmin.value = false;
+      }
+
       document.querySelector("#app").classList.remove("conference-grid");
     });
 

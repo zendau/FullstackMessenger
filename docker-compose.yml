@@ -1,4 +1,5 @@
 version: '3'
+name: 'messanger-prod'
 services:
 
   nginx:
@@ -41,7 +42,7 @@ services:
       context: ./server/socket-chat
       dockerfile: Dockerfile
     ports:
-      - "81:80"
+      - "8082:8082"
     depends_on:
       - redis
       - mysqlDB
@@ -56,9 +57,9 @@ services:
     volumes:
       - ./wwwroot/ssl:/usr/src/app/ssl
     ports:
-      - "82:81"
+      - "8084:8084"
       - "9000:9000"
-      
+
     depends_on:
       - redis
       - mysqlDB
@@ -70,6 +71,8 @@ services:
     build:
       context: ./server/file-cloud
       dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
     depends_on:
       - mysqlDB
       - rabbitmq
@@ -86,16 +89,6 @@ services:
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
       - mysqlDB:/var/lib/mysql
-    networks:
-      - backend
-
-  phpmyadmin:
-    image: phpmyadmin
-    ports:
-      - 8083:80
-    environment:
-      - PMA_HOST=mysqlDB
-      - PMA_ARBITRARY=1
     networks:
       - backend
 

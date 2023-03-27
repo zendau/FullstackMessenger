@@ -6,7 +6,7 @@ import {
   forwardRef,
   Logger,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
 
 import { Chat } from '@/chat/entities/chat.entity';
@@ -36,6 +36,8 @@ export class ChatService {
     private socketService: SocketService,
     private socketRedisAdapter: SocketRedisAdapter,
     @Inject('PEER_SERVICE') private peerServiceClient: ClientProxy,
+    @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
+    private connection: Connection,
   ) {}
 
   async getChatsIdList(userId: number) {
@@ -152,11 +154,23 @@ export class ChatService {
   }
 
   async createChat(chatData: IChatCreate) {
+    const queryRunner = this.connection.createQueryRunner();
     try {
-      const chatInseted = await this.chatRepository.save({
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const chatInseted = await queryRunner.manager.save(Chat, {
         adminId: chatData?.adminId,
         title: chatData?.groupName,
       });
+
+      const foulderData = await firstValueFrom(
+        this.fileServiceClient.send('foulder/add', chatInseted.id),
+      );
+
+      if (foulderData?.status === false) {
+        throw new Error(foulderData.message);
+      }
 
       const usersEntity: ChatUsers[] = [];
 
@@ -164,16 +178,20 @@ export class ChatService {
         usersEntity.push(this.createEntity(userId, chatInseted));
       });
 
-      await this.chatUserRepository.save(usersEntity);
+      await queryRunner.manager.save(ChatUsers, usersEntity);
 
+      await queryRunner.commitTransaction();
       return chatInseted;
     } catch (e) {
+      await queryRunner.rollbackTransaction();
       this.logger.error(e.sqlMessage ?? e);
       return {
         status: false,
         message: 'error.unexpected',
         httpCode: HttpStatus.BAD_REQUEST,
       };
+    } finally {
+      await queryRunner.release();
     }
   }
 

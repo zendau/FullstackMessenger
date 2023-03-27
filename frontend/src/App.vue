@@ -1,8 +1,7 @@
 <template>
-  <component :is="authLayout">
+  <component :is="appLayout">
     <router-view />
   </component>
-  <ConferenceCall />
 </template>
 
 <script>
@@ -10,97 +9,45 @@ import { useStore } from "vuex";
 import { computed, provide, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import AuthMainLayout from "./layout/AuthMainLayout.vue";
-import AuthChatLayout from "./layout/AuthChatLayout.vue";
+import AuthSocketLayoutVue from "./layout/AuthSocketLayout.vue";
 import noAuthLayoutVue from "./layout/NoAuthLayout.vue";
 
-import ConferenceCall from "@/components/conference/ConfrenceCall.vue";
-
-import { Layout } from "./router/layouts";
-import { useRoute } from "vue-router";
-
+import { getUserTheme } from "@/utils/theme";
 import { io } from "socket.io-client";
 
-import { getUserTheme } from "@/utils/theme";
-
 export default {
-  components: { ConferenceCall },
   setup() {
     getUserTheme();
 
     const { locale } = useI18n();
     locale.value = localStorage.getItem("locale") ?? locale.value;
 
+    const peerSocket = io(import.meta.env.VITE_SOCKET_PEER_HOST, { path: "/peerChat", autoConnect: false });
+    provide("peerSocket", peerSocket);
+
+    const chatSocket = io(import.meta.env.VITE_SOCKET_HOST, { path: "/socketChat", autoConnect: false });
+    provide("chatSocket", chatSocket);
+
     const store = useStore();
 
     store.dispatch("auth/checkAuth");
-
-    const layouts = new Map();
-
-    layouts.set(Layout.Chat, AuthChatLayout);
-    layouts.set(Layout.Main, AuthMainLayout);
-    layouts.set(Layout.NoAuth, noAuthLayoutVue);
 
     const callingData = ref(null);
     provide("callingData", callingData);
 
     const authStatus = computed(() => store.state.auth.authStatus);
-    const userId = computed(() => store.state.auth.user.id);
 
-    const route = useRoute();
-    const authLayout = computed(() => {
+    const appLayout = computed(() => {
+      console.log("CHANGE AUTH STATUS", authStatus.value);
       if (authStatus.value) {
-        return layouts.get(route.meta.layout);
+        return AuthSocketLayoutVue;
       }
 
       return noAuthLayoutVue;
     });
 
-    const chatSocket = io(import.meta.env.VITE_SOCKET_HOST, { path: "/socketChat" });
-    provide("chatSocket", chatSocket);
-
-    const peerSocket = io(import.meta.env.VITE_SOCKET_PEER_HOST, { path: "/peerChat" });
-    provide("peerSocket", peerSocket);
-    const peerSocketConnected = ref(false);
-    provide("peerSocketConnected", peerSocketConnected);
-
-    const peerIdPromise = new Promise((res, rej) => {
-      try {
-        peerSocket.on("connect", () => {
-          peerSocket.emit("connect-user", userId.value);
-          peerSocketConnected.value = true;
-
-          res(peerSocket.id);
-        });
-      } catch {
-        rej(null);
-      }
-    });
-
-    chatSocket.on("connect", async () => {
-      const peerId = await peerIdPromise;
-      store.state.auth.user.peerId = peerId;
-
-      chatSocket.emit("connect-user", {
-        userId: userId.value,
-        peerId,
-      });
-    });
-
-    chatSocket.on("updateUserOnline", (userStatus) => {
-      console.log("userStatus", userStatus);
-      store.commit("users/updateUserOnline", userStatus);
-    });
-
-    chatSocket.on("changeContactStatus", (data) => {
-      console.log("data", data);
-      store.commit("contact/changeContactStatus", data);
-    });
-
-    setInterval(() => store.commit("users/updateUsersDateOnline"), 30000);
-
     return {
-      authLayout,
+      appLayout,
     };
   },
 };

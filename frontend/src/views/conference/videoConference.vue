@@ -72,7 +72,7 @@ export default {
     watch(
       [socketConnected, peerConnected],
       async ([socketStatus, peerStatus]) => {
-        console.log("JOIN TO ROOM");
+        console.log("JOIN TO ROOM", socketStatus, peerStatus);
         if (socketStatus && peerStatus) {
           mainStream.value = await initUserMedia();
 
@@ -127,7 +127,7 @@ export default {
     onUnmounted(() => {
       peerSocket.emit("exit-room", {
         userId: userData.value.id,
-        roomId: roomId,
+        roomId,
       });
       window.removeEventListener("keypress", muteEvent);
       peerSocket.removeAllListeners("getUsers");
@@ -239,7 +239,6 @@ export default {
 
     // connected to new user
     function connectToNewUser(userId, stream) {
-      console.log("CALL TO USER", userId, stream);
       const call = peerConnect.call(userId, stream);
       streams.push(call);
 

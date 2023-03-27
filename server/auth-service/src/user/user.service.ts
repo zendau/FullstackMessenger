@@ -210,7 +210,6 @@ export class UserService {
   }
 
   async getUserById(id: number) {
-    debugger;
     const user = await this.usersRepository
       .createQueryBuilder('user')
       .select([

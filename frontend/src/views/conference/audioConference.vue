@@ -1,10 +1,10 @@
 <template>
   <AudioContainer
     v-for="user in roomUsers"
-    :key="user.userId"
+    :key="user[1].userId"
     :ref="setItemRef"
-    :is-muted="user.mute"
-    :user-name="user.userLogin"
+    :is-muted="user[1].mute"
+    :user-name="user[1].userLogin"
   />
 </template>
 
@@ -14,8 +14,8 @@ import { onUnmounted, ref, inject, watch, onBeforeUpdate, computed, reactive } f
 import { useStore } from "vuex";
 import Peer from "peerjs";
 
-import { startRecordAudio } from "@/utils/audioRecorderioRecorder";
-import AudioContainer from "@/components/conterence/AudioContainer.vue";
+import { startRecordAudio } from "@/utils/audioRecorder";
+import AudioContainer from "@/components/conference/AudioContainer.vue";
 
 export default {
   components: { AudioContainer },
@@ -29,11 +29,11 @@ export default {
     const roomId = route.params.id;
     const roomTitle = computed(() => store.state.conference.title);
 
-    const userId = ref(null);
+    const userData = computed(() => store.state.auth.user);
     const peerId = ref(null);
     const peerConnected = ref(false);
 
-    const socket = inject("socket", undefined);
+    const peerSocket = inject("peerSocket");
     const socketConnected = inject("peerSocketConnected", false);
 
     const isRecord = inject("isRecord");
@@ -56,13 +56,14 @@ export default {
 
     watch(
       [socketConnected, peerConnected],
-      ([socketStatus, peerStatus]) => {
+      async ([socketStatus, peerStatus]) => {
         if (socketStatus && peerStatus) {
-          userId.value = socket.id;
-          socket.emit("join-room", {
-            userId: userId.value,
+          mainStream.value = await initUserMedia();
+          peerSocket.emit("join-room", {
+            userId: userData.value.id,
+            userLogin: userData.value.login,
             peerId: peerId.value,
-            roomId: roomId,
+            roomId,
           });
         }
       },
@@ -80,19 +81,19 @@ export default {
     });
 
     watch(isMuted, () => {
-      socket.emit("userMute", {
-        userId: userId.value,
+      peerSocket.emit("userMute", {
+        userId: userData.value.id,
         roomId,
       });
     });
 
     onUnmounted(() => {
-      socket.emit("exit-room", {
-        userId: userId.value,
-        roomId: roomId,
+      peerSocket.emit("exit-room", {
+        userId: userData.value.id,
+        roomId,
       });
       window.removeEventListener("keypress", muteEvent);
-      socket.removeAllListeners("getUsers");
+      peerSocket.removeAllListeners("getUsers");
       mainStream.value.getTracks().forEach((t) => {
         t.stop();
       });
@@ -109,11 +110,12 @@ export default {
 
     // ==== socket ==== //
 
-    socket.on("getUsers", (users) => {
-      roomUsers.value = users;
+    peerSocket.on("getUsers", (users) => {
+      console.log("users", users);
+      roomUsers.value = new Map(JSON.parse(users));
     });
 
-    socket.on("userJoinedRoom", (userId) => {
+    peerSocket.on("userJoinedRoom", (userId) => {
       connectToNewUser(userId, mainStream.value);
     });
 
@@ -134,30 +136,31 @@ export default {
       port: import.meta.env.VITE_PEER_PORT,
     });
 
-    const getUserMedia =
-      navigator.mediaDevices.getUserMedia ||
-      navigator.mediaDevices.webkitGetUserMedia ||
-      navigator.mediaDevices.mozGetUserMedia;
+    async function initUserMedia() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
 
-    getUserMedia({
-      audio: true,
-    }).then((stream) => {
-      mainStream.value = stream;
-    });
+        console.log("set mainStream");
+        return stream;
+      } catch (e) {
+        store.commit("alert/setErrorMessage", "Could not start video source");
+      }
+    }
 
-    peerConnect.on("call", (call) => {
-      getUserMedia({
+    peerConnect.on("call", async (call) => {
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
-      }).then((stream) => {
-        childStream.push(stream);
-        call.answer(stream);
-        call.on("stream", (userAudiotream) => {
-          streams.push(userAudiotream);
-          containersRefs.forEach((item) => {
-            if (item.peerId === call.peer) {
-              item.setStream(userAudiotream);
-            }
-          });
+      });
+      childStream.push(stream);
+      call.answer(stream);
+      call.on("stream", (userAudiotream) => {
+        streams.push(userAudiotream);
+        containersRefs.forEach((item) => {
+          if (item.peerId === call.peer) {
+            item.setStream(userAudiotream);
+          }
         });
       });
     });

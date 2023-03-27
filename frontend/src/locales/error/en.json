@@ -17,5 +17,6 @@
   "notFoundFoulder": "Foulder with id {id} is not found",
   "notFoundFoulderPath": "Foulder with path {path} is not found",
   "foulderExist": "foulder with name {path} is alredy exist",
-  "notFoundFile": "File with id {id} is not found"
+  "notFoundFile": "File with id {id} is not found",
+  "fileUpload": "File upload error"
 }

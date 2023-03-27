@@ -87,8 +87,6 @@ export const auth = {
       }
     },
     async changeUserData({ commit }, userData) {
-      // eslint-disable-next-line no-debugger
-      debugger;
       try {
         const resData = await $api.patch("/user/editData", userData);
 
@@ -107,11 +105,9 @@ export const auth = {
       }
     },
     async logout({ commit }) {
-      // localStorage.removeItem("token");
-      const resData = await $api.get("/user/logout");
-      console.log(resData);
       commit("logout");
-      router.push("/");
+      localStorage.removeItem("token");
+      await $api.get("/user/logout");
     },
     async register({ commit }, registerData) {
       try {
@@ -148,16 +144,15 @@ export const auth = {
       }
     },
     async checkAuth({ commit }) {
-      console.log("checkAuth");
-      // TODO: Return jwt request
       const accessToken = localStorage.getItem("token");
       let tokenDecode = null;
+
+      if (!accessToken) return;
 
       try {
         tokenDecode = jwt_decode(accessToken);
       } catch {
         const resRefresh = await $api.get("/user/refresh");
-        console.log("resRefresh", resRefresh);
         if (resRefresh.data.statusCode === 401) return;
 
         const [accessToken] = resRefresh.data;
@@ -168,17 +163,6 @@ export const auth = {
           commit("authSuccess", tokenDecode);
         }
       }
-      // const userData = JSON.parse(localStorage.getItem("userData"));
-      // console.log("userData", userData);
-      // commit("authSuccess", {
-      //   id: userData.id,
-      //   email: userData.email,
-      //   login: userData.login,
-      //   role: userData.role,
-      //   isBanned: userData.isBanned,
-      //   deviceId: userData.deviceId,
-      //   info: userData.info,
-      // });
       commit("authSuccess", tokenDecode);
     },
     async getUserDevices({ commit, state }) {
@@ -239,7 +223,7 @@ export const auth = {
     },
     logout(state) {
       state.user = {
-        id: null,
+        id: 0,
         email: null,
         login: null,
         role: null,

@@ -13,10 +13,13 @@ export class FoulderService {
     private foulderRepository: Repository<Foulder>,
   ) {}
 
-  async create(createFoulderDTO: IFoulderDTO) {
-    const foulderExist = await this.getByPath(createFoulderDTO.path);
-    if ('status' in foulderExist) {
-      const dir = `${process.env.STORE_PATH}/${createFoulderDTO.path}`;
+  async create(foulderPath: string) {
+    const foulderExist = await this.getByPath(foulderPath);
+    if (
+      'status' in foulderExist &&
+      foulderExist.message[0] === 'error.notFoundFoulderPath'
+    ) {
+      const dir = `${process.env.STORE_PATH}/${foulderPath}`;
       fs.mkdir(dir, (err) => {
         if (err) {
           return {
@@ -26,12 +29,14 @@ export class FoulderService {
           };
         }
       });
-      const resInsered = await this.foulderRepository.save(createFoulderDTO);
+      const resInsered = await this.foulderRepository.save({
+        path: foulderPath,
+      });
       return resInsered;
     } else {
       return {
         status: false,
-        message: ['error.foulderExist', createFoulderDTO.path],
+        message: ['error.foulderExist', foulderPath],
         httpCode: HttpStatus.BAD_REQUEST,
       };
     }

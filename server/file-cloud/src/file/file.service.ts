@@ -62,8 +62,6 @@ export class FileService {
   async removeMany(idList: number[]) {
     const resRemoveStatuses = await Promise.all(
       idList.map(async (fileId) => {
-        debugger;
-
         const fileData = await this.getById(fileId);
 
         if ('status' in fileData) {

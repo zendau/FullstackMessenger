@@ -56,7 +56,7 @@ export default class ScreenShare {
 
     this.containersRefs.forEach((item) => {
       if (item.peerId === this.peerId.value) {
-        item.setStream(this.mainStream);
+        item.setStream(this.mainStream.value);
       }
     });
 

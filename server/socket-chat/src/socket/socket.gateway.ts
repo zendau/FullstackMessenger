@@ -172,7 +172,6 @@ export class SocketGateway {
 
   @SubscribeMessage('readMessages')
   async readMessagesHandler(socket: Socket, payload: IReadMessage) {
-    debugger;
     const unreadCount = await this.socketService.unReadMessages({
       userId: payload.userId,
       chatData: payload.chatData,
@@ -185,8 +184,6 @@ export class SocketGateway {
 
   @SubscribeMessage('sendMessage')
   async sendMessage(socket: Socket, payload: IMessageData) {
-    console.log('new message', payload);
-
     const isChatDateExist = await this.socketService.isChatDateMessage(
       payload.roomId,
     );

@@ -178,6 +178,7 @@ router.beforeEach((to, from, next) => {
   const userRole = store.state.auth.user.role;
   const { isBanned } = store.state.auth.user;
 
+
   if (to.meta.requiresAuth) {
     if (authStatus) {
       if (isBanned) {

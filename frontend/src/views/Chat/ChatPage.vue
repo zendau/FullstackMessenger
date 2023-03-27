@@ -60,6 +60,7 @@ export default {
     });
 
     onUnmounted(() => {
+      console.log("UNMOUNTED");
       window.removeEventListener("keyup", closeActiveChat);
     });
 

@@ -309,8 +309,6 @@ export const contact = {
       state.contactsPagintation.hasMore = data.hasMore;
     },
     setFreeUsers(state, data) {
-      // eslint-disable-next-line no-debugger
-      debugger;
       if (Object.keys(data.resList).length > 0) {
         Object.assign(state.freeUsers, data.resList);
       }
@@ -337,9 +335,6 @@ export const contact = {
       state.contactsCount = countData;
     },
     changeUserStatus(state, statusData) {
-      console.log("test", statusData);
-      // eslint-disable-next-line no-debugger
-      debugger;
       switch (statusData.operation) {
         case "AddContact": {
           const contactData = state.freeUsers[statusData.contactId];

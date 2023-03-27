@@ -23,14 +23,14 @@ export const alert = {
       state.type = null;
     }, 4000),
     setErrorMessage(state, text) {
+      if (text === "Unauthorized") return;
+
       if (Array.isArray(text)) {
         state.text = $t(text[0], text[1]);
       } else if (typeof text === "string") {
-        state.text = text;
+        state.text = $t(text);
       } else if (text.message) {
-        state.text = text;
-      } else {
-        state.text = text;
+        state.text = $t(text.message);
       }
       state.type = alertTypes.danger;
 

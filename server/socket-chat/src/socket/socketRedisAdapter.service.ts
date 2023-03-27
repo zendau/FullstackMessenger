@@ -100,7 +100,6 @@ export class SocketRedisAdapter {
     mainId: string | number,
     subId?: string | number,
   ) {
-    debugger;
     const valueKey = `${key}:${mainId}` + (subId ? `:${subId}` : '');
     const resData = await this.redis.get(valueKey);
 

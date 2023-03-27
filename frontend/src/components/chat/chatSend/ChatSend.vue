@@ -35,7 +35,7 @@
 import { inject, ref, computed, watch } from "vue";
 import { useStore } from "vuex";
 
-import $api from "@/axios";
+import $api from "axios";
 import debounce from "@/utils/debounce";
 import throttle from "@/utils/throttle";
 
@@ -104,13 +104,12 @@ export default {
       }
 
       console.log("sending message");
-      const inseredFilesData = [];
+      let inseredFilesData = [];
       console.log("files", files.value);
       if (files.value.length > 0) {
         const formData = new FormData();
 
-        // TODO: Add room path foulder
-        formData.append("path", "5d6e4a4e-761d-4e08-93e3-0b96e49ec627");
+        formData.append("path", chatId.value);
         formData.append("userId", userId);
 
         for (const file of files.value) {
@@ -127,10 +126,11 @@ export default {
 
         try {
           const resUpload = await $api.post(`${import.meta.env.VITE_STORAGE}/file/add`, formData, config);
-          inseredFilesData.push(...resUpload.data);
+          inseredFilesData = resUpload.data;
         } catch (e) {
           // TODO: alert error
           console.log("UPLOAD ERROR", e);
+          store.commit("alert/setErrorMessage", "error.fileUpload");
           return;
         }
       }
@@ -146,8 +146,11 @@ export default {
         });
         cancelMessage();
       } else {
-        console.log("messageText", messageText);
-        if (messageText.length === 0 || (messageText.length === 0 && inseredFilesData.length === 0)) return;
+        // if (messageText.length === 0) return;
+
+        if (messageText.length === 0 && inseredFilesData.length === 0) {
+          return;
+        }
 
         const messageData = {
           roomId: chatId.value,

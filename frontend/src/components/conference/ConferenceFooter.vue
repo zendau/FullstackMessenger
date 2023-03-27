@@ -78,11 +78,12 @@
         </h3>
         <p class="menu__conference-admin">
           <span
-            v-if="conferenceType"
+            v-if="isPrivate"
             class="menu__conference-admin--group"
             @click="toggleUsersList"
           >
-            {{ $t("conference.conferenceFoouter.group") }}</span>
+            {{ $t("conference.conferenceFoouter.group") }}
+          </span>
           <span v-else>{{ $t("conference.conferenceFoouter.private") }}</span>
         </p>
       </div>
@@ -123,6 +124,10 @@ export default {
       required: true,
     },
     conferenceType: {
+      type: Boolean,
+      required: true,
+    },
+    isPrivate: {
       type: Boolean,
       required: true,
     },
@@ -229,7 +234,7 @@ footer {
   }
 }
 
-@media (max-width: 1140px) {
+@media (max-width: 900px) {
   .mobile {
     display: none !important;
   }

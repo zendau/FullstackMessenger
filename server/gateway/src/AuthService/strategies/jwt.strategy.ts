@@ -12,7 +12,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    debugger
     if (!payload || payload.isBanned) return false;
     return payload;
   }
