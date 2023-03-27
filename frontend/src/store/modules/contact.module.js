@@ -416,99 +416,101 @@ export const contact = {
     changeContactStatus(state, statusData) {
       console.log("test", statusData);
       switch (statusData.operation) {
-        case "AddContact":
-          delete state.freeUsers[statusData.userData.id];
-          state.pendingRequests[statusData.userData.id] = statusData.userData;
+        case "AddContact": {
+          const userData = state.freeUsers[statusData.userId];
+          delete state.freeUsers[statusData.userId];
+          state.pendingRequests[statusData.userId] = userData;
           state.contactsCount.pendingRequests++;
 
-          if (state.contactStatutes[statusData.userData.id]) {
-            state.contactStatutes[
-              statusData.userData.id
-            ].isConfirmRequest = true;
+          if (state.contactStatutes[statusData.userId]) {
+            state.contactStatutes[statusData.userId].isConfirmRequest = true;
           }
 
           break;
-        case "PendingAccept":
-          delete state.outgoingRequests[statusData.userData.id];
-          state.contacts[statusData.userData.id] = statusData.userData;
+        }
+
+        case "PendingAccept": {
+          const userData = state.outgoingRequests[statusData.userId];
+          delete state.outgoingRequests[statusData.userId];
+          state.contacts[statusData.userId] = userData;
           state.contactsCount.contacts++;
           state.contactsCount.outgoingRequests--;
-          state.contactStatutes[
-            statusData.userData.id
-          ].isPendingRequest = false;
+          state.contactStatutes[statusData.userId].isPendingRequest = false;
 
-          if (state.contactStatutes[statusData.userData.id]) {
-            state.contactStatutes[statusData.userData.id].isFriend = true;
+          if (state.contactStatutes[statusData.userId]) {
+            state.contactStatutes[statusData.userId].isFriend = true;
           }
 
           break;
-        case "PendingReject":
-          delete state.outgoingRequests[statusData.userData.id];
-          state.freeUsers[statusData.userData.id] = statusData.userData;
+        }
+
+        case "PendingReject": {
+          const userData = state.outgoingRequests[statusData.userId];
+          delete state.outgoingRequests[statusData.userId];
+          state.freeUsers[statusData.userId] = userData;
           state.contactsCount.outgoingRequests--;
 
-          if (state.contactStatutes[statusData.userData.id]) {
-            state.contactStatutes[
-              statusData.userData.id
-            ].isPendingRequest = false;
+          if (state.contactStatutes[statusData.userId]) {
+            state.contactStatutes[statusData.userId].isPendingRequest = false;
           }
 
           break;
-        case "OutgointCancel":
-          delete state.pendingRequests[statusData.userData.id];
-          state.freeUsers[statusData.userData.id] = statusData.userData;
+        }
+
+        case "OutgointCancel": {
+          const userData = state.pendingRequests[statusData.userId];
+          delete state.pendingRequests[statusData.userId];
+          state.freeUsers[statusData.userId] = userData;
           state.contactsCount.pendingRequests--;
 
-          if (state.contactStatutes[statusData.userData.id]) {
-            state.contactStatutes[
-              statusData.userData.id
-            ].isConfirmRequest = false;
+          if (state.contactStatutes[statusData.userId]) {
+            state.contactStatutes[statusData.userId].isConfirmRequest = false;
           }
 
           break;
-        case "DeleteContact":
-          delete state.contacts[statusData.userData.id];
-          state.outgoingRequests[statusData.userData.id] = statusData.userData;
+        }
+
+        case "DeleteContact": {
+          const userData = state.contacts[statusData.userId];
+          delete state.contacts[statusData.userId];
+          state.outgoingRequests[statusData.userId] = userData;
           state.contactsCount.contacts--;
           state.contactsCount.outgoingRequests++;
 
-          if (state.contactStatutes[statusData.userData.id]) {
-            state.contactStatutes[
-              statusData.userData.id
-            ].isPendingRequest = true;
-            state.contactStatutes[statusData.userData.id].isFriend = false;
+          if (state.contactStatutes[statusData.userId]) {
+            state.contactStatutes[statusData.userId].isPendingRequest = true;
+            state.contactStatutes[statusData.userId].isFriend = false;
           }
 
           break;
-        case "BlockUser":
-          if (state.contacts[statusData.userData.id]) {
-            delete state.contacts[statusData.userData.id];
+        }
+
+        case "BlockUser": {
+          if (state.contacts[statusData.userId]) {
+            delete state.contacts[statusData.userId];
             state.contactsCount.contacts--;
-          } else if (state.freeUsers[statusData.userData.id]) {
-            delete state.freeUsers[statusData.userData.id];
-          } else if (state.pendingRequests[statusData.userData.id]) {
-            delete state.pendingRequests[statusData.userData.id];
+          } else if (state.freeUsers[statusData.userId]) {
+            delete state.freeUsers[statusData.userId];
+          } else if (state.pendingRequests[statusData.userId]) {
+            delete state.pendingRequests[statusData.userId];
             state.contactsCount.pendingRequests--;
-          } else if (state.outgoingRequests[statusData.userData.id]) {
-            delete state.outgoingRequests[statusData.userData.id];
+          } else if (state.outgoingRequests[statusData.userId]) {
+            delete state.outgoingRequests[statusData.userId];
             state.contactsCount.outgoingRequests--;
           }
 
-          if (state.contactStatutes[statusData.userData.id]) {
-            state.contactStatutes[
-              statusData.userData.id
-            ].isBannedByContact = true;
+          if (state.contactStatutes[statusData.userId]) {
+            state.contactStatutes[statusData.userId].isBannedByContact = true;
           }
 
           break;
+        }
 
         case "UnBlockUser":
-          state.freeUsers[statusData.userData.id] = statusData.userData;
+          state.freeUsers[statusData.userId] = statusData.userData;
 
-          if (state.contactStatutes[statusData.userData.id]) {
-            state.contactStatutes[
-              statusData.userData.id
-            ].isBannedByContact = false;
+          if (state.contactStatutes[statusData.userId]) {
+            state.contactStatutes[statusData.userId].isBannedByContact = false;
           }
 
           break;

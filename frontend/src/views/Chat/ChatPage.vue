@@ -26,6 +26,8 @@ import ChatContainer from "@/components/chat/ChatContainer.vue";
 import ChatsList from "@/components/chat/chatsList/ChatsList.vue";
 import UserModal from "@/components/chat/modals/UserModal.vue";
 
+import { insertUsersList } from "@/store/modules/users.module";
+
 export default {
   components: { ChatNavbar, ContactsContainer, ChatContainer, ChatsList, UserModal },
   setup() {
@@ -81,6 +83,8 @@ export default {
     });
 
     chatSocket.on("newChat", (chatData) => {
+      chatData.users = insertUsersList(chatData.users);
+
       store.commit("chat/saveChat", chatData);
       if (chatData.adminId === userId.value || isCallSendAfterCreate.value) {
         router.push(`/chat/${chatData.id}`);

@@ -275,6 +275,7 @@ export const chat = {
   },
   mutations: {
     saveChat(state, chat) {
+      console.log("chat", chat);
       state.chats.set(chat.id, chat);
     },
     saveChats(state, chats) {

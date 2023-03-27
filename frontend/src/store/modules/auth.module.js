@@ -262,8 +262,10 @@ export const auth = {
       return {
         email: state.user.email,
         id: state.user.id,
-        lastOnline: "online",
+        info: state.user.info,
+        lastOnline: $t("store.user.online"),
         login: state.user.login,
+        role: state.user.role,
       };
     },
   },

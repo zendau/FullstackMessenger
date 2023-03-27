@@ -137,7 +137,7 @@ export default {
       const statusData = {
         operation: listTypes.BlockUser,
         contactId: contactId.value,
-        userData: store.getters["auth/getUserContactData"],
+        userId: userId.value,
       };
 
       chatSocket.emit("chatContactStatus", statusData);
@@ -147,12 +147,14 @@ export default {
     async function unblockUser() {
       store.dispatch("contact/unblockUser", contactId.value);
 
+      const userData = store.getters["auth/getUserContactData"];
+
       const statusData = {
         operation: listTypes.UnBlockUser,
         contactId: contactId.value,
-        userData: store.getters["auth/getUserContactData"],
+        userId: userData.id,
+        userData,
       };
-      console.log("BLOCK WITHOUT SOCKET");
       chatSocket.emit("chatContactStatus", statusData);
       store.commit("contact/changeUserStatus", statusData);
     }
@@ -163,7 +165,7 @@ export default {
       const statusData = {
         operation: listTypes.DeleteContact,
         contactId: contactId.value,
-        userData: store.getters["auth/getUserContactData"],
+        userId: userId.value,
       };
 
       chatSocket.emit("chatContactStatus", statusData);
@@ -176,7 +178,7 @@ export default {
       const statusData = {
         operation: listTypes.AddContact,
         contactId: contactId.value,
-        userData: store.getters["auth/getUserContactData"],
+        userId: userId.value,
       };
 
       chatSocket.emit("chatContactStatus", statusData);
@@ -191,7 +193,7 @@ export default {
       const statusData = {
         operation: listTypes.OutgointCancel,
         contactId: contactId.value,
-        userData: store.getters["auth/getUserContactData"],
+        userId: userId.value,
       };
 
       chatSocket.emit("chatContactStatus", statusData);
@@ -204,7 +206,7 @@ export default {
       const statusData = {
         operation: listTypes.PendingAccept,
         contactId: contactId.value,
-        userData: store.getters["auth/getUserContactData"],
+        userId: userId.value,
       };
 
       chatSocket.emit("chatContactStatus", statusData);
@@ -220,7 +222,7 @@ export default {
       const statusData = {
         operation: listTypes.PendingReject,
         contactId: contactId.value,
-        userData: store.getters["auth/getUserContactData"],
+        userId: userId.value,
       };
 
       chatSocket.emit("chatContactStatus", statusData);
