@@ -30,6 +30,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    peerId: {
+      type: String,
+      required: true,
+    },
   },
   setup(props) {
     const media = ref(null);
@@ -46,6 +50,7 @@ export default {
       media.value.srcObject = stream;
       console.log(stream, "stream");
       media.value.addEventListener("loadedmetadata", () => {
+        console.log("play audio");
         media.value.play();
       });
     }

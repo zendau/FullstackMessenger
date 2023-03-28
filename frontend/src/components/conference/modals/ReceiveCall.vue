@@ -44,7 +44,10 @@ export default {
     audio.loop = true;
 
     onUpdated(() => {
-      if (!callingData.value) return;
+      if (!callingData.value) {
+        closeCTX();
+        return;
+      }
 
       audio.play();
 
@@ -54,9 +57,9 @@ export default {
     });
 
     function acceptCall() {
-      console.log("accept call");
+      console.log("accept call", callingData.value);
       peerSocket.emit("acceptCalling", callingData.value);
-      router.push(`/conference/video/${callingData.value.confrenceId}`);
+      router.push(`/conference/${callingData.value.withVideo ? "video" : "audio"}/${callingData.value.confrenceId}`);
       closeCTX();
     }
 

@@ -6,13 +6,18 @@ let isRecordScreen = null;
 let mediaScreenRecorder = null;
 
 export async function startScreenRecorder(isRecordProvide) {
-  let stream = await navigator.mediaDevices.getDisplayMedia({
-    audio: true,
-    video: true,
-  });
+  try {
+    let stream = await navigator.mediaDevices.getDisplayMedia({
+      audio: true,
+      video: true,
+    });
 
-  mediaScreenRecorder = createRecorder(stream, mimeType);
-  isRecordScreen = isRecordProvide;
+    mediaScreenRecorder = createRecorder(stream, mimeType);
+    isRecordScreen = isRecordProvide;
+  } catch (e) {
+    // this.store.commit("alert/setErrorMessage", e.message);
+    return false;
+  }
 }
 
 export function stopScreenRecorder() {

@@ -31,6 +31,7 @@
       :chat-users="chatData?.users"
       :chat-title="chatData.title"
       :is-private-banned="isPrivateBanned"
+      :with-video="chatData.conferenceWithVideo"
     />
   </div>
   <HeaderGroupList
