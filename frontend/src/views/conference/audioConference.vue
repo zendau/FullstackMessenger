@@ -180,10 +180,7 @@ export default {
       call.on("stream", (userAudiotream) => {
         streams.push(userAudiotream);
         containersRefs.forEach((item) => {
-          // eslint-disable-next-line no-debugger
-          debugger;
           if (item.peerId === userId) {
-            console.log("!!!!!!!!!!!!!!!!!2");
             item.setStream(userAudiotream);
           }
         });

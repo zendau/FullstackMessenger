@@ -48,9 +48,7 @@ export default {
 
     function setStream(stream) {
       media.value.srcObject = stream;
-      console.log(stream, "stream");
       media.value.addEventListener("loadedmetadata", () => {
-        console.log("play audio");
         media.value.play();
       });
     }
