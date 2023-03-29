@@ -43,7 +43,6 @@ import ChatEditMessage from "@/components/chat/chatSend/ChatEditMessage.vue";
 import ChatPressing from "@/components/chat/chatSend/ChatPressing.vue";
 import ChatFiles from "@/components/chat/chatSend/ChatFiles.vue";
 import ChatFileUpload from "@/components/chat/chatSend/ChatFileUpload.vue";
-import messageHTMLConvert from "@/utils/messageHTMLConvert";
 
 export default {
   components: { ChatEditMessage, ChatPressing, ChatFiles, ChatFileUpload },
@@ -93,22 +92,20 @@ export default {
       }
     });
 
-    async function sendMessage(e) {
-      if (e.keyCode === 13) {
-        e.preventDefault();
-      }
-
+    async function sendMessage() {
+      console.log("change 2");
       if (!chatId.value && store.state.chat.tempPrivateChat) {
         chatSocket.emit("createChat", {
           users: [store.state.chat.tempPrivateChat.id, store.state.auth.user.id],
         });
-
+        console.log("create chat before sending message");
         isCallSendAfterCreate.value = true;
         return;
       }
 
+      console.log("sending message");
       let inseredFilesData = [];
-
+      console.log("files", files.value);
       if (files.value.length > 0) {
         const formData = new FormData();
 
@@ -122,7 +119,7 @@ export default {
         const config = {
           onUploadProgress: function (progressEvent) {
             const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-
+            console.log("upload file - ", percentCompleted);
             fileUploadPercent.value = percentCompleted;
           },
         };
@@ -131,13 +128,14 @@ export default {
           const resUpload = await $api.post(`${import.meta.env.VITE_STORAGE}/file/add`, formData, config);
           inseredFilesData = resUpload.data;
         } catch (e) {
+          // TODO: alert error
+          console.log("UPLOAD ERROR", e);
           store.commit("alert/setErrorMessage", "error.fileUpload");
           return;
         }
       }
 
-      const messageText = messageHTMLConvert(message.value.getInnerHTML()).trim();
-
+      const messageText = message.value.getInnerHTML().trim();
       if (editMessageData.value) {
         chatSocket.emit("edit_message", {
           roomId: chatId.value,
@@ -148,8 +146,9 @@ export default {
         });
         cancelMessage();
       } else {
+        // if (messageText.length === 0) return;
+
         if (messageText.length === 0 && inseredFilesData.length === 0) {
-          cancelMessage();
           return;
         }
 
@@ -184,6 +183,7 @@ export default {
         userName: "",
         roomId: chatId.value,
       });
+      console.log("press_end");
     });
 
     const inputStartPress = throttle(() => {
@@ -191,9 +191,12 @@ export default {
         userName: userLogin,
         roomId: chatId.value,
       });
+      console.log("press_start");
     }, 5000);
 
     chatSocket.on("message_status", (status) => {
+      console.log("status", status);
+
       if (status.roomId !== chatId.value) return;
       userPressing.value = status.userName;
     });

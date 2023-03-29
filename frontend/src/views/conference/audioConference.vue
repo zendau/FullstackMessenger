@@ -5,7 +5,6 @@
     :ref="setItemRef"
     :is-muted="user[1].mute"
     :user-name="user[1].userLogin"
-    :peer-id="user[1].peerId"
   />
 </template>
 
@@ -159,10 +158,7 @@ export default {
       call.on("stream", (userAudiotream) => {
         streams.push(userAudiotream);
         containersRefs.forEach((item) => {
-          // eslint-disable-next-line no-debugger
-          debugger;
           if (item.peerId === call.peer) {
-            console.log("!!!!!!!!!!!!!111");
             item.setStream(userAudiotream);
           }
         });

@@ -3,12 +3,7 @@
     "group": "Group",
     "private": "Private",
     "interrupt": "Interrupt",
-    "chat": "Chat",
-    "on": "On",
-    "off": "Off",
-    "record": "Record",
-    "stop": "Stop",
-    "show": "Show"
+    "chat": "Chat"
   },
   "conferenceItem": {
     "group": "Group",

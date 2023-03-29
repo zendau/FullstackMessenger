@@ -79,7 +79,7 @@ export class ContactService {
     if (checkContact) {
       return {
         status: true,
-        message: 'error.alreadyContact',
+        message: 'Is already contact',
       };
     }
 

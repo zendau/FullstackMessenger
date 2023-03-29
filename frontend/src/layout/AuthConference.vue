@@ -2,7 +2,7 @@
   <section class="main-container">
     <AlertNotification />
     <div
-      v-if="roomData && !alert.text"
+      v-if="roomData"
       class="conference-container"
       :class="{ 'conference-container--audio': roomData.conferenceWithVideo === 0 }"
     >
@@ -42,7 +42,6 @@ export default {
     const showChat = ref(false);
     const store = useStore();
     const route = useRoute();
-    const alert = computed(() => store.state.alert);
 
     const roomId = route.params.id;
     const roomData = computed(() => store.getters["chat/selectedChat"](roomId));
@@ -90,7 +89,11 @@ export default {
       document.querySelector("#app").classList.remove("conference-grid");
     });
 
-    return { alert, showChat, roomData, isMuted };
+    return {
+      showChat,
+      roomData,
+      isMuted,
+    };
   },
 };
 </script>

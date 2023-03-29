@@ -26,17 +26,9 @@ export const alert = {
       if (text === "Unauthorized") return;
 
       if (Array.isArray(text)) {
-        state.text = $t(text[0], { value: text[1] });
+        state.text = $t(text[0], text[1]);
       } else if (typeof text === "string") {
-        switch (text) {
-          case "Permission denied":
-            state.text = $t("error.permission");
-            break;
-
-          default:
-            state.text = $t(text);
-            break;
-        }
+        state.text = $t(text);
       } else if (text.message) {
         state.text = $t(text.message);
       }

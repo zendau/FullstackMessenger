@@ -40,16 +40,15 @@ export default {
       callingData.value = callData;
     });
 
-    peerSocket.on("cancelInviteCalling", () => {
-      // console.log("cancelInviteCalling", callData);
+    peerSocket.on("cancelInviteCalling", (callData) => {
+      console.log("cancelInviteCalling", callData);
       clearCallingData();
     });
 
     peerSocket.on("acceptInviteCalling", (callData) => {
       console.log("acceptInviteCalling", callData);
       clearCallingData();
-
-      router.push(`/conference/${callingData.withVideo ? "video" : "audio"}/${callData.confrenceId}`);
+      router.push(`/conference/video/${callData.confrenceId}`);
     });
 
     peerSocket.on("rejectInviteCalling", (rejectedUser) => {

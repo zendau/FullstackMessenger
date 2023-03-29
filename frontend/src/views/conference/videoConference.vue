@@ -106,20 +106,18 @@ export default {
     });
 
     // Change share screen status
-    watch(isShareScreen, async (status) => {
+    watch(isShareScreen, (status) => {
       if (status) {
-        const res = await screenShare.startShareScreen();
-        if (!res) isShareScreen.value = false;
+        screenShare.startShareScreen();
       } else {
         screenShare.stopShareScreen();
       }
     });
 
     // Change record screen status
-    watch(isRecordScreen, async (status) => {
+    watch(isRecordScreen, (status) => {
       if (status) {
-        const res = await startScreenRecorder(isRecordScreen);
-        if (!res) isRecordScreen.value = false;
+        startScreenRecorder(isRecordScreen);
       } else {
         stopScreenRecorder();
       }

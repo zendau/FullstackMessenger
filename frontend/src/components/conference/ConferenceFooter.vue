@@ -11,7 +11,7 @@
             v-else
             icon="fa-solid fa-microphone"
           />
-          {{ isMuted ? $t("conference.conferenceFoouter.off") : $t("conference.conferenceFoouter.on") }}
+          {{ isMuted ? "Unmute" : "Mute" }}
         </button>
         <button
           v-if="conferenceType"
@@ -25,7 +25,7 @@
             v-else
             icon="fa-solid fa-video"
           />
-          {{ isPauseVideo ? $t("conference.conferenceFoouter.off") : $t("conference.conferenceFoouter.on") }}
+          {{ isPauseVideo ? "Off" : "On" }}
         </button>
         <button
           v-if="!conferenceType"
@@ -39,7 +39,7 @@
             v-else
             icon="fa-solid fa-record-vinyl"
           />
-          {{ isRecord ? $t("conference.conferenceFoouter.stop") : $t("conference.conferenceFoouter.record") }}
+          {{ isRecord ? "Stop" : "Record" }}
         </button>
         <button
           v-if="conferenceType"
@@ -54,7 +54,7 @@
             v-else
             icon="fa-solid fa-record-vinyl"
           />
-          {{ isRecordScreen ? $t("conference.conferenceFoouter.stop") : $t("conference.conferenceFoouter.record") }}
+          {{ isRecordScreen ? "Stop" : "Record" }}
         </button>
         <button
           v-if="conferenceType"
@@ -69,7 +69,7 @@
             v-else
             icon="fa-solid fa-display"
           />
-          {{ isShareScreen ? $t("conference.conferenceFoouter.stop") : $t("conference.conferenceFoouter.show") }}
+          {{ isShareScreen ? "Stop" : "Show" }}
         </button>
       </div>
       <div class="menu__conference-data">
@@ -192,7 +192,6 @@ footer {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 0 5px;
 
     &:hover {
       color: var(--color-links-active);

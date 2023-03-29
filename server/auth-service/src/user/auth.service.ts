@@ -85,11 +85,11 @@ export class AuthService {
       if (resUserData.status)
         return {
           find: true,
-          message: ['error.takenEmail', email],
+          message: `Email - is already exist`,
         };
       return {
         find: false,
-        message: ['error.undefinedEmail', email],
+        message: `Email - is not exist`,
       };
     } catch (e) {
       this.logger.error(e.message);
