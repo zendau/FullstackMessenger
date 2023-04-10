@@ -135,8 +135,7 @@ export default {
           return;
         }
       }
-
-      const messageText = messageHTMLConvert(message.value.getInnerHTML()).trim();
+      const messageText = messageHTMLConvert(message.value.innerHTML).trim();
 
       if (editMessageData.value) {
         chatSocket.emit("edit_message", {

@@ -41,6 +41,12 @@
             >
           </a>
 
+          <video
+            v-else-if="file.mimetype.includes('video')"
+            controls
+            :src="`${storageURL}/storage/${file.foulder.path}/${file.fileTempName}`"
+          />
+
           <template v-else>
             <a
               class="message__file"
@@ -192,7 +198,25 @@ export default {
 
     const isAuthor = computed(() => props.message.authorId === props.userId);
 
+    function toFullScreen(e) {
+      const media = e.target;
+
+      if (!media) return;
+
+      if (media.requestFullscreen) {
+        media.requestFullscreen();
+      } else if (media.mozRequestFullScreen) {
+        media.mozRequestFullScreen();
+      } else if (media.webkitRequestFullscreen) {
+        media.webkitRequestFullscreen();
+      } else if (media.msRequestFullscreen) {
+        media.msRequestFullscreen();
+      }
+      console.log("e", e);
+    }
+
     return {
+      toFullScreen,
       formatBytes,
       isConferenceChat,
       checboxData,
@@ -241,6 +265,10 @@ img {
     border-radius: 5px;
     gap: 2px;
     position: relative;
+
+    video {
+      width: 100%;
+    }
 
     &:has(label input:checked) {
       background-color: var(--button-chat-hover);

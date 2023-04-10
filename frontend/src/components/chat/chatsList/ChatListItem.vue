@@ -27,7 +27,7 @@
         class="chat__last-message"
       >
         <span v-if="chatData.adminId"> {{ chatData.lastMessage?.authorLogin }}: </span>
-        {{ lastMessageHTMLConvert(chatData.lastMessage?.text) }}
+        {{ clearMessage(chatData.lastMessage?.text) }}
       </p>
       <p
         v-if="chatData.userUnread"
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import lastMessageHTMLConvert from "@/utils/messageHTMLConvert";
+import messageHTMLConvert from "@/utils/messageHTMLConvert";
 
 export default {
   props: {
@@ -59,8 +59,12 @@ export default {
       emit("open-chat", chatId);
     }
 
+    function clearMessage(message) {
+      return messageHTMLConvert(message).replaceAll("&nbsp;", "");
+    }
+
     return {
-      lastMessageHTMLConvert,
+      clearMessage,
       openChat,
     };
   },
