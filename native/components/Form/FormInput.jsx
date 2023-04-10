@@ -1,5 +1,8 @@
 import styled from 'styled-components/native'
 import { memo } from 'react'
+
+import { Text, TextInput } from 'react-native'
+
 const Input = styled.TextInput`
   background-color: #242F3D;
   border-radius: 5px;

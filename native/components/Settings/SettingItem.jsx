@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import {TouchableOpacity, Text} from 'react-native'
 
 const SettingContainer = styled.TouchableOpacity`
   padding: 0 15px;

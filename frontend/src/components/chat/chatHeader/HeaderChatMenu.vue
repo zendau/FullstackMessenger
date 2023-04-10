@@ -77,6 +77,10 @@ export default {
       type: Object,
       required: true,
     },
+    withVideo: {
+      type: Boolean,
+      required: true,
+    },
   },
   setup(props) {
     const isShowConfirmModal = ref(false);
@@ -115,6 +119,7 @@ export default {
         chatTitle: props.chatTitle,
         users: onlineUsersPeers,
         confrenceId: chatId.value,
+        withVideo: props.withVideo,
       };
     }
 

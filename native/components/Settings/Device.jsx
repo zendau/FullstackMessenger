@@ -1,10 +1,13 @@
-import { Text, TouchableOpacity, Alert } from 'react-native'
+import { Text, TouchableOpacity, Alert, View } from 'react-native'
 import styled from "styled-components";
-import { FontAwesome, FontAwesome5, Entypo, AntDesign } from '@expo/vector-icons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useEffect, useState } from 'react';
 
 const DeviceIcon = styled.View`
-  border-radius: 50; 
+  border-radius: 50;
   height: 55px;
   width: 55px;
   align-items: center;

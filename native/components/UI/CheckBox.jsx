@@ -1,5 +1,5 @@
 import { TouchableOpacity } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { memo } from 'react';
 
 function CheckBox({ status, onPress, isSelected }) {

@@ -1,12 +1,12 @@
-import { Ionicons } from '@expo/vector-icons'; 
-import styled from 'styled-components';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import styled from 'styled-components/native';
 
 const StatusIcon = styled(Ionicons)`
   align-self: flex-end;
 `
 
 function MessageStatus({isRead}) {
-  
+
 
 
   if (isRead === true) {

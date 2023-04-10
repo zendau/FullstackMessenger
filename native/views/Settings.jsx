@@ -1,9 +1,9 @@
-import { View } from 'react-native';
-import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import {View} from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SettingItem from '../components/Settings/SettingItem';
 
-function SettingsScreen({ navigation }) {
-
+function SettingsScreen({navigation}) {
   return (
     <View style={{marginTop: 15}}>
       <SettingItem
@@ -20,4 +20,4 @@ function SettingsScreen({ navigation }) {
   );
 }
 
-export default SettingsScreen
+export default SettingsScreen;

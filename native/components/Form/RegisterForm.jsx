@@ -1,4 +1,4 @@
-import { Button } from 'react-native';
+import { Button, View } from 'react-native';
 import styled from 'styled-components/native'
 import FormInput from './FormInput';
 import { memo } from 'react'

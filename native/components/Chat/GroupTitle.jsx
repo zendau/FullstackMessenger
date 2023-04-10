@@ -1,4 +1,4 @@
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, Text} from 'react-native'
 import styled from 'styled-components/native'
 import ToolbarModel from './Toolbar/ToolbarModal'
 import { useState } from 'react'

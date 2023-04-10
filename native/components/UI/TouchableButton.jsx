@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { Text } from 'react-native'
+import styled from "styled-components/native"
+import { Text, TouchableOpacity } from 'react-native'
 
 const ButtonContainer = styled.TouchableOpacity`
   padding: 10px;

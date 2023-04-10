@@ -1,6 +1,6 @@
-import { Text } from 'react-native';
+import { Text, TouchableOpacity, View} from 'react-native';
 import styled from 'styled-components/native'
-import { AntDesign } from '@expo/vector-icons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import formatSizeUnits from '../../../utils/formatSizeUnits';
 
 const Container = styled.TouchableOpacity`

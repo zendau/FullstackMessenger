@@ -266,7 +266,7 @@ img {
   }
 
   &__unread {
-    color: var(--dangerColor);
+    color: var(--color-danger);
   }
 
   &__files-container {

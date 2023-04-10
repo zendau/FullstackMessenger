@@ -1,6 +1,7 @@
 import { useState } from "react"
-import styled from "styled-components"
+import styled from "styled-components/native"
 import TouchableButton from "../UI/TouchableButton"
+import { View } from 'react-native'
 
 const Container = styled.View`
   flex-direction: row;

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, TouchableOpacity } from 'react-native'
 import styled from 'styled-components';
 
 const BtnAction = styled.TouchableOpacity`

@@ -1,6 +1,6 @@
 import ChatItem from "../components/Chat/ChatItem";
 import { useEffect, useState } from "react";
-import { FlatList } from 'react-native';
+import { FlatList, View, Text } from 'react-native';
 import useSearchData from "../hooks/useSearchData";
 import styled from 'styled-components/native'
 import { useNavigation } from "@react-navigation/native";

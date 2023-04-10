@@ -1,12 +1,13 @@
-import { FontAwesome, AntDesign } from '@expo/vector-icons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styled from 'styled-components/native'
 import { useState, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
-import { View, Text, Button } from 'react-native'
+import { View, Text, Button, TextInput } from 'react-native'
 
 
 const SearchInput = styled.TextInput`
-  color: white; 
+  color: white;
   font-size: 20px;
   padding: 5px;
   text-decoration: underline;

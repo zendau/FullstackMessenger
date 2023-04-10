@@ -30,6 +30,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    peerId: {
+      type: String,
+      required: true,
+    },
   },
   setup(props) {
     const media = ref(null);

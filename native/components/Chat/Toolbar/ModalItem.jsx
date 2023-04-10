@@ -1,4 +1,4 @@
-import { Text } from 'react-native'
+import { Text, TouchableOpacity } from 'react-native'
 import styled from 'styled-components/native'
 
 const ItemContainer = styled.TouchableOpacity`

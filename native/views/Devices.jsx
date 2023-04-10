@@ -1,8 +1,5 @@
-import { Text, View, ScrollView, Alert } from "react-native"
-import { FontAwesome, FontAwesome5, Entypo, AntDesign } from '@expo/vector-icons';
-import UAParser from "ua-parser-js";
-import * as Device from 'expo-device';
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
+import { Text, View, SafeAreaView  } from "react-native"
+import { FlatList } from "react-native-gesture-handler";
 import DeviceComponent from "../components/Settings/Device";
 import styled from "styled-components";
 
@@ -67,16 +64,8 @@ const divecesData = [
 
 function DevicesScreen() {
 
-
-  // const browser = UAParser('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36')
-  // console.log(browser)
-  // console.log()
-  // console.log(Device)
-
-
-
   return (
-    <ScrollView nestedScrollEnabled style={{paddingTop: 15}}>
+    <SafeAreaView  nestedScrollEnabled style={{paddingTop: 15}}>
       <View>
         <TextInfo>This device</TextInfo>
         <DeviceComponent id={divecesData[0].id} ip={divecesData[0].ip} onlineStatus={divecesData[0].onlineStatus} deviceData={divecesData[0].device} current={divecesData[0].current} />
@@ -91,56 +80,7 @@ function DevicesScreen() {
         renderItem={({ item }) =>
           <DeviceComponent id={item.id} ip={item.ip} onlineStatus={item.onlineStatus} deviceData={item.device} current={item.current} />
         } />
-    </ScrollView>
-
-    // <ScrollView>
-    //   {/* <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-    //     <DeviceIcon style={{ backgroundColor: '#4388B9' }}>
-    //       {getBrowserIcon(browser.browser.name)}
-    //     </DeviceIcon>
-    //     <View>
-    //       <Text style={{ color: 'white' }}>{`${browser.browser.name} ${browser.browser.version}`}</Text>
-    //       <Text style={{ color: 'white' }}>127.0.0.1</Text>
-    //       <Text style={{ color: 'white' }}>1.10.2022 21:13</Text>
-    //     </View>
-    //     <TouchableOpacity onPress={() => Alert.alert(
-    //       "Alert Title",
-    //       "My Alert Msg",
-    //       [
-    //         {
-    //           text: "Cancel",
-    //           onPress: () => console.log("Cancel Pressed"),
-    //           style: "cancel"
-    //         },
-    //         { text: "OK", onPress: () => console.log("OK Pressed") }
-    //       ],
-    //       { cancelable: false }
-    //     )}>
-    //       <AntDesign name="close" size={50} color="black" />
-    //     </TouchableOpacity>
-    //   </View>
-    //   <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-    //     <DeviceIcon style={{ backgroundColor: '#63AA55' }}>
-    //       <AntDesign name="android1" size={40} color="white" />
-    //     </DeviceIcon>
-
-    //     <View>
-    //       <Text style={{ color: 'white' }}>{`${Device.manufacturer} ${Device.modelName}`}</Text>
-    //       <Text style={{ color: 'white' }}>127.0.0.1</Text>
-    //       <Text style={{ color: 'white' }}>1.10.2022 21:13</Text>
-    //     </View>
-    //   </View>
-    //   <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-    //     <DeviceIcon style={{ backgroundColor: '#B8477A' }}>
-    //       <AntDesign name="apple1" size={40} color="white" />
-    //     </DeviceIcon>
-    //     <View>
-    //       <Text style={{ color: 'white' }}>{`${Device.manufacturer} ${Device.modelName}`}</Text>
-    //       <Text style={{ color: 'white' }}>127.0.0.1</Text>
-    //       <Text style={{ color: 'white' }}>1.10.2022 21:13</Text>
-    //     </View>
-    //   </View> */}
-    // </ScrollView>
+    </SafeAreaView>
   )
 
 }

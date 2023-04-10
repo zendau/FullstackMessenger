@@ -1,9 +1,9 @@
-import { Button } from 'react-native'
+import { Button, TextInput, View, Text } from 'react-native'
 import styled from 'styled-components/native'
 import { useState, useMemo } from 'react'
 
 const SearchInput = styled.TextInput`
-  color: white; 
+  color: white;
   font-size: 20px;
   padding: 5px;
   text-decoration: underline;
@@ -25,7 +25,7 @@ const Wrapper = styled.View`
 
 const TextCountInfo = styled.Text`
   color: white;
-  margin-right: 10px; 
+  margin-right: 10px;
 `
 
 

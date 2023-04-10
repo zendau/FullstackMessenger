@@ -31,10 +31,11 @@ export default class ScreenShare {
           item.setStream(this.screenStream);
         }
       });
-
       videoTrack.addEventListener("ended", () => this.returnVideoStream());
+      return true;
     } catch (e) {
-      this.store.commit("alert/setErrorMessage", e);
+      // this.store.commit("alert/setErrorMessage", e.message);
+      return false;
     }
   }
 

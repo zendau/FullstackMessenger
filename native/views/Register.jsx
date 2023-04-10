@@ -2,20 +2,20 @@ import { memo, useState } from 'react'
 import RegisterForm from '../components/Form/RegisterForm';
 import ConfirmCodeForm from '../components/Form/ConfirmCodeForm';
 import axios from 'axios';
-import * as Device from 'expo-device';
+import {getModel} from 'react-native-device-info';
 
 function RegisterScreen() {
 
   const [isShowConfirmCode, setIsShowConfirmCode] = useState(false)
   const [userData, setUserData] = useState({})
-  
+
   const onSumbitConfirmCode = (values) => {
     console.log(values)
   }
 
   const onSubmitRegister = async (values) => {
 
-    const name = Device.modelName
+    const name = getModel()
 
     console.log(values, name)
     setUserData(values)

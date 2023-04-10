@@ -1,4 +1,4 @@
-import { View, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Image, TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native'
 import FileContainer from './FileContainer';
 import MessageStatus from './MessageStatus';
@@ -10,8 +10,8 @@ const MessageContainer = styled.View`
   margin-top: 5px;
   margin-bottom: 5px;
   width: 80%;
-  border-radius: 4px; 
-  background-color: ${props => props.type ? '#182533' : '#376EAF'}; 
+  border-radius: 4px;
+  background-color: ${props => props.type ? '#182533' : '#376EAF'};
   align-self: ${props => props.type ? 'flex-start' : 'flex-end'};
 `
 
