@@ -62,7 +62,12 @@ export default {
     const store = useStore();
     const { t } = useI18n();
 
-    const registerData = ref(null);
+    const registerData = ref({
+      email: "",
+      login: "",
+      password: "",
+      confirmPassword: "",
+    });
     const isConfirmCode = computed(() => store.state.auth.isConfirmCode);
 
     const schema = yup.object({
@@ -90,6 +95,7 @@ export default {
     });
 
     const onSubmitForm = handleSubmit((value) => {
+      console.log("SUBMIT");
       registerData.value = value;
       store.commit("alert/clearAlert");
 

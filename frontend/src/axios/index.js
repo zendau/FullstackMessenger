@@ -3,7 +3,9 @@ import axios from "axios";
 import store from "@/store";
 
 const API_URL = import.meta.env.VITE_API;
-console.log("API_URL", API_URL);
+
+console.log("API", API_URL);
+
 const $api = axios.create({
   withCredentials: true,
   baseURL: API_URL,
@@ -20,7 +22,6 @@ $api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-
     if (originalRequest.url === "/user/refresh") {
       return error.response;
     }

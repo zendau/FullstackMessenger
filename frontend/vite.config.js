@@ -10,4 +10,8 @@ export default defineConfig({
     },
   },
   plugins: [vue(), eslintPlugin()],
+  test: {
+    globals: true,
+    environment: "happy-dom",
+  },
 });

@@ -35,7 +35,7 @@ export const auth = {
         localStorage.setItem("token", accessToken);
         router.push("/chat");
       } catch (e) {
-        const message = e.response.data;
+        const message = e.response?.data ?? e.message;
         commit("alert/setErrorMessage", message, {
           root: true,
         });
@@ -48,7 +48,6 @@ export const auth = {
         });
 
         const { find, message } = resData.data;
-
         if (find === isFind) {
           commit("setIsConfirmCode", true);
         } else {
@@ -57,7 +56,6 @@ export const auth = {
           });
         }
       } catch (e) {
-        console.log("DEAT", e);
         const { message } = e.response.data;
         commit("alert/setErrorMessage", message, {
           root: true,
@@ -120,12 +118,13 @@ export const auth = {
         });
 
         const { accessToken } = resData.data;
+
         const tokenDecode = jwt_decode(accessToken);
         commit("authSuccess", tokenDecode);
         localStorage.setItem("token", accessToken);
         router.push("/chat");
       } catch (e) {
-        const message = e.response.data;
+        const message = e.response?.data ?? e.message;
         commit("alert/setErrorMessage", message, {
           root: true,
         });
@@ -147,6 +146,8 @@ export const auth = {
       const accessToken = localStorage.getItem("token");
       let tokenDecode = null;
 
+      console.log("ACCESS", accessToken);
+
       if (!accessToken) return;
 
       try {
@@ -155,7 +156,7 @@ export const auth = {
         const resRefresh = await $api.get("/user/refresh");
         if (resRefresh.data.statusCode === 401) return;
 
-        const [accessToken] = resRefresh.data;
+        const { accessToken } = resRefresh.data;
         localStorage.setItem("token", accessToken);
         tokenDecode = jwt_decode(accessToken);
       } finally {
@@ -196,7 +197,6 @@ export const auth = {
   },
   mutations: {
     authSuccess(state, userData) {
-      console.log("auth success", userData);
       state.user = {
         id: userData.id,
         email: userData.email,
@@ -230,7 +230,9 @@ export const auth = {
         isBanned: null,
         deviceId: null,
       };
+      state.devices = [];
       state.authStatus = false;
+      state.isConfirmCode = false;
     },
     saveDivicesData(state, diveces) {
       state.devices = diveces;

@@ -175,9 +175,7 @@ router.beforeEach((to, from, next) => {
   const startAuthPage = import.meta.env.VITE_ROUTER_START_AUTH_PAGE_PATH;
 
   const { authStatus } = store.state.auth;
-  const userRole = store.state.auth.user.role;
-  const { isBanned } = store.state.auth.user;
-
+  const { isBanned, role: userRole } = store.state.auth.user;
 
   if (to.meta.requiresAuth) {
     if (authStatus) {
@@ -185,6 +183,7 @@ router.beforeEach((to, from, next) => {
         store.dispatch("auth/logout");
       } else {
         if (to.meta.role <= Role[userRole]) {
+          console.log("GOOD ROUTE");
           next();
         } else {
           next(wrongRoleRedicect);
