@@ -24,6 +24,7 @@
 
 <script>
 import { inject, ref } from "vue";
+
 export default {
   setup() {
     const dragStatus = ref(false);

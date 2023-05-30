@@ -14,7 +14,6 @@ export function insertUsersList(usersList) {
       } else {
         user.lastOnline = $t("store.user.online");
       }
-
       stateList.set(user.id, user);
     }
     chatUsers[user.id] = stateList.get(user.id);
@@ -23,7 +22,7 @@ export function insertUsersList(usersList) {
   return chatUsers;
 }
 
-function dateTransformer(time) {
+export function dateTransformer(time) {
   let delta = Math.floor((new Date() - new Date(time)) / 1000);
   const days = Math.floor(delta / 86400);
   delta -= days * 86400;
@@ -51,7 +50,8 @@ export const users = {
   mutations: {
     saveUsers(state, usersList) {
       const newUsers = new Map(JSON.parse(usersList));
-      state.userList = new Map([...state.userList, ...newUsers]);
+
+      state.usersList = new Map([...state.usersList, ...newUsers]);
     },
     saveUser(state, userData) {
       state.usersList.set(userData.id, userData);

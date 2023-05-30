@@ -144,6 +144,7 @@ export class ChatService {
       );
       return res;
     } catch (e) {
+      console.log('e', e);
       this.logger.error(e.message);
       return {
         status: false,

@@ -21,7 +21,6 @@ export const contact = {
     blockedUsers: {},
     contactsCount: {},
     contactStatutes: {},
-    error: null,
   },
   actions: {
     async blockUser({ commit }, contactId) {
@@ -31,7 +30,9 @@ export const contact = {
         });
         commit("blockUser", contactId);
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async unblockUser({ commit }, contactId) {
@@ -46,7 +47,9 @@ export const contact = {
           value: false,
         });
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async deleteFromContacts({ commit }, contactId) {
@@ -56,6 +59,7 @@ export const contact = {
             contactId,
           },
         });
+
         commit("setNewContactStatus", {
           contactId,
           status: "isFriend",
@@ -67,7 +71,9 @@ export const contact = {
           value: true,
         });
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async addToContacts({ commit }, contactId) {
@@ -81,7 +87,9 @@ export const contact = {
           value: true,
         });
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async cancelOutgoingRequest({ commit }, contactId) {
@@ -95,7 +103,9 @@ export const contact = {
           value: false,
         });
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async confirmContactRequest({ commit }, contactId) {
@@ -114,7 +124,9 @@ export const contact = {
           value: true,
         });
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async cancelPendingRequest({ commit }, { userId, contactId }) {
@@ -128,7 +140,9 @@ export const contact = {
           value: false,
         });
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async getContactCount({ commit }) {
@@ -136,7 +150,9 @@ export const contact = {
         const res = await $api.get("contact/getContactCount");
         commit("setContactsCount", res.data);
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async getContactStatutesData({ commit }, contactId) {
@@ -148,7 +164,9 @@ export const contact = {
         });
         commit("setContactStatutesData", { contactId, data: res.data });
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async getContactsList({ commit, state }, pattern) {
@@ -178,7 +196,9 @@ export const contact = {
         commit("setContacts", res.data);
       } catch (e) {
         console.log("e", e);
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async getFreeUsersList({ commit, state }, pattern) {
@@ -207,8 +227,9 @@ export const contact = {
 
         commit("setFreeUsers", res.data);
       } catch (e) {
-        console.log("e", e);
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async getPendingRequests({ commit }, pattern) {
@@ -229,7 +250,9 @@ export const contact = {
         res.data.resList = insertUsersList(Object.values(res.data.resList));
         commit("setPendingRequests", res.data);
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async getOutgoingRequests({ commit }, pattern) {
@@ -250,7 +273,9 @@ export const contact = {
         res.data.resList = insertUsersList(Object.values(res.data.resList));
         commit("setOutgoingRequests", res.data);
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
     async getBlockedUsers({ commit }, pattern) {
@@ -271,7 +296,9 @@ export const contact = {
         res.data.resList = insertUsersList(Object.values(res.data.resList));
         commit("setBannedUsersList", res.data);
       } catch (e) {
-        commit("setError", e.response.data.message);
+        commit("alert/setErrorMessage", e.response.data.message, {
+          root: true,
+        });
       }
     },
   },
@@ -292,7 +319,6 @@ export const contact = {
       if (!state.contactStatutes[contactId]) return;
       const contactData = state.contactStatutes[contactId];
       contactData.isBanned = true;
-      contactData.isConfirmRequest = false;
       contactData.isConfirmRequest = false;
       contactData.isFriend = false;
       contactData.isPendingRequest = false;
@@ -414,7 +440,6 @@ export const contact = {
       }
     },
     changeContactStatus(state, statusData) {
-      console.log("test", statusData);
       switch (statusData.operation) {
         case "AddContact": {
           const userData = state.freeUsers[statusData.userId];

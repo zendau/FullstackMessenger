@@ -33,8 +33,6 @@ export const chat = {
   actions: {
     async newChatMessage({ commit, state, getters }, { messagesData, userId }) {
       try {
-        console.log("resieve message", messagesData);
-
         if (!state.chats.has(messagesData.roomId)) {
           const res = await $api.get("/chat/byId", {
             params: {
@@ -51,11 +49,9 @@ export const chat = {
           roomData: getters.selectedChat(messagesData.roomId),
         });
 
-        console.log("2222");
         commit("setLastChatMessage", messagesData.roomId);
         commit("sortByMessageDate");
       } catch (e) {
-        console.log("e", e);
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });
@@ -100,7 +96,6 @@ export const chat = {
 
         commit("saveMessages", { chatId, uploadMessagesData: messages.data });
       } catch (e) {
-        console.log("e", e);
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });
@@ -117,7 +112,6 @@ export const chat = {
       }
     },
     deletedMessages({ commit, state }, deletedMessageData) {
-      console.log("updateDeletedMessages", deletedMessageData);
       if (state.messages[deletedMessageData.roomId]) {
         commit("deletedMessages", deletedMessageData);
 
@@ -137,7 +131,6 @@ export const chat = {
     },
     async getChats({ commit, state }, paginationData) {
       if (!state.loadChatsPagination.hasMore) return;
-      console.log("call", { ...state.loadChatsPagination });
       try {
         const res = await $api.get("/chat/listPagination", {
           params: {
@@ -147,9 +140,8 @@ export const chat = {
             ...(paginationData?.chatId && { chatId: paginationData.chatId }),
           },
         });
-        console.log("RES", res);
 
-        const chatsList = JSON.parse(res.data.roomsData);
+        const chatsList = res.data.roomsData;
 
         for (const chat of chatsList) {
           chat[1].users = insertUsersList(chat[1].users);
@@ -167,7 +159,6 @@ export const chat = {
           commit("saveCurrentTempChat", res.data.currentTempChatData);
         }
       } catch (e) {
-        console.log("e", e);
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });
@@ -183,7 +174,6 @@ export const chat = {
 
         commit("saveChatsByPattern", res.data);
       } catch (e) {
-        console.log("e", e);
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });
@@ -255,7 +245,6 @@ export const chat = {
           },
         });
         if (res.data) {
-          console.log("res", res.data);
           openChat(res.data);
         } else {
           openChat("contact");
@@ -266,7 +255,6 @@ export const chat = {
           });
         }
       } catch (e) {
-        console.log("e", e);
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });
@@ -275,7 +263,6 @@ export const chat = {
   },
   mutations: {
     saveChat(state, chat) {
-      console.log("chat", chat);
       state.chats.set(chat.id, chat);
     },
     saveChats(state, chats) {
@@ -286,11 +273,7 @@ export const chat = {
       state.currentTempChatData = chatData;
     },
     saveMessages(state, { chatId, uploadMessagesData }) {
-      console.log("test", chatId, uploadMessagesData);
-
       if (!state.messages[chatId]) state.messages[chatId] = [];
-
-      console.log("!!!!!!!!11", chatId, uploadMessagesData);
 
       state.messages[chatId].push(...uploadMessagesData.messages);
       state.chats.get(chatId).loadMessagesPagination = {
@@ -301,7 +284,6 @@ export const chat = {
       };
     },
     clearTempData(state) {
-      console.log("CLEART TEMP");
       state.currentTempChatData = null;
       state.tempPrivateChat = null;
       state.freeChatUsers = {};
@@ -402,7 +384,6 @@ export const chat = {
       }
     },
     updateReadMessages(state, { chatId, unreadCount }) {
-      console.log("QQWW", chatId, unreadCount);
       if (state.chats.has(chatId)) {
         state.chats.get(chatId).chatUnread = unreadCount;
       } else if (state.currentTempChatData?.id === chatId) {
@@ -410,7 +391,6 @@ export const chat = {
       }
     },
     setTempPrivateChat(state, chatData) {
-      console.log("SET TEMP DATA");
       state.tempPrivateChat = chatData;
     },
     saveNewChatsPagination(state, { page, hasMore, inMemory }) {
@@ -431,7 +411,6 @@ export const chat = {
       state.freeChatUsers = freeUsers;
     },
     updateFreeChatUsers(state, withoutId) {
-      console.log("CAASD");
       const a = Object.entries(state.freeChatUsers);
       const b = a.filter((userData) => userData[1].id !== withoutId);
 

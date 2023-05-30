@@ -1,6 +1,6 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SocketRedisAdapter } from 'src/socket/socketRedisAdapter.service';
+import { SocketRedisAdapter } from '@/socket/socketRedisAdapter.service';
 import { firstValueFrom } from 'rxjs';
 import IUser from './interfaces/IUser';
 import IGetDataError from './interfaces/IGetDataError';
