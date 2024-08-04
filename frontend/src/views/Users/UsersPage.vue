@@ -37,7 +37,7 @@ export default {
 :deep(.searchCreate__container) {
   width: 50%;
   margin: 0 auto;
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 :deep(.contacts__btn) {

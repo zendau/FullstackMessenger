@@ -141,7 +141,7 @@ export const chat = {
           },
         });
 
-        const chatsList = res.data.roomsData;
+        const chatsList = JSON.parse(res.data.roomsData);
 
         for (const chat of chatsList) {
           chat[1].users = insertUsersList(chat[1].users);
@@ -159,6 +159,7 @@ export const chat = {
           commit("saveCurrentTempChat", res.data.currentTempChatData);
         }
       } catch (e) {
+        console.log("e", e);
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });

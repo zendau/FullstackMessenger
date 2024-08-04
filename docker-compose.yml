@@ -30,6 +30,8 @@ services:
     build:
       context: ./server/auth-service
       dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - redis
       - mysqlDB

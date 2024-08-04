@@ -141,7 +141,7 @@ export default {
     box-sizing: border-box;
 
     &--admin {
-      border: 1px solid red;
+      border: 2px solid red;
     }
   }
 
@@ -177,6 +177,7 @@ export default {
 }
 
 video {
+  display: flex;
   width: 100%;
   height: 100%;
 }

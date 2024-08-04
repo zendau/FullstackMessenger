@@ -49,7 +49,7 @@ export default {
       console.log("acceptInviteCalling", callData);
       clearCallingData();
 
-      router.push(`/conference/${callingData.withVideo ? "video" : "audio"}/${callData.confrenceId}`);
+      router.push(`/conference/${callData.withVideo ? "video" : "audio"}/${callData.confrenceId}`);
     });
 
     peerSocket.on("rejectInviteCalling", (rejectedUser) => {

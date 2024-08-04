@@ -88,6 +88,7 @@ export default {
   &__list {
     overflow: auto;
     margin-top: 2px;
+    height: 100%;
   }
 
   &__container {

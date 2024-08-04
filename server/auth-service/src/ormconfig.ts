@@ -1,5 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+import { ConnectionOptions } from 'typeorm';
+
 const environment = process.env.NODE_ENV || 'development';
 const dataWithMode: any = dotenv.parse(fs.readFileSync(`.env.${environment}`));
 const data: any = dotenv.parse(fs.readFileSync('.env'));
@@ -9,9 +11,6 @@ const env = {
   ...dataWithMode
 }
 
-
-
-import { ConnectionOptions } from 'typeorm';
 const config: ConnectionOptions  = {
   type: 'mysql',
   host: env.DATABASE_HOST,

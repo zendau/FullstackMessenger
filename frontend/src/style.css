@@ -8,23 +8,6 @@
   --scrollbarThumb: #9b9fa4;
 }
 
-/* :root[data-theme="light"] {
-  --btn-color: #1866e4;
-  --menuColor: #0e1621;
-  --textColor: rgba(255, 255, 255, 0.84);
-  --secondTextColor: #aaaaaa;
-  --itemColor: #202b36;
-  --btnChat: #3a3a3d;
-  --btnHover: #464649;
-  --bgcColor: #0d3c6b;
-  --activeBgcColor: #25303e;
-  --dangerColor: #e33741;
-  --messageColor: #182533;
-  --activeColor: #5eb5f7;
-  --linkColor: #59b7ff;
-  --successColor: #119c1a;
-  --inputBgcColor: #242f3d;
-} */
 :root[data-theme="light"] {
   --color-primary: #354259;
   --color-icon: #272727;

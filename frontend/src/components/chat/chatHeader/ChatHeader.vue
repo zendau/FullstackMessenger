@@ -120,7 +120,7 @@ export default {
     background-color: var(--color-background);
     border-left: 1px solid rgba(0, 0, 0, 0.2);
 
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 2fr 1fr;
     justify-items: baseline;
     align-content: center;
     padding-left: 30px;

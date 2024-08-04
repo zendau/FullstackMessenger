@@ -1,7 +1,9 @@
-import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
 import { Injectable, Logger } from '@nestjs/common';
+import Redis from 'ioredis';
 import IEditMessage from '@/socket/interfaces/message/IEditMessage';
 import { IDeleteMessage } from '@/socket/interfaces/message/IDeleteMessage';
+
 
 type redisValue =
   | 'user'

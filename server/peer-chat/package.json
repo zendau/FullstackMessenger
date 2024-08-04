@@ -1,5 +1,5 @@
 {
-  "name": "backend nest",
+  "name": "@chat/peer",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -30,6 +30,7 @@
     "@nestjs/platform-socket.io": "^8.4.1",
     "@nestjs/typeorm": "^8.0.3",
     "@nestjs/websockets": "^8.4.1",
+    "@types/socket.io": "^3.0.2",
     "amqp-connection-manager": "^4.1.2",
     "amqplib": "^0.8.0",
     "class-validator": "^0.13.2",
@@ -39,6 +40,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "socket.io": "^4.7.5",
     "typeorm": "^0.2.45",
     "uuid": "^8.3.2"
   },

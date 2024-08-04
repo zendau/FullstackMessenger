@@ -143,6 +143,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+:root[data-theme="light"] {
+  .searchCreate {
+    &__container {
+      box-shadow: 0 0px 2px rgb(0 0 0 / 25%);
+    }
+  }
+}
 .searchCreate {
   &__container {
     box-shadow: 0 2px 2px rgb(0 0 0 / 25%);

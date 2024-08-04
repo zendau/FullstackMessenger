@@ -90,5 +90,6 @@
     "add": "Add to contact",
     "unBlock": "Unblock user",
     "block": "Block user"
-  }
+  },
+  "selectChat": "Select a contact to start a chat"
 }

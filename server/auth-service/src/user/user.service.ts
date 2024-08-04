@@ -1,7 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 import { ConfirmCodeService } from '@/access/access-confirm/access-confirm';
 import { User } from '@/user/user.entity';

@@ -1,4 +1,5 @@
-import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Media } from '@/message/entities/media.entity';

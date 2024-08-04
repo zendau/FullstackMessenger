@@ -16,6 +16,7 @@ import {
   UsePipes,
   ValidationPipe,
   ParseIntPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Response, Request } from 'express';
@@ -289,6 +290,19 @@ export class UserController {
     if (resData.status === false) {
       throw new HttpException(resData.message, resData.httpCode);
     }
+
+    return resData;
+  }
+
+  @Get('clear')
+  async clearDbTestData() {
+    if (process.env.NODE_ENV !== 'test') {
+      throw new HttpException('Route not found', HttpStatus.NOT_FOUND);
+    }
+
+    const resData = await firstValueFrom(
+      this.authServiceClient.send('user/deleteLastData', ''),
+    );
 
     return resData;
   }

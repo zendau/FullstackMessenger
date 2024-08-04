@@ -49,7 +49,7 @@ export default {
     width: 100%;
     display: grid;
     justify-content: center;
-    box-shadow: 0 -2px 2px rgb(0 0 0 / 25%);
+    box-shadow: 0 0px 2px rgb(0 0 0 / 25%);
 
     ul {
       margin: 0;

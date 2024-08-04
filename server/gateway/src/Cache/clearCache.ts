@@ -5,9 +5,6 @@ import { cacheKeys } from "./cacheKeys";
 @Injectable()
 export default class HttpClearCacheInterceptor extends CacheInterceptor {
 
-  protected cacheManager: any;
-
-
   isRequestCacheable(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     let cachePath = null

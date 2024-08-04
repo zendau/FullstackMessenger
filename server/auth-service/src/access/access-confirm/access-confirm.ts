@@ -2,7 +2,8 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { randomInt } from 'crypto';
-import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 import { User } from '@/user/user.entity';
 import { UserAccess } from '@/access/access.entity';

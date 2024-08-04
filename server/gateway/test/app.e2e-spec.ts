@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '@/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -15,10 +15,17 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/user/setConfirmCode (POST)', async (done) => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .post('/user/setConfirmCode')
+      .send({
+        email: 'test@mail.com',
+      })
+      .expect(201)
+      .then((res) => {
+        expect(res.body).toBe('true');
+
+        done();
+      });
   });
 });
