@@ -39,8 +39,7 @@ $api.interceptors.response.use(
         localStorage.setItem("token", response.data.accessToken);
         return $api.request(originalRequest);
       } catch (e) {
-        // console.log("axios e", e);
-        // store.dispatch("auth/logout");
+        store.dispatch("auth/logout");
       }
     }
     throw error;

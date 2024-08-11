@@ -30,7 +30,7 @@ export default {
 
     const store = useStore();
 
-    store.dispatch("auth/checkAuth");
+    store.dispatch("auth/initAuth");
 
     const callingData = ref(null);
     provide("callingData", callingData);

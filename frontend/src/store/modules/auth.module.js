@@ -30,9 +30,9 @@ export const auth = {
         });
 
         const { accessToken } = resData.data;
-        const tokenDecode = jwt_decode(accessToken);
-        commit("authSuccess", tokenDecode);
-        localStorage.setItem("token", accessToken);
+
+        setAccessToken(commit, accessToken, true);
+
         router.push("/chat");
       } catch (e) {
         const message = e.response?.data ?? e.message;
@@ -104,7 +104,6 @@ export const auth = {
     },
     async logout({ commit }) {
       commit("logout");
-      localStorage.removeItem("token");
       await $api.get("/user/logout");
     },
     async register({ commit }, registerData) {
@@ -119,9 +118,8 @@ export const auth = {
 
         const { accessToken } = resData.data;
 
-        const tokenDecode = jwt_decode(accessToken);
-        commit("authSuccess", tokenDecode);
-        localStorage.setItem("token", accessToken);
+        setAccessToken(commit, accessToken, true);
+
         router.push("/chat");
       } catch (e) {
         const message = e.response?.data ?? e.message;
@@ -142,29 +140,26 @@ export const auth = {
         });
       }
     },
-    async checkAuth({ commit }) {
+    async initAuth({ commit }) {
       const accessToken = localStorage.getItem("token");
-      let tokenDecode = null;
-
-      console.log("ACCESS", accessToken);
-
       if (!accessToken) return;
 
+      setAccessToken(commit, accessToken, false);
       try {
-        tokenDecode = jwt_decode(accessToken);
-      } catch {
-        const resRefresh = await $api.get("/user/refresh");
-        if (resRefresh.data.statusCode === 401) return;
+        const res = await $api.get("/user/refresh");
 
-        const { accessToken } = resRefresh.data;
-        localStorage.setItem("token", accessToken);
-        tokenDecode = jwt_decode(accessToken);
-      } finally {
-        if (tokenDecode !== null) {
-          commit("authSuccess", tokenDecode);
-        }
+        const { accessToken } = res.data;
+
+        if (!accessToken) throw Error;
+
+        setAccessToken(commit, accessToken, true);
+      } catch (e) {
+        commit("logout");
+        const message = e.response?.data ?? e.message;
+        commit("alert/setErrorMessage", message, {
+          root: true,
+        });
       }
-      commit("authSuccess", tokenDecode);
     },
     async getUserDevices({ commit, state }) {
       try {
@@ -222,6 +217,7 @@ export const auth = {
       state.user.login = updateData.login;
     },
     logout(state) {
+      localStorage.removeItem("token");
       state.user = {
         id: 0,
         email: null,
@@ -233,6 +229,8 @@ export const auth = {
       state.devices = [];
       state.authStatus = false;
       state.isConfirmCode = false;
+      console.log("push to /");
+      router.push("/");
     },
     saveDivicesData(state, diveces) {
       state.devices = diveces;
@@ -272,3 +270,12 @@ export const auth = {
     },
   },
 };
+
+function setAccessToken(commit, accessToken, isNew) {
+  if (isNew) {
+    localStorage.setItem("token", accessToken);
+  }
+
+  const decodeToken = jwt_decode(accessToken);
+  commit("authSuccess", decodeToken);
+}

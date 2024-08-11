@@ -316,25 +316,25 @@ describe("Auth store module", () => {
 
   // CheckAuth action
 
-  it("Action checkAuth success", async () => {
+  it("Action initAuth success", async () => {
     localStorage.setItem("token", accessToken);
-    await store.dispatch("auth/checkAuth");
+    await store.dispatch("auth/initAuth");
     await flushPromises();
 
     expect(store.state.auth.authStatus).toBe(true);
   });
 
-  it("Action checkAuth without access token", async () => {
+  it("Action initAuth without access token", async () => {
     localStorage.removeItem("token");
-    await store.dispatch("auth/checkAuth");
+    await store.dispatch("auth/initAuth");
     await flushPromises();
 
     expect(store.state.auth.authStatus).toBe(false);
   });
 
-  it("Action checkAuth with wrong access token", async () => {
+  it("Action initAuth with wrong access token", async () => {
     localStorage.setItem("token", "wrong");
-    await store.dispatch("auth/checkAuth");
+    await store.dispatch("auth/initAuth");
     await flushPromises();
 
     expect(store.state.auth.authStatus).toBe(true);
