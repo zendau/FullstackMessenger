@@ -7,17 +7,17 @@ services:
       - 3306:3306
     volumes:
       - mysqlDB:/var/lib/mysql
-      - ./sql/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ./server/dump/dump.sql:/docker-entrypoint-initdb.d/dump.sql
     environment:
       MYSQL_ROOT_PASSWORD: root
 
   rabbitmq:
-      image: rabbitmq:management
-      ports:
-        - "5672:5672"
-        - "15672:15672"
-      env_file:
-        - docker.env
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - docker.env
 
   redis:
     image: redis:alpine
@@ -31,7 +31,13 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-        - redis
+      - redis
+
+  mailpit:
+    image: 'axllent/mailpit:latest'
+    ports:
+      - 1025:1025
+      - 8025:8025
 
 volumes:
   mysqlDB:
