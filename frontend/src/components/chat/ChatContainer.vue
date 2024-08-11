@@ -196,4 +196,12 @@ export default {
     grid-template-rows: 1fr;
   }
 }
+
+@media (max-width: 720px) {
+  .chat__empty {
+  display: none;
+}
+
+}
+
 </style>

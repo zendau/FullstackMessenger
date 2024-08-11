@@ -139,6 +139,7 @@ export default {
 
     function closeActiveChat(e) {
       if (e.key !== "Escape") return;
+      isShowMobileMessages.value = false
       router.push("/chat");
       store.commit("chat/clearTempData");
     }
