@@ -15,10 +15,10 @@ import {
   ValidationPipe,
   UsePipes,
 } from '@nestjs/common';
-import { FilesUploadDataDTO } from '@/FileCloudService/file/dto/filesUploadData.dto';
+import { FilesUploadDataDTO } from '@/services/fileCloud/file/dto/filesUploadData.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import destinationStorage from '@/FileCloudService/multer/destination.storage';
-import filenameStorage from '@/FileCloudService/multer/filename.storage';
+import destinationStorage from '@/services/fileCloud/multer/destination.storage';
+import filenameStorage from '@/services/fileCloud/multer/filename.storage';
 
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
@@ -30,10 +30,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
-import { FileDTO } from '@/FileCloudService/file/dto/file.dto';
-import { FileEditDataDTO } from '@/FileCloudService/file/dto/filesEditData.dto';
-import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
+import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
+import { FileDTO } from '@/services/fileCloud/file/dto/file.dto';
+import { FileEditDataDTO } from '@/services/fileCloud/file/dto/filesEditData.dto';
+import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('FileCloud microservice - File controller')

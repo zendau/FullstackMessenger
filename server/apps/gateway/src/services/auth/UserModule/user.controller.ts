@@ -1,5 +1,5 @@
-import { GetUserDTO } from '@/AuthService/ResponseDTO/getUser.dto';
-import { UserRegisterDTO } from '@/AuthService/UserModule/dto/userRegister.dto';
+import { GetUserDTO } from '@/services/auth/ResponseDTO/getUser.dto';
+import { UserRegisterDTO } from '@/services/auth/UserModule/dto/userRegister.dto';
 import {
   Body,
   Controller,
@@ -21,10 +21,10 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Response, Request } from 'express';
-import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
-import { JwtRefreshGuard } from '@/AuthService/guards/jwt-refresh.guard';
+import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
+import { JwtRefreshGuard } from '@/services/auth/guards/jwt-refresh.guard';
 import { firstValueFrom } from 'rxjs';
-import { UserLoginDTO } from '@/AuthService/UserModule/dto/userLogin.dto';
+import { UserLoginDTO } from '@/services/auth/UserModule/dto/userLogin.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -32,19 +32,19 @@ import {
   ApiTags,
   ApiCookieAuth,
 } from '@nestjs/swagger';
-import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
+import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
 
-import { ConfirmDataDTO } from '@/AuthService/UserModule/dto/confirmData.dto';
-import { EditDataDTO } from '@/AuthService/UserModule/dto/userEdit.dto';
+import { ConfirmDataDTO } from '@/services/auth/UserModule/dto/confirmData.dto';
+import { EditDataDTO } from '@/services/auth/UserModule/dto/userEdit.dto';
 
-import HttpCacheInterceptor from '@/Cache/HttpCacheInterceptor';
-import { authSuccessDTO } from '@/AuthService/ResponseDTO/authSuccess.dto';
+import HttpCacheInterceptor from '@/cache/HttpCacheInterceptor';
+import { authSuccessDTO } from '@/services/auth/ResponseDTO/authSuccess.dto';
 
-import BodyWithDevice from '@/AuthService/decorators/BodyWithDevice.decorator';
-import RefreshData from '@/AuthService/decorators/RefreshData.decorator';
-import { UserResetPasswordDTO } from '@/AuthService/UserModule/dto/userResetPassword.dto';
-import IToken from '@/AuthService/UserModule/interfaces/IToken';
-import { ExceptionsFilter } from '../../common/filters/exception.filter';
+import BodyWithDevice from '@/services/auth/decorators/BodyWithDevice.decorator';
+import RefreshData from '@/services/auth/decorators/RefreshData.decorator';
+import { UserResetPasswordDTO } from '@/services/auth/UserModule/dto/userResetPassword.dto';
+import IToken from '@/services/auth/UserModule/interfaces/IToken';
+import { ExceptionsFilter } from '../../../common/filters/exception.filter';
 
 @ApiTags('Auth microservice - User controller')
 @UseFilters(ExceptionsFilter)

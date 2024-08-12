@@ -1,18 +1,18 @@
-import { UserController } from './AuthService/UserModule/user.controller';
-import { RoomController } from './PeerService/room/room.controller';
-import { FoulderController } from './FileCloudService/foulder/foulder.controller';
-import { MessageController } from './ChatService/message/message.controller';
-import { ChatController } from './ChatService/chat/chat.controller';
+import { UserController } from './services/auth/UserModule/user.controller';
+import { RoomController } from './services/peer/room/room.controller';
+import { FoulderController } from './services/fileCloud/foulder/foulder.controller';
+import { MessageController } from './services/chat/message/message.controller';
+import { ChatController } from './services/chat/chat/chat.controller';
 import { CacheModule, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { FileController } from './FileCloudService/file/file.controller';
+import { FileController } from './services/fileCloud/file/file.controller';
 import { ConfigModule } from '@nestjs/config';
-import { JwtStrategy } from './AuthService/strategies/jwt.strategy';
-import { RefreshStrategy } from './AuthService/strategies/refresh.strategy';
+import { JwtStrategy } from './services/auth/strategies/jwt.strategy';
+import { RefreshStrategy } from './services/auth/strategies/refresh.strategy';
 
 import * as redisStore from 'cache-manager-redis-store';
-import { ContactController } from './AuthService/UserModule/contact.controller';
-import { AdminController } from './AuthService/UserModule/admin.controller';
+import { ContactController } from './services/auth/UserModule/contact.controller';
+import { AdminController } from './services/auth/UserModule/admin.controller';
 
 @Module({
   imports: [

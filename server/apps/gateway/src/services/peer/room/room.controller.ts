@@ -1,4 +1,4 @@
-import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
+import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
 import {
   Controller,
   Get,
@@ -16,9 +16,9 @@ import {
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
-import { RoomDTO } from '@/PeerService/room/dto/room.dto';
-import { EditRoomDTO } from '@/PeerService/room/dto/editRoom.dto';
-import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
+import { RoomDTO } from '@/services/peer/room/dto/room.dto';
+import { EditRoomDTO } from '@/services/peer/room/dto/editRoom.dto';
+import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
 import {
   ApiBearerAuth,
   ApiOperation,

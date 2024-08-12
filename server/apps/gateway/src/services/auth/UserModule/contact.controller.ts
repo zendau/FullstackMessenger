@@ -1,4 +1,4 @@
-import { GetUserDTO } from '@/AuthService/ResponseDTO/getUser.dto';
+import { GetUserDTO } from '@/services/auth/ResponseDTO/getUser.dto';
 import {
   Body,
   Controller,
@@ -15,7 +15,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
 import { firstValueFrom } from 'rxjs';
 import {
   ApiBearerAuth,
@@ -23,13 +23,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
-import { ContactDTO } from '@/AuthService/ResponseDTO/contact.dto';
-import IUserPaginationList from '@/AuthService/UserModule/interfaces/IUserPaginationList';
-import IContact from '@/AuthService/UserModule/interfaces/IContact';
-import IUserChat from '@/ChatService/interfaces/IUserChat';
-import IToken from '@/AuthService/UserModule/interfaces/IToken';
-import { ContactStatusesDTO } from '@/AuthService/ResponseDTO/contactStatuses.dto';
+import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
+import { ContactDTO } from '@/services/auth/ResponseDTO/contact.dto';
+import IUserPaginationList from '@/services/auth/UserModule/interfaces/IUserPaginationList';
+import IContact from '@/services/auth/UserModule/interfaces/IContact';
+import IUserChat from '@/services/chat/interfaces/IUserChat';
+import IToken from '@/services/auth/UserModule/interfaces/IToken';
+import { ContactStatusesDTO } from '@/services/auth/ResponseDTO/contactStatuses.dto';
 
 @ApiBearerAuth()
 @ApiTags('Auth microservice - Contact controller')

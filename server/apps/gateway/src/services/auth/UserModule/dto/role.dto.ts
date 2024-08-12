@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString, Min } from 'class-validator';
-import { UserRole } from '@/AuthService/enum/userRole.enum';
+import { UserRole } from '@/services/auth/enum/userRole.enum';
 
 export class RoleDTO {
   @ApiProperty({

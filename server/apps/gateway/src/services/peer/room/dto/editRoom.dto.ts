@@ -1,4 +1,4 @@
-import { RoomDTO } from '@/PeerService/room/dto/room.dto';
+import { RoomDTO } from '@/services/peer/room/dto/room.dto';
 import { IsInt, IsString, Length, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 

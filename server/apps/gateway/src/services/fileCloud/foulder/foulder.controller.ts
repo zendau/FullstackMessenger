@@ -1,18 +1,18 @@
+import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
 import {
   Controller,
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Inject,
   HttpException,
-  Query,
-  UseGuards,
-  ParseIntPipe,
+  Put,
   ValidationPipe,
   UsePipes,
+  ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
@@ -22,27 +22,24 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
-import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
-import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
-import { MessageDTO } from '@/ChatService/message/dto/message.dto';
-import { UpdateMessageDTO } from '@/ChatService/message/dto/update-message.dto';
-import IChatPagination from '@/ChatService/interfaces/IChatPagination';
+import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
+import { FoulderDTO } from '@/services/fileCloud/foulder/dto/foulder.dto';
 
 @ApiBearerAuth()
-@ApiTags('Chat microservice - Message controller')
+@ApiTags('FileCloud microservice - Foulder controller')
 @UseGuards(JwtAuthGuard)
-@Controller('message')
-export class MessageController {
-  constructor(@Inject('CHAT_SERVICE') private chatServiceClient: ClientProxy) {}
+@Controller('foulder')
+export class FoulderController {
+  constructor(@Inject('FILE_SERVICE') private fileServiceClient: ClientProxy) {}
 
-  @ApiOperation({ summary: 'Add new message' })
-  @ApiResponse({ status: 200, type: UpdateMessageDTO })
+  @ApiOperation({ summary: 'Create new foulder' })
+  @ApiResponse({ status: 200, type: FoulderDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @UsePipes(ValidationPipe)
   @Post('add')
-  async create(@Body() createMessageDto: MessageDTO) {
+  async create(@Body() createFoulderDto: FoulderDTO) {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('message/add', createMessageDto),
+      this.fileServiceClient.send('foulder/add', createFoulderDto),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
@@ -50,13 +47,13 @@ export class MessageController {
     return res;
   }
 
-  @ApiOperation({ summary: 'Get all chat messages' })
-  @ApiResponse({ status: 200, type: UpdateMessageDTO, isArray: true })
+  @ApiOperation({ summary: 'Get all foulders' })
+  @ApiResponse({ status: 200, type: FoulderDTO, isArray: true })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
-  @Get('listPagination')
-  async getMessagesPagination(@Query() paginationData: IChatPagination) {
+  @Get('getAll')
+  async findAll() {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('message/listPagination', paginationData),
+      this.fileServiceClient.send('foulder/getAll', ''),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
@@ -64,13 +61,13 @@ export class MessageController {
     return res;
   }
 
-  @ApiOperation({ summary: 'Get message by id' })
-  @ApiResponse({ status: 200, type: UpdateMessageDTO })
+  @ApiOperation({ summary: 'Get foulder by id' })
+  @ApiResponse({ status: 200, type: FoulderDTO })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Get('get/:id')
-  async findOne(@Param('id', ParseIntPipe) messageId: number) {
+  async findOne(@Param('id', ParseIntPipe) foulderId: number) {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('message/get', messageId),
+      this.fileServiceClient.send('foulder/get', foulderId),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
@@ -78,14 +75,14 @@ export class MessageController {
     return res;
   }
 
-  @ApiOperation({ summary: 'Edit message by id' })
+  @ApiOperation({ summary: 'Edit foulder data' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @UsePipes(ValidationPipe)
-  @Patch('edit')
-  async update(@Body() updateMessageDto: UpdateMessageDTO) {
+  @Put('edit')
+  async update(@Body() updateFoulderDto: FoulderDTO) {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('message/edit', updateMessageDto),
+      this.fileServiceClient.send('foulder/edit', updateFoulderDto),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);
@@ -93,13 +90,13 @@ export class MessageController {
     return res;
   }
 
-  @ApiOperation({ summary: 'Delete message by id' })
+  @ApiOperation({ summary: 'Delete foulder' })
   @ApiResponse({ status: 200, description: 'Success operation' })
   @ApiResponse({ status: 400, type: HttpErrorDTO })
   @Delete('delete/:id')
-  async remove(@Param('id', ParseIntPipe) messageId: number) {
+  async remove(@Param('id', ParseIntPipe) foulderId: number) {
     const res = await firstValueFrom(
-      this.chatServiceClient.send('message/delete', messageId),
+      this.fileServiceClient.send('foulder/delete', foulderId),
     );
     if (res.status === false) {
       throw new HttpException(res.message, res.httpCode);

@@ -15,16 +15,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
-import { HttpErrorDTO } from '@/AuthService/ResponseDTO/httpError.dto';
-import { ChatDTO } from '@/ChatService/chat/dto/chat.dto';
-import { JwtAuthGuard } from '@/AuthService/guards/jwt-auth.guard';
-import IChatPagination from '@/ChatService/interfaces/IChatPagination';
-import IChatSearch from '@/ChatService/interfaces/IChatSearch';
-import IUserChat from '@/ChatService/interfaces/IUserChat';
-import IToken from '@/AuthService/UserModule/interfaces/IToken';
-import IChatLoad from '@/ChatService/interfaces/IChatLoad';
-import { ChatsListDTO } from '@/ChatService/chat/dto/chatsList.dto';
-import { ChatUserDTO } from '@/ChatService/chat/dto/chatUser.dto';
+import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
+import { ChatDTO } from '@/services/chat/chat/dto/chat.dto';
+import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
+import IChatPagination from '@/services/chat/interfaces/IChatPagination';
+import IChatSearch from '@/services/chat/interfaces/IChatSearch';
+import IUserChat from '@/services/chat/interfaces/IUserChat';
+import IToken from '@/services/auth/UserModule/interfaces/IToken';
+import IChatLoad from '@/services/chat/interfaces/IChatLoad';
+import { ChatsListDTO } from '@/services/chat/chat/dto/chatsList.dto';
+import { ChatUserDTO } from '@/services/chat/chat/dto/chatUser.dto';
 
 @ApiBearerAuth()
 @ApiTags('Chat microservice - chat controller')

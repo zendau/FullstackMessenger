@@ -1,4 +1,4 @@
-import IUser from "@/AuthService/UserModule/interfaces/IUser";
+import IUser from "@/services/auth/UserModule/interfaces/IUser";
 
 export default interface IUserChat {
   chatId: string;
