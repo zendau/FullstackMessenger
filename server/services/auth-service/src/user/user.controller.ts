@@ -1,4 +1,4 @@
-import { Controller, HttpStatus, Logger } from '@nestjs/common';
+import { Controller, HttpStatus, Logger, UseFilters } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
 import { AuthService } from '@/user/auth.service';
@@ -10,7 +10,9 @@ import IConfirmData from '@/user/interfaces/IConfirmData';
 import IRefreshData from '@/user/interfaces/IRefreshData';
 import { DeviceService } from '@/token/device.service';
 import IEditUserData from './interfaces/IEditUserData';
+import { DetailedRpcExceptionsFilter } from '@lib/exception';
 
+@UseFilters(DetailedRpcExceptionsFilter)
 @Controller()
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
@@ -38,14 +40,7 @@ export class UsersController {
 
   @MessagePattern('user/checkEmail')
   async checkUserEmail(@Payload() email: string) {
-    const res = await this.authService.checkEmail(email).catch((err) => {
-      this.logger.error(err.sqlMessage);
-      return {
-        status: false,
-        message: 'error.unexpected',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
+    const res = await this.authService.checkEmail(email);
     return res;
   }
 

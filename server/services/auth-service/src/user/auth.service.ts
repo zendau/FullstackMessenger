@@ -15,6 +15,8 @@ import { IDevice } from '@/token/interfaces/ITokenDevice';
 import IRefreshData from '@/user/interfaces/IRefreshData';
 import IUserData from './interfaces/IUserData';
 
+import { DetailedRpcException } from '@lib/exception';
+
 @Injectable()
 export class AuthService {
   private queryRunner: QueryRunner;
@@ -80,25 +82,17 @@ export class AuthService {
   }
 
   async checkEmail(email: string) {
-    try {
-      const resUserData = await this.userService.findByEmail(email);
-      if (resUserData.status)
-        return {
-          find: true,
-          message: ['error.takenEmail', email],
-        };
+    const resUserData = await this.userService.findByEmail(email);
+
+    if (resUserData.status)
       return {
-        find: false,
-        message: ['error.undefinedEmail', email],
+        find: true,
+        message: ['error.takenEmail', email],
       };
-    } catch (e) {
-      this.logger.error(e.message);
-      return {
-        status: false,
-        message: 'error.unexpected',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    }
+    return {
+      find: false,
+      message: ['error.undefinedEmail', email],
+    };
   }
 
   async login(userData: IUserData) {
