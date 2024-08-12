@@ -11,7 +11,7 @@ tmux select-window -t "$session_name"
 for element in "${microservices[@]}"
 do
     tmux new-window -d -n "$element"
-    tmux send-keys -t "$element.0" "cd server/services/$element" C-m
+    tmux send-keys -t "$element.0" "cd server/apps/$element" C-m
     tmux send-keys -t "$element.0" "pnpm run start" C-m
 
 done

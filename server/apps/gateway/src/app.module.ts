@@ -9,7 +9,6 @@ import { FileController } from './FileCloudService/file/file.controller';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './AuthService/strategies/jwt.strategy';
 import { RefreshStrategy } from './AuthService/strategies/refresh.strategy';
-import { ClientOpts } from '@nestjs/microservices/external/redis.interface';
 
 import * as redisStore from 'cache-manager-redis-store';
 import { ContactController } from './AuthService/UserModule/contact.controller';
@@ -20,7 +19,7 @@ import { AdminController } from './AuthService/UserModule/admin.controller';
     ConfigModule.forRoot({
       envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
     }),
-    CacheModule.register<ClientOpts>({
+    CacheModule.register({
       store: redisStore,
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT),
@@ -89,7 +88,7 @@ import { AdminController } from './AuthService/UserModule/admin.controller';
     RoomController,
     UserController,
     ContactController,
-    AdminController
+    AdminController,
   ],
   providers: [JwtStrategy, RefreshStrategy],
 })

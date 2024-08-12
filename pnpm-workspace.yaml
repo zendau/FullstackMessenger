@@ -1,4 +1,4 @@
 packages:
-  - "server/services/*"
+  - "server/apps/*"
   - "server/libs/*"
   - "frontend"
