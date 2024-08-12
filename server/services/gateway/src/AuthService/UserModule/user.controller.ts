@@ -17,6 +17,7 @@ import {
   ValidationPipe,
   ParseIntPipe,
   HttpStatus,
+  UseFilters,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Response, Request } from 'express';
@@ -43,8 +44,10 @@ import BodyWithDevice from '@/AuthService/decorators/BodyWithDevice.decorator';
 import RefreshData from '@/AuthService/decorators/RefreshData.decorator';
 import { UserResetPasswordDTO } from '@/AuthService/UserModule/dto/userResetPassword.dto';
 import IToken from '@/AuthService/UserModule/interfaces/IToken';
+import { ExceptionsFilter } from '../../common/filters/exception.filter';
 
 @ApiTags('Auth microservice - User controller')
+@UseFilters(ExceptionsFilter)
 @Controller('user')
 export class UserController {
   private cookieOptions = {
@@ -91,9 +94,6 @@ export class UserController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/checkEmail', checkData.email),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
     return resData;
   }
 
