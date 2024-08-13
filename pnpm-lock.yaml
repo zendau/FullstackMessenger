@@ -212,7 +212,7 @@ importers:
         version: 8.2.8
       '@nestjs/schematics':
         specifier: ^8.0.0
-        version: 8.0.11(chokidar@3.5.3)(typescript@4.9.5)
+        version: 8.0.11(chokidar@3.6.0)(typescript@4.9.5)
       '@nestjs/testing':
         specifier: ^8.0.0
         version: 8.4.7(@nestjs/common@8.0.0(cache-manager@4.1.0)(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/core@8.0.0(@nestjs/common@8.0.0(cache-manager@4.1.0)(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/microservices@8.2.5)(@nestjs/platform-express@8.4.7)(@nestjs/websockets@8.4.7)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/microservices@8.2.5(@nestjs/common@8.0.0(cache-manager@4.1.0)(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/core@8.0.0)(@nestjs/websockets@8.4.7)(amqp-connection-manager@4.1.14(amqplib@0.8.0))(amqplib@0.8.0)(cache-manager@4.1.0)(redis@3.1.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/platform-express@8.4.7(@nestjs/common@8.0.0(cache-manager@4.1.0)(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/core@8.0.0))
@@ -288,6 +288,9 @@ importers:
 
   server/apps/file-cloud:
     dependencies:
+      '@lib/exception':
+        specifier: workspace:^
+        version: link:../../libs/exceptions
       '@nestjs/common':
         specifier: 8.0.0
         version: 8.0.0(cache-manager@4.1.0)(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.1)
@@ -348,7 +351,7 @@ importers:
         version: 8.2.8
       '@nestjs/schematics':
         specifier: ^8.0.0
-        version: 8.0.11(chokidar@3.6.0)(typescript@4.9.5)
+        version: 8.0.11(chokidar@3.5.3)(typescript@4.9.5)
       '@nestjs/testing':
         specifier: ^8.0.0
         version: 8.4.7(@nestjs/common@8.0.0(cache-manager@4.1.0)(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/core@8.0.0(@nestjs/common@8.0.0(cache-manager@4.1.0)(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/microservices@8.2.5)(@nestjs/platform-express@8.4.7)(@nestjs/websockets@8.4.7)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/microservices@8.2.5(@nestjs/common@8.0.0(cache-manager@4.1.0)(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/core@8.0.0)(@nestjs/websockets@8.4.7)(amqp-connection-manager@4.1.14(amqplib@0.8.0))(amqplib@0.8.0)(cache-manager@4.1.0)(redis@3.1.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/platform-express@8.4.7(@nestjs/common@8.0.0(cache-manager@4.1.0)(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/core@8.0.0))

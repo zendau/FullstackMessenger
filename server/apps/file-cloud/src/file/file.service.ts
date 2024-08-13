@@ -1,11 +1,12 @@
 import IFiles from './interfaces/IFiles';
 import { Foulder } from '../foulder/entities/foulder.entity';
 import { FoulderService } from '../foulder/foulder.service';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { File } from './entities/file.entity';
 import * as fs from 'fs';
+import { DetailedRpcException } from '@lib/exception';
 
 @Injectable()
 export class FileService {
@@ -16,22 +17,29 @@ export class FileService {
   ) {}
 
   async create(createFilesData: IFiles) {
-    const foulder = await this.foulderService.getByPath(createFilesData.path);
-    if (!(foulder instanceof Foulder)) {
-      return foulder;
-    }
+    try {
+      const foulder = await this.foulderService.getByPath(createFilesData.path);
+      if (!(foulder instanceof Foulder)) {
+        return foulder;
+      }
 
-    const resInsered = await Promise.all(
-      createFilesData.filesData.map(async (file) => {
-        const fileInsered = await this.fileRepository.save({
-          ...file,
-          userId: createFilesData.userId,
-          foulder,
-        });
-        return fileInsered;
-      }),
-    );
-    return resInsered;
+      const resInsered = await Promise.all(
+        createFilesData.filesData.map(async (file) => {
+          const fileInsered = await this.fileRepository.save({
+            ...file,
+            userId: createFilesData.userId,
+            foulder,
+          });
+          return fileInsered;
+        }),
+      );
+      return resInsered;
+    } catch (e) {
+      const errorMessage =
+        e.errno === 1452 ? ['error.notFoundFoulder'] : 'error.unexpected';
+
+      throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async getAll() {
@@ -48,13 +56,12 @@ export class FileService {
       .innerJoinAndSelect('file.foulder', 'foulder')
       .where('file.id = :fileId', { fileId })
       .getOne();
-    console.log('res', res);
+
     if (res === undefined)
-      return {
-        status: false,
-        message: ['error.notFoundFile', fileId],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        ['error.notFoundFile', fileId],
+        HttpStatus.BAD_REQUEST,
+      );
 
     return res;
   }
@@ -81,15 +88,6 @@ export class FileService {
         }
 
         return [fileId, deletedStatus];
-
-        // const file = await this.getById(id);
-        // if (file instanceof File) {
-        //   if (typeof error === 'string') {
-        //     throw new Error(error);
-        //   }
-        // } else {
-        //   return file;
-        // }
       }),
     );
     return resRemoveStatuses;

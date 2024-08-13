@@ -9,6 +9,7 @@ import {
   Post,
   Res,
   UploadedFiles,
+  UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileService } from './file.service';
@@ -18,7 +19,9 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import destinationStorage from './multer/destination.storage';
 import filenameStorage from './multer/filename.storage';
+import { DetailedRpcExceptionsFilter } from '@lib/exception';
 
+@UseFilters(new DetailedRpcExceptionsFilter())
 @Controller('file')
 export class FileController {
   private readonly logger = new Logger(FileController.name);
@@ -42,7 +45,6 @@ export class FileController {
     },
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    console.log('filesUploadDTO', files, filesUploadDTO);
     const filesData = {
       ...filesUploadDTO,
       filesData: files.map((file) => {
@@ -54,57 +56,25 @@ export class FileController {
         };
       }),
     };
-    console.log('filesData', filesData);
-    const res = await this.fileService.create(filesData).catch((err) => {
-      const errorMessage =
-        err.errno === 1452 ? ['error.notFoundFoulder'] : 'error.unexpected';
-
-      return {
-        status: false,
-        message: errorMessage,
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
+    const res = await this.fileService.create(filesData);
     return res;
   }
 
   @MessagePattern('file/getAll')
   async findAll() {
-    const res = await this.fileService.getAll().catch((err) => {
-      this.logger.error(err.sqlMessage);
-      return {
-        status: false,
-        message: 'error.unexpected',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
+    const res = await this.fileService.getAll();
     return res;
   }
 
   @MessagePattern('file/get')
   async findOne(@Payload() fileId: number) {
-    const res = await this.fileService.getById(fileId).catch((err) => {
-      console.log('err', err);
-      this.logger.error(err.sqlMessage);
-      return {
-        status: false,
-        message: 'error.unexpected',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
+    const res = await this.fileService.getById(fileId);
     return res;
   }
 
   @MessagePattern('file/deleteMany')
   async remove(@Payload() fileList: any[]) {
-    const res = await this.fileService.removeMany(fileList).catch((err) => {
-      this.logger.error(err.sqlMessage ?? err.message);
-      return {
-        status: false,
-        message: 'error.unexpected',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    });
+    const res = await this.fileService.removeMany(fileList);
     return res;
   }
 
@@ -114,7 +84,7 @@ export class FileController {
     @Param('id', ParseIntPipe) fileId: number,
   ) {
     const fileData = await this.fileService.isFileExist(fileId);
-    console.log('!!!', fileId, fileData);
+
     if (fileData) {
       const filePath = `${process.env.STORE_PATH}/${fileData.foulder.path}/${fileData.fileTempName}`;
       response.download(filePath, fileData.fileName);
