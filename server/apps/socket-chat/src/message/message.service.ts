@@ -20,6 +20,7 @@ import IFile from '@/socket/interfaces/message/IFile';
 import { IDeletedData } from '@/socket/interfaces/message/IDeleteMessage';
 import { SocketRedisAdapter } from '@/socket/socketRedisAdapter.service';
 import IChatMessages from '@/socket/interfaces/chat/IChatMessages';
+import { DetailedRpcException } from '@lib/exception';
 
 @Injectable()
 export class MessageService {
@@ -156,11 +157,10 @@ export class MessageService {
       .getOne();
 
     if (res === undefined)
-      return {
-        status: false,
-        message: ['error.notFoundMessage', messageId],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        ['error.notFoundMessage', messageId],
+        HttpStatus.BAD_REQUEST,
+      );
 
     return res;
   }

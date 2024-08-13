@@ -21,6 +21,7 @@ import IUserChat from '@/socket/interfaces/user/IUserChat';
 import IChatCreate from '@/chat/interfaces/IChatCreate';
 import IGetContactList from '@/chat/interfaces/IGetContactList';
 import { SocketService } from '@/socket/socket.service';
+import { DetailedRpcException } from '@lib/exception';
 
 @Injectable()
 export class ChatService {
@@ -129,29 +130,18 @@ export class ChatService {
       .where('id = :id', { id })
       .getOne()) as unknown as IChat;
     if (res === undefined)
-      return {
-        status: false,
-        message: 'error.notFoundChat',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-
-    try {
-      const resGetGroupUsers = await this.getGroupUsers(res.id);
-      res.users = resGetGroupUsers;
-
-      res.conferenceWithVideo = await firstValueFrom(
-        this.peerServiceClient.send('room/getByChat', id),
+      throw new DetailedRpcException(
+        'error.notFoundChat',
+        HttpStatus.BAD_REQUEST,
       );
-      return res;
-    } catch (e) {
-      console.log('e', e);
-      this.logger.error(e.message);
-      return {
-        status: false,
-        message: 'error.unexpected',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    }
+
+    const resGetGroupUsers = await this.getGroupUsers(res.id);
+    res.users = resGetGroupUsers;
+
+    res.conferenceWithVideo = await firstValueFrom(
+      this.peerServiceClient.send('room/getByChat', id),
+    );
+    return res;
   }
 
   async createChat(chatData: IChatCreate) {
@@ -185,12 +175,7 @@ export class ChatService {
       return chatInseted;
     } catch (e) {
       await queryRunner.rollbackTransaction();
-      this.logger.error(e.sqlMessage ?? e);
-      return {
-        status: false,
-        message: 'error.unexpected',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw e;
     } finally {
       await queryRunner.release();
     }

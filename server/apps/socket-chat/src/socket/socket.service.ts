@@ -22,6 +22,7 @@ import IReadMessage from '@/socket/interfaces/message/IReadMessage';
 import IMessageCreated from '@/socket/interfaces/message/IMessageCreated';
 import { IDeleteMessage } from '@/socket/interfaces/message/IDeleteMessage';
 import IChatCreate from '@/chat/interfaces/IChatCreate';
+import { DetailedRpcException } from '@lib/exception';
 
 @Injectable()
 export class SocketService {
@@ -489,11 +490,10 @@ export class SocketService {
     const chatData = await this.getChatById(chatId);
 
     if (chatData.adminId !== adminId)
-      return {
-        status: false,
-        message: ['error.invalidChatAdmin', adminId],
-        httpCode: HttpStatus.FORBIDDEN,
-      };
+      throw new DetailedRpcException(
+        ['error.invalidChatAdmin', adminId],
+        HttpStatus.FORBIDDEN,
+      );
 
     const usersIdList = [];
 
