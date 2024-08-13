@@ -226,11 +226,10 @@ export class UserService {
       .getOne();
 
     if (user === undefined) {
-      return {
-        status: false,
-        message: ['error.undefinedUser', id],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        ['error.undefinedUser', id],
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return user;

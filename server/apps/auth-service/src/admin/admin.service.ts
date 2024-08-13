@@ -66,11 +66,10 @@ export class AdminService {
   async setUserRole(userId: number, role: UserRole) {
     const roleObject = Object.values(UserRole);
     if (!roleObject.includes(role)) {
-      return {
-        status: false,
-        message: ['error.undefinedRole', role],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        ['error.undefinedRole', role],
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const resSetRole = await this.usersRepository

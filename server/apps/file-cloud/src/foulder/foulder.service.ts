@@ -4,6 +4,7 @@ import { IFoulderDTO } from './dto/foulder.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as fs from 'fs';
+import { DetailedRpcException } from '@lib/exception';
 
 @Injectable()
 export class FoulderService {
@@ -22,11 +23,10 @@ export class FoulderService {
       const dir = `${process.env.STORE_PATH}/${foulderPath}`;
       fs.mkdir(dir, (err) => {
         if (err) {
-          return {
-            status: false,
-            message: 'error.unexpected',
-            httpCode: HttpStatus.BAD_REQUEST,
-          };
+          throw new DetailedRpcException(
+            'error.unexpected',
+            HttpStatus.BAD_REQUEST,
+          );
         }
       });
       const resInsered = await this.foulderRepository.save({
@@ -34,11 +34,10 @@ export class FoulderService {
       });
       return resInsered;
     } else {
-      return {
-        status: false,
-        message: ['error.foulderExist', foulderPath],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        ['error.foulderExist', foulderPath],
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -53,11 +52,10 @@ export class FoulderService {
       .getOne();
 
     if (res === undefined)
-      return {
-        status: false,
-        message: ['error.notFoundFoulder', id],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        ['error.notFoundFoulder', id],
+        HttpStatus.BAD_REQUEST,
+      );
 
     return res;
   }
@@ -87,11 +85,10 @@ export class FoulderService {
         const newNameDir = `${process.env.STORE_PATH}/${updateFoulderDTO.path}`;
         fs.rename(currNameDir, newNameDir, (err) => {
           if (err) {
-            return {
-              status: false,
-              message: 'error.unexpected',
-              httpCode: HttpStatus.BAD_REQUEST,
-            };
+            throw new DetailedRpcException(
+              'error.unexpected',
+              HttpStatus.BAD_REQUEST,
+            );
           }
         });
         const res = await this.foulderRepository
@@ -105,18 +102,16 @@ export class FoulderService {
 
         return !!res.affected;
       } else {
-        return {
-          status: false,
-          message: ['error.foulderExist', updateFoulderDTO.path],
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
+        throw new DetailedRpcException(
+          ['error.foulderExist', updateFoulderDTO.path],
+          HttpStatus.BAD_REQUEST,
+        );
       }
     } else {
-      return {
-        status: false,
-        message: ['error.notFoundFoulder', updateFoulderDTO.id],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        ['error.notFoundFoulder', updateFoulderDTO.id],
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -127,11 +122,10 @@ export class FoulderService {
 
       fs.rm(dir, { recursive: true }, (err) => {
         if (err) {
-          return {
-            status: false,
-            message: 'error.unexpected',
-            httpCode: HttpStatus.BAD_REQUEST,
-          };
+          throw new DetailedRpcException(
+            'error.unexpected',
+            HttpStatus.BAD_REQUEST,
+          );
         }
       });
 
@@ -143,11 +137,10 @@ export class FoulderService {
 
       return !!res.affected;
     } else {
-      return {
-        status: false,
-        message: ['error.notFoundFoulder', id],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        ['error.notFoundFoulder', id],
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }
