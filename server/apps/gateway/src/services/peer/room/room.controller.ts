@@ -45,9 +45,7 @@ export class RoomController {
     const res = await firstValueFrom(
       this.peerServiceClient.send('room/add', createRoomDto),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -60,17 +58,10 @@ export class RoomController {
       this.chatServiceClient.send('chat/idList', requestData.userId),
     );
 
-    if (chatIdList.status === false) {
-      throw new HttpException(chatIdList.message, chatIdList.httpCode);
-    }
-
     const roomsList = await firstValueFrom(
       this.peerServiceClient.send('room/list', chatIdList),
     );
 
-    if (roomsList.status === false) {
-      throw new HttpException(roomsList.message, roomsList.httpCode);
-    }
     return roomsList;
   }
 
@@ -82,9 +73,7 @@ export class RoomController {
     const res = await firstValueFrom(
       this.peerServiceClient.send('room/get', roomId),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -97,9 +86,7 @@ export class RoomController {
     const res = await firstValueFrom(
       this.peerServiceClient.send('room/edit', updateRoomDto),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -111,9 +98,7 @@ export class RoomController {
     const res = await firstValueFrom(
       this.peerServiceClient.send('room/delete', roomId),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 }

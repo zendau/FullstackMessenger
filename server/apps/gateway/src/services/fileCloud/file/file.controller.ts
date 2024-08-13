@@ -76,9 +76,7 @@ export class FileController {
     const res = await firstValueFrom(
       this.fileServiceClient.send('file/getAll', ''),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -90,9 +88,7 @@ export class FileController {
     const res = await firstValueFrom(
       this.fileServiceClient.send('file/get', fileId),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -124,13 +120,11 @@ export class FileController {
         };
       }),
     };
-    console.log('files', filesData);
+
     const res = await firstValueFrom(
       this.fileServiceClient.send('file/edit', filesData),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -142,9 +136,7 @@ export class FileController {
     const res = await firstValueFrom(
       this.fileServiceClient.send('file/delete', fileId),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 }

@@ -41,9 +41,7 @@ export class FoulderController {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/add', createFoulderDto),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -55,9 +53,7 @@ export class FoulderController {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/getAll', ''),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -69,9 +65,7 @@ export class FoulderController {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/get', foulderId),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -84,9 +78,7 @@ export class FoulderController {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/edit', updateFoulderDto),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -98,9 +90,7 @@ export class FoulderController {
     const res = await firstValueFrom(
       this.fileServiceClient.send('foulder/delete', foulderId),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 }

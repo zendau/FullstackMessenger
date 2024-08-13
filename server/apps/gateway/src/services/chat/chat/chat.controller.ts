@@ -53,9 +53,7 @@ export class ChatController {
         userId: request.user.id,
       }),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -80,9 +78,7 @@ export class ChatController {
         userId: request.user.id,
       }),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -106,9 +102,7 @@ export class ChatController {
         userId: request.user.id,
       }),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -133,9 +127,7 @@ export class ChatController {
         userId: request.user.id,
       }),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -160,10 +152,6 @@ export class ChatController {
         userId: request.user.id,
       }),
     );
-    console.log('RES d', resData);
-    if (resData?.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData ?? false;
   }

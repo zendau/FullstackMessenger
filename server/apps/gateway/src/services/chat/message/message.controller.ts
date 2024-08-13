@@ -44,9 +44,7 @@ export class MessageController {
     const res = await firstValueFrom(
       this.chatServiceClient.send('message/add', createMessageDto),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -58,9 +56,7 @@ export class MessageController {
     const res = await firstValueFrom(
       this.chatServiceClient.send('message/listPagination', paginationData),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -72,9 +68,7 @@ export class MessageController {
     const res = await firstValueFrom(
       this.chatServiceClient.send('message/get', messageId),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -87,9 +81,7 @@ export class MessageController {
     const res = await firstValueFrom(
       this.chatServiceClient.send('message/edit', updateMessageDto),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 
@@ -101,9 +93,7 @@ export class MessageController {
     const res = await firstValueFrom(
       this.chatServiceClient.send('message/delete', messageId),
     );
-    if (res.status === false) {
-      throw new HttpException(res.message, res.httpCode);
-    }
+
     return res;
   }
 }

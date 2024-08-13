@@ -62,10 +62,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    console.log('resData', resData);
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -91,9 +87,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -113,9 +106,6 @@ export class ContactController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('contact/getContactCount', request.user.id),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -142,9 +132,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -170,9 +157,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -198,9 +182,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -227,9 +208,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -256,9 +234,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -285,9 +260,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -313,9 +285,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -342,9 +311,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -372,9 +338,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -400,9 +363,6 @@ export class ContactController {
         userId: request.user.id,
       }),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }

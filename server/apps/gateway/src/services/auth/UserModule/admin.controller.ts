@@ -49,9 +49,6 @@ export class AdminController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('admin/list', listData),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -70,9 +67,6 @@ export class AdminController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('admin/blockUser', userId),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -90,9 +84,6 @@ export class AdminController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('admin/unblockUser', userId),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -116,9 +107,6 @@ export class AdminController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('admin/setRole', roleData),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -132,9 +120,6 @@ export class AdminController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('admin/rolesList', ''),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }

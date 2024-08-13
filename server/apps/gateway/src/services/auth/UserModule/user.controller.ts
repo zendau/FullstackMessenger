@@ -47,7 +47,7 @@ import IToken from '@/services/auth/UserModule/interfaces/IToken';
 import { ExceptionsFilter } from '../../../common/filters/exception.filter';
 
 @ApiTags('Auth microservice - User controller')
-@UseFilters(ExceptionsFilter)
+@UseFilters(new ExceptionsFilter())
 @Controller('user')
 export class UserController {
   private cookieOptions = {
@@ -73,9 +73,6 @@ export class UserController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/register', authBody),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     res.cookie('auth-cookie', resData.refreshToken, this.cookieOptions);
     return resData;
@@ -109,10 +106,6 @@ export class UserController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/login', authBody),
     );
-    console.log(resData);
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     res.cookie('auth-cookie', resData.refreshToken, this.cookieOptions);
     return resData;
@@ -135,9 +128,6 @@ export class UserController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/refresh', refreshData),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     res.cookie('auth-cookie', resData.refreshToken, this.cookieOptions);
     return resData;
@@ -158,12 +148,9 @@ export class UserController {
     const authCookie = request.cookies['auth-cookie'];
 
     if (authCookie) {
-      const resData = await firstValueFrom(
+      await firstValueFrom(
         this.authServiceClient.send('user/logout', authCookie),
       );
-      if (resData.status === false) {
-        throw new HttpException(resData.message, resData.httpCode);
-      }
     }
 
     res.clearCookie('auth-cookie');
@@ -185,9 +172,6 @@ export class UserController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/id', id),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -198,14 +182,9 @@ export class UserController {
   @UsePipes(ValidationPipe)
   @Post('setConfirmCode')
   async getCodeEditData(@Body() confirmData: ConfirmDataDTO) {
-    console.log('confirmData', confirmData);
-
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/setConfirmCode', confirmData),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
@@ -236,9 +215,6 @@ export class UserController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/editData', editUserData),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     res.cookie('auth-cookie', resData.refreshToken, this.cookieOptions);
     return resData;
@@ -264,9 +240,6 @@ export class UserController {
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/resetPassword', resetData),
     );
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     res.cookie('auth-cookie', resData.refreshToken, { httpOnly: true });
     return resData;
@@ -282,14 +255,9 @@ export class UserController {
   })
   @Get('getDevicesData/:id')
   async getTokensDeviceData(@Param('id', ParseIntPipe) id: number) {
-    console.log('id', id);
     const resData = await firstValueFrom(
       this.authServiceClient.send('user/getTokensDeviceData', id),
     );
-    console.log('resData', resData);
-    if (resData.status === false) {
-      throw new HttpException(resData.message, resData.httpCode);
-    }
 
     return resData;
   }
