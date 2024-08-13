@@ -70,11 +70,11 @@ export class AuthService {
       return tokens;
     } catch (e) {
       await this.queryRunner.rollbackTransaction();
-      return {
-        status: false,
-        message: 'error.wrongCredentials',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+
+      throw new DetailedRpcException(
+        'error.wrongCredentials',
+        HttpStatus.BAD_REQUEST,
+      );
     } finally {
       await this.queryRunner.release();
       this.queryRunner = null;
@@ -85,10 +85,10 @@ export class AuthService {
     const resUserData = await this.userService.findByEmail(email);
 
     if (resUserData.status)
-      return {
-        find: true,
-        message: ['error.takenEmail', email],
-      };
+    return {
+      find: true,
+      message: ['error.takenEmail', email],
+    };
     return {
       find: false,
       message: ['error.undefinedEmail', email],
@@ -126,11 +126,10 @@ export class AuthService {
       return tokens;
     } catch (e) {
       this.logger.error(e.message);
-      return {
-        status: false,
-        message: 'error.unexpected',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        'error.unexpected',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -181,13 +180,11 @@ export class AuthService {
       .where('email = :email', { email: userData.email })
       .execute();
 
-    if (!statusUpdated.affected) {
-      return {
-        status: false,
-        message: 'error.invalidResetData',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    }
+    if (!statusUpdated.affected)
+      throw new DetailedRpcException(
+        'error.invalidResetData',
+        HttpStatus.BAD_REQUEST,
+      );
 
     await this.confirmCodeService.deleteConfirmCode(userData.email);
     this.nodeMailerService.sendPassword(newPassword, userData.email);

@@ -7,6 +7,7 @@ import { IDevice } from './interfaces/ITokenDevice';
 import { DeviceService } from './device.service';
 import IToken from './interfaces/IToken';
 import ITokens from './interfaces/ITokens';
+import { DetailedRpcException } from '@lib/exception';
 
 @Injectable()
 export class TokenService {
@@ -75,28 +76,25 @@ export class TokenService {
       .select(['token.refreshToken, token.deviceId, device.tag'])
       .execute();
 
-    if (tokenData[0] === undefined || tokenData[0].tag !== deviceTag) {
-      return {
-        status: false,
-        message: 'error.notAuth',
-        httpCode: HttpStatus.UNAUTHORIZED,
-      };
-    } else {
-      const userData = await this.jwtService.decode(tokenData[0].refreshToken);
+    if (tokenData[0] === undefined || tokenData[0].tag !== deviceTag)
+      throw new DetailedRpcException('error.notAuth', HttpStatus.UNAUTHORIZED);
 
-      if (typeof userData === 'object') {
-        delete userData['iat'];
-        delete userData['exp'];
+    const userData = await this.jwtService.decode(tokenData[0].refreshToken);
 
-        return {
-          status: true,
-          userData: userData as IToken,
-          deviceId: tokenData[0].deviceId,
-        };
-      } else {
-        throw new Error('Not valid user refresh token data');
-      }
-    }
+    if (typeof userData !== 'object')
+      throw new DetailedRpcException(
+        'Not valid user refresh token data',
+        HttpStatus.UNAUTHORIZED,
+      );
+
+    delete userData['iat'];
+    delete userData['exp'];
+
+    return {
+      status: true,
+      userData: userData as IToken,
+      deviceId: tokenData[0].deviceId,
+    };
   }
 
   saveToken(
@@ -150,11 +148,7 @@ export class TokenService {
         .execute();
       return !!tokenData.affected;
     } catch (e) {
-      return {
-        status: false,
-        message: 'error.noToken',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException('error.noToken', HttpStatus.BAD_REQUEST);
     }
   }
 }

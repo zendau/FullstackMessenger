@@ -6,6 +6,7 @@ import { UserAccess } from '../access/access.entity';
 import { UserRole } from '../user/user.entity';
 import IUserPaginationList from 'src/contacts/interfaces/IUserPaginationList';
 import { UserService } from 'src/user/user.service';
+import { DetailedRpcException } from '@lib/exception';
 
 @Injectable()
 export class AdminService {
@@ -83,12 +84,11 @@ export class AdminService {
 
     if (resSetRole.affected) {
       return true;
-    } else {
-      return {
-        status: false,
-        message: ['error.undefinedUser', userId],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
     }
+
+    throw new DetailedRpcException(
+      ['error.undefinedUser', userId],
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }

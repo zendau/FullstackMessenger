@@ -8,6 +8,7 @@ import { union } from '@/utils/typeorm/union';
 import IGetContactList from '@/contacts/interfaces/IUserPaginationList';
 import IContact from '@/contacts/interfaces/IContact';
 import IUserContactsCount from './interfaces/IUserContactsCount';
+import { DetailedRpcException } from '@lib/exception';
 
 @Injectable()
 export class ContactService {
@@ -237,13 +238,11 @@ export class ContactService {
 
     const updatedStatus = !!resUpdated.affected;
 
-    if (!updatedStatus) {
-      return {
-        status: false,
-        message: ['error.invalidContactStatus', userId],
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
-    }
+    if (!updatedStatus)
+      throw new DetailedRpcException(
+        ['error.invalidContactStatus', userId],
+        HttpStatus.BAD_REQUEST,
+      );
 
     return {
       status: true,

@@ -10,6 +10,8 @@ import { UserAccess } from '@/access/access.entity';
 import { NodeMailerService } from '@/access/nodemailer/nodemailer.service';
 import IConfirmData from '@/user/interfaces/IConfirmData';
 
+import { DetailedRpcException } from '@lib/exception';
+
 @Injectable()
 export class ConfirmCodeService {
   constructor(
@@ -63,11 +65,10 @@ export class ConfirmCodeService {
       };
     }
 
-    return {
-      status: false,
-      message: 'error.confirmCodeValid',
-      httpCode: HttpStatus.BAD_REQUEST,
-    };
+    throw new DetailedRpcException(
+      'error.confirmCodeValid',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   async deleteConfirmCode(confirmId: string) {

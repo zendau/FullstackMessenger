@@ -16,6 +16,7 @@ import { UnionParameters } from '@/utils/typeorm/union';
 import IPublicUserData from '@/user/interfaces/IPublicUserData';
 import IUser from '@/user/interfaces/IUser';
 import { TokenService } from '@/token/token.service';
+import { DetailedRpcException } from '@lib/exception';
 
 @Injectable()
 export class UserService {
@@ -97,18 +98,16 @@ export class UserService {
       return tokens;
     } catch (e) {
       if (e.errno === sqlErrorCodes.DuplicateEmail) {
-        return {
-          status: false,
-          message: ['error.takenEmail', userData.email],
-          httpCode: HttpStatus.BAD_REQUEST,
-        };
+        throw new DetailedRpcException(
+          ['error.takenEmail', userData.email],
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
-      return {
-        status: false,
-        message: 'error.wrongCredentials',
-        httpCode: HttpStatus.BAD_REQUEST,
-      };
+      throw new DetailedRpcException(
+        'error.wrongCredentials',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -126,11 +125,10 @@ export class UserService {
       };
     }
 
-    return {
-      status: false,
-      message: ['error.undefinedEmail', email],
-      httpCode: HttpStatus.BAD_REQUEST,
-    };
+    throw new DetailedRpcException(
+      ['error.undefinedEmail', email],
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   async getAdditionalUserData(userId: number) {
