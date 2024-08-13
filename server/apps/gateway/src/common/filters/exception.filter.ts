@@ -16,6 +16,12 @@ export class ExceptionsFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     let status = 500;
 
+    if (exception.isParse) {
+      exception.message = JSON.parse(exception.message);
+    }
+
+    console.log('exe', exception);
+
     const data = {} as { message: string; status: number };
 
     if (exception instanceof HttpException) {
