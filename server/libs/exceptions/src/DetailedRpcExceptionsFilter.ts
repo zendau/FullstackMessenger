@@ -13,7 +13,6 @@ export class DetailedRpcExceptionsFilter implements ExceptionFilter {
 
   catch(exception: DetailedRpcException, host: ArgumentsHost) {
     const error = exception.getError();
-
     this.logger.error({
       message: error.message,
       code: error.code,
