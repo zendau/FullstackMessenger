@@ -1,14 +1,22 @@
 import { RpcException } from '@nestjs/microservices';
 
 export class DetailedRpcException extends RpcException {
-  constructor(message: string | object, private readonly code: number) {
+  private isParse: boolean;
 
-    if (typeof message === 'object') {
-      message = JSON.stringify(message)
+  constructor(message: string | object, private readonly code: number) {
+    const isObjectMessage = typeof message === 'object';
+
+    if (isObjectMessage) {
+      message = JSON.stringify(message);
     }
 
-    console.log('ttt', message, code)
     super({ code, message });
+
+    if (isObjectMessage) {
+      this.isParse = true;
+    } else {
+      this.isParse = false;
+    }
   }
 
   getCustomCode(): number {
@@ -17,6 +25,7 @@ export class DetailedRpcException extends RpcException {
 
   getError() {
     return {
+      isParse: this.isParse,
       code: this.code,
       message: this.message,
     };
