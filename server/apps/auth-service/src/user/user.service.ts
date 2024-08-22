@@ -125,10 +125,9 @@ export class UserService {
       };
     }
 
-    throw new DetailedRpcException(
-      ['error.undefinedEmail', email],
-      HttpStatus.BAD_REQUEST,
-    );
+    return {
+      status: false
+    }
   }
 
   async getAdditionalUserData(userId: number) {

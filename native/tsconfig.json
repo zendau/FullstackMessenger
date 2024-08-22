@@ -3,6 +3,10 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "types": ["jest", "node", "styled-components-react-native"]
+    "types": [
+      "jest",
+      "node",
+      "styled-components-react-native"
+    ]
   }
 }

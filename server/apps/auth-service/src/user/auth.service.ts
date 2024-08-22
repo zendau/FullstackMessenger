@@ -85,10 +85,10 @@ export class AuthService {
     const resUserData = await this.userService.findByEmail(email);
 
     if (resUserData.status)
-    return {
-      find: true,
-      message: ['error.takenEmail', email],
-    };
+      return {
+        find: true,
+        message: ['error.takenEmail', email],
+      };
     return {
       find: false,
       message: ['error.undefinedEmail', email],
@@ -96,41 +96,33 @@ export class AuthService {
   }
 
   async login(userData: IUserData) {
-    try {
-      const resUserData = await this.userService.findByEmail(userData.email);
-      if (!resUserData.status) return resUserData;
+    const resUserData = await this.userService.findByEmail(userData.email);
+    if (!resUserData.status) return resUserData;
 
-      const resComparePasswords = await comparePassword(
-        userData.password,
-        resUserData.userData.password,
-      );
+    const resComparePasswords = await comparePassword(
+      userData.password,
+      resUserData.userData.password,
+    );
 
-      if (!resComparePasswords.status) {
-        return resComparePasswords;
-      }
-
-      const { bannedStatus, userInfo } =
-        await this.userService.getAdditionalUserData(resUserData.userData.id);
-
-      const tokens = await this.tokenService.insertTokens(
-        {
-          ...convertUserDTO(resUserData.userData),
-          isBanned: bannedStatus.isBanned,
-          info: userInfo,
-        },
-        userData.system,
-        null,
-      );
-
-      await this.confirmCodeService.deleteConfirmCode(userData.email);
-      return tokens;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new DetailedRpcException(
-        'error.unexpected',
-        HttpStatus.BAD_REQUEST,
-      );
+    if (!resComparePasswords.status) {
+      return resComparePasswords;
     }
+
+    const { bannedStatus, userInfo } =
+      await this.userService.getAdditionalUserData(resUserData.userData.id);
+
+    const tokens = await this.tokenService.insertTokens(
+      {
+        ...convertUserDTO(resUserData.userData),
+        isBanned: bannedStatus.isBanned,
+        info: userInfo,
+      },
+      userData.system,
+      null,
+    );
+
+    await this.confirmCodeService.deleteConfirmCode(userData.email);
+    return tokens;
   }
 
   private async userRegisterTransaction(userData: User, deviceData: IDevice) {

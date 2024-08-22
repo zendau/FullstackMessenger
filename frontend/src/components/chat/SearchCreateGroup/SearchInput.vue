@@ -22,7 +22,7 @@ export default {
     const searchByPattern = debounce((el) => {
       const pattern = el.target.value;
       emit("search-pattern", pattern);
-    });
+    }, 500);
     return {
       searchByPattern,
     };

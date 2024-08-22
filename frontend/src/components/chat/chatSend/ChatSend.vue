@@ -25,7 +25,9 @@
     />
     <ChatFiles @delete-file="deleteFileById" />
     <ChatFileUpload :file-upload-percent="fileUploadPercent" />
-    <button @click="sendMessage">
+    <button
+      @click="sendMessage"
+    >
       <font-awesome-icon icon="fa-solid fa-paper-plane" />
     </button>
   </div>
@@ -94,7 +96,7 @@ export default {
     });
 
     async function sendMessage(e) {
-      if (e.keyCode === 13) {
+      if (e?.keyCode === 13) {
         e.preventDefault();
       }
 

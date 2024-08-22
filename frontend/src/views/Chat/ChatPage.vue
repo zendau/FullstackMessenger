@@ -78,6 +78,7 @@ export default {
       }
     );
 
+    store.commit('chat/$reset')
     store.dispatch("chat/getChats", {
       chatId: chatId.value,
     });
