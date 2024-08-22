@@ -10,7 +10,8 @@
       "video": "Video"
     },
     "create": "Create",
-    "typeError": "Confrence type must be selected"
+    "typeError": "Confrence type must be selected",
+    "atLeast": "At least 2 other participants are required to create a conference"
   },
   "searchInput": {
     "placeholder": "Search"
@@ -89,7 +90,8 @@
     "cancel": "Cancel contact request",
     "add": "Add to contact",
     "unBlock": "Unblock user",
-    "block": "Block user"
+    "block": "Block user",
+    "emptyData": "Absent"
   },
   "selectChat": "Select a contact to start a chat"
 }

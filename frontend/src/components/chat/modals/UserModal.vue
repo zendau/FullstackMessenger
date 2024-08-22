@@ -28,10 +28,12 @@
             <font-awesome-icon icon="fa-solid fa-envelope" /> {{ contactData.email }}
           </p>
           <p class="info user-modal__data">
-            <font-awesome-icon icon="fa-solid fa-info" /> {{ contactData.info?.details }}
+            <font-awesome-icon icon="fa-solid fa-info" />
+            {{ contactData.info?.details ?? $t("chat.userModal.emptyData") }}
           </p>
           <p class="user-modal__data">
-            <font-awesome-icon icon="fa-solid fa-phone" /> {{ contactData.info?.phone }}
+            <font-awesome-icon icon="fa-solid fa-phone" />
+            {{ contactData.info?.phone ?? $t("chat.userModal.emptyData") }}
           </p>
         </div>
 
