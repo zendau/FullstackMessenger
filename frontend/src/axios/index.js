@@ -16,6 +16,30 @@ $api.interceptors.request.use((config) => {
   return config;
 });
 
+function refreshJWTPrepare() {
+  const fetchRefresh = () =>
+    axios.get(`${API_URL}/user/refresh`, {
+      withCredentials: true,
+    });
+
+  let isFetching = false;
+  let reqFetch = null;
+
+  return function () {
+    if (isFetching === false) {
+      reqFetch = fetchRefresh().then((value) => {
+        isFetching = false;
+        return value;
+      });
+      isFetching = true;
+    }
+
+    return reqFetch;
+  };
+}
+
+const refreshJWT = refreshJWTPrepare();
+
 $api.interceptors.response.use(
   (config) => {
     return config;
@@ -33,9 +57,7 @@ $api.interceptors.response.use(
     ) {
       originalRequest._isRetry = true;
       try {
-        const response = await axios.get(`${API_URL}/user/refresh`, {
-          withCredentials: true,
-        });
+        const response = await refreshJWT();
         localStorage.setItem("token", response.data.accessToken);
         return $api.request(originalRequest);
       } catch (e) {
