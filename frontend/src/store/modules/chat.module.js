@@ -19,17 +19,19 @@ const defoultLoadMessagesPagination = {
   inMemory: true,
 };
 
+const getDefaultState = () => ({
+  chats: new Map(),
+  chatsByPattern: null,
+  currentTempChatData: null,
+  messages: {},
+  tempPrivateChat: null,
+  loadChatsPagination: { ...defaultLoadChatsPagination },
+  freeChatUsers: {},
+});
+
 export const chat = {
   namespaced: true,
-  state: {
-    chats: new Map(),
-    chatsByPattern: null,
-    currentTempChatData: null,
-    messages: {},
-    tempPrivateChat: null,
-    loadChatsPagination: { ...defaultLoadChatsPagination },
-    freeChatUsers: {},
-  },
+  state: getDefaultState(),
   actions: {
     async newChatMessage({ commit, state, getters }, { messagesData, userId }) {
       try {
@@ -380,7 +382,7 @@ export const chat = {
     deleteChatData(state, chatId) {
       if (state.chats.has(chatId)) {
         state.chats.delete(chatId);
-      } else if (state.currentTempChatData.id === chatId) {
+      } else if (state.currentTempChatData?.id === chatId) {
         state.currentTempChatData = null;
       }
     },
@@ -420,6 +422,9 @@ export const chat = {
     },
     pushFreeChatUsers(state, userData) {
       state.freeChatUsers[userData.id] = userData;
+    },
+    $reset(state) {
+      Object.assign(state, getDefaultState());
     },
   },
   getters: {
