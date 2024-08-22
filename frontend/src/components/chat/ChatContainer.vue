@@ -107,8 +107,12 @@ export default {
     });
 
     chatSocket.on("removeChatUser", (removeUser) => {
-      console.log("removeUser", removeUser);
+
       store.dispatch("chat/deleteFromChat", removeUser);
+
+      if (removeUser.deletedUserInfo === userId.value) {
+        isShowMobileMessages.value = false
+      }
 
       if (removeUser?.adminId === userId.value) {
         const deletedUserData = store.state.users.usersList.get(removeUser.deletedUserInfo);
@@ -120,6 +124,7 @@ export default {
     chatSocket.on("deletedChatGroup", (removeData) => {
       if (removeData.chatId === chatId.value) {
         router.push("/chat");
+        isShowMobileMessages.value = false
       }
 
       store.commit("chat/deleteChatData", removeData.chatId);
