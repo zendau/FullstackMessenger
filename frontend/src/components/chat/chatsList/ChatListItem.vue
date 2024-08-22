@@ -86,13 +86,13 @@ export default {
 
   &__unread {
     text-align: center;
-    height: 25px;
+    height: 22px;
     background-color: var(--button-chat-color);
-    width: 25px;
+    width: 22px;
     border-radius: 50%;
     justify-self: center;
-    font-size: 16px;
-    line-height: 25px;
+    font-size: 14px;
+    line-height: 22px;
     grid-column: 2/3;
   }
 }

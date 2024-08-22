@@ -51,6 +51,9 @@
     >
       {{ $t("chat.searchCreateGroup.create") }}
     </button>
+    <p class="info">
+      {{ $t("chat.searchCreateGroup.atLeast") }}
+    </p>
   </div>
 </template>
 
@@ -208,4 +211,11 @@ export default {
     }
   }
 }
+
+.info {
+  text-align: center;
+  margin: 5px 0;
+  color: var(--color-secondary);
+}
+
 </style>

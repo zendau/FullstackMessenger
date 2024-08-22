@@ -193,6 +193,7 @@ footer {
     justify-content: center;
     align-items: center;
     margin: 0 5px;
+    font-size: 14px;
 
     &:hover {
       color: var(--color-links-active);
@@ -202,7 +203,7 @@ footer {
       font-size: 24px;
     }
 
-    font-size: 14px;
+
   }
 
   &__conference-title {

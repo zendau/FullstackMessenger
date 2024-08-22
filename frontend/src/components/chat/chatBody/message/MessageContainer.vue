@@ -354,6 +354,10 @@ img {
   &__text {
     text-align: left;
     color: var(--color-primary);
+    word-wrap: break-word;
+    word-break: break-all;
+    padding: 5px;
+
   }
 
   &__edited {

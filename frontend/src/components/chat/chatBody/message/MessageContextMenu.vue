@@ -151,7 +151,7 @@ export default {
     width: 100%;
     cursor: pointer;
     transition: 0.3s ease;
-    padding: 10px;
+    padding: 15px;
     box-sizing: border-box;
     display: flex;
 

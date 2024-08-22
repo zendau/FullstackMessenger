@@ -292,7 +292,7 @@ body {
 
 @media (max-width: 720px) {
   .chat__header {
-    font-size: 10px;
+    font-size: 13px;
   }
 
   .user {
