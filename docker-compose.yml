@@ -89,7 +89,7 @@ services:
     ports:
       - 3309:3306
     volumes:
-      - ./sql:/docker-entrypoint-initdb.d
+      - ./server/dump/dump.sql:/docker-entrypoint-initdb.d/dump.sql
       - mysqlDB:/var/lib/mysql
     networks:
       - backend
