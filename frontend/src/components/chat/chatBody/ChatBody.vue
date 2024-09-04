@@ -56,7 +56,7 @@ export default {
     const chatSocket = inject("chatSocket");
     const selectedMessages = inject("selectedMessages");
     const chatId = inject("chatId");
-    const messages = computed(() => store.state.chat.messages[chatId.value]);
+    const messages = computed(() => store.state.message.list[chatId.value]);
     const scrollEnd = ref(null);
     const chatData = inject("chatData");
     const isConferenceChat = inject("isConferenceChat", false);
@@ -75,7 +75,7 @@ export default {
 
     chatSocket.on("updateMessage", (updatedMessageData) => {
       console.log("updated payload", updatedMessageData);
-      store.dispatch("chat/editChatMesssage", updatedMessageData);
+      store.dispatch("message/editChatMesssage", updatedMessageData);
     });
 
     const readChatMessage = debounce(() => {

@@ -61,7 +61,7 @@ export default {
 
     onMounted(() => {
       chatSocket.on("newMessage", (messagesData) => {
-        store.dispatch("chat/newChatMessage", {
+        store.dispatch("message/newChatMessage", {
           messagesData,
           userId: userId.value,
         });
@@ -85,7 +85,7 @@ export default {
     }
 
     chatSocket.on("updateDeletedMessages", (payload) => {
-      store.dispatch("chat/deletedMessages", payload);
+      store.dispatch("message/deletedMessages", payload);
     });
 
     chatSocket.on("inviteChatUser", (inseredUserData) => {
@@ -128,7 +128,7 @@ export default {
       }
 
       store.commit("chat/deleteChatData", removeData.chatId);
-      store.commit("chat/clearChatMessages", removeData.chatId);
+      store.commit("message/clearChatMessages", removeData.chatId);
     });
 
     const chatData = computed(() => store.getters["chat/selectedChat"](chatId.value));

@@ -121,9 +121,8 @@ export default {
       const paginationPage = chatData?.loadMessagesPagination?.page;
 
       if (!paginationPage) {
-        store.commit("chat/clearChatMessages", roomId);
-        console.log("GET CHAT MESSGES");
-        store.dispatch("chat/getChatMessages", roomId);
+        store.commit("message/clearChatMessages", roomId);
+        store.dispatch("message/getChatMessages", roomId);
       }
     }
 

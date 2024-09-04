@@ -5,6 +5,7 @@ import { contact } from "./modules/contact.module";
 import { alert } from "./modules/alert.module";
 import { admin } from "./modules/admin.module";
 import { users } from "./modules/users.module";
+import { message } from "./modules/message.module";
 
 export default createStore({
   modules: {
@@ -14,5 +15,6 @@ export default createStore({
     alert,
     admin,
     users,
+    message,
   },
 });

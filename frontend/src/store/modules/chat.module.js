@@ -12,18 +12,11 @@ const defaultLoadChatsPagination = {
   inMemory: true,
 };
 
-const defoultLoadMessagesPagination = {
-  page: 0,
-  limit: 20,
-  hasMore: true,
-  inMemory: true,
-};
-
 const getDefaultState = () => ({
+  isLoading: false,
   chats: new Map(),
   chatsByPattern: null,
   currentTempChatData: null,
-  messages: {},
   tempPrivateChat: null,
   loadChatsPagination: { ...defaultLoadChatsPagination },
   freeChatUsers: {},
@@ -33,104 +26,6 @@ export const chat = {
   namespaced: true,
   state: getDefaultState(),
   actions: {
-    async newChatMessage({ commit, state, getters }, { messagesData, userId }) {
-      try {
-        if (!state.chats.has(messagesData.roomId)) {
-          const res = await $api.get("/chat/byId", {
-            params: {
-              chatId: messagesData.roomId,
-            },
-          });
-
-          commit("saveChat", res.data);
-        }
-
-        commit("setNewMessageData", {
-          messagesData,
-          userId,
-          roomData: getters.selectedChat(messagesData.roomId),
-        });
-
-        commit("setLastChatMessage", messagesData.roomId);
-        commit("sortByMessageDate");
-      } catch (e) {
-        commit("alert/setErrorMessage", e.response.data.message, {
-          root: true,
-        });
-      }
-    },
-    async getChatMessages({ commit, state }, chatId) {
-      try {
-        if (!state.chats.has(chatId)) {
-          const chatData = await $api.get("/chat/byId", {
-            params: {
-              chatId,
-            },
-          });
-
-          if (chatData.data) {
-            commit("saveChat", chatData.data);
-          } else {
-            commit(
-              "alert/setErrorMessage",
-              $t("store.chat.notFoundChat", chatId),
-              {
-                root: true,
-              }
-            );
-          }
-        }
-
-        const messagePagination =
-          state.chats.get(chatId)?.loadMessagesPagination ??
-          defoultLoadMessagesPagination;
-
-        if (!messagePagination.hasMore) return;
-
-        const messages = await $api.get("message/listPagination", {
-          params: {
-            chatId,
-            page: messagePagination.page,
-            limit: messagePagination.limit,
-            inMemory: messagePagination.inMemory,
-          },
-        });
-
-        commit("saveMessages", { chatId, uploadMessagesData: messages.data });
-      } catch (e) {
-        commit("alert/setErrorMessage", e.response.data.message, {
-          root: true,
-        });
-      }
-    },
-    editChatMesssage({ commit, state }, updatedMessageData) {
-      if (
-        Object.prototype.hasOwnProperty.call(
-          state.messages,
-          updatedMessageData.roomId
-        )
-      ) {
-        commit("updateMessage", updatedMessageData);
-      }
-    },
-    deletedMessages({ commit, state }, deletedMessageData) {
-      if (state.messages[deletedMessageData.roomId]) {
-        commit("deletedMessages", deletedMessageData);
-
-        const isDeletedLastMessage = deletedMessageData.deletedData.find(
-          (item) => {
-            return (
-              item.id ===
-              state.chats.get(deletedMessageData.roomId)?.lastMessage.id
-            );
-          }
-        );
-        if (isDeletedLastMessage) {
-          commit("setLastChatMessage", deletedMessageData.roomId);
-          commit("sortByMessageDate");
-        }
-      }
-    },
     async getChats({ commit, state }, paginationData) {
       if (!state.loadChatsPagination.hasMore) return;
       try {
@@ -216,7 +111,9 @@ export const chat = {
         if (deleteData.deletedUserInfo !== rootState.auth.user.id) return;
 
         commit("deleteChatData", deleteData.userData.chatId);
-        commit("clearChatMessages", deleteData.userData.chatId);
+        commit("message/clearChatMessages", deleteData.userData.chatId, {
+          root: true,
+        });
         router.push("/chat");
       } catch (e) {
         commit("alert/setErrorMessage", e.response.data.message, {
@@ -224,10 +121,11 @@ export const chat = {
         });
       }
     },
-    async getChatById({ commit }, { userId, chatId }) {
+    async getChatById({ commit, state }, { chatId }) {
+      if (state.chats.has(chatId)) return;
+
       const chatData = await $api.get("/chat/byId", {
         params: {
-          userId,
           chatId,
         },
       });
@@ -275,10 +173,9 @@ export const chat = {
     saveCurrentTempChat(state, chatData) {
       state.currentTempChatData = chatData;
     },
-    saveMessages(state, { chatId, uploadMessagesData }) {
-      if (!state.messages[chatId]) state.messages[chatId] = [];
+    saveMessagesPagination(state, { chatId, uploadMessagesData }) {
+      if (!state.chats.has(chatId)) return;
 
-      state.messages[chatId].push(...uploadMessagesData.messages);
       state.chats.get(chatId).loadMessagesPagination = {
         page: uploadMessagesData.page,
         limit: uploadMessagesData.limit,
@@ -290,9 +187,6 @@ export const chat = {
       state.currentTempChatData = null;
       state.tempPrivateChat = null;
       state.freeChatUsers = {};
-    },
-    clearChatMessages(state, chatId) {
-      state.messages[chatId] = [];
     },
     sortByMessageDate(state) {
       const sortedMessagesByDate = [...state.chats.keys()]
@@ -310,70 +204,12 @@ export const chat = {
           obj.set(key, state.chats.get(key));
           return obj;
         }, new Map());
-
       state.chats = sortedMessagesByDate;
     },
+    setLastChatMessage(state, message) {
+      if (!state.chats.has(message.roomId)) return;
 
-    setNewMessageData(state, { messagesData, userId, roomData }) {
-      if (state.messages[messagesData.roomId]) {
-        state.messages[messagesData.roomId].unshift(messagesData);
-      } else {
-        state.messages[messagesData.roomId] = [messagesData];
-      }
-
-      if (
-        !roomData ||
-        (messagesData.type !== undefined && messagesData.type !== "text")
-      )
-        return;
-
-      if (messagesData.authorId !== userId) {
-        roomData.userUnread++;
-      }
-
-      roomData.chatUnread++;
-    },
-
-    setLastChatMessage(state, roomId) {
-      const messages = state.messages[roomId];
-      if (!messages) return [];
-
-      const [lastMessage] = messages;
-      state.chats.get(roomId).lastMessage = lastMessage;
-    },
-    updateMessage(state, updatedMessageData) {
-      state.messages[updatedMessageData.roomId] = state.messages[
-        updatedMessageData.roomId
-      ].map((message) => {
-        if (message.id === updatedMessageData.messageId) {
-          message.isEdited = true;
-
-          if (updatedMessageData.updatedText) {
-            message.text = updatedMessageData.updatedText;
-          }
-
-          if (updatedMessageData.deletedFiles) {
-            message.files = message.files.filter(
-              (file) => !updatedMessageData.deletedFiles.includes(file.id)
-            );
-          }
-
-          if (updatedMessageData.files) {
-            message.files.push(...updatedMessageData.files);
-          }
-        }
-        return message;
-      });
-    },
-    deletedMessages(state, deletedMessagesData) {
-      state.messages[deletedMessagesData.roomId] = state.messages[
-        deletedMessagesData.roomId
-      ].filter(
-        (message) =>
-          !deletedMessagesData.deletedData.find(
-            (item) => item.id === message.id
-          )
-      );
+      state.chats.get(message.roomId).lastMessage = message;
     },
     addUserToGroup(state, { chatId, userData }) {
       if (!state.chats.has(chatId)) return;
@@ -426,8 +262,16 @@ export const chat = {
     $reset(state) {
       Object.assign(state, getDefaultState());
     },
+    setIsloadingStatus(state, status) {
+      state.isLoading = status;
+    },
   },
   getters: {
+    lastMessage: (state) => (chatId) => {
+      if (!state.chats.has(chatId)) return null;
+
+      return state.chats.get(chatId)?.lastMessage;
+    },
     selectedChat: (state) => (chatId) => {
       if (state.chats.has(chatId)) return state.chats.get(chatId);
       else if (state.currentTempChatData?.id === chatId)
