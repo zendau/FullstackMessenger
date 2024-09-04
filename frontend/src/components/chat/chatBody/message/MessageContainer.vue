@@ -2,7 +2,10 @@
 <template>
   <div
     class="message__container"
-    :class="{ 'message__container--author': isAuthor, 'message__container--mini': isConferenceChat }"
+    :class="{
+      'message__container--author': isAuthor,
+      'message__container--mini': isConferenceChat,
+    }"
     @contextmenu="openMessageCTXMenu"
   >
     <label
@@ -13,7 +16,7 @@
         v-model="selectedMessages"
         :value="checboxData"
         type="checkbox"
-      >
+      />
     </label>
 
     <p class="message__author">
@@ -38,7 +41,7 @@
               :src="`${storageURL}/storage/${file.foulder.path}/${file.fileTempName}`"
               :alt="file.fileName"
               @mousedown.right.prevent="null"
-            >
+            />
           </a>
 
           <video
@@ -124,7 +127,10 @@ export default {
 
     const { d } = useI18n();
 
-    const checboxData = reactive({ id: props.message.id, isRead: props.isRead });
+    const checboxData = reactive({
+      id: props.message.id,
+      isRead: props.isRead,
+    });
 
     const isConferenceChat = inject("isConferenceChat", false);
 
@@ -357,7 +363,6 @@ img {
     word-wrap: break-word;
     word-break: break-all;
     padding: 5px;
-
   }
 
   &__edited {

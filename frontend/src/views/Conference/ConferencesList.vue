@@ -68,7 +68,7 @@ export default {
       chatObserver.observe(el);
     }
 
-    store.commit('chat/$reset')
+    store.commit("chat/$reset");
     store.dispatch("chat/getChats");
 
     return {

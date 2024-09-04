@@ -7,7 +7,7 @@
   max-width: 100%;
   top: 50%;
   -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 
 .video__info {
@@ -27,7 +27,7 @@
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 video {
@@ -51,7 +51,7 @@ video::after {
     margin-bottom: 5px;
     top: 0;
     -webkit-transform: none;
-            transform: none;
+    transform: none;
   }
 }
 /*# sourceMappingURL=video.css.map */

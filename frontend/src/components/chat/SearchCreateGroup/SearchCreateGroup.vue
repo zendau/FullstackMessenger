@@ -25,7 +25,7 @@
       type="text"
       class="searchCreate__input"
       :placeholder="$t('chat.searchCreateGroup.inputPlaceholder')"
-    >
+    />
     <select
       v-model="conferenceType"
       class="searchCreate__input"
@@ -97,7 +97,11 @@ export default {
     }
 
     const schema = yup.object({
-      chatTitle: yup.string().required().min(4).label(t("chat.searchCreateGroup.inputPlaceholder")),
+      chatTitle: yup
+        .string()
+        .required()
+        .min(4)
+        .label(t("chat.searchCreateGroup.inputPlaceholder")),
       conferenceType: yup
         .boolean()
         .required()
@@ -109,7 +113,11 @@ export default {
       validationSchema: schema,
     });
 
-    const { value: conferenceType } = useField("conferenceType", {}, { initialValue: null });
+    const { value: conferenceType } = useField(
+      "conferenceType",
+      {},
+      { initialValue: null }
+    );
     const { value: chatTitle } = useField("chatTitle");
 
     onUnmounted(() => {
@@ -129,7 +137,9 @@ export default {
       cancelCreateGroup();
     }, onInvalidSubmit);
 
-    const isValidGroupUsersLength = computed(() => createGroupUsers.value.length < 3);
+    const isValidGroupUsersLength = computed(
+      () => createGroupUsers.value.length < 3
+    );
 
     return {
       isValidGroupUsersLength,
@@ -217,5 +227,4 @@ export default {
   margin: 5px 0;
   color: var(--color-secondary);
 }
-
 </style>

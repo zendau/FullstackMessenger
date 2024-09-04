@@ -10,10 +10,8 @@
 </template>
 
 <script>
-
 import { inject, watch, computed } from "vue";
 import { useStore } from "vuex";
-
 
 import { startRecordAudio } from "@/utils/audioRecorder";
 import AudioContainer from "@/components/conference/AudioContainer.vue";
@@ -22,19 +20,15 @@ import { usePeerConference } from "./usePeerConference";
 export default {
   components: { AudioContainer },
   setup() {
-
     const store = useStore();
 
-    const roomUsers = inject('roomUsers', []);
+    const roomUsers = inject("roomUsers", []);
     const roomTitle = computed(() => store.state.conference.title);
 
     const isRecord = inject("isRecord");
 
-
-    const localeStream = inject('localeStream')
-    const {containersRefs, streams } = usePeerConference()
-
-
+    const localeStream = inject("localeStream");
+    const { containersRefs, streams } = usePeerConference();
 
     const setItemRef = (el) => {
       if (el) {
@@ -46,17 +40,15 @@ export default {
 
     watch(isRecord, (newStatus) => {
       if (newStatus) {
-        mediaRecorder = startRecordAudio(localeStream.value, streams, roomTitle.value);
+        mediaRecorder = startRecordAudio(
+          localeStream.value,
+          streams,
+          roomTitle.value
+        );
       } else {
         mediaRecorder.stop();
       }
     });
-
-
-
-
-
-
 
     return {
       roomUsers,

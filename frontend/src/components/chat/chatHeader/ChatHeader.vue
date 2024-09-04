@@ -53,7 +53,13 @@ import HeaderChatMenu from "@/components/chat/chatHeader/HeaderChatMenu.vue";
 import HeaderGroupList from "@/components/chat/chatHeader/headerGroupList/HeaderGroupList.vue";
 
 export default {
-  components: { HeaderMessages, HeaderGroup, HeaderPrivate, HeaderChatMenu, HeaderGroupList },
+  components: {
+    HeaderMessages,
+    HeaderGroup,
+    HeaderPrivate,
+    HeaderChatMenu,
+    HeaderGroupList,
+  },
   props: {
     isPrivateBanned: {
       type: [String, Boolean],
@@ -81,7 +87,9 @@ export default {
       return Object.values(chatData.value.users)[0]?.id;
     });
 
-    const chatGroupMembersCount = computed(() => Object.keys(chatData.value.users).length);
+    const chatGroupMembersCount = computed(
+      () => Object.keys(chatData.value.users).length
+    );
 
     const isShowUsersList = ref(false);
 

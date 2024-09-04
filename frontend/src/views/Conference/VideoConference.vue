@@ -16,21 +16,21 @@ import { useRoute } from "vue-router";
 import { inject, watch, computed } from "vue";
 import { useStore } from "vuex";
 
-
 import videoContainerVue from "@/components/conference/VideoContainer.vue";
-import { startScreenRecorder, stopScreenRecorder } from "@/utils/screenRecorder";
+import {
+  startScreenRecorder,
+  stopScreenRecorder,
+} from "@/utils/screenRecorder";
 import ScreenShare from "@/utils/screenShare";
 import { usePeerConference } from "@/composables/conference/usePeerConference";
 
 export default {
   components: { videoContainerVue },
   setup() {
-
-
     const route = useRoute();
     const store = useStore();
 
-    const roomUsers = inject('roomUsers', []);
+    const roomUsers = inject("roomUsers", []);
     const roomId = route.params.id;
 
     const roomData = computed(() => store.getters["chat/selectedChat"](roomId));
@@ -42,13 +42,9 @@ export default {
     const isPauseVideo = inject("isPauseVideo");
     const isShareScreen = inject("isShareScreen");
     const isRecordScreen = inject("isRecordScreen");
-    const localeStream = inject('localeStream')
+    const localeStream = inject("localeStream");
 
-
-
-
-    const {containersRefs, streams, peerId } = usePeerConference()
-
+    const { containersRefs, streams, peerId } = usePeerConference();
 
     const setItemRef = (el) => {
       if (el) {
@@ -60,7 +56,14 @@ export default {
       }
     };
 
-    const screenShare = new ScreenShare(streams, containersRefs, peerId, localeStream, isShareScreen, store);
+    const screenShare = new ScreenShare(
+      streams,
+      containersRefs,
+      peerId,
+      localeStream,
+      isShareScreen,
+      store
+    );
 
     // Change video pause status
     watch(isPauseVideo, () => {

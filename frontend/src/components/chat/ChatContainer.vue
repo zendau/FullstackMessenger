@@ -2,7 +2,10 @@
   <div
     v-if="chatData?.title"
     class="chat__messages"
-    :class="{ 'chat__messages--active': isShowMobileMessages, 'chat__messages--conference': isConferenceChat }"
+    :class="{
+      'chat__messages--active': isShowMobileMessages,
+      'chat__messages--conference': isConferenceChat,
+    }"
   >
     <ChatHeader
       v-if="!isConferenceChat"
@@ -59,12 +62,12 @@ export default {
       if (value.length === 0) isSelectMessagesMode.value = false;
     });
 
-        chatSocket.on("newMessage", (messagesData) => {
-        store.dispatch("message/newChatMessage", {
-          messagesData,
-          userId: userId.value,
-        });
-      })
+    chatSocket.on("newMessage", (messagesData) => {
+      store.dispatch("message/newChatMessage", {
+        messagesData,
+        userId: userId.value,
+      });
+    });
 
     onUnmounted(() => {
       chatSocket.removeAllListeners("newMessage");
@@ -89,13 +92,21 @@ export default {
     chatSocket.on("inviteChatUser", (inseredUserData) => {
       console.log("inseredUserData", inseredUserData);
       if (inseredUserData?.adminId === userId.value) {
-        store.commit("chat/updateFreeChatUsers", inseredUserData.inseredData.userId);
+        store.commit(
+          "chat/updateFreeChatUsers",
+          inseredUserData.inseredData.userId
+        );
       }
 
       if (inseredUserData.inseredData.userId === userId.value) {
-        store.dispatch("chat/getChatMessages", inseredUserData.inseredData.chatId);
+        store.dispatch(
+          "chat/getChatMessages",
+          inseredUserData.inseredData.chatId
+        );
       } else {
-        const userData = store.state.users.usersList.get(inseredUserData.inseredData.userId);
+        const userData = store.state.users.usersList.get(
+          inseredUserData.inseredData.userId
+        );
 
         store.commit("chat/addUserToGroup", {
           chatId: inseredUserData.inseredData.chatId,
@@ -105,15 +116,16 @@ export default {
     });
 
     chatSocket.on("removeChatUser", (removeUser) => {
-
       store.dispatch("chat/deleteFromChat", removeUser);
 
       if (removeUser.deletedUserInfo === userId.value) {
-        isShowMobileMessages.value = false
+        isShowMobileMessages.value = false;
       }
 
       if (removeUser?.adminId === userId.value) {
-        const deletedUserData = store.state.users.usersList.get(removeUser.deletedUserInfo);
+        const deletedUserData = store.state.users.usersList.get(
+          removeUser.deletedUserInfo
+        );
 
         store.commit("chat/pushFreeChatUsers", deletedUserData);
       }
@@ -122,18 +134,22 @@ export default {
     chatSocket.on("deletedChatGroup", (removeData) => {
       if (removeData.chatId === chatId.value) {
         router.push("/chat");
-        isShowMobileMessages.value = false
+        isShowMobileMessages.value = false;
       }
 
       store.commit("chat/deleteChatData", removeData.chatId);
       store.commit("message/clearChatMessages", removeData.chatId);
     });
 
-    const chatData = computed(() => store.getters["chat/selectedChat"](chatId.value));
+    const chatData = computed(() =>
+      store.getters["chat/selectedChat"](chatId.value)
+    );
     console.log("CHATDATA", chatData);
     provide("chatData", chatData);
     const privateMemberId = ref(null);
-    const privateUserStatus = computed(() => store.state.contact.contactStatutes[privateMemberId.value]);
+    const privateUserStatus = computed(
+      () => store.state.contact.contactStatutes[privateMemberId.value]
+    );
     const isPrivateBannedStatus = ref(false);
 
     watch(
@@ -202,9 +218,7 @@ export default {
 
 @media (max-width: 720px) {
   .chat__empty {
-  display: none;
+    display: none;
+  }
 }
-
-}
-
 </style>

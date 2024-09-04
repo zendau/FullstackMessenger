@@ -19,8 +19,8 @@
 
 .user__link {
   -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
+  -ms-grid-row-align: center;
+  align-self: center;
   color: #59b7ff;
   text-decoration: none;
   margin-bottom: 15px;

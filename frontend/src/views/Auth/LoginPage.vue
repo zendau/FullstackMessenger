@@ -22,9 +22,9 @@
     <input
       type="submit"
       :value="$t('view.loginPage.submit')"
-    >
+    />
   </form>
-  <hr class="user__hr">
+  <hr class="user__hr" />
   <router-link
     class="user__link"
     to="/forgot"
@@ -52,7 +52,11 @@ export default {
 
     const schema = yup.object({
       email: yup.string().required().email().label(t("view.loginPage.email")),
-      password: yup.string().required().min(6).label(t("view.loginPage.password")),
+      password: yup
+        .string()
+        .required()
+        .min(6)
+        .label(t("view.loginPage.password")),
     });
 
     const { handleSubmit } = useForm({
@@ -60,7 +64,8 @@ export default {
     });
 
     const { errorMessage: errorMessageEmail, value: email } = useField("email");
-    const { errorMessage: errorMessagePassword, value: password } = useField("password");
+    const { errorMessage: errorMessagePassword, value: password } =
+      useField("password");
 
     onUnmounted(() => {
       store.commit("alert/hotClearAlert");

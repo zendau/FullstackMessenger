@@ -2,7 +2,9 @@
   <ModalWindow :is-show-c-t-x="isCaller">
     <div class="modal">
       <div class="container">
-        <h2>{{ $t("conference.initCall.callTo") }} {{ callingData.chatTitle }}</h2>
+        <h2>
+          {{ $t("conference.initCall.callTo") }} {{ callingData.chatTitle }}
+        </h2>
         <button
           class="modal__btn"
           @click="cancelCalling"

@@ -41,7 +41,7 @@
     <input
       type="submit"
       :value="$t('view.registerPage.submit')"
-    >
+    />
   </form>
 </template>
 
@@ -71,9 +71,17 @@ export default {
     const isConfirmCode = computed(() => store.state.auth.isConfirmCode);
 
     const schema = yup.object({
-      email: yup.string().required().email().label(t("view.registerPage.email")),
+      email: yup
+        .string()
+        .required()
+        .email()
+        .label(t("view.registerPage.email")),
       login: yup.string().required().min(6).label(t("view.registerPage.login")),
-      password: yup.string().required().min(6).label(t("view.registerPage.password")),
+      password: yup
+        .string()
+        .required()
+        .min(6)
+        .label(t("view.registerPage.password")),
       confirmPassword: yup
         .string()
         .required()

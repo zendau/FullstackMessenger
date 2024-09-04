@@ -26,7 +26,9 @@
         v-if="chatData.lastMessage?.text && chatData.lastMessage.authorId"
         class="chat__last-message"
       >
-        <span v-if="chatData.adminId"> {{ chatData.lastMessage?.authorLogin }}: </span>
+        <span v-if="chatData.adminId">
+          {{ chatData.lastMessage?.authorLogin }}:
+        </span>
         {{ clearMessage(chatData.lastMessage?.text) }}
       </p>
       <p

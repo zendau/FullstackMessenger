@@ -84,7 +84,9 @@ export default {
 
     const context = ref(null);
 
-    const isShowCTX = computed(() => isShowMessageCTX.value === props.ctxMenuData?.message?.id);
+    const isShowCTX = computed(
+      () => isShowMessageCTX.value === props.ctxMenuData?.message?.id
+    );
 
     const files = inject("files");
     function selectMessageHandler() {
@@ -105,13 +107,20 @@ export default {
 
     function editMessage() {
       editMessageData.value = props.ctxMenuData.message;
-      console.log("edit messaget id -", props.ctxMenuData.message.id, editMessageData.value, props.ctxMenuData.message);
+      console.log(
+        "edit messaget id -",
+        props.ctxMenuData.message.id,
+        editMessageData.value,
+        props.ctxMenuData.message
+      );
       isShowMessageCTX.value = null;
       files.value = [...props.ctxMenuData.message.files];
     }
     function deleteMessage() {
       console.log("test", props.ctxMenuData.message);
-      emit("delete-messages", [{ id: props.ctxMenuData.message.id, isRead: props.ctxMenuData.isRead }]);
+      emit("delete-messages", [
+        { id: props.ctxMenuData.message.id, isRead: props.ctxMenuData.isRead },
+      ]);
       isShowMessageCTX.value = null;
     }
 

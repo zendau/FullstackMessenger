@@ -1,5 +1,5 @@
 <template>
-  <hr class="user__hr">
+  <hr class="user__hr" />
   <h2 class="user__title">
     {{ $t("setting.settingDevices.title") }}
   </h2>
@@ -61,7 +61,12 @@ export default {
         console.log("watch", devices);
         othersDevices.length = 0;
         devices.forEach((device) => {
-          console.log("device.id ", device.id, deviceId.value, deviceId.value === device.id);
+          console.log(
+            "device.id ",
+            device.id,
+            deviceId.value,
+            deviceId.value === device.id
+          );
           if (device.id === deviceId.value) currenteDevice.value = device;
           else othersDevices.push(device);
         });

@@ -25,7 +25,8 @@
           </div>
 
           <p class="user-modal__data">
-            <font-awesome-icon icon="fa-solid fa-envelope" /> {{ contactData.email }}
+            <font-awesome-icon icon="fa-solid fa-envelope" />
+            {{ contactData.email }}
           </p>
           <p class="info user-modal__data">
             <font-awesome-icon icon="fa-solid fa-info" />
@@ -112,8 +113,12 @@ export default {
 
     const userId = computed(() => store.state.auth.user.id);
     const contactId = inject("modalUserId");
-    const contactData = computed(() => store.state.users.usersList.get(contactId.value));
-    const contactStatus = computed(() => store.state.contact.contactStatutes[contactId.value]);
+    const contactData = computed(() =>
+      store.state.users.usersList.get(contactId.value)
+    );
+    const contactStatus = computed(
+      () => store.state.contact.contactStatutes[contactId.value]
+    );
 
     const chatSocket = inject("chatSocket");
 

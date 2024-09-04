@@ -29,7 +29,13 @@ import UserModal from "@/components/chat/modals/UserModal.vue";
 import { insertUsersList } from "@/store/modules/users.module";
 
 export default {
-  components: { ChatNavbar, ContactsContainer, ChatContainer, ChatsList, UserModal },
+  components: {
+    ChatNavbar,
+    ContactsContainer,
+    ChatContainer,
+    ChatsList,
+    UserModal,
+  },
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -78,7 +84,7 @@ export default {
       }
     );
 
-    store.commit('chat/$reset')
+    store.commit("chat/$reset");
     store.dispatch("chat/getChats", {
       chatId: chatId.value,
     });
@@ -139,7 +145,7 @@ export default {
 
     function closeActiveChat(e) {
       if (e.key !== "Escape") return;
-      isShowMobileMessages.value = false
+      isShowMobileMessages.value = false;
       router.push("/chat");
       store.commit("chat/clearTempData");
     }

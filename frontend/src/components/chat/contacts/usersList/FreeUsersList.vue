@@ -39,7 +39,12 @@ export default {
     const contactsPattern = inject("contactsPattern");
 
     const observer = new IntersectionObserver(async (entries) => {
-      console.log("free", entries[0].isIntersecting, contactsPattern.value, !contactsPattern.value);
+      console.log(
+        "free",
+        entries[0].isIntersecting,
+        contactsPattern.value,
+        !contactsPattern.value
+      );
       if (entries[0].isIntersecting && !contactsPattern.value) {
         store.dispatch("contact/getFreeUsersList");
       }

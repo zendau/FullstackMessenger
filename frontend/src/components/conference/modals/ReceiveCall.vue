@@ -2,7 +2,10 @@
   <ModalWindow :is-show-c-t-x="isCaller">
     <div class="modal">
       <div class="container">
-        <h2>{{ $t("conference.receiveCall.callFrom") }} {{ callingData.from.login }}</h2>
+        <h2>
+          {{ $t("conference.receiveCall.callFrom") }}
+          {{ callingData.from.login }}
+        </h2>
         <div class="modal__container-btn">
           <button
             class="modal__btn"
@@ -59,7 +62,11 @@ export default {
     function acceptCall() {
       console.log("accept call", callingData.value);
       peerSocket.emit("acceptCalling", callingData.value);
-      router.push(`/conference/${callingData.value.withVideo ? "video" : "audio"}/${callingData.value.confrenceId}`);
+      router.push(
+        `/conference/${callingData.value.withVideo ? "video" : "audio"}/${
+          callingData.value.confrenceId
+        }`
+      );
       closeCTX();
     }
 

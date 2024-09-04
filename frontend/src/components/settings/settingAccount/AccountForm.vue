@@ -44,7 +44,7 @@
     <input
       type="submit"
       :value="$t('setting.accountForm.changeBtn')"
-    >
+    />
   </form>
 </template>
 
@@ -72,18 +72,39 @@ export default {
 
     const schema = yup.lazy((value) =>
       yup.object().shape({
-        email: value.email?.length > 0 && yup.string().email().label(t("setting.accountForm.email")),
+        email:
+          value.email?.length > 0 &&
+          yup.string().email().label(t("setting.accountForm.email")),
         login:
-          value.login?.length > 0 && yup.string().nullable().notRequired().min(6).label(t("setting.accountForm.login")),
+          value.login?.length > 0 &&
+          yup
+            .string()
+            .nullable()
+            .notRequired()
+            .min(6)
+            .label(t("setting.accountForm.login")),
         userDetails:
           value.userDetails?.length > 0 &&
-          yup.string().nullable().notRequired().min(6).label(t("setting.accountForm.details")),
+          yup
+            .string()
+            .nullable()
+            .notRequired()
+            .min(6)
+            .label(t("setting.accountForm.details")),
         phoneNumber:
           value.phoneNumber?.length > 0 &&
-          yup.string().matches(phoneRegExp, "Phone number is not valid").label(t("setting.accountForm.phone")),
+          yup
+            .string()
+            .matches(phoneRegExp, "Phone number is not valid")
+            .label(t("setting.accountForm.phone")),
         password:
           value.password?.length > 0 &&
-          yup.string().nullable().notRequired().min(6).label(t("setting.accountForm.password")),
+          yup
+            .string()
+            .nullable()
+            .notRequired()
+            .min(6)
+            .label(t("setting.accountForm.password")),
         confirmPassword: yup
           .string()
           .oneOf([yup.ref("password"), null], "Passwords must match")
@@ -95,12 +116,32 @@ export default {
       validationSchema: schema,
     });
 
-    const { value: email } = useField("email", {}, { initialValue: userData.value.email });
-    const { value: login } = useField("login", {}, { initialValue: userData.value.login });
+    const { value: email } = useField(
+      "email",
+      {},
+      { initialValue: userData.value.email }
+    );
+    const { value: login } = useField(
+      "login",
+      {},
+      { initialValue: userData.value.login }
+    );
     const { value: password } = useField("password", {}, { initialValue: "" });
-    const { value: confirmPassword } = useField("confirmPassword", {}, { initialValue: "" });
-    const { value: phoneNumber } = useField("phoneNumber", {}, { initialValue: userData.value.info?.phone });
-    const { value: userDetails } = useField("userDetails", {}, { initialValue: userData.value.info?.details });
+    const { value: confirmPassword } = useField(
+      "confirmPassword",
+      {},
+      { initialValue: "" }
+    );
+    const { value: phoneNumber } = useField(
+      "phoneNumber",
+      {},
+      { initialValue: userData.value.info?.phone }
+    );
+    const { value: userDetails } = useField(
+      "userDetails",
+      {},
+      { initialValue: userData.value.info?.details }
+    );
 
     onUnmounted(() => {
       store.commit("alert/hotClearAlert");

@@ -7,8 +7,8 @@
 
 .chat__body {
   -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -ms-flex: 1;
+  flex: 1;
   overflow: auto;
 }
 
@@ -31,7 +31,7 @@
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 80% 20%;
-      grid-template-columns: 80% 20%;
+  grid-template-columns: 80% 20%;
   margin: 0 7px 7px;
   background-color: #182533;
   padding: 6px;
@@ -59,19 +59,19 @@
 
 .chat__message span {
   -ms-flex-item-align: end;
-      align-self: flex-end;
+  align-self: flex-end;
   max-width: 50px;
   -ms-grid-column: 2;
   -ms-grid-column-span: 1;
   grid-column: 2/3;
   -ms-grid-column-align: end;
-      justify-self: end;
+  justify-self: end;
   color: #aaaaaa;
 }
 
 .chat__input {
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   width: 100%;
   min-height: 1.4em;
   max-height: 10em;
@@ -96,21 +96,21 @@
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
   background-color: #202b36;
   padding: 5px;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .chat__file a {
   text-decoration: none;
   color: #59b7ff;
-  -webkit-transition: .3s ease;
-  transition: .3s ease;
+  -webkit-transition: 0.3s ease;
+  transition: 0.3s ease;
 }
 
 .chat__file a:hover {

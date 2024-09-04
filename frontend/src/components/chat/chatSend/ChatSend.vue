@@ -25,9 +25,7 @@
     />
     <ChatFiles @delete-file="deleteFileById" />
     <ChatFileUpload :file-upload-percent="fileUploadPercent" />
-    <button
-      @click="sendMessage"
-    >
+    <button @click="sendMessage">
       <font-awesome-icon icon="fa-solid fa-paper-plane" />
     </button>
   </div>
@@ -80,7 +78,12 @@ export default {
 
     function deleteFileById(fileId, file) {
       files.value = files.value.filter((_, index) => index !== fileId);
-      console.log("DELETE FILE", editMessageData.value, file, "fileName" in file);
+      console.log(
+        "DELETE FILE",
+        editMessageData.value,
+        file,
+        "fileName" in file
+      );
       if (editMessageData.value && "fileName" in file) {
         console.log("insert delete");
         deletedFiles.push(file.id);
@@ -102,7 +105,10 @@ export default {
 
       if (!chatId.value && store.state.chat.tempPrivateChat) {
         chatSocket.emit("createChat", {
-          users: [store.state.chat.tempPrivateChat.id, store.state.auth.user.id],
+          users: [
+            store.state.chat.tempPrivateChat.id,
+            store.state.auth.user.id,
+          ],
         });
 
         isCallSendAfterCreate.value = true;
@@ -123,14 +129,20 @@ export default {
 
         const config = {
           onUploadProgress: function (progressEvent) {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
 
             fileUploadPercent.value = percentCompleted;
           },
         };
 
         try {
-          const resUpload = await $api.post(`${import.meta.env.VITE_STORAGE}/file/add`, formData, config);
+          const resUpload = await $api.post(
+            `${import.meta.env.VITE_STORAGE}/file/add`,
+            formData,
+            config
+          );
           inseredFilesData = resUpload.data;
         } catch (e) {
           store.commit("alert/setErrorMessage", "error.fileUpload");

@@ -11,31 +11,31 @@ $activeColor: #5eb5f7;
 $linkColor: #59b7ff;
 
 .user {
-    &__hr {
-        width: 80%;
-        margin: 35px auto;
-        border-color: $secondTextColor;
-    }
+  &__hr {
+    width: 80%;
+    margin: 35px auto;
+    border-color: $secondTextColor;
+  }
 
-    &__role {
-        text-align: center;
-    }
+  &__role {
+    text-align: center;
+  }
 
-    &__title {
-        text-align: center;
-        margin-bottom: 25px;
-    }
+  &__title {
+    text-align: center;
+    margin-bottom: 25px;
+  }
 
-    &__form {
-        input {
-            margin-bottom: 20px;
-        }
+  &__form {
+    input {
+      margin-bottom: 20px;
     }
+  }
 
-    &__link {
-        align-self: center;
-        color: $linkColor;
-        text-decoration: none;
-        margin-bottom: 15px;
-    }
+  &__link {
+    align-self: center;
+    color: $linkColor;
+    text-decoration: none;
+    margin-bottom: 15px;
+  }
 }

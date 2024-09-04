@@ -1,5 +1,5 @@
 {
-  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnPaste": false, // required
   "editor.formatOnType": false, // required
   "editor.formatOnSave": true, // optional
@@ -7,6 +7,5 @@
   "files.autoSave": "off",
   "[vue]": {
     "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
-  },
-  "vue3snippets.enable-compile-vue-file-on-did-save-code": false, // optional but recommended
+  }
 }

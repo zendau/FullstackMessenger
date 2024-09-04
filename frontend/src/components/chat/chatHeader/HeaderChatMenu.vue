@@ -85,7 +85,7 @@ export default {
   setup(props) {
     const isShowConfirmModal = ref(false);
     const chatSocket = inject("chatSocket");
-    const isShowMobileMessages = inject('isShowMobileMessages')
+    const isShowMobileMessages = inject("isShowMobileMessages");
 
     const { t } = useI18n();
 
@@ -95,13 +95,19 @@ export default {
     const isChatAdmin = computed(() => props.adminId === props.userId);
 
     function initCallConference() {
-      const onlineUsersPeers = Object.values(props.chatUsers).reduce((prev, curr) => {
-        if (curr.lastOnline === t("store.user.online") && curr.id !== props.userId) {
-          prev.push(curr.peerId);
-        }
+      const onlineUsersPeers = Object.values(props.chatUsers).reduce(
+        (prev, curr) => {
+          if (
+            curr.lastOnline === t("store.user.online") &&
+            curr.id !== props.userId
+          ) {
+            prev.push(curr.peerId);
+          }
 
-        return prev;
-      }, []);
+          return prev;
+        },
+        []
+      );
 
       if (onlineUsersPeers.length === 0) {
         const audio = new Audio("/audio/disconnect.mp3");
@@ -130,7 +136,7 @@ export default {
         users: Object.values(props.chatUsers),
         adminId: null,
       });
-      isShowMobileMessages.value = false
+      isShowMobileMessages.value = false;
     }
 
     function deleteChat() {
@@ -138,7 +144,7 @@ export default {
         chatId: chatId.value,
         adminId: props.userId,
       });
-      isShowMobileMessages.value = false
+      isShowMobileMessages.value = false;
     }
 
     return {

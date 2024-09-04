@@ -7,7 +7,7 @@
     :placeholder="title"
     :value="modelValue"
     @input="updateValue"
-  >
+  />
 </template>
 
 <script>

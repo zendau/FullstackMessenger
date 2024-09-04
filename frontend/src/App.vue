@@ -22,10 +22,16 @@ export default {
     const { locale } = useI18n();
     locale.value = localStorage.getItem("locale") ?? locale.value;
 
-    const peerSocket = io(import.meta.env.VITE_SOCKET_PEER_HOST, { path: "/peerChat", autoConnect: false });
+    const peerSocket = io(import.meta.env.VITE_SOCKET_PEER_HOST, {
+      path: "/peerChat",
+      autoConnect: false,
+    });
     provide("peerSocket", peerSocket);
 
-    const chatSocket = io(import.meta.env.VITE_SOCKET_HOST, { path: "/socketChat", autoConnect: false });
+    const chatSocket = io(import.meta.env.VITE_SOCKET_HOST, {
+      path: "/socketChat",
+      autoConnect: false,
+    });
     provide("chatSocket", chatSocket);
 
     const store = useStore();

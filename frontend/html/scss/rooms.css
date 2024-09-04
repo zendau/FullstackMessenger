@@ -15,12 +15,12 @@ body {
   list-style: none;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (250px)[auto-fill];
-      grid-template-columns: repeat(auto-fill, 250px);
+  -ms-grid-columns: (250px) [auto-fill];
+  grid-template-columns: repeat(auto-fill, 250px);
   gap: 15px;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   margin-top: 35px;
 }
 
@@ -32,11 +32,11 @@ body {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   background-color: #182533;
 }
 
@@ -63,8 +63,8 @@ body {
   background-color: #3a3a3d;
   line-height: 30px;
   border: 10%;
-  -webkit-transition: .3s ease;
-  transition: .3s ease;
+  -webkit-transition: 0.3s ease;
+  transition: 0.3s ease;
   color: rgba(255, 255, 255, 0.84);
 }
 
@@ -83,8 +83,8 @@ body {
     width: 800px;
   }
   .rooms__list {
-    -ms-grid-columns: (200px)[auto-fill];
-        grid-template-columns: repeat(auto-fill, 200px);
+    -ms-grid-columns: (200px) [auto-fill];
+    grid-template-columns: repeat(auto-fill, 200px);
   }
 }
 
@@ -98,11 +98,11 @@ body {
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
     -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
   }
   .rooms__item {
     width: 300px;

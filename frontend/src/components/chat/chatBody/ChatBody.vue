@@ -47,7 +47,12 @@ import MessageContexMenu from "@/components/chat/chatBody/message/MessageContext
 import FileUpload from "@/components/FileUpload.vue";
 
 export default {
-  components: { MessageContainer, FileUpload, MessageContexMenu, MessageSystemInfo },
+  components: {
+    MessageContainer,
+    FileUpload,
+    MessageContexMenu,
+    MessageSystemInfo,
+  },
   emits: ["delete-messages"],
   setup(_, { emit }) {
     const store = useStore();
@@ -101,7 +106,12 @@ export default {
       entries.forEach((entrie) => {
         if (entrie.isIntersecting) {
           messageReadCount++;
-          console.log("unobserve", entrie.target, messageReadCount, readMessageObserver);
+          console.log(
+            "unobserve",
+            entrie.target,
+            messageReadCount,
+            readMessageObserver
+          );
           readMessageObserver.unobserve(entrie.target);
         }
       });
@@ -140,7 +150,13 @@ export default {
     });
 
     chatSocket.on("updateReadMessages", (newData) => {
-      console.log("### NEW DATA ###", newData, route, chatId, typeof chatId.value);
+      console.log(
+        "### NEW DATA ###",
+        newData,
+        route,
+        chatId,
+        typeof chatId.value
+      );
       store.commit("chat/updateReadMessages", {
         chatId: chatId.value,
         unreadCount: newData,
@@ -154,8 +170,16 @@ export default {
       if (isLastMessage) {
         messageScrollObserver.observe(el.$el.nextElementSibling);
         console.log("SET", isFirstMessageUnread.value, isFirstScroll);
-        if (messages.value?.length - 1 === 0 || !isFirstMessageUnread.value || !isFirstScroll) return;
-        console.log("isFirstMessageUnread scrollIntoView", isFirstMessageUnread);
+        if (
+          messages.value?.length - 1 === 0 ||
+          !isFirstMessageUnread.value ||
+          !isFirstScroll
+        )
+          return;
+        console.log(
+          "isFirstMessageUnread scrollIntoView",
+          isFirstMessageUnread
+        );
 
         isFirstMessageUnread.value.scrollIntoView();
       }
@@ -163,7 +187,11 @@ export default {
       const isReadMessage = index - chatData.value.userUnread;
       // console.log("EL!!!", el, index, roomData.value, res);
       if (isReadMessage < 0) {
-        console.log("++isReadMessage++", chatData.value.userUnread, el.$el.nextElementSibling);
+        console.log(
+          "++isReadMessage++",
+          chatData.value.userUnread,
+          el.$el.nextElementSibling
+        );
         readMessageObserver.observe(el.$el.nextElementSibling);
       }
 

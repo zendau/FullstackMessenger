@@ -11,62 +11,56 @@ $activeColor: #5eb5f7;
 $linkColor: #59b7ff;
 
 .menu {
+  &__setting button,
+  &__chat {
+    width: 50px;
+    height: 50px;
+    border: none;
+    background-color: inherit;
+    color: $textColor;
+    cursor: pointer;
+    transition: 0.3s ease;
 
-    &__setting button, &__chat {
-        width: 50px;
-        height: 50px;
-        border: none;
-        background-color: inherit;
-        color: $textColor;
-        cursor: pointer;
-        transition: .3s ease;
-
-        &:hover {
-            color: $activeColor;
-        }
-        
-        i {
-            font-size: 24px;
-        }
-
-        font-size: 14px;
+    &:hover {
+      color: $activeColor;
     }
 
-    &__conference-title {
-        color: $textColor;
+    i {
+      font-size: 24px;
     }
 
-    &__conference-admin {
-        color: $secondTextColor;
-     }
+    font-size: 14px;
+  }
 
-    &__conference-title, &__conference-admin {
-        text-align: center;
-        
+  &__conference-title {
+    color: $textColor;
+  }
+
+  &__conference-admin {
+    color: $secondTextColor;
+  }
+
+  &__conference-title,
+  &__conference-admin {
+    text-align: center;
+  }
+
+  &__chat {
+    width: 50px;
+    height: 50px;
+    i {
+      font-size: 24px;
     }
 
-    &__chat {
-        width: 50px;
-        height: 50px;      
-        i {
-            font-size: 24px;
-        }
-
-        font-size: 14px;
-    }
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 1140px) {
-
-
 }
 
 @media (max-width: 960px) {
-
-
 }
 
 @media (max-width: 730px) {
-
-
 }

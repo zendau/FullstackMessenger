@@ -5,7 +5,9 @@
       class="device__data"
       @click="showDeviceModal(true)"
     >
-      <font-awesome-icon :icon="getDeviceIcon(deviceData.brand, deviceData.osName)" />
+      <font-awesome-icon
+        :icon="getDeviceIcon(deviceData.brand, deviceData.osName)"
+      />
       <p>{{ deviceData.osName }}</p>
       <p>{{ deviceData.brand }} - {{ deviceData.model }}</p>
       <p v-if="isCurrent">

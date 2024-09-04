@@ -12,7 +12,7 @@
     <input
       type="submit"
       :value="$t('ui.confirmCode.btn')"
-    >
+    />
   </form>
 </template>
 

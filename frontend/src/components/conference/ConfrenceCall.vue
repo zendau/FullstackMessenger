@@ -28,7 +28,9 @@ export default {
       return callingData.value.from.peerId === peerId.value;
     });
 
-    const isAnswerer = computed(() => !isCaller.value && !!callingData.value?.from);
+    const isAnswerer = computed(
+      () => !isCaller.value && !!callingData.value?.from
+    );
 
     function clearCallingData() {
       callingData.value = null;
@@ -49,7 +51,11 @@ export default {
       console.log("acceptInviteCalling", callData);
       clearCallingData();
 
-      router.push(`/conference/${callData.withVideo ? "video" : "audio"}/${callData.confrenceId}`);
+      router.push(
+        `/conference/${callData.withVideo ? "video" : "audio"}/${
+          callData.confrenceId
+        }`
+      );
     });
 
     peerSocket.on("rejectInviteCalling", (rejectedUser) => {

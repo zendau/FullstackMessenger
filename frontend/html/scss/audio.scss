@@ -11,53 +11,50 @@ $activeColor: #5eb5f7;
 $linkColor: #59b7ff;
 
 .audio {
+  &__container {
+    background-color: $messageColor;
+  }
 
-    &__container {
-        background-color: $messageColor;
+  &__info {
+    display: flex;
+    height: 30px;
+    align-items: center;
+    color: $textColor;
+
+    .mute {
+      border-right: 1px solid black;
+      height: 30px;
+      width: 30px;
+      text-align: center;
+      line-height: 30px;
+      font-size: 18px;
     }
 
-    &__info {
-        display: flex;
-        height: 30px;
-        align-items: center;
-        color: $textColor;
-
-        .mute {
-            border-right: 1px solid black;
-            height: 30px;
-            width: 30px;
-            text-align: center;
-            line-height: 30px;
-            font-size: 18px;
-        }
-
-        p {
-            text-align: center;
-            padding: 15px;
-        }
-
-        &--active {
-            border: 2px solid $activeColor;
-            .mute {
-                border-right: 2px solid $activeColor;
-            }
-        }
-
-        &--admin {
-            border: 2px solid $dangerColor;
-            .mute {
-                border-right: 2px solid $dangerColor;
-            }
-        }
+    p {
+      text-align: center;
+      padding: 15px;
     }
 
+    &--active {
+      border: 2px solid $activeColor;
+      .mute {
+        border-right: 2px solid $activeColor;
+      }
+    }
+
+    &--admin {
+      border: 2px solid $dangerColor;
+      .mute {
+        border-right: 2px solid $dangerColor;
+      }
+    }
+  }
 }
 
 @media (max-width: 730px) {
-
-    .audio {
-        &__container {
-            margin-bottom: 10px;
-        }
+  .audio {
+    &__container {
+      margin-bottom: 10px;
     }
+  }
 }

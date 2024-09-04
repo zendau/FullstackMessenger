@@ -10,40 +10,39 @@ $messageColor: #182533;
 $activeColor: #5eb5f7;
 $linkColor: #59b7ff;
 
-
 .video {
-    &__container {
-        display: block;
-        position: relative;
-        aspect-ratio: 16/9;
-        background-color: $messageColor;
-        border-radius: 3px;
-        max-width: 100%;
-        top: 50%;
-        transform: translateY(-50%);
-    }
+  &__container {
+    display: block;
+    position: relative;
+    aspect-ratio: 16/9;
+    background-color: $messageColor;
+    border-radius: 3px;
+    max-width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 
-    &__info {
-        position: absolute;
-        display: flex;
-        bottom: 10px;
-        left: 5px;
-        color: $textColor;
-    }
+  &__info {
+    position: absolute;
+    display: flex;
+    bottom: 10px;
+    left: 5px;
+    color: $textColor;
+  }
 
-    &__placeholder {
-        position: absolute;
-        font-size: 70px;
-        color: $textColor;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
+  &__placeholder {
+    position: absolute;
+    font-size: 70px;
+    color: $textColor;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 video {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 /* video::before {
@@ -59,12 +58,11 @@ video::after {
 } */
 
 @media (max-width: 730px) {
-
-    .video {
-        &__container {
-          margin-bottom: 5px;
-          top: 0;
-          transform: none;
-        }
+  .video {
+    &__container {
+      margin-bottom: 5px;
+      top: 0;
+      transform: none;
     }
+  }
 }

@@ -1,7 +1,7 @@
 <template>
   <section class="setting__container">
     <account />
-    <hr class="user__hr">
+    <hr class="user__hr" />
     <h2 class="user__title">
       {{ $t("setting.settingPage.select") }}
     </h2>

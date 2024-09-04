@@ -11,7 +11,11 @@
             v-else
             icon="fa-solid fa-microphone"
           />
-          {{ isMuted ? $t("conference.conferenceFoouter.off") : $t("conference.conferenceFoouter.on") }}
+          {{
+            isMuted
+              ? $t("conference.conferenceFoouter.off")
+              : $t("conference.conferenceFoouter.on")
+          }}
         </button>
         <button
           v-if="conferenceType"
@@ -25,7 +29,11 @@
             v-else
             icon="fa-solid fa-video"
           />
-          {{ isPauseVideo ? $t("conference.conferenceFoouter.off") : $t("conference.conferenceFoouter.on") }}
+          {{
+            isPauseVideo
+              ? $t("conference.conferenceFoouter.off")
+              : $t("conference.conferenceFoouter.on")
+          }}
         </button>
         <button
           v-if="!conferenceType"
@@ -39,7 +47,11 @@
             v-else
             icon="fa-solid fa-record-vinyl"
           />
-          {{ isRecord ? $t("conference.conferenceFoouter.stop") : $t("conference.conferenceFoouter.record") }}
+          {{
+            isRecord
+              ? $t("conference.conferenceFoouter.stop")
+              : $t("conference.conferenceFoouter.record")
+          }}
         </button>
         <button
           v-if="conferenceType"
@@ -54,7 +66,11 @@
             v-else
             icon="fa-solid fa-record-vinyl"
           />
-          {{ isRecordScreen ? $t("conference.conferenceFoouter.stop") : $t("conference.conferenceFoouter.record") }}
+          {{
+            isRecordScreen
+              ? $t("conference.conferenceFoouter.stop")
+              : $t("conference.conferenceFoouter.record")
+          }}
         </button>
         <button
           v-if="conferenceType"
@@ -69,7 +85,11 @@
             v-else
             icon="fa-solid fa-display"
           />
-          {{ isShareScreen ? $t("conference.conferenceFoouter.stop") : $t("conference.conferenceFoouter.show") }}
+          {{
+            isShareScreen
+              ? $t("conference.conferenceFoouter.stop")
+              : $t("conference.conferenceFoouter.show")
+          }}
         </button>
       </div>
       <div class="menu__conference-data">
@@ -99,7 +119,8 @@
           class="menu__chat"
           @click="$emit('show-chat')"
         >
-          <font-awesome-icon icon="fa-solid fa-comment-dots" /> {{ $t("conference.conferenceFoouter.chat") }}
+          <font-awesome-icon icon="fa-solid fa-comment-dots" />
+          {{ $t("conference.conferenceFoouter.chat") }}
         </button>
       </div>
     </div>
@@ -202,8 +223,6 @@ footer {
     svg {
       font-size: 24px;
     }
-
-
   }
 
   &__conference-title {

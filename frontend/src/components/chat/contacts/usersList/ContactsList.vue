@@ -28,7 +28,7 @@
         class="contact__checkbox"
         :value="user.id"
         type="checkbox"
-      >
+      />
     </li>
   </ul>
   <p

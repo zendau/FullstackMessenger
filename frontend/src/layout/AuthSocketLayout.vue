@@ -6,7 +6,16 @@
 </template>
 
 <script>
-import { computed, provide, ref, onUnmounted, onUpdated, inject, onMounted, watch } from "vue";
+import {
+  computed,
+  provide,
+  ref,
+  onUnmounted,
+  onUpdated,
+  inject,
+  onMounted,
+  watch,
+} from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import ConferenceCall from "@/components/conference/ConfrenceCall.vue";
@@ -76,7 +85,10 @@ export default {
 
           peerSocket.emit("connect-user", userId.value);
           peerSocketConnected.value = true;
-          console.log("=====================peerSocketConnected", peerSocketConnected.value);
+          console.log(
+            "=====================peerSocketConnected",
+            peerSocketConnected.value
+          );
 
           chatSocket.emit("connect-user", {
             userId: userId.value,

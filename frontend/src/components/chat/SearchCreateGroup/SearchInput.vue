@@ -5,7 +5,7 @@
       type="text"
       class="search__input"
       @input="searchByPattern"
-    >
+    />
     <font-awesome-icon
       class="search__icon"
       icon="fa-solid fa-magnifying-glass"

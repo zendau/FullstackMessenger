@@ -22,7 +22,7 @@
     <input
       type="submit"
       :value="$t('view.forgotPage.submit')"
-    >
+    />
   </form>
 </template>
 

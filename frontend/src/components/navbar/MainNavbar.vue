@@ -39,7 +39,9 @@
         v-if="authStatus"
         href="#"
         @click="logout"
-      >{{ $t("navbar.mainNavbar.exit") }}</a>
+      >{{
+        $t("navbar.mainNavbar.exit")
+      }}</a>
     </nav>
     <button
       class="nav__btn"
@@ -50,7 +52,7 @@
         type="checkbox"
         name=""
         :checked="isShowMobileNavbar"
-      >
+      />
       <div class="hamburger-lines">
         <span class="line line1" />
         <span class="line line2" />
