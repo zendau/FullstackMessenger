@@ -22,7 +22,7 @@ export default {
     provide("chatId", chatId);
 
     onMounted(() => {
-      store.dispatch("chat/getChatMessages", chatId.value);
+      store.dispatch("message/getChatMessages", chatId.value);
     });
 
     return {

@@ -20,7 +20,7 @@ import { useStore } from "vuex";
 import videoContainerVue from "@/components/conference/VideoContainer.vue";
 import { startScreenRecorder, stopScreenRecorder } from "@/utils/screenRecorder";
 import ScreenShare from "@/utils/screenShare";
-import { usePeerConference } from "./usePeerConference";
+import { usePeerConference } from "@/composables/conference/usePeerConference";
 
 export default {
   components: { videoContainerVue },

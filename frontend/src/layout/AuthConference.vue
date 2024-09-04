@@ -33,9 +33,9 @@ import { useStore } from "vuex";
 import AlertNotification from "@/components/UI/AlertNotification.vue";
 import FooterComponent from "@/components/conference/ConferenceFooter.vue";
 import ConferenceChat from "@/components/conference/ConferenceChat.vue";
-import { useEventListener } from "../views/Conference/useEventListener";
-import { usePeerConference } from "../views/Conference/usePeerConference";
-import { useMediaDevices } from "../views/Conference/useMediaDevices";
+import { useEventListener } from "@/composables/useEventListener";
+import { usePeerConference } from "@/composables/conference/usePeerConference";
+import { useMediaDevices } from "@/composables/conference/useMediaDevices";
 
 // import ChatContainer from "@/components/chat/ChatContainer.vue";
 
