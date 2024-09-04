@@ -1,6 +1,13 @@
 <template>
+  <LoadingContent v-if="isLoading" />
+  <p
+    v-else-if="Object.keys(listData).length <= 0"
+    class="empty_message"
+  >
+    {{ $t("chat.contactsList.noUsers") }}
+  </p>
   <ul
-    v-if="Object.keys(listData).length > 0"
+    v-else
     class="contacts__list"
   >
     <li
@@ -31,23 +38,21 @@
       />
     </li>
   </ul>
-  <p
-    v-else
-    class="empty_message"
-  >
-    {{ $t("chat.contactsList.noUsers") }}
-  </p>
 </template>
 
 <script>
 import { computed, inject, watch } from "vue";
 import { useStore } from "vuex";
 
+import LoadingContent from "@/components/UI/LoadingContent.vue";
+
 export default {
+  components: { LoadingContent },
   emits: ["open-chat"],
   setup(_, { emit }) {
     const store = useStore();
     const listData = computed(() => store.state.contact.contacts);
+    const isLoading = computed(() => store.state.contact.isLoading);
 
     const modalUserId = inject("modalUserId");
     const contactsPattern = inject("contactsPattern");
@@ -97,6 +102,7 @@ export default {
     }
 
     return {
+      isLoading,
       checkPrivateContact,
       openChat,
       createGroupUsers,

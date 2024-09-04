@@ -4,13 +4,17 @@
     :class="{ 'chats__container--active': isShowMobileMessages }"
   >
     <SearchCreateGroup @search-pattern="searchChats" />
+    <LoadingContent v-if="isLoading" />
     <p
-      v-if="chatsList.size === 0"
+      v-else-if="chatsList.size === 0"
       class="empty_message"
     >
       {{ $t("chat.list.empty") }}
     </p>
-    <ul class="chats__list">
+    <ul
+      v-else
+      class="chats__list"
+    >
       <ChatListItem
         v-for="(chat, index) in chatsList"
         :key="chat[1].id"
@@ -28,9 +32,10 @@ import { computed, inject, ref } from "vue";
 import { useStore } from "vuex";
 import SearchCreateGroup from "@/components/chat/SearchCreateGroup/SearchCreateGroup.vue";
 import ChatListItem from "@/components/chat/chatsList/ChatListItem.vue";
+import LoadingContent from "@/components/UI/LoadingContent.vue";
 
 export default {
-  components: { SearchCreateGroup, ChatListItem },
+  components: { SearchCreateGroup, ChatListItem, LoadingContent },
   emits: ["open-chat", "set-last-chat-element"],
   setup(_, { emit }) {
     const store = useStore();
@@ -38,6 +43,8 @@ export default {
     const searchPattern = ref(null);
     const isShowMobileMessages = inject("isShowMobileMessages");
     const chatsData = computed(() => store.state.chat.chats);
+
+    const isLoading = computed(() => store.state.chat.isLoading)
 
     function openChat(chatId) {
       emit("open-chat", chatId);
@@ -69,6 +76,7 @@ export default {
     }
 
     return {
+      isLoading,
       isShowMobileMessages,
       chatsData,
       searchChats,

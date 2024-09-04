@@ -26,6 +26,7 @@ import ChatContainer from "@/components/chat/ChatContainer.vue";
 import ChatsList from "@/components/chat/chatsList/ChatsList.vue";
 import UserModal from "@/components/chat/modals/UserModal.vue";
 
+
 import { insertUsersList } from "@/store/modules/users.module";
 
 export default {
@@ -35,6 +36,7 @@ export default {
     ChatContainer,
     ChatsList,
     UserModal,
+
   },
   setup() {
     const route = useRoute();
@@ -43,6 +45,7 @@ export default {
 
     const isShowMobileMessages = ref(false);
     provide("isShowMobileMessages", isShowMobileMessages);
+
 
     const createGroupUsers = ref([]);
     provide("createGroupUsers", createGroupUsers);

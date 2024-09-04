@@ -28,6 +28,9 @@ export const chat = {
   actions: {
     async getChats({ commit, state }, paginationData) {
       if (!state.loadChatsPagination.hasMore) return;
+
+      commit("setIsloadingStatus", true);
+
       try {
         const res = await $api.get("/chat/listPagination", {
           params: {
@@ -55,6 +58,8 @@ export const chat = {
         if (res.data.currentTempChatData) {
           commit("saveCurrentTempChat", res.data.currentTempChatData);
         }
+
+        commit("setIsloadingStatus", false);
       } catch (e) {
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,

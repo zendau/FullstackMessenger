@@ -10,6 +10,7 @@ const defaultPatination = {
 export const contact = {
   namespaced: true,
   state: {
+    isLoading: false,
     contacts: {},
     contactsPagintation: { ...defaultPatination },
     freeUsers: {},
@@ -186,7 +187,7 @@ export const contact = {
             limit: state.contactsPagintation.limit,
           };
         }
-
+        commit("setIsloadingStatus", true);
         const res = await $api.get("/contact/list", {
           params,
         });
@@ -194,6 +195,7 @@ export const contact = {
         res.data.resList = insertUsersList(Object.values(res.data.resList));
 
         commit("setContacts", res.data);
+        commit("setIsloadingStatus", false);
       } catch (e) {
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
@@ -542,6 +544,9 @@ export const contact = {
         default:
           break;
       }
+    },
+    setIsloadingStatus(state, status) {
+      state.isLoading = status;
     },
   },
 };
