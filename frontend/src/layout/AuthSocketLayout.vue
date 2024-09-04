@@ -1,4 +1,5 @@
 <template>
+  <LoadingApp v-if="isLoading" />
   <component :is="authLayout">
     <slot />
     <ConferenceCall />
@@ -16,17 +17,26 @@ import {
   watch,
 } from "vue";
 import { useStore } from "vuex";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import ConferenceCall from "@/components/conference/ConfrenceCall.vue";
 import { Layout } from "@/router/layouts";
 import AuthChatLayoutVue from "./AuthChatLayout.vue";
 import AuthMainLayoutVue from "./AuthMainLayout.vue";
+import LoadingApp from "@/components/UI/LoadingApp.vue";
+
 
 export default {
-  components: { ConferenceCall },
+  components: { ConferenceCall, LoadingApp },
   setup() {
     const store = useStore();
     const route = useRoute();
+
+    const router = useRouter();
+
+
+
+    const isLoading = ref(true)
+
 
     onMounted(() => {
       if (!chatSocket.connected && !peerSocket.connected) {
@@ -43,6 +53,11 @@ export default {
         isPeerSocketConntect.value = false;
       }
     });
+
+    router.beforeResolve(() => {
+      isLoading.value = false
+    })
+
 
     const isChatSocketConntect = ref(false);
     const isPeerSocketConntect = ref(false);
@@ -108,6 +123,7 @@ export default {
     setInterval(() => store.commit("users/updateUsersDateOnline"), 30000);
 
     return {
+      isLoading,
       authLayout,
     };
   },

@@ -36,6 +36,7 @@ export default {
 
     const store = useStore();
 
+
     store.dispatch("auth/initAuth");
 
     const callingData = ref(null);
