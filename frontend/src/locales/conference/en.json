@@ -1,0 +1,32 @@
+{
+  "conferenceFoouter": {
+    "group": "Group",
+    "private": "Private",
+    "interrupt": "Interrupt",
+    "chat": "Chat",
+    "on": "On",
+    "off": "Off",
+    "record": "Record",
+    "stop": "Stop",
+    "show": "Show"
+  },
+  "conferenceItem": {
+    "group": "Group",
+    "private": "Private",
+    "video": "Video call",
+    "audio": "Audio call",
+    "enter": "Enter"
+  },
+  "initCall": {
+    "callTo": "Call to",
+    "cancel": "Cancel"
+  },
+  "receiveCall": {
+    "callFrom": "Call from",
+    "accept": "Accept",
+    "reject": "Reject"
+  },
+  "recorder": {
+    "promptSave": "Enter file name"
+  }
+}

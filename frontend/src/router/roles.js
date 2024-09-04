@@ -1,5 +1,5 @@
-export  const Role = {
-    noAuth: 0,
-    User: 1,
-    Admin: 2,
-}
+export const Role = {
+  GUEST: 0,
+  USER: 1,
+  ADMIN: 2,
+};

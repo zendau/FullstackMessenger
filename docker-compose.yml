@@ -1,44 +1,119 @@
 version: '3'
+name: 'messanger-prod'
 services:
+
+  nginx:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./wwwroot/nginx.conf:/etc/nginx/nginx.conf
+      - ./wwwroot/ssl:/etc/nginx/ssl
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./server/gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    networks:
+      - backend
+
+  auth-service:
+    build:
+      context: ./server/auth-service
+      dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+      - mysqlDB
+      - rabbitmq
+    networks:
+      - backend
+
+  chat-service:
+    build:
+      context: ./server/socket-chat
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - redis
+      - mysqlDB
+      - rabbitmq
+    networks:
+      - backend
+
+  peer-service:
+    build:
+      context: ./server/peer-chat
+      dockerfile: Dockerfile
+    volumes:
+      - ./wwwroot/ssl:/usr/src/app/ssl
+    ports:
+      - "8084:8084"
+      - "9000:9000"
+
+    depends_on:
+      - redis
+      - mysqlDB
+      - rabbitmq
+    networks:
+      - backend
+
+  file_cloud-service:
+    build:
+      context: ./server/file-cloud
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mysqlDB
+      - rabbitmq
+    networks:
+      - backend
 
   mysqlDB:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
+    env_file:
+      - docker.env
     ports:
       - 3309:3306
     volumes:
+      - ./sql:/docker-entrypoint-initdb.d
       - mysqlDB:/var/lib/mysql
-
-
-  phpmyadmin:
-      image: phpmyadmin
-      restart: always
-      ports:
-        - 8083:80
-      environment:
-        - PMA_ARBITRARY=1
+    networks:
+      - backend
 
   rabbitmq:
-      image: rabbitmq:management
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - docker.env
+    networks:
+      - backend
 
-      restart: always
-      ports:
-        - "5672:5672"
-        - "15672:15672"
-      environment:
-        - RABBITMQ_DEFAULT_USER=user
-        - RABBITMQ_DEFAULT_PASS=root
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    networks:
+      - backend
 
-  # gateway:
-  #   build:
-  #     context: ./server/gateway
-  #     dockerfile: Dockerfile
-  #   container_name: gateway
-  #   ports:
-  #       - "3002:3000"
-  #   command: npm run start
 volumes:
   mysqlDB:
+
+networks:
+  backend:
+    driver: bridge

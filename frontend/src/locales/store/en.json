@@ -1,0 +1,16 @@
+{
+  "user": {
+    "online": "Online",
+    "hour": "Hour ago | {n} hours ago",
+    "minute": "Minute ago | {n} minutes ago",
+    "recently": "Recently"
+  },
+  "chat": {
+    "notFoundChat": "Not found chat {id}",
+    "deleteError": "Error when deleting a user"
+  },
+  "auth": {
+    "newPassword": "New password was send to your {email}",
+    "updatedData": "Your data was updated"
+  }
+}

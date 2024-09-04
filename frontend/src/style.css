@@ -1,0 +1,200 @@
+:root {
+  --color-links: rgb(51, 144, 236);
+  --button-primary: #1866e4;
+  --color-links-active: #5eb5f7;
+  --color-danger: #e33741;
+  --color-success: #119c1a;
+  --scrollbarTrack: #3f4750;
+  --scrollbarThumb: #9b9fa4;
+}
+
+:root[data-theme="light"] {
+  --color-primary: #354259;
+  --color-icon: #272727;
+  --color-secondary: rgb(112, 117, 121);
+  --color-background: #f7f7f8;
+  --color-background-secondary: #e4e5e7;
+  --color-background-active: #dadee3;
+  --color-background-item: rgba(0, 0, 0, 0.0666667);
+  --button-chat-color: #cfd3d8;
+  --button-chat-hover: #bac1c6;
+  --color-message: #f5f6f8;
+  --input-background: #d8d8d8;
+  --chat-navbar-bgc-active: #cbcace;
+  --chat-selecte-active: #c8c8d0;
+}
+
+:root[data-theme="dark"] {
+  --color-primary: rgba(255, 255, 255, 0.84);
+  --color-icon: rgb(170, 170, 170);
+  --color-secondary: #aaaaaa;
+  --color-background: #17212b;
+  --color-background-hover: #232e3c;
+  --color-background-secondary: #0e1621;
+  --color-background-active: #25303e;
+  --color-background-item: #202b36;
+  --button-chat-color: #3a3a3d;
+  --button-chat-hover: #464649;
+  --color-message: #182533;
+  --input-background: #242f3d;
+  --chat-navbar-bgc-active: #25303e;
+  --chat-selecte-active: #1866e4;
+}
+
+/* :root[data-theme="dark"] {
+
+
+  --textColor: rgba(255, 255, 255, 0.84);
+  --btn-color: #1866e4;
+  --menuColor: #0e1621;
+  --secondTextColor: #aaaaaa;
+  --itemColor: #202b36;
+  --btnChat: #3a3a3d;
+  --btnHover: #464649;
+  --bgcColor: #17212b;
+  --activeBgcColor: #25303e;
+  --dangerColor: #e33741;
+  --messageColor: #182533;
+  --activeColor: #5eb5f7;
+  --linkColor: #59b7ff;
+  --successColor: #119c1a;
+
+  --inputBgcColor: #242f3d;
+
+  --scrollbarTrack: #3f4750;
+  --scrollbarThumb: #9b9fa4;
+} */
+
+:dark {
+  --color-primary: rgb(135, 116, 225);
+  --color-primary-opacity: rgba(131, 120, 219, 0.501961);
+  --color-primary-opacity-hover: rgba(131, 120, 219, 0.627451);
+  --color-primary-shade: rgb(123, 113, 198);
+  --color-primary-shade-rgb: 123, 113, 198;
+  --color-background: rgb(33, 33, 33);
+  --color-background-compact-menu: rgba(33, 33, 33, 0.866667);
+  --color-background-compact-menu-reactions: rgba(33, 33, 33, 0.866667);
+  --color-background-compact-menu-hover: rgba(0, 0, 0, 0.4);
+  --color-background-secondary: rgb(15, 15, 15);
+  --color-background-secondary-accent: rgb(16, 15, 16);
+  --color-background-own: rgb(118, 106, 200);
+  --color-background-own-apple: rgb(118, 106, 200);
+  --color-background-selected: rgb(44, 44, 44);
+  --color-background-own-selected: rgb(101, 73, 212);
+  --color-chat-hover: rgb(44, 44, 44);
+  --color-chat-active: rgb(118, 106, 200);
+  --color-chat-active-greyed: rgb(146, 136, 211);
+  --color-item-active: rgb(41, 41, 41);
+  --color-text: rgb(255, 255, 255);
+  --color-text-secondary: rgb(170, 170, 170);
+  --color-text-secondary-rgb: 170, 170, 170;
+  --color-icon-secondary: rgb(170, 170, 170);
+  --color-text-secondary-apple: rgb(170, 170, 170);
+  --color-borders: rgb(48, 48, 48);
+  --color-borders-input: rgb(91, 91, 90);
+  --color-dividers: rgb(59, 59, 61);
+  --color-links: rgb(135, 116, 225);
+  --color-gray: rgb(113, 117, 121);
+  --color-pinned: rgb(112, 117, 121);
+  --color-default-shadow: rgba(16, 16, 16, 0.611765);
+  --color-light-shadow: rgba(0, 0, 0, 0.25098);
+  --color-green: rgb(135, 116, 225);
+  --color-text-meta-colored: rgb(131, 120, 219);
+  --color-reply-hover: rgb(39, 39, 39);
+  --color-reply-active: rgb(46, 47, 47);
+  --color-reply-own-hover: rgb(135, 117, 218);
+  --color-reply-own-hover-apple: rgb(135, 117, 218);
+  --color-reply-own-active: rgb(145, 125, 234);
+  --color-reply-own-active-apple: rgb(145, 125, 234);
+  --color-accent-own: rgb(255, 255, 255);
+  --color-message-meta-own: rgba(255, 255, 255, 0.533333);
+  --color-own-links: rgb(255, 255, 255);
+  --color-code: rgb(135, 116, 225);
+  --color-code-own: rgb(255, 255, 255);
+  --color-code-bg: rgba(0, 0, 0, 0.501961);
+  --color-code-own-bg: rgba(0, 0, 0, 0.313725);
+  --color-composer-button: rgba(170, 170, 170, 0.8);
+  --color-message-reaction: rgb(43, 42, 53);
+  --color-message-reaction-hover: rgb(52, 49, 71);
+  --color-message-reaction-own: rgb(103, 92, 175);
+  --color-message-reaction-hover-own: rgb(91, 82, 155);
+  --color-voice-transcribe-button: rgb(42, 42, 60);
+  --color-voice-transcribe-button-own: rgb(131, 115, 211);
+  --color-topic-blue: rgb(111, 249, 240);
+  --color-topic-yellow: rgb(255, 214, 126);
+  --color-topic-violet: rgb(203, 134, 219);
+  --color-topic-green: rgb(142, 238, 152);
+  --color-topic-rose: rgb(255, 147, 178);
+  --color-topic-red: rgb(251, 111, 95);
+  --color-topic-grey: rgb(153, 153, 153);
+  --color-forum-unread-topic-hover: rgb(54, 54, 54);
+  --color-forum-hover-unread-topic-hover: rgb(63, 63, 63);
+}
+
+:light {
+  --color-primary: rgb(51, 144, 236);
+  --color-primary-opacity: rgba(80, 162, 233, 0.25098);
+  --color-primary-opacity-hover: rgba(80, 162, 233, 0.14902);
+  --color-primary-shade: rgb(74, 149, 214);
+  --color-primary-shade-rgb: 74, 149, 214;
+  --color-background: rgb(255, 255, 255);
+  --color-background-compact-menu: rgba(255, 255, 255, 0.733333);
+  --color-background-compact-menu-reactions: rgba(255, 255, 255, 0.921569);
+  --color-background-compact-menu-hover: rgba(0, 0, 0, 0.0666667);
+  --color-background-secondary: rgb(244, 244, 245);
+  --color-background-secondary-accent: rgb(228, 228, 229);
+  --color-background-own: rgb(238, 255, 222);
+  --color-background-own-apple: rgb(220, 248, 197);
+  --color-background-selected: rgb(244, 244, 245);
+  --color-background-own-selected: rgb(208, 255, 172);
+  --color-chat-hover: rgb(244, 244, 245);
+  --color-chat-active: rgb(51, 144, 236);
+  --color-chat-active-greyed: rgb(96, 167, 240);
+  --color-item-active: rgb(237, 237, 237);
+  --color-text: rgb(0, 0, 0);
+  --color-text-secondary: rgb(112, 117, 121);
+  --color-text-secondary-rgb: 112, 117, 121;
+  --color-icon-secondary: rgb(112, 117, 121);
+  --color-text-secondary-apple: rgb(142, 142, 146);
+  --color-borders: rgb(218, 220, 224);
+  --color-borders-input: rgb(218, 220, 224);
+  --color-dividers: rgb(200, 198, 204);
+  --color-links: rgb(51, 144, 236);
+  --color-gray: rgb(196, 201, 204);
+  --color-pinned: rgb(196, 201, 204);
+  --color-default-shadow: rgba(114, 114, 114, 0.25098);
+  --color-light-shadow: rgba(114, 114, 114, 0.168627);
+  --color-green: rgb(0, 199, 62);
+  --color-text-meta-colored: rgb(77, 205, 94);
+  --color-reply-hover: rgb(244, 244, 244);
+  --color-reply-active: rgb(232, 233, 233);
+  --color-reply-own-hover: rgb(217, 245, 206);
+  --color-reply-own-hover-apple: rgb(203, 239, 183);
+  --color-reply-own-active: rgb(197, 236, 190);
+  --color-reply-own-active-apple: rgb(186, 230, 168);
+  --color-accent-own: rgb(69, 175, 84);
+  --color-message-meta-own: rgba(79, 174, 78, 1);
+  --color-own-links: rgb(51, 144, 236);
+  --color-code: rgb(74, 114, 154);
+  --color-code-own: rgb(60, 121, 64);
+  --color-code-bg: rgba(112, 117, 121, 0.0784314);
+  --color-code-own-bg: rgba(112, 117, 121, 0.0784314);
+  --color-composer-button: rgba(112, 117, 121, 0.8);
+  --color-message-reaction: rgb(235, 243, 253);
+  --color-message-reaction-hover: rgb(197, 222, 249);
+  --color-message-reaction-own: rgb(206, 240, 186);
+  --color-message-reaction-hover-own: rgb(181, 224, 164);
+  --color-voice-transcribe-button: rgb(232, 243, 255);
+  --color-voice-transcribe-button-own: rgb(204, 238, 191);
+  --color-topic-blue: rgb(47, 119, 114);
+  --color-topic-yellow: rgb(127, 105, 59);
+  --color-topic-violet: rgb(139, 90, 150);
+  --color-topic-green: rgb(68, 119, 74);
+  --color-topic-rose: rgb(155, 87, 107);
+  --color-topic-red: rgb(235, 104, 88);
+  --color-topic-grey: rgb(108, 108, 108);
+  --color-forum-unread-topic-hover: rgb(233, 233, 233);
+  --color-forum-hover-unread-topic-hover: rgb(226, 226, 226);
+}
+
+/* scrollbarTrack и scrollbarThumb мб сделать общими  */

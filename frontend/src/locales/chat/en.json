@@ -1,0 +1,97 @@
+{
+  "list": {
+    "empty": "No chats"
+  },
+  "searchCreateGroup": {
+    "inputPlaceholder": "Enter a chat name",
+    "selectType": "Select conference type",
+    "type": {
+      "audio": "Audio",
+      "video": "Video"
+    },
+    "create": "Create",
+    "typeError": "Confrence type must be selected",
+    "atLeast": "At least 2 other participants are required to create a conference"
+  },
+  "searchInput": {
+    "placeholder": "Search"
+  },
+  "contactType": {
+    "freeUsers": "Add",
+    "contacts": "Contacts",
+    "pendingRequests": "Pending",
+    "outgoingRequests": "Outgoing",
+    "blockedUsers": "Blocked"
+  },
+  "headerGroup": {
+    "members": "{n}  member | {n} members"
+  },
+  "headerMessages": {
+    "deleted": "Deleted",
+    "cancel": "Cancel",
+    "selected": "Selected {n} message | Selected {n} messages"
+  },
+  "headerChatMenu": {
+    "call": "Call",
+    "deleteChat": "Delete chat",
+    "exit": "Exit chat",
+    "confirmTitle": "Delete selected chat ?"
+  },
+  "confirmModal": {
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "groupListItem": {
+    "admin": "Admin",
+    "add": "Add",
+    "delete": "Delete"
+  },
+  "groupFreeContacts": {
+    "invite": "Invite contacts"
+  },
+  "messageContextMenu": {
+    "copy": "Copy text",
+    "edit": "Edit",
+    "select": "Select",
+    "delete": "Delete"
+  },
+  "messageContainer": {
+    "edited": "edited",
+    "newMessage": "New message"
+  },
+  "messageSystemInfo": {
+    "added": "Added:",
+    "deleted": "Deleted:",
+    "exit": "Exit:",
+    "created": "Created"
+  },
+  "fileUpload": {
+    "message": "Put file(s) to download"
+  },
+  "chatSend": {
+    "isBanned": "You have blocked this user",
+    "isBannedByContact": "This user has blocked you",
+    "placeholder": "Type message..."
+  },
+  "chatEditMessage": {
+    "cancel": "Cancel"
+  },
+  "chatPressing": {
+    "pressing": "is pressing ..."
+  },
+  "contactsList": {
+    "noUsers": "No users"
+  },
+  "userModal": {
+    "blockedByUsers": "Blocked by this user",
+    "accept": "Accept request",
+    "reject": "Reject request",
+    "remove": "Remove from contacts",
+    "cancel": "Cancel contact request",
+    "add": "Add to contact",
+    "unBlock": "Unblock user",
+    "block": "Block user",
+    "emptyData": "Absent"
+  },
+  "selectChat": "Select a contact to start a chat"
+}

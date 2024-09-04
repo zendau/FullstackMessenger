@@ -1,0 +1,47 @@
+{
+  "deviceModal": {
+    "os": "OS:",
+    "device": "Device:",
+    "time": "Time:",
+    "delete": "Delete session",
+    "cancel": "Cancel"
+  },
+  "accountForm": {
+    "email": "Email",
+    "login": "Login",
+    "phone": "Phone Number",
+    "details": "User Details",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "changeBtn": "Change data"
+  },
+  "settingPage": {
+    "select": "Interface customization"
+  },
+  "settingAccount": {
+    "hello": "Hello",
+    "role": "Role:",
+    "change": "Change user data"
+  },
+  "settingLanguage": {
+    "select": "Select language"
+  },
+  "settingTheme": {
+    "change": "Change theme"
+  },
+  "settingDevices": {
+    "title": "Devices",
+    "current": "This device",
+    "endOther": "End all other sessions",
+    "other": "Active sessions",
+    "noSessions": "No other sessions"
+  },
+  "deviceData": {
+    "open": "Open"
+  },
+  "role": {
+    "ADMIN": "Admin",
+    "MODERATOR": "Moderator",
+    "USER": "User"
+  }
+}

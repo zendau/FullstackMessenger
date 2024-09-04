@@ -1,0 +1,21 @@
+.alert {
+  width: 250px;
+  height: 60px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__danger {
+    background-color: var(--dangerColor);
+  }
+
+  &__success {
+    background-color: var(--successColor);
+  }
+
+  &__text {
+    color: var(--textColor);
+    text-align: center;
+  }
+}
