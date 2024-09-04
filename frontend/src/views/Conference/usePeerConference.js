@@ -1,97 +1,66 @@
 import { ref, reactive } from "vue";
-import Peer from "peerjs";
+
 import { useMediaDevices } from "./useMediaDevices";
 import { useStore } from "vuex";
+import { usePeerConnection } from "./usePeerConnection";
 
-const peerConnect = ref(null);
+const containersRefs = reactive([]);
+const streams = reactive([]);
+const childStream = [];
+const peerId = ref(null);
+const peerConnected = ref(false);
 
-function connectToPeer() {
-  peerConnect.value = new Peer({
-    path: "/peer",
-    host: "/",
-    port: import.meta.env.VITE_PEER_PORT,
-  });
-}
-
-export function usePeerConnection() {
-  const containersRefs = reactive([]);
-  const peerId = ref(null);
-  const peerConnected = ref(false);
-  const streams = reactive([]);
-  const childStream = [];
-  console.log("init refs");
-
+export function usePeerConference() {
+  const { peerConnect } = usePeerConnection();
   const store = useStore();
 
-  if (!peerConnect.value) {
-    connectToPeer();
-  }
+  function initPeerListeners(withVideo = false) {
+    // answer to call
+    peerConnect.value.on("call", async (call) => {
+      try {
+        streams.push(call);
 
-  // answer to call
-  peerConnect.value.on("call", async (call) => {
-    console.log("CALL FROM USER", call);
-    try {
-      streams.push(call);
+        // Another user media stream
+        const { stream } = await useMediaDevices(withVideo);
 
-      // Another user media stream
-      const { stream } = await useMediaDevices(true);
-      // eslint-disable-next-line no-debugger
-      debugger;
-      childStream.push(stream);
-      call.answer(stream);
+        childStream.push(stream);
+        call.answer(stream);
 
-      // answer to  stream
-      call.on("stream", (userVideoStream) => {
-        console.log("answer stream", userVideoStream);
-        console.log("refs", containersRefs);
-        containersRefs.forEach((item) => {
-          console.log(
-            "item.peerId === call.peer",
-            item,
-            item.peerId,
-            call.peer
-          );
-          // eslint-disable-next-line no-debugger
-          debugger;
-          if (item.peerId === call.peer) {
-            console.log("2");
-            item.setStream(userVideoStream);
-          }
+        // answer to  stream
+        call.on("stream", (userVideoStream) => {
+          containersRefs.forEach((item) => {
+            if (item.peerId === call.peer) {
+              item.setStream(userVideoStream);
+            }
+          });
         });
-      });
-    } catch {
-      store.commit("alert/setErrorMessage", "Could not start video source");
-    }
-  });
+      } catch {
+        store.commit("alert/setErrorMessage", "Could not start video source");
+      }
+    });
 
-  // join to peer server
-  peerConnect.value.on("open", (id) => {
-    peerId.value = id;
-    peerConnected.value = true;
-    console.log("OPEN", peerConnected.value, peerId.value);
-  });
+    // join to peer server
+    peerConnect.value.on("open", (id) => {
+      peerId.value = id;
+      peerConnected.value = true;
+    });
+  }
 
   // connected to new user
   function connectToNewUser(userId, stream) {
-    // eslint-disable-next-line no-debugger
-    debugger;
     const call = peerConnect.value.call(userId, stream);
     streams.push(call);
 
     // connected user's stream
     call.on("stream", (userVideoStream) => {
-      console.log("STREAM123", userVideoStream);
-      console.log("refs", containersRefs);
       containersRefs.forEach((item) => {
-        // eslint-disable-next-line no-debugger
-        debugger;
         if (item.peerId === userId) {
-          console.log("3");
           item.setStream(userVideoStream);
         }
       });
     });
   }
+
   return {
     peerId,
     streams,
@@ -99,5 +68,6 @@ export function usePeerConnection() {
     peerConnected,
     containersRefs,
     connectToNewUser,
+    initPeerListeners,
   };
 }

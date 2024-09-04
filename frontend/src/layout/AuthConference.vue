@@ -26,13 +26,16 @@
 </template>
 
 <script>
-import { computed, inject, onMounted, onUnmounted, provide, ref } from "vue";
+import { computed, inject, onMounted, onUnmounted, provide, ref, watch, onBeforeUpdate } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
 import AlertNotification from "@/components/UI/AlertNotification.vue";
 import FooterComponent from "@/components/conference/ConferenceFooter.vue";
 import ConferenceChat from "@/components/conference/ConferenceChat.vue";
+import { useEventListener } from "../views/Conference/useEventListener";
+import { usePeerConference } from "../views/Conference/usePeerConference";
+import { useMediaDevices } from "../views/Conference/useMediaDevices";
 
 // import ChatContainer from "@/components/chat/ChatContainer.vue";
 
@@ -75,7 +78,7 @@ export default {
     provide("isRecordScreen", isRecordScreen);
 
     const isConferenceAdmin = inject("isConferenceAdmin");
-    // const peerSocket = inject("peerSocket");
+    const peerSocket = inject("peerSocket");
 
     onMounted(() => {
       // store.dispatch("conference/getConferenceData", roomId);
@@ -89,6 +92,105 @@ export default {
 
       document.querySelector("#app").classList.remove("conference-grid");
     });
+
+
+    const isVideoConference = route.name === "videoRoom"
+
+    /////////
+
+    const {
+      connectToNewUser,
+      peerConnected, peerId, childStream, containersRefs, initPeerListeners
+} = usePeerConference()
+
+    initPeerListeners(isVideoConference)
+    const socketConnected = inject("peerSocketConnected", false);
+    const roomUsers = ref([]);
+    provide('roomUsers', roomUsers)
+
+    const userData = computed(() => store.state.auth.user);
+
+    const isReadyToJoin = computed(() => socketConnected.value && peerConnected.value);
+
+
+    const localeStream = ref(null);
+    provide('localeStream', localeStream)
+
+
+    console.log('isReady', peerConnected, socketConnected)
+
+
+    watch(
+      isReadyToJoin,
+      async (ready) => {
+        if (ready) {
+
+
+          const {stream} = await useMediaDevices(isVideoConference);
+          localeStream.value = stream
+
+
+          peerSocket.emit("join-room", {
+            userId: userData.value.id,
+            userLogin: userData.value.login,
+            peerId: peerId.value,
+            roomId,
+          });
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
+
+    // Change muted status
+    watch(isMuted, () => {
+      peerSocket.emit("userMute", {
+        userId: userData.value.id,
+        roomId,
+      });
+    });
+
+        // Exit from room and clear data
+        onUnmounted(() => {
+      peerSocket.emit("exit-room", {
+        userId: userData.value.id,
+        roomId,
+      });
+      peerSocket.removeAllListeners("getUsers");
+      localeStream.value?.getTracks().forEach((t) => {
+        t.stop();
+      });
+      childStream?.forEach((stream) => {
+        stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      });
+    });
+
+    onBeforeUpdate(() => {
+      containersRefs.length = 0;
+    });
+
+
+    peerSocket.on("getUsers", (users) => {
+      roomUsers.value = new Map(JSON.parse(users));
+    });
+
+    peerSocket.on("userJoinedRoom", (userId) => {
+      connectToNewUser(userId, localeStream.value);
+    });
+
+
+    useEventListener("keypress", muteEvent)
+
+
+    function muteEvent(event) {
+      if (event.code === "KeyM") {
+        isMuted.value = !isMuted.value;
+      }
+    }
+
 
     return { alert, showChat, roomData, isMuted };
   },

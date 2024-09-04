@@ -13,16 +13,14 @@
 
 <script>
 import { useRoute } from "vue-router";
-import { onUnmounted, ref, inject, watch, computed, onBeforeUpdate } from "vue";
+import { inject, watch, computed } from "vue";
 import { useStore } from "vuex";
 
 
 import videoContainerVue from "@/components/conference/VideoContainer.vue";
 import { startScreenRecorder, stopScreenRecorder } from "@/utils/screenRecorder";
 import ScreenShare from "@/utils/screenShare";
-import { usePeerConnection } from "./usePeerConference";
-import { useMediaDevices } from "./useMediaDevices";
-import { useEventListener } from "./useEventListener";
+import { usePeerConference } from "./usePeerConference";
 
 export default {
   components: { videoContainerVue },
@@ -32,7 +30,7 @@ export default {
     const route = useRoute();
     const store = useStore();
 
-    const roomUsers = ref([]);
+    const roomUsers = inject('roomUsers', []);
     const roomId = route.params.id;
 
     const roomData = computed(() => store.getters["chat/selectedChat"](roomId));
@@ -40,59 +38,29 @@ export default {
     const userData = computed(() => store.state.auth.user);
 
     const peerSocket = inject("peerSocket");
-    const socketConnected = inject("peerSocketConnected", false);
-    const isMuted = inject("isMuted");
+
     const isPauseVideo = inject("isPauseVideo");
     const isShareScreen = inject("isShareScreen");
     const isRecordScreen = inject("isRecordScreen");
+    const localeStream = inject('localeStream')
 
 
-    const mainStream = ref(null);
 
 
-    const {containersRefs, streams, connectToNewUser, peerConnected, peerId, childStream} = usePeerConnection()
+    const {containersRefs, streams, peerId } = usePeerConference()
+
 
     const setItemRef = (el) => {
       if (el) {
         containersRefs.push(el);
-        if (el.peerId === peerId.value && mainStream.value) {
-          el.setStream(mainStream.value);
+        if (el.peerId === peerId.value && localeStream.value) {
+          el.setStream(localeStream.value);
           el.muteYourSelf();
         }
       }
     };
 
-    const screenShare = new ScreenShare(streams, containersRefs, peerId, mainStream, isShareScreen, store);
-    const isReadyToJoin = computed(() => socketConnected.value && peerConnected.value);
-
-    watch(
-      isReadyToJoin,
-      async (ready) => {
-        if (ready) {
-          const {stream} = await useMediaDevices(true);
-          mainStream.value = stream
-
-
-          peerSocket.emit("join-room", {
-            userId: userData.value.id,
-            userLogin: userData.value.login,
-            peerId: peerId.value,
-            roomId,
-          });
-        }
-      },
-      {
-        immediate: true,
-      }
-    );
-
-    // Change muted status
-    watch(isMuted, () => {
-      peerSocket.emit("userMute", {
-        userId: userData.value.id,
-        roomId,
-      });
-    });
+    const screenShare = new ScreenShare(streams, containersRefs, peerId, localeStream, isShareScreen, store);
 
     // Change video pause status
     watch(isPauseVideo, () => {
@@ -121,46 +89,6 @@ export default {
         stopScreenRecorder();
       }
     });
-
-    // Exit from room and clear data
-    onUnmounted(() => {
-      peerSocket.emit("exit-room", {
-        userId: userData.value.id,
-        roomId,
-      });
-      peerSocket.removeAllListeners("getUsers");
-      mainStream?.value?.getTracks().forEach((t) => {
-        t.stop();
-      });
-      childStream?.forEach((stream) => {
-        stream.getTracks().forEach((track) => {
-          track.stop();
-        });
-      });
-    });
-
-    onBeforeUpdate(() => {
-      containersRefs.length = 0;
-    });
-
-
-
-    peerSocket.on("getUsers", (users) => {
-      roomUsers.value = new Map(JSON.parse(users));
-    });
-
-    peerSocket.on("userJoinedRoom", (userId) => {
-      connectToNewUser(userId, mainStream.value);
-    });
-
-    useEventListener("keypress", muteEvent)
-
-
-    function muteEvent(event) {
-      if (event.code === "KeyM") {
-        isMuted.value = !isMuted.value;
-      }
-    }
 
     return {
       roomUsers,
