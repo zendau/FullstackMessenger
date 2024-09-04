@@ -21,8 +21,8 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Response, Request } from 'express';
-import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
-import { JwtRefreshGuard } from '@/services/auth/guards/jwt-refresh.guard';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import { JwtRefreshGuard } from '@/common/guards/jwt-refresh.guard';
 import { firstValueFrom } from 'rxjs';
 import { UserLoginDTO } from '@/services/auth/UserModule/dto/userLogin.dto';
 import {
@@ -40,8 +40,8 @@ import { EditDataDTO } from '@/services/auth/UserModule/dto/userEdit.dto';
 import HttpCacheInterceptor from '@/cache/HttpCacheInterceptor';
 import { authSuccessDTO } from '@/services/auth/ResponseDTO/authSuccess.dto';
 
-import BodyWithDevice from '@/services/auth/decorators/BodyWithDevice.decorator';
-import RefreshData from '@/services/auth/decorators/RefreshData.decorator';
+import BodyWithDevice from '@/common/decorators/BodyWithDevice.decorator';
+import RefreshData from '@/common/decorators/RefreshData.decorator';
 import { UserResetPasswordDTO } from '@/services/auth/UserModule/dto/userResetPassword.dto';
 import IToken from '@/services/auth/UserModule/interfaces/IToken';
 import { ExceptionsFilter } from '../../../common/filters/exception.filter';

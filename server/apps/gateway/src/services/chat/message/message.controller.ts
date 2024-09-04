@@ -22,7 +22,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
-import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
 import { MessageDTO } from '@/services/chat/message/dto/message.dto';
 import { UpdateMessageDTO } from '@/services/chat/message/dto/update-message.dto';

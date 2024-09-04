@@ -22,12 +22,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { GetUserDTO } from '@/services/auth/ResponseDTO/getUser.dto';
 import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
 import { RoleDTO } from '@/services/auth/UserModule/dto/role.dto';
 import IUserPaginationList from '@/services/auth/UserModule/interfaces/IUserPaginationList';
-import RoleGuard from '@/services/auth/guards/roles.guard';
+import RoleGuard from '@/common/guards/roles.guard';
 import { UserRole } from '@/services/auth/enum/userRole.enum';
 import { RoleListDTO } from '@/services/auth/UserModule/dto/roleList.dto';
 import HttpClearCacheInterceptor from '@/cache/clearCache';

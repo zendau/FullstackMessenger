@@ -17,7 +17,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
 import { ChatDTO } from '@/services/chat/chat/dto/chat.dto';
-import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import IChatPagination from '@/services/chat/interfaces/IChatPagination';
 import IChatSearch from '@/services/chat/interfaces/IChatSearch';
 import IUserChat from '@/services/chat/interfaces/IUserChat';

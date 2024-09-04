@@ -18,7 +18,7 @@ import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { RoomDTO } from '@/services/peer/room/dto/room.dto';
 import { EditRoomDTO } from '@/services/peer/room/dto/editRoom.dto';
-import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import {
   ApiBearerAuth,
   ApiOperation,

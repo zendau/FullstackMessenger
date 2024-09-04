@@ -7,8 +7,8 @@ import { CacheModule, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { FileController } from './services/fileCloud/file/file.controller';
 import { ConfigModule } from '@nestjs/config';
-import { JwtStrategy } from './services/auth/strategies/jwt.strategy';
-import { RefreshStrategy } from './services/auth/strategies/refresh.strategy';
+import { JwtStrategy } from './common/strategies/jwt.strategy';
+import { RefreshStrategy } from './common/strategies/refresh.strategy';
 
 import * as redisStore from 'cache-manager-redis-store';
 import { ContactController } from './services/auth/UserModule/contact.controller';

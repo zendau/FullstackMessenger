@@ -20,8 +20,6 @@ export class ExceptionsFilter implements ExceptionFilter {
       exception.message = JSON.parse(exception.message);
     }
 
-    console.log('exe', exception);
-
     const data = {} as { message: string; status: number };
 
     if (exception instanceof HttpException) {

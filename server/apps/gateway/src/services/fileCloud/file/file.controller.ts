@@ -33,7 +33,7 @@ import {
 import { HttpErrorDTO } from '@/services/auth/ResponseDTO/httpError.dto';
 import { FileDTO } from '@/services/fileCloud/file/dto/file.dto';
 import { FileEditDataDTO } from '@/services/fileCloud/file/dto/filesEditData.dto';
-import { JwtAuthGuard } from '@/services/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('FileCloud microservice - File controller')
