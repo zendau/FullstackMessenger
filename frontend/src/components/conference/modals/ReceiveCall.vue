@@ -60,7 +60,6 @@ export default {
     });
 
     function acceptCall() {
-      console.log("accept call", callingData.value);
       peerSocket.emit("acceptCalling", callingData.value);
       router.push(
         `/conference/${callingData.value.withVideo ? "video" : "audio"}/${
@@ -71,7 +70,6 @@ export default {
     }
 
     function rejectCall() {
-      console.log("reject call");
       peerSocket.emit("rejectCalling", callingData.value);
       closeCTX();
     }
@@ -79,7 +77,6 @@ export default {
     function closeCTX() {
       audio.pause();
       audio.currentTime = 0;
-      console.log("callingTimer.value", callingTimer.value);
       clearTimeout(callingTimer.value);
       callingData.value = null;
     }

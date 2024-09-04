@@ -44,7 +44,6 @@ export class TasksService {
     const inseredData = [];
 
     for (const roomMessages of messagesData) {
-      console.log('roomMessages', roomMessages);
       if (roomMessages[0]) return;
 
       const messages = roomMessages[1];
@@ -74,8 +73,6 @@ export class TasksService {
         inseredData.push(messageEntiry);
       });
     }
-    console.log('messagesData', messagesData);
-    console.log('inseredData ', inseredData);
     this.messageService.setMany(inseredData);
 
     scanPos = 0;

@@ -10,9 +10,9 @@ export async function useMediaDevices(withVideo = false) {
 
       return { stream };
     } catch (e) {
-      console.log("alert/setErrorMessage", "Could not start video source");
+      console.error("Could not start video source");
     }
   } else {
-    console.log("alert/setErrorMessage", "Media devices are not supported");
+    console.error("Media devices are not supported");
   }
 }

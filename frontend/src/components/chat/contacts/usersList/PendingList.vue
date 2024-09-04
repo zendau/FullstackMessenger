@@ -40,7 +40,6 @@ export default {
     watch(
       contactsPattern,
       (pattern, oldPattern) => {
-        console.log("WATCH");
         if (pattern) {
           store.dispatch("contact/getPendingRequests", contactsPattern.value);
           return;

@@ -38,17 +38,14 @@ export default {
     }
 
     peerSocket.on("receiveInviteCalling", (callData) => {
-      console.log("receiveInviteCalling", callData);
       callingData.value = callData;
     });
 
     peerSocket.on("cancelInviteCalling", () => {
-      // console.log("cancelInviteCalling", callData);
       clearCallingData();
     });
 
     peerSocket.on("acceptInviteCalling", (callData) => {
-      console.log("acceptInviteCalling", callData);
       clearCallingData();
 
       router.push(
@@ -59,20 +56,16 @@ export default {
     });
 
     peerSocket.on("rejectInviteCalling", (rejectedUser) => {
-      console.log("rejectInviteCalling", rejectedUser);
       const audio = new Audio("/audio/disconnect.mp3");
       audio.play();
 
       if (!callingData.value) return;
 
       rejectedAnswerers.push(rejectedUser);
-      console.log(rejectedAnswerers, callingData.value, peerId.value);
       if (
         callingData.value.from.peerId === peerId.value &&
         callingData.value.users.length === rejectedAnswerers.length
       ) {
-        console.log("ALL USERS REJECTED  CALL");
-
         clearCallingData();
       }
     });

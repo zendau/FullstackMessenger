@@ -20,7 +20,6 @@ export default {
   },
   setup() {
     const { t, d } = useI18n();
-    console.log("useI18n", useI18n());
 
     function getMessageAlert(messageType, messageText) {
       if (messageType === "date") {

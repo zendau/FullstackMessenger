@@ -54,13 +54,10 @@ export default {
     const createGroupUsers = inject("createGroupUsers");
 
     const observer = new IntersectionObserver(async (entries) => {
-      console.log("contacts", entries[0], contactsPattern.value);
       if (entries[0].isIntersecting && !contactsPattern.value) {
         store.dispatch("contact/getContactsList");
       }
     });
-
-    console.log("setup");
 
     watch(
       contactsPattern,
@@ -88,17 +85,14 @@ export default {
     }
 
     function checkPrivateContact(contactData) {
-      console.log("CHAT", contactData);
       store.dispatch("chat/getPrivateChatId", { contactData, openChat });
     }
 
     function openChat(chatId) {
       emit("open-chat", chatId);
-      // console.log("open chat", userData.chat);
     }
 
     function openUserModal(userId) {
-      console.log("userId", userId);
       modalUserId.value = userId;
     }
 

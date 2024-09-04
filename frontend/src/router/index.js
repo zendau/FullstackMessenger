@@ -183,7 +183,6 @@ router.beforeEach((to, from, next) => {
         store.dispatch("auth/logout");
       } else {
         if (to.meta.role <= Role[userRole]) {
-          console.log("GOOD ROUTE");
           next();
         } else {
           next(wrongRoleRedicect);

@@ -41,7 +41,6 @@ export default {
     function dataDrop(e) {
       files.value.push(...e.dataTransfer.files);
       dragStatus.value = false;
-      console.log(files.value);
     }
 
     return {

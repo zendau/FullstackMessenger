@@ -67,14 +67,11 @@ export default {
 
     store.dispatch("contact/getContactCount");
 
-    console.log("on contact");
     chatSocket.on("contact", (userStatus) => {
-      console.log("USER sttaa", userStatus);
       store.commit("users/updateUserOnline", userStatus);
     });
 
     onUnmounted(() => {
-      console.log("unmounted");
       chatSocket.removeAllListeners("contact");
     });
 

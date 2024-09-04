@@ -64,7 +64,6 @@ export default {
     });
 
     function mutedAudio() {
-      console.log("updated");
       if (isMainFrame.value) {
         media.value.muted = true;
       } else {
@@ -94,7 +93,6 @@ export default {
 
     function setStream(stream) {
       if (!media.value) return;
-      console.log("stream", stream);
       media.value.srcObject = stream;
       media.value.addEventListener("loadedmetadata", () => {
         media.value.play();

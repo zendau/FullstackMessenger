@@ -65,7 +65,6 @@ export class SocketRedisAdapter {
 
       const dbData = await setQuery.getValuesFromDB();
       this.setValues(key, mainId, dbData.resList, setQuery.isExpire);
-      console.log('dbData', dbData);
       return dbData.resList;
     }
 
@@ -110,7 +109,6 @@ export class SocketRedisAdapter {
     if (!setQuery) return null;
 
     const resDB = await setQuery.getValuesFromDB();
-    console.log('RESDB', resDB);
     if (!resDB) return null;
 
     if (typeof resDB === 'object' && 'status' in resDB)
@@ -254,7 +252,6 @@ export class SocketRedisAdapter {
   }
 
   async deleteListValue(key: redisList, id: number, value: string | number) {
-    console.log(`${key}:${id}`, 1, value);
     this.redis.lrem(`${key}:${id}`, 1, value);
   }
 
@@ -425,7 +422,6 @@ export class SocketRedisAdapter {
     limit: number,
   ) {
     const valueKey = `${key}:${valueId}`;
-    console.log('OFFSET', offset, limit);
     const messagesRange = await this.redis.lrange(
       `map-${valueKey}`,
       offset,

@@ -17,7 +17,6 @@ import SettingTheme from "@/components/settings/SettingTheme.vue";
 export default {
   components: { Navbar, SettingLanguage, SettingTheme },
   setup() {
-    console.log("NO AUTH LAYOUT");
   },
 };
 </script>

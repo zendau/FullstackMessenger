@@ -56,7 +56,6 @@ export const chat = {
           commit("saveCurrentTempChat", res.data.currentTempChatData);
         }
       } catch (e) {
-        console.log("e", e);
         commit("alert/setErrorMessage", e.response.data.message, {
           root: true,
         });

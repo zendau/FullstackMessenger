@@ -66,7 +66,6 @@ export default {
     const userId = store.state.auth.user.id;
 
     if (!roomData.value) {
-      console.log("GET NEW");
       store.dispatch("chat/getChatById", {
         userId,
         chatId: roomId,
@@ -130,8 +129,6 @@ export default {
 
     const localeStream = ref(null);
     provide("localeStream", localeStream);
-
-    console.log("isReady", peerConnected, socketConnected);
 
     watch(
       isReadyToJoin,

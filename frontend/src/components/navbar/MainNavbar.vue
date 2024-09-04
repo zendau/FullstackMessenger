@@ -81,17 +81,13 @@ export default {
     const isShowMobileNavbar = ref(false);
 
     const authStatus = computed(() => store.state.auth.authStatus);
-    console.log("auth", authStatus.value);
 
     const isAdmin = computed(() => Role[store.state.auth.user.role] >= 2);
-    console.log("isAdmin", isAdmin.value);
 
     watch(
       () => route.path,
       () => {
-        console.log("isShow", isShowMobileNavbar.value);
         isShowMobileNavbar.value = false;
-        console.log("isShow", isShowMobileNavbar.value);
       }
     );
 

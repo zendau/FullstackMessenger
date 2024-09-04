@@ -218,7 +218,6 @@ export default {
       } else if (media.msRequestFullscreen) {
         media.msRequestFullscreen();
       }
-      console.log("e", e);
     }
 
     return {

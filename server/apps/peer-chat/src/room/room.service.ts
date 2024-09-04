@@ -22,7 +22,6 @@ export class RoomService {
       .where('id = :chatId', { chatId })
       .getRawOne();
 
-    console.log('chatData', chatData);
     return chatData?.withVideo === 1 ?? null;
   }
 

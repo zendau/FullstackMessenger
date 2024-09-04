@@ -71,7 +71,6 @@ export class MessageService {
 
   async setMany(messagesData: IMessage[]) {
     const messages = await this.messageRepository.save(messagesData);
-    console.log(messages);
   }
 
   async getRoomMessages(scrollData: IChatMessages) {

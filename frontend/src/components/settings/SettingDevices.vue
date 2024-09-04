@@ -58,15 +58,8 @@ export default {
     watch(
       () => store.state.auth.devices,
       (devices) => {
-        console.log("watch", devices);
         othersDevices.length = 0;
         devices.forEach((device) => {
-          console.log(
-            "device.id ",
-            device.id,
-            deviceId.value,
-            deviceId.value === device.id
-          );
           if (device.id === deviceId.value) currenteDevice.value = device;
           else othersDevices.push(device);
         });

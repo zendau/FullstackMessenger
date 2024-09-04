@@ -49,11 +49,6 @@ export default {
     });
 
     function confirmChangeData(confirmCode) {
-      console.log({
-        ...updatedUserData.value,
-        newEmail: updatedUserData.value.email,
-        confirmCode,
-      });
       store.dispatch("auth/changeUserData", {
         ...updatedUserData.value,
         newEmail: updatedUserData.value.email,

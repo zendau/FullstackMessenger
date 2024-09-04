@@ -76,7 +76,6 @@ export class SocketGateway {
   @SubscribeMessage('initInviteCalling')
   initInviteCalling(socket: Socket, payload: ICallingData) {
     payload.users.forEach((userPeerId) => {
-      console.log('CALL TO', userPeerId);
       this.server.to(userPeerId).emit('receiveInviteCalling', payload);
     });
   }

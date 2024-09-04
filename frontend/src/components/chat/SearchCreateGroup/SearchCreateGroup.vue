@@ -125,7 +125,6 @@ export default {
     });
 
     const onCreateChat = handleSubmit((formData) => {
-      console.log("CREATE GROUP");
       if (isValidGroupUsersLength.value.data) return;
 
       chatSocket.emit("createChat", {

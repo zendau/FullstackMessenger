@@ -34,7 +34,6 @@ export default {
     const rolesList = computed(() => store.state.admin.rolesList);
 
     function changeRole(e) {
-      console.log("CNGAW");
       store.dispatch("admin/setUserRole", {
         userId: props.userId,
         role: e.target.value,

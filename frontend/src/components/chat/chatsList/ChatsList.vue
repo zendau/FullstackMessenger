@@ -61,8 +61,6 @@ export default {
       if (searchPattern.value || !el) return;
 
       if (chatsData.value.size - 1 !== index) return;
-
-      console.log("EMIT set-last-chat-element");
       emit("set-last-chat-element", el);
     }
 

@@ -148,7 +148,6 @@ export default {
     });
 
     const onSubmitForm = handleSubmit((changeData) => {
-      console.log("value", changeData, userData);
 
       const newUserData = {};
 
@@ -170,10 +169,6 @@ export default {
 
       if (changeData?.password && changeData?.confirmPassword) {
         newUserData.password = changeData.password;
-      }
-
-      if (Object.keys(newUserData).length > 0) {
-        console.log("set new user data", newUserData);
       }
 
       emit("initChangeData", newUserData);

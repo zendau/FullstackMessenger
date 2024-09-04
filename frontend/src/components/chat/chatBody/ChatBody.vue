@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import { useRoute } from "vue-router";
 import { inject, ref, computed, watch, provide } from "vue";
 import { useStore } from "vuex";
 
@@ -56,7 +55,7 @@ export default {
   emits: ["delete-messages"],
   setup(_, { emit }) {
     const store = useStore();
-    const route = useRoute();
+
 
     const chatSocket = inject("chatSocket");
     const selectedMessages = inject("selectedMessages");
@@ -79,12 +78,10 @@ export default {
     let messageReadCount = 0;
 
     chatSocket.on("updateMessage", (updatedMessageData) => {
-      console.log("updated payload", updatedMessageData);
       store.dispatch("message/editChatMesssage", updatedMessageData);
     });
 
     const readChatMessage = debounce(() => {
-      console.log("send ", messageReadCount);
 
       const userUnread = chatData.value?.userUnread;
       if (!userUnread) return;
@@ -101,17 +98,12 @@ export default {
     }, 500);
 
     const readMessageObserver = new IntersectionObserver((entries) => {
-      console.log("observer . Message 1", entries);
+
 
       entries.forEach((entrie) => {
         if (entrie.isIntersecting) {
           messageReadCount++;
-          console.log(
-            "unobserve",
-            entrie.target,
-            messageReadCount,
-            readMessageObserver
-          );
+
           readMessageObserver.unobserve(entrie.target);
         }
       });
@@ -124,12 +116,7 @@ export default {
         const messagePagination = chatData.value?.loadMessagesPagination;
         isFirstScroll = false;
         if (entries[0].isIntersecting && messagePagination?.hasMore) {
-          console.log("load message scrool observer", {
-            chatId: chatId.value,
-            page: messagePagination.page,
-            limit: messagePagination.limit,
-            inMemory: messagePagination.inMemory,
-          });
+
           messageScrollObserver.unobserve(entries[0].target);
 
           store.dispatch("chat/getChatMessages", chatId.value);
@@ -150,13 +137,7 @@ export default {
     });
 
     chatSocket.on("updateReadMessages", (newData) => {
-      console.log(
-        "### NEW DATA ###",
-        newData,
-        route,
-        chatId,
-        typeof chatId.value
-      );
+
       store.commit("chat/updateReadMessages", {
         chatId: chatId.value,
         unreadCount: newData,
@@ -169,35 +150,28 @@ export default {
 
       if (isLastMessage) {
         messageScrollObserver.observe(el.$el.nextElementSibling);
-        console.log("SET", isFirstMessageUnread.value, isFirstScroll);
+
         if (
           messages.value?.length - 1 === 0 ||
           !isFirstMessageUnread.value ||
           !isFirstScroll
         )
           return;
-        console.log(
-          "isFirstMessageUnread scrollIntoView",
-          isFirstMessageUnread
-        );
+
 
         isFirstMessageUnread.value.scrollIntoView();
       }
       if (chatData.value.userUnread === 0) return;
       const isReadMessage = index - chatData.value.userUnread;
-      // console.log("EL!!!", el, index, roomData.value, res);
+
       if (isReadMessage < 0) {
-        console.log(
-          "++isReadMessage++",
-          chatData.value.userUnread,
-          el.$el.nextElementSibling
-        );
+
         readMessageObserver.observe(el.$el.nextElementSibling);
       }
 
       if (isFirstUnread(index)) {
         isFirstMessageUnread.value = el.$el.nextElementSibling;
-        console.log("SETTTTTTTTTTTTT", isFirstMessageUnread.value);
+
       }
     }
 
@@ -214,7 +188,6 @@ export default {
     });
 
     function openCTXMenu(CTXdata) {
-      console.log("openCTXMenu", CTXdata);
       ctxMenuData.value = CTXdata;
     }
 

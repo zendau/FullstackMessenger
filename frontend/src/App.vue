@@ -44,7 +44,6 @@ export default {
     const authStatus = computed(() => store.state.auth.authStatus);
 
     const appLayout = computed(() => {
-      console.log("CHANGE AUTH STATUS", authStatus.value);
       if (authStatus.value) {
         return AuthSocketLayoutVue;
       }

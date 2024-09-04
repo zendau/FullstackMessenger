@@ -50,7 +50,6 @@ export class FileService {
   }
 
   async getById(fileId: number) {
-    console.log('test', fileId);
     const res = await this.fileRepository
       .createQueryBuilder('file')
       .innerJoinAndSelect('file.foulder', 'foulder')
@@ -113,7 +112,6 @@ export class FileService {
               return await this.getById(file.fileId);
             }),
           );
-          console.log('MESSAGE', message.files);
         }
         return message;
       }),

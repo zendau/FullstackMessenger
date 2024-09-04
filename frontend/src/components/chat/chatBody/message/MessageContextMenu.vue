@@ -90,7 +90,6 @@ export default {
 
     const files = inject("files");
     function selectMessageHandler() {
-      console.log("test click");
       isSelectMessagesMode.value = !isSelectMessagesMode.value;
 
       selectedMessages.value.push({
@@ -107,17 +106,11 @@ export default {
 
     function editMessage() {
       editMessageData.value = props.ctxMenuData.message;
-      console.log(
-        "edit messaget id -",
-        props.ctxMenuData.message.id,
-        editMessageData.value,
-        props.ctxMenuData.message
-      );
+
       isShowMessageCTX.value = null;
       files.value = [...props.ctxMenuData.message.files];
     }
     function deleteMessage() {
-      console.log("test", props.ctxMenuData.message);
       emit("delete-messages", [
         { id: props.ctxMenuData.message.id, isRead: props.ctxMenuData.isRead },
       ]);
@@ -125,7 +118,6 @@ export default {
     }
 
     function closeCTX() {
-      console.log("close", isShowMessageCTX.value);
       isShowMessageCTX.value = null;
     }
 

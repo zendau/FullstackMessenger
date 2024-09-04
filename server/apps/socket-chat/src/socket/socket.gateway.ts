@@ -152,7 +152,6 @@ export class SocketGateway {
 
   @SubscribeMessage('message_pressing')
   handleMessagePressing(socket: Socket, payload: IMessagePressing) {
-    console.log('message_pressing', payload);
     socket.broadcast.to(payload.roomId).emit('message_status', payload);
   }
 
@@ -177,7 +176,6 @@ export class SocketGateway {
       chatData: payload.chatData,
       count: payload.count,
     });
-    console.log('unreadCount', unreadCount);
 
     this.server.to(payload.chatData.id).emit('updateReadMessages', unreadCount);
   }
@@ -201,7 +199,6 @@ export class SocketGateway {
     }
 
     const message = await this.socketService.addMessage(payload);
-    console.log('MESSAGE', message);
     this.server.to(payload.roomId).emit('newMessage', message);
   }
 
@@ -209,13 +206,6 @@ export class SocketGateway {
   async chatContactStatus(socket: Socket, payload: IContactStatus) {
     for (const userSocket of this.server.sockets.sockets?.values()) {
       if (userSocket.data?.userId == payload.contactId) {
-        console.log('userSocket', userSocket.data, payload);
-        console.log(
-          '!!!!userSocket.data',
-          userSocket.id,
-          userSocket.data?.userId,
-        );
-        console.log(socket.rooms);
         this.server.to(userSocket.id).emit('changeContactStatus', payload);
         break;
       }
@@ -224,7 +214,6 @@ export class SocketGateway {
 
   @SubscribeMessage('createChat')
   async createChat(socket: Socket, payload: IChatCreate) {
-    console.log('create chat', payload);
 
     const chatData = await this.socketService.createChat(payload);
 
@@ -233,7 +222,6 @@ export class SocketGateway {
     } else {
       for (const userSocket of this.server.sockets.sockets?.values()) {
         if (payload.users.includes(userSocket.data?.userId)) {
-          console.log('userSocket.id', userSocket.id);
           userSocket.join(chatData.id);
 
           if (!chatData.adminId) {

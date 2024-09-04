@@ -103,7 +103,6 @@ export default {
     });
 
     const onSubmitForm = handleSubmit((value) => {
-      console.log("SUBMIT");
       registerData.value = value;
       store.commit("alert/clearAlert");
 

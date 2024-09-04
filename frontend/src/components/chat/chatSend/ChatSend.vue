@@ -78,20 +78,12 @@ export default {
 
     function deleteFileById(fileId, file) {
       files.value = files.value.filter((_, index) => index !== fileId);
-      console.log(
-        "DELETE FILE",
-        editMessageData.value,
-        file,
-        "fileName" in file
-      );
       if (editMessageData.value && "fileName" in file) {
-        console.log("insert delete");
         deletedFiles.push(file.id);
       }
     }
 
     watch(chatId, () => {
-      console.log("change 1");
       if (chatId.value && isCallSendAfterCreate.value) {
         isCallSendAfterCreate.value = false;
         sendMessage();

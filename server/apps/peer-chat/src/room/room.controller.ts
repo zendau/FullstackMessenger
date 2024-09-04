@@ -19,7 +19,6 @@ export class RoomController {
 
   @MessagePattern('room/getByChat')
   async getByChatId(@Payload() chatId: string) {
-    console.log(chatId);
     const res = await this.roomService.getByChatId(chatId);
     return res;
   }

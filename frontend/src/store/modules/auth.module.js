@@ -229,7 +229,6 @@ export const auth = {
       state.devices = [];
       state.authStatus = false;
       state.isConfirmCode = false;
-      console.log("push to /");
       router.push("/");
     },
     saveDivicesData(state, diveces) {
@@ -237,21 +236,9 @@ export const auth = {
     },
 
     deleteDivicesData(state, devicesIdList) {
-      console.log(
-        "devicesIdList",
-        devicesIdList,
-        state.devices,
-        Array.isArray(state.devices)
-      );
       state.devices = state.devices.filter((device) => {
-        console.log(
-          devicesIdList.includes(device.id),
-          devicesIdList,
-          device.id
-        );
         return !devicesIdList.includes(device.id);
       });
-      console.log("RES", state.devices);
     },
     setIsConfirmCode(state, status) {
       state.isConfirmCode = status;

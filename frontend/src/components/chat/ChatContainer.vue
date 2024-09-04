@@ -90,7 +90,6 @@ export default {
     });
 
     chatSocket.on("inviteChatUser", (inseredUserData) => {
-      console.log("inseredUserData", inseredUserData);
       if (inseredUserData?.adminId === userId.value) {
         store.commit(
           "chat/updateFreeChatUsers",
@@ -144,7 +143,6 @@ export default {
     const chatData = computed(() =>
       store.getters["chat/selectedChat"](chatId.value)
     );
-    console.log("CHATDATA", chatData);
     provide("chatData", chatData);
     const privateMemberId = ref(null);
     const privateUserStatus = computed(

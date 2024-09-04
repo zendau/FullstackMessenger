@@ -64,17 +64,14 @@ export default {
 
     onMounted(() => {
       window.addEventListener("keyup", closeActiveChat);
-      console.log(chatId.value);
     });
 
     onUnmounted(() => {
-      console.log("UNMOUNTED");
       window.removeEventListener("keyup", closeActiveChat);
     });
 
     const chatObserver = new IntersectionObserver(
       (entries) => {
-        console.log("OBSERVER CHAT", entries);
         if (entries[0].isIntersecting) {
           store.dispatch("chat/getChats");
         }
@@ -104,7 +101,6 @@ export default {
 
     function openChatRoom(roomId, isFirstLoad = false) {
       isFirstChatsLoad = false;
-      console.log("OPEN CHAT ROOM");
 
       const { isPushed } = route.query;
 
@@ -116,7 +112,6 @@ export default {
         router.push(`/chat/${roomId}`);
 
         if (roomId === "contact") {
-          console.log("PUSH TO CHAT");
           router.push(`/chat`);
           return;
         }
@@ -134,11 +129,9 @@ export default {
 
     function setLastChatElement(el) {
       if (!el) return;
-      console.log("set observer", el);
       chatObserver.disconnect();
       chatObserver.observe(el);
       if (chatId.value && isFirstChatsLoad) {
-        console.log("OPEN HERE");
         openChatRoom(chatId.value, true);
       }
     }
