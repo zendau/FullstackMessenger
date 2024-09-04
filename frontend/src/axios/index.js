@@ -1,10 +1,7 @@
 import axios from "axios";
-// eslint-disable-next-line no-unused-vars
 import store from "@/store";
 
 const API_URL = import.meta.env.VITE_API;
-
-console.log("API", API_URL);
 
 const $api = axios.create({
   withCredentials: true,

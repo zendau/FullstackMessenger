@@ -59,7 +59,6 @@ export default {
     const media = ref(null);
     const placeholder = ref(false);
     const isMainFrame = ref(false);
-
     onUpdated(() => {
       mutedAudio();
     });

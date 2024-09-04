@@ -72,12 +72,6 @@ export default {
 
     const users = computed(() => store.state.admin.userList);
 
-    // onMounted(async () => {
-    //   const res = await $api.get("/user/all");
-    //   users.value = res.data;
-    //   console.log(users.value);
-    // });
-
     async function banUser(userId) {
       store.dispatch("admin/blockUser", userId);
     }

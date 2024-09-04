@@ -21,7 +21,6 @@ import AudioContainer from "@/components/conference/AudioContainer.vue";
 export default {
   components: { AudioContainer },
   setup() {
-    // ==== state ==== //
 
     const route = useRoute();
     const store = useStore();
@@ -52,8 +51,6 @@ export default {
     };
 
     let mediaRecorder = null;
-
-    // ==== hooks ==== //
 
     watch(
       [socketConnected, peerConnected],
@@ -109,7 +106,7 @@ export default {
       containersRefs = [];
     });
 
-    // ==== socket ==== //
+
 
     peerSocket.on("getUsers", (users) => {
       console.log("users", users);
@@ -120,7 +117,7 @@ export default {
       connectToNewUser(userId, mainStream.value);
     });
 
-    // ==== events ==== //
+
     window.addEventListener("keypress", muteEvent);
 
     function muteEvent(event) {
@@ -129,7 +126,6 @@ export default {
       }
     }
 
-    // ==== peer ==== //
 
     const peerConnect = new Peer({
       path: "/peer",
@@ -157,10 +153,7 @@ export default {
       call.on("stream", (userAudiotream) => {
         streams.push(userAudiotream);
         containersRefs.forEach((item) => {
-          // eslint-disable-next-line no-debugger
-          debugger;
           if (item.peerId === call.peer) {
-            console.log("!!!!!!!!!!!!!111");
             item.setStream(userAudiotream);
           }
         });

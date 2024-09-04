@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { computed, inject, provide, ref, watch, onUnmounted, onMounted } from "vue";
+import { computed, inject, provide, ref, watch, onUnmounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 
@@ -59,14 +59,12 @@ export default {
       if (value.length === 0) isSelectMessagesMode.value = false;
     });
 
-    onMounted(() => {
-      chatSocket.on("newMessage", (messagesData) => {
+        chatSocket.on("newMessage", (messagesData) => {
         store.dispatch("message/newChatMessage", {
           messagesData,
           userId: userId.value,
         });
-      });
-    });
+      })
 
     onUnmounted(() => {
       chatSocket.removeAllListeners("newMessage");
